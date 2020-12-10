@@ -136,3 +136,5 @@ desktop.ini
 .vscode/settings.json
 
 *.gdoc
+*.gslides
+*.gsheet
