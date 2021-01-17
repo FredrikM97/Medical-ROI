@@ -1,11 +1,12 @@
 import pandas as pd
+import yaml
 
 def downloadContent():
     pass
 
 def getLabels():
     pass
-def xml2dict(r, parent='', delimiter=".") -> list:
+def xml_to_dict(r, parent='', delimiter=".") -> list:
     param = lambda r:"_"+list(r.attrib.values())[0] if r.attrib else ''
     def recursive(r, parent='', delimiter=".") -> list:
         cont = {}
@@ -20,14 +21,17 @@ def xml2dict(r, parent='', delimiter=".") -> list:
             return {'dummy':None}
     return recursive(r, parent=parent, delimiter=delimiter)
 
-def xml_dict_2_pd(xml_dict):
+def xml_to_pd(xml_dict:dict):
     """Convert a xml dictionary to pandas dataframe and process to fit metadata"""
-    d = [xml2dict(root.findall('./*')[0], delimiter='') for root in xml_dict]
+    d = [xml_to_dict(root.findall('./*')[0], delimiter='') for root in xml_dict]
     
     meta_df = pd.DataFrame(d).sort_values('subject.subjectIdentifier')
     # Add I so that images and meta is named the same!
     meta_df['subject.study.imagingProtocol.imageUID'] = 'I' + meta_df['subject.study.imagingProtocol.imageUID']
     return meta_df
+
+def dict_to_pandas(input_dict, columns=None):
+    return pd.DataFrame(input_dict,columns=columns)
 
 def convert_df_types(
     input_df,
@@ -35,8 +39,9 @@ def convert_df_types(
         'num':[],
         'str':[],
         'datetime':[],
+    },
     datetime_format='%Y-%m-%d',
-    }):
+    ):
     
     converter = {
         'num':{
@@ -48,20 +53,25 @@ def convert_df_types(
             'params':{}
         },
         'datetime':{
-            'i
+            'obj':pd.to_datetime,
+            'params':{'format':datetime_format}
         }
     }
-    for key,cols in types.items():
+    for key,cols in types.items(): # get types
         t = converter.get(key)
         for col in cols:
-            t['obj'](col,*t['params'])
+            print("Processing type of", col)
+            input_df[col] =  t['obj'](input_df[col],**t['params'])
             
-    
-    meta_df['subject.study.subjectAge'] =  pd.to_numeric(meta_df['subject.study.subjectAge']) 
-meta_df['subject.study.weightKg'] =  pd.to_numeric(meta_df['subject.study.weightKg']) 
-meta_df['subject.study.series.dateAcquired'] = pd.to_datetime(meta_df['subject.study.series.dateAcquired'], format='%Y-%m-%d')
-    return 
+    return input_df
+
+def merge_df(image_df,meta_df, cols=[]):
+    """Merge two dataframes based on 'subject.subjectIdentifier' and 'subject.study.imagingProtocol.imageUID'"""
+    return image_df.merge(meta_df,on=cols)
 
 def display_all_pd_cols(input_df):
     with pd.option_context('display.max_columns', None):
         display(input_df.head())
+
+def display_dict_to_yaml(input_dict:dict):
+    print(yaml.dump(input_dict, allow_unicode=True, default_flow_style=False))
