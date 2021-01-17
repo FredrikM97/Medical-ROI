@@ -23,10 +23,10 @@ def get_images(rootdir=None)-> dict:
         subdir = dict.fromkeys(files)
         contents.extend((*folders,file, path + "/"+file) for file in files)
 
-        parent = reduce(dict.get, folders[:-1], temp_dir)
-        parent[folders[-1]] = subdir
+        #parent = reduce(dict.get, folders[:-1], temp_dir)
+        #parent[folders[-1]] = subdir
 
-    return temp_dir
+    return contents, columns
 
 def get_XML(path=None) -> iter:
     assert path, "No path defined"
