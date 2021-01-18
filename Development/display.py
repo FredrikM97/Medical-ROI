@@ -32,7 +32,7 @@ def display_advanced_plot(slices):
         ax1.set_aspect('equal')
         ax.append(ax1)
         ax[-1].set_title("ax:"+str(i))  # set title
-        plt.imshow(slices[i])
+        plt.imshow(slices[i], cmap="gray", origin="lower")
 
 
     plt.show()  # finally, render the plot
