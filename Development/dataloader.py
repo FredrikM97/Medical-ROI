@@ -1,6 +1,7 @@
 import os
 import xml.etree.ElementTree as ET
 from functools import reduce
+import shutil
 
 def get_images(rootdir=None)-> dict:
     """Get all files from folder and subfolder of nii images. Based on ADNI directory paths!"""
@@ -35,3 +36,10 @@ def get_XML(path=None) -> iter:
         fullname = os.path.join(path, filename)
         tree = ET.parse(fullname)
         yield tree
+        
+def copy_file(src, dest):
+    "Copy file from source dir to dest dir. Note that the path must exist where folders should be placed!"
+    if not os.path.exists(dest):
+        shutil.copy(src, dest)
+        return 'ok' 
+    return "fail"
