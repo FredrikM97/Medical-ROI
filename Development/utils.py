@@ -30,8 +30,8 @@ def xml_to_pd(xml_dict:dict):
     meta_df['subject.study.imagingProtocol.imageUID'] = 'I' + meta_df['subject.study.imagingProtocol.imageUID']
     return meta_df
 
-def dict_to_pandas(input_dict, columns=None):
-    return pd.DataFrame(input_dict,columns=columns)
+def list_to_pandas(input_list, columns=None):
+    return pd.DataFrame(input_list,columns=columns)
 
 
 
