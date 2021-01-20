@@ -88,6 +88,14 @@ def save_to_categorised_images(output_df, base_dir)->None:
     
 def load_nii_data(path) -> iter:
     files = os.listdir(path)
-    for file in files:  
-        pet_img = nib.load(path+file).get_fdata() # Load image
-        yield pet_img.T[0] # Shape: (z,x,y)
+    for file in files:
+        if file[-4:] == '.nii':
+            pet_img = nib.load(path+file).get_fdata() # Load image
+            yield pet_img.T[0] # Shape: (z,x,y)
+            
+def load_spm_data(path) -> iter:
+    files = os.listdir(path)
+    for file in files:
+        if file[-4:] == '.nii':
+            pet_img = nib.load(path + file).get_fdata()
+            yield pet_img.T
