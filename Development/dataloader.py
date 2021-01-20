@@ -3,6 +3,40 @@ import xml.etree.ElementTree as ET
 from functools import reduce
 import shutil
 import nibabel as nib
+"""
+class ADNI:
+    columns = [
+        'projectIdentifier',
+        'subject.subjectIdentifier',
+        'ImageProtocol.description',
+        'dateAcquired',
+        'subject.study.imagingProtocol.imageUID', 
+        'filename',
+        'path'
+    ]
+    files = []
+    
+    def __init__(self, data_dir, derivatives=True):
+        self.data_dir = data_dir
+        self.derivatives = derivatives
+    
+    def columns(self):
+        return self.columns
+    
+    def load(self, dir):
+        files = nib.load(dir)
+        self.files = files
+    def get(self):
+        #ADNI_002_S_0295_PT_ADNI_Brain_PET__Raw_FDG_br_raw_20110609102421118_60_S111104_I239487.nii
+        #
+        pass
+    
+    def to_df(self):
+        pass
+       
+    def nii_header(self,nib_image):
+        pass
+"""
 
 def get_images(rootdir=None)-> dict:
     """Get all files from folder and subfolder of nii images. Based on ADNI directory paths!"""
