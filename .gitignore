@@ -143,3 +143,4 @@ jupyterhub_config.py
 jupyterhub-proxy.pid
 jupyterhub.sqlite
 setupJupyter.sh
+.jupyterhub_config.py.swp
