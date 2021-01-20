@@ -103,3 +103,21 @@ How does the region affect the classification result? Is any of the regions dome
 
 # Limitations
 * Some highlights: European, American, Asian brain images could be biased.
+
+# Meeting 6 (2021-01-18)
+
+* The number of slices is caused by precision of scanner
+* What kind of normalization should be done?
+* Normazation: [0,1], [-1,1] - Evaluate which one or other exists
+* Is data augmentation ok? (when time allow us)
+* Focus on RPN before data augmentation
+## TODO
+* Based on severity of AD/CN/MCI can we detect with only lowest/highest/mixed distribution of images
+* Add NifTi images without disorder in order to make that an alternative (or is it bad decision? Will it only classify it as normal?)
+    * For Fredrik what is CN is this "normal"?
+* Add scores on plot. Research meaning behind scores
+* Change library for plotting brain scans (Green color is not correct)
+* Verify what preprocessing steps that is done by ADNI
+### Send mail with following:
+* To ask for next meeting. How do we input data to neural network?? Time-Series? Indivual images?
+* Dates given from slawomir
