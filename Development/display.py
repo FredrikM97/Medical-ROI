@@ -1,5 +1,6 @@
 import pandas as pd
-import yaml
+import sys
+from ruamel.yaml import YAML
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 from math import ceil,floor
@@ -9,7 +10,9 @@ def display_all_pd_cols(input_df):
         display(input_df.head())
 
 def display_dict_to_yaml(input_dict:dict):
-    print(yaml.dump(input_dict, allow_unicode=True, default_flow_style=False))
+    yaml = YAML()
+    yaml.indent(mapping=4, sequence=6, offset=3)
+    yaml.dump(input_dict, sys.stdout)
     
 def display_advanced_plot(slices):
     import matplotlib.gridspec as gridspec
