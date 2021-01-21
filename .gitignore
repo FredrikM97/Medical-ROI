@@ -138,3 +138,9 @@ desktop.ini
 *.gdoc
 *.gslides
 *.gsheet
+setupJupyter.sh
+jupyterhub.sqlite
+jupyterhub-proxy.pid
+jupyterhub_cookie_secret
+jupyterhub_config.py
+.jupyterhub_config.py.swp
