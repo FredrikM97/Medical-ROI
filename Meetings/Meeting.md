@@ -89,6 +89,18 @@ What have been done?
 
 * Use dementia instead of disease
 
+# Meeting 4 (2021-01-11)
+* Present visualisation until next week
+* Sent mail to slawomir of deadlines
+* Investigate if matlab code can be converted to python (Max two weeks)
+* Contact radiologist of what is important: Precision (Area) vs Accuracy? Source or area around the area?
+* Metrics for evaluation?
+* Investigate if predefined models to apply for CNN
+* Is pytorch better than keras?
+* How to build framework for visualisation?
+* Is tensorboard compatible to pytorch or alternatives?
+* Note: Use generators for images if we need to iterate. Proven to be faster
+
 # Meeting 5 (2020-12-07)
 
 # Metric
