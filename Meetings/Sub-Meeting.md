@@ -31,11 +31,7 @@
     
 ## What we have done:
 1. We fixed plots for the different metrics. 
-2. Rewrote all code for ADNI. Easier to follow notebook code/reduced redundancy.
-    * Added function import of images and categorise them into AD,MCI, CN
-    * Added function to load of image to generators (performance)
-    * Added function to get one slice at a time from generator
-    * Added function to split images and labels into train, validation and test dataset
+2. Rewrote code related to ADNI images. 
 3. Testing of SPM 
 4. Tried to find alternative to SPM.
     * Found wrapper for SPM in python. Might be easier to use SPM to save time.
