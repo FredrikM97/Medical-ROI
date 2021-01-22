@@ -2,12 +2,17 @@
 * Improve data loading, some bugs discovered
 * Evaluate if separate python script instead of SPM
 * Limitations of matlab, one file at a time, can it handle multiple files?
+    - with supplied script, yes
 
-## Question:
-1. Some folders contain 6 nii files. Should we keep them all if they are done on one test or select one of them?
-    * ADNI_002_S_1261_PT_ADNI_Brain_PET__Raw_FDG_br_raw_20110301121631780_456_S100595_I221695
-    * ADNI_002_S_1261_PT_ADNI_Brain_PET__Raw_FDG_br_raw_20110301121638249_191_S100595_I221695
-    * ADNI_002_S_1261_PT_ADNI_Brain_PET__Raw_FDG_br_raw_20110301121642624_127_S100595_I221695
+## Questions:
+1. Some folders contain 6 nii files. How to treat:
+    - Keep all
+    - Select 1
+    - Average
+    * Example:
+        * ADNI_002_S_1261_PT_ADNI_Brain_PET__Raw_FDG_br_raw_20110301121631780_456_S100595_I221695
+        * ADNI_002_S_1261_PT_ADNI_Brain_PET__Raw_FDG_br_raw_20110301121638249_191_S100595_I221695
+        * ADNI_002_S_1261_PT_ADNI_Brain_PET__Raw_FDG_br_raw_20110301121642624_127_S100595_I221695
     
 2. Input suggestions (CNN):
     * Mosaik one image as input.

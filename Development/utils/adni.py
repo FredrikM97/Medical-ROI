@@ -2,7 +2,7 @@ import os
 import xml.etree.ElementTree as ET
 import nibabel as nib
 import pandas as pd
-from . import utils
+from . import misc_util
 import numpy as np
 from .display import display_dict_to_yaml
 import enum
@@ -202,7 +202,7 @@ class ADNI(ADNI_PROPERTIES):
         # Add I so that images and meta is named the same!
         meta_df['subject.study.imagingProtocol.imageUID'] = 'I' + meta_df['subject.study.imagingProtocol.imageUID']
         
-        meta_df = utils.convert_df_types(meta_df, types={
+        meta_df = misc_util.convert_df_types(meta_df, types={
             'num':[
                 'subject.study.subjectAge',
                 'subject.study.weightKg',
@@ -227,7 +227,7 @@ class ADNI(ADNI_PROPERTIES):
     def files_to_df(self, show_output=True):
         "Convert files list to dataframe"
         files_df = pd.DataFrame(list(self.get_files()),columns=self.columns)
-        files_df = utils.convert_df_types(files_df, types={},show_output=show_output)
+        files_df = misc_util.convert_df_types(files_df, types={},show_output=show_output)
         
         return files_df
     
@@ -264,7 +264,7 @@ class ADNI(ADNI_PROPERTIES):
         }
         def inner(row):
             filename = f"{'#'.join([row[p] for p in self.category_filename])}.nii"
-            response = utils.copy_file(str(row['path']), f"{path[row['subject.researchGroup']]}/{filename}")
+            response = misc_util.copy_file(str(row['path']), f"{path[row['subject.researchGroup']]}/{filename}")
             stats[row['subject.researchGroup']][conv[response]] += 1 
         
         output_df.apply(lambda row: inner(row), axis=1)
