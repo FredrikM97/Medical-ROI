@@ -154,3 +154,4 @@ jupyterhub_config.py
 .jupyterhub_config.py.swp
 .nfs
 >>>>>>> main
+Development/.vscode/settings.json
