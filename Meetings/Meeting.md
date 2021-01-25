@@ -115,3 +115,25 @@ How does the region affect the classification result? Is any of the regions dome
 * How to build framework for visualisation?
 * Is tensorboard compatible to pytorch or alternatives?
 * Note: Use generators for images if we need to iterate. Proven to be faster
+
+# Meeting 6 (2021-01-25)
+* Feature-wise normalization is due to existance of negative values
+* Each scan session produces 6 .nii images
+	- Options discussed: Pick one, keep all, average. ADNI has average as an option for download.
+	- No real answer, suggest pick 1 of them. Early scans only feature 1 image, so using could cause imbalance.
+		- Need to explore in detail the differences between each image from the same session
+
+* How to input to CNN?
+	- We suggested mosaic, one slice at a time, layers as channels
+	- Not required, 3D CNN should handle. If not re-evaluate above options
+	- Depth of kernel important. 3x3x3 vs 3x3x1
+
+* MMSE Score (and other scores) used when validating models. Part of the clinical assessment of subjects, before a potential diagnosis.
+
+* Only use data of ADNI3 - at least at first. Each phase uses slightly different protocols, resulting in some potential incompatability.
+
+* .nii metadata
+	- Does .nii files contain a header with meta data?
+	- How does SPM treat .nii file?
+		- File name is retained, but prepended with 'iw'
+		- Metadata?
