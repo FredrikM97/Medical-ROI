@@ -14,7 +14,7 @@ class ADNI_PATHS:
     meta=None
 
     def update_paths(self,rootpath):
-        self.processed= rootpath+'/processed/'
+        self.processed=rootpath+'/processed/'
         self.raw=rootpath+'/adni_raw/'
         self.category={
             'root':rootpath+'/adni/',
@@ -175,8 +175,6 @@ class ADNI(ADNI_PROPERTIES):
                         yield one_slice
                 
         return _generator()
-    
-        
             
     def to_array(self, image_list=None) -> iter:
         "Convert images into numpy arrays and transpose from (x,y,z,n) -> (n,z,x,y)"
