@@ -46,26 +46,35 @@ def display_advanced_plot(slices):
 
     plt.show()  # finally, render the plot
 
+def plot_meta_settings(rows=1, cols=2, figsize=(16,16)):
+    plt.rcParams.update({'font.size': 15})
+    fig, axes = plt.subplots(nrows=rows, ncols=cols, figsize=figsize)
+    fig.set_tight_layout(True)
+    return fig, axes
+
 def move_legend(ax, new_loc="upper left",title:str=None,**kws):
     """
     If the legend disapear this function should be used. 
     Recommended from https://github.com/mwaskom/seaborn/issues/2280 where matplotlib have some weird implementation which makes the legend disappear..
     """
-    old_legend = ax.legend_
-    handles = old_legend.legendHandles
-    labels = [t.get_text() for t in old_legend.get_texts()]
-    if not title: title = old_legend.get_title().get_text() #, loc=new_loc
-    ax.legend(handles, labels, title=title, borderaxespad=0., bbox_to_anchor=(1.02, 1), loc=new_loc,**kws)
+    if (old_legend := ax.legend_) is not None:
+        handles = old_legend.legendHandles
+        labels = [t.get_text() for t in old_legend.get_texts()]
+        if not title: title = old_legend.get_title().get_text() #, loc=new_loc
+            
+        ax.legend(handles, labels, title=title, borderaxespad=0., bbox_to_anchor=(1.02, 1), loc=new_loc,**kws)
 
 def set_plot_settings(ax,rotation:int=0, title:str=None, xlabel:str=None, ylabel:str=None, **kws):
+    sns.set_theme(style="ticks", color_codes=True)
     if title: ax.set_title(title)
-    if xlabel and ylabel: ax.set(xlabel=xlabel, ylabel=ylabel)
+    if xlabel: ax.set(xlabel=xlabel)
+    if ylabel: ax.set(ylabel=ylabel)
     
     ax.tick_params(axis='x',which='major', rotation=rotation)
     
     
 def do_countplot(
-                data, 
+                df, 
                 x:str=None, 
                 y:str=None, 
                 hue:str=None, 
@@ -92,9 +101,11 @@ def do_countplot(
     """
     sns.set(font_scale=1.1)
 
-    ax1 = sns.countplot(x=x,y=y,
+    ax1 = sns.countplot(
+                x=x,
+                y=y,
                 hue = hue, 
-                data = data,
+                data = df,
                 order=order,
                 ax=ax,
                 **plot_kws
@@ -110,7 +121,6 @@ def do_histplot(
             x=None,
             y=None,
             hue:str=None, 
-            title:str=None,
             multiple='stack',
             bins:int='auto',
             discrete=True,
@@ -121,7 +131,6 @@ def do_histplot(
             **kws
         ):
     sns.set(font_scale=1.1)
-    print(bins)
     ax1 = sns.histplot(
         df,
         x=x,
@@ -130,6 +139,97 @@ def do_histplot(
         bins=bins,
         discrete=discrete,
         multiple=multiple,
+        ax=ax,
+        **plot_kws,
+        
+    )
+    set_plot_settings(ax1,**setting_kws)
+    move_legend(ax1,**legend_kws)
+    plt.tight_layout()
+    return ax1
+
+def do_catplot(
+            df, 
+            x=None,
+            y=None,
+            hue:str=None, 
+            kind='bar',
+            multiple='stack',
+            bins:int='auto',
+            discrete=True,
+            plot_kws:dict={},
+            setting_kws:dict={},
+            legend_kws:dict={},
+            **kws
+        ):
+    sns.set(font_scale=1.1)
+    ax1 = sns.catplot(
+        df,
+        x=x,
+        y=y, 
+        kind=kind,
+        hue=hue,
+        bins=bins,
+        discrete=discrete,
+        multiple=multiple,
+        **plot_kws,
+        
+    )
+    set_plot_settings(ax1,**setting_kws)
+    move_legend(ax1,**legend_kws)
+    plt.tight_layout()
+    return ax1
+
+    
+def do_boxplot(
+                df, 
+                x:str=None, 
+                y:str=None, 
+                hue:str=None, 
+                order:list=None, 
+                ax=None,
+                plot_kws:dict={},
+                setting_kws:dict={},
+                legend_kws:dict={},
+                **kws
+            ):
+ 
+    sns.set(font_scale=1.1)
+
+    ax1 = sns.boxplot(
+                x=x,
+                y=y,
+                hue = hue, 
+                data = df,
+                order=order,
+                ax=ax,
+                **plot_kws
+            )
+
+    set_plot_settings(ax1,**setting_kws)
+    move_legend(ax1,**legend_kws)
+    plt.tight_layout()
+    return ax1
+
+def do_lineplot(
+            df, 
+            x=None,
+            y=None,
+            hue:str=None, 
+            title:str=None,
+            ax=None,
+            plot_kws:dict={},
+            setting_kws:dict={},
+            legend_kws:dict={},
+            **kws
+        ):
+    "Evaluate if this works. Not tested"
+    sns.set(font_scale=1.1)
+    ax1 = sns.lineplot(
+        data=df,
+        x=x,
+        y=y, 
+        hue=hue,
         ax=ax,
         **plot_kws,
         
