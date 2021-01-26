@@ -25,7 +25,8 @@ def split_dataset(files:list, split_ratio={'train':0.70,'validation':0.15, 'test
 def convert_df_types(
     input_df,
     types={
-        'num':[],
+        'float':[],
+        'int':[],
         'str':[],
         'cat':[],
         'datetime':[],
@@ -33,7 +34,8 @@ def convert_df_types(
     show_output=True):
     
     converter = {
-        'num':'float',#pd.to_numeric,
+        'float':'float',#pd.to_numeric,
+        'int':'int',
         'str':'string',#pd.to_string,
         'cat':'category',#pd.Categorical,
         'datetime':'datetime64[ns]',#pd.to_datetime,
@@ -43,7 +45,7 @@ def convert_df_types(
     for key,cols in types.items(): # get types
         t = converter.get(key)
         for col in cols:
-            if show_output: print(f"\t{col}")
+            if show_output: print(f"\t {t}: {col}")
             input_df[col] =  input_df[col].astype(t)
             
     return input_df
