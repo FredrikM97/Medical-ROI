@@ -201,7 +201,7 @@ class ADNI(ADNI_PROPERTIES):
         meta_df['subject.study.imagingProtocol.imageUID'] = 'I' + meta_df['subject.study.imagingProtocol.imageUID']
         
         meta_df = misc_util.convert_df_types(meta_df, types={
-            'num':[
+            'float':[
                 'subject.study.subjectAge',
                 'subject.study.weightKg',
                 'subject.visit.assessment.component.assessmentScore_MMSCORE',
