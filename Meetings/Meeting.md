@@ -89,18 +89,6 @@ What have been done?
 
 * Use dementia instead of disease
 
-# Meeting 4 (2021-01-11)
-* Present visualisation until next week
-* Sent mail to slawomir of deadlines
-* Investigate if matlab code can be converted to python (Max two weeks)
-* Contact radiologist of what is important: Precision (Area) vs Accuracy? Source or area around the area?
-* Metrics for evaluation?
-* Investigate if predefined models to apply for CNN
-* Is pytorch better than keras?
-* How to build framework for visualisation?
-* Is tensorboard compatible to pytorch or alternatives?
-* Note: Use generators for images if we need to iterate. Proven to be faster
-
 # Meeting 5 (2020-12-07)
 
 # Metric
@@ -116,7 +104,7 @@ How does the region affect the classification result? Is any of the regions dome
 # Limitations
 * Some highlights: European, American, Asian brain images could be biased.
 
-# Meeting 4 (2021-01-11)
+# Meeting 6 (2021-01-11)
 * Present visualisation until next week
 * Sent mail to slawomir of deadlines
 * Investigate if matlab code can be converted to python (Max two weeks)
@@ -128,7 +116,7 @@ How does the region affect the classification result? Is any of the regions dome
 * Is tensorboard compatible to pytorch or alternatives?
 * Note: Use generators for images if we need to iterate. Proven to be faster
 
-# Meeting 6 (2021-01-25)
+# Meeting 7 (2021-01-25)
 * Feature-wise normalization is due to existance of negative values
 * Each scan session produces 6 .nii images
 	- Options discussed: Pick one, keep all, average. ADNI has average as an option for download.
