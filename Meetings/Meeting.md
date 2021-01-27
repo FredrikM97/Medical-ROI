@@ -137,3 +137,6 @@ How does the region affect the classification result? Is any of the regions dome
 	- How does SPM treat .nii file?
 		- File name is retained, but prepended with 'iw'
 		- Metadata?
+## TODO:
+* Finish preprocess
+* Present CNN model next week
