@@ -1,5 +1,6 @@
 import os
 from shutil import copy
+from .misc_util import copy_file, make_directory
 
 def data_filter(in_dir, out_dir):
     "Will remove all but 1 .nii file from each bottom-level folder, keeps in_dir intact and puts result in out_dir. Example usage: data_filter('..\\data\\adni_raw', '..\\data\\adni_raw_filtered')"
@@ -13,7 +14,7 @@ def data_filter(in_dir, out_dir):
             files_to_create.append([root.replace(in_dir, '', 1), nii_files_in_directory[0]])
     
     for file in files_to_create:
-        os.makedirs(os.path.dirname(out_dir + file[0] + '\\'), exist_ok=True)
-        copy(in_dir + file[0] + '\\' + file[1], out_dir + file[0] + '\\' + file[1])
+        assert make_directory(out_dir + file[0] + '\\'), "Could not create directory"
+        assert copy_file(in_dir + file[0] + '\\' + file[1], out_dir + file[0] + '\\' + file[1]), "Source file already exists"
         
 data_filter('..\\data\\adni_raw', '..\\data\\adni_raw_filtered')

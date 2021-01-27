@@ -7,7 +7,7 @@ import numpy as np
 from .display import display_dict_to_yaml
 import enum
     
-class ADNI_PATHS:
+class AdniPaths:
     processed=None
     raw=None
     category=None
@@ -24,7 +24,7 @@ class ADNI_PATHS:
         }
         self.meta=rootpath+'/meta/'
         
-class ADNI_PROPERTIES:
+class AdniProperties:
     columns:list = [
             'projectIdentifier', 
             'subject.subjectIdentifier',
@@ -54,9 +54,9 @@ class ADNI_PROPERTIES:
         'subject.study.imagingProtocol.imageUID',
         'image_nbr',
     ]
-    path = ADNI_PATHS()
+    path = AdniPaths()
     
-class ADNI(ADNI_PROPERTIES):
+class Adni(AdniProperties):
     
     def __init__(self, root_dir):
         self.path.update_paths(root_dir)
@@ -79,16 +79,12 @@ class ADNI(ADNI_PROPERTIES):
             self.info_from_raw_filename
         )
         
-        start = path.rfind(os.sep) + 1
-        
-        getFolder = lambda path: path[start:].split(os.sep)
-        
         files =  [
             dict(
-                zip(columns,[*func(file), file, path+"/"+file])
+                zip(columns,[*func(filename), filename, path+"/"+filename])
             ) 
             for path, dirs, files in os.walk(path) 
-            for file in files if file.endswith('.nii')
+            for filename in files if filename.endswith('.nii')
         ]
         if show_output: print(f"Root path: {path}\nLoaded files: {len(files)}\nColumns:\n\t" + '\n\t'.join(columns))
         return files
@@ -99,6 +95,7 @@ class ADNI(ADNI_PROPERTIES):
         self.meta = self.load_meta(show_output=show_output)
     
     def info_from_custom_filename(self, file, sep='#'):
+        "Split filenames based on custom seperator."
         slices= file.split(sep)
         slices[-1] = slices[-1].split(".")[0]
 
