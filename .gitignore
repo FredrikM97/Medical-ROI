@@ -138,20 +138,10 @@ desktop.ini
 *.gdoc
 *.gslides
 *.gsheet
-<<<<<<< HEAD
 jupyterhub_cookie_secret
 jupyterhub_config.py
 jupyterhub-proxy.pid
 jupyterhub.sqlite
 setupJupyter.sh
 .jupyterhub_config.py.swp
-=======
-setupJupyter.sh
-jupyterhub.sqlite
-jupyterhub-proxy.pid
-jupyterhub_cookie_secret
-jupyterhub_config.py
-.jupyterhub_config.py.swp
-.nfs
->>>>>>> main
 Development/.vscode/settings.json
