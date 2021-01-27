@@ -2,6 +2,7 @@ import pandas as pd
 import yaml
 import os
 import shutil
+import sys
 
 def list_to_pandas(input_list, columns=None):
     return pd.DataFrame(input_list,columns=columns)
@@ -58,3 +59,17 @@ def copy_file(src, dest)-> bool:
         shutil.copy(src, dest)
         return True
     return False
+
+def make_directory(dest)-> bool:
+    "Creates directory if not exists"
+    return os.makedirs(os.path.dirname(dest), exist_ok=True)
+
+def get_nii_files(srcdir):
+    columns = ['filename','dirs','path']
+    return [
+            dict(
+                zip(columns,[filename,path])
+            ) 
+            for path, _, files in os.walk(srcdir) 
+            for filename in files if filename.endswith('.nii')
+        ] 
