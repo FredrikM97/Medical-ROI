@@ -1,98 +1,101 @@
-def train(config):
-    net = Net(config., config["l2"])
+import argparse
+from datasets import create_dataset
+from utils import parse_configuration
+import math
+from models import create_model
+import time
+from utils.visualizer import Visualizer
 
-    device = "cpu"
-    if torch.cuda.is_available():
-        device = "cuda:0"
-        if torch.cuda.device_count() > 1:
-            net = nn.DataParallel(net)
-    net.to(device)
+"""Performs training of a specified model.
+    
+Input params:
+    config_file: Either a string with the path to the JSON 
+        system-specific config file or a dictionary containing
+        the system-specific, dataset-specific and 
+        model-specific settings.
+    export: Whether to export the final model (default=True).
+"""
+def train(config_file, export=True):
+    print('Reading config file...')
+    configuration = parse_configuration(config_file)
 
-    criterion = nn.CrossEntropyLoss()
-    optimizer = optim.SGD(net.parameters(), lr=config["lr"], momentum=0.9)
+    print('Initializing dataset...')
+    train_dataset = create_dataset(configuration['train_dataset_params'])
+    train_dataset_size = len(train_dataset)
+    print('The number of training samples = {0}'.format(train_dataset_size))
 
-    if checkpoint_dir:
-        model_state, optimizer_state = torch.load(
-            os.path.join(checkpoint_dir, "checkpoint"))
-        net.load_state_dict(model_state)
-        optimizer.load_state_dict(optimizer_state)
+    val_dataset = create_dataset(configuration['val_dataset_params'])
+    val_dataset_size = len(val_dataset)
+    print('The number of validation samples = {0}'.format(val_dataset_size))
 
-    trainset, testset = load_data(data_dir)
+    print('Initializing model...')
+    model = create_model(configuration['model_params'])
+    model.setup()
 
-    test_abs = int(len(trainset) * 0.8)
-    train_subset, val_subset = random_split(
-        trainset, [test_abs, len(trainset) - test_abs])
+    print('Initializing visualization...')
+    visualizer = Visualizer(configuration['visualization_params'])   # create a visualizer that displays images and plots
 
-    trainloader = torch.utils.data.DataLoader(
-        train_subset,
-        batch_size=int(config["batch_size"]),
-        shuffle=True,
-        num_workers=8)
-    valloader = torch.utils.data.DataLoader(
-        val_subset,
-        batch_size=int(config["batch_size"]),
-        shuffle=True,
-        num_workers=8)
+    starting_epoch = configuration['model_params']['load_checkpoint'] + 1
+    num_epochs = configuration['model_params']['max_epochs']
 
-    for epoch in range(10):  # loop over the dataset multiple times
-        running_loss = 0.0
-        epoch_steps = 0
-        for i, data in enumerate(trainloader, 0):
-            # get the inputs; data is a list of [inputs, labels]
-            inputs, labels = data
-            inputs, labels = inputs.to(device), labels.to(device)
+    for epoch in range(starting_epoch, num_epochs):
+        epoch_start_time = time.time()  # timer for entire epoch
+        train_dataset.dataset.pre_epoch_callback(epoch)
+        model.pre_epoch_callback(epoch)
 
-            # zero the parameter gradients
-            optimizer.zero_grad()
+        train_iterations = len(train_dataset)
+        train_batch_size = configuration['train_dataset_params']['loader_params']['batch_size']
 
-            # forward + backward + optimize
-            outputs = net(inputs)
-            loss = criterion(outputs, labels)
-            loss.backward()
-            optimizer.step()
+        model.train()
+        for i, data in enumerate(train_dataset):  # inner loop within one epoch
+            visualizer.reset()
 
-            # print statistics
-            running_loss += loss.item()
-            epoch_steps += 1
-            if i % 2000 == 1999:  # print every 2000 mini-batches
-                print("[%d, %5d] loss: %.3f" % (epoch + 1, i + 1,
-                                                running_loss / epoch_steps))
-                running_loss = 0.0
+            model.set_input(data)         # unpack data from dataset and apply preprocessing
+            model.forward()
+            model.backward()
 
-        # Validation loss
-        val_loss = 0.0
-        val_steps = 0
-        total = 0
-        correct = 0
-        for i, data in enumerate(valloader, 0):
-            with torch.no_grad():
-                inputs, labels = data
-                inputs, labels = inputs.to(device), labels.to(device)
+            if i % configuration['model_update_freq'] == 0:
+                model.optimize_parameters()   # calculate loss functions, get gradients, update network weights
 
-                outputs = net(inputs)
-                _, predicted = torch.max(outputs.data, 1)
-                total += labels.size(0)
-                correct += (predicted == labels).sum().item()
+            if i % configuration['printout_freq'] == 0:
+                losses = model.get_current_losses()
+                visualizer.print_current_losses(epoch, num_epochs, i, math.floor(train_iterations / train_batch_size), losses)
+                visualizer.plot_current_losses(epoch, float(i) / math.floor(train_iterations / train_batch_size), losses)
 
-                loss = criterion(outputs, labels)
-                val_loss += loss.cpu().numpy()
-                val_steps += 1
+        model.eval()
+        for i, data in enumerate(val_dataset):
+            model.set_input(data)
+            model.test()
 
-        with tune.checkpoint_dir(epoch) as checkpoint_dir:
-            path = os.path.join(checkpoint_dir, "checkpoint")
-            torch.save((net.state_dict(), optimizer.state_dict()), path)
+        model.post_epoch_callback(epoch, visualizer)
+        train_dataset.dataset.post_epoch_callback(epoch)
 
-        tune.report(loss=(val_loss / val_steps), accuracy=correct / total)
-    print("Finished Training")
+        print('Saving model at the end of epoch {0}'.format(epoch))
+        model.save_networks(epoch)
+        model.save_optimizers(epoch)
 
-def loss():
-    pass
+        print('End of epoch {0} / {1} \t Time Taken: {2} sec'.format(epoch, num_epochs, time.time() - epoch_start_time))
 
-def evaluate():
-    pass
+        model.update_learning_rate() # update learning rates every epoch
 
-def test():
-    pass
+    if export:
+        print('Exporting model')
+        model.eval()
+        custom_configuration = configuration['train_dataset_params']
+        custom_configuration['loader_params']['batch_size'] = 1 # set batch size to 1 for tracing
+        dl = train_dataset.get_custom_dataloader(custom_configuration)
+        sample_input = next(iter(dl)) # sample input from the training dataset
+        model.set_input(sample_input)
+        model.export()
 
-def validation():
-    pass
+    return model.get_hyperparam_result()
+
+if __name__ == '__main__':
+    import multiprocessing
+    multiprocessing.set_start_method('spawn', True)
+
+    parser = argparse.ArgumentParser(description='Perform model training.')
+    parser.add_argument('configfile', help='path to the configfile')
+
+    args = parser.parse_args()
+    train(args.configfile)
