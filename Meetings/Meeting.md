@@ -89,6 +89,18 @@ What have been done?
 
 * Use dementia instead of disease
 
+# Meeting 4 (2021-01-11)
+* Present visualisation until next week
+* Sent mail to slawomir of deadlines
+* Investigate if matlab code can be converted to python (Max two weeks)
+* Contact radiologist of what is important: Precision (Area) vs Accuracy? Source or area around the area?
+* Metrics for evaluation?
+* Investigate if predefined models to apply for CNN
+* Is pytorch better than keras?
+* How to build framework for visualisation?
+* Is tensorboard compatible to pytorch or alternatives?
+* Note: Use generators for images if we need to iterate. Proven to be faster
+
 # Meeting 5 (2020-12-07)
 
 # Metric
@@ -104,14 +116,20 @@ How does the region affect the classification result? Is any of the regions dome
 # Limitations
 * Some highlights: European, American, Asian brain images could be biased.
 
-# Meeting 4 (2021-01-11)
-* Present visualisation until next week
-* Sent mail to slawomir of deadlines
-* Investigate if matlab code can be converted to python (Max two weeks)
-* Contact radiologist of what is important: Precision (Area) vs Accuracy? Source or area around the area?
-* Metrics for evaluation?
-* Investigate if predefined models to apply for CNN
-* Is pytorch better than keras?
-* How to build framework for visualisation?
-* Is tensorboard compatible to pytorch or alternatives?
-* Note: Use generators for images if we need to iterate. Proven to be faster
+# Meeting 6 (2021-01-18)
+
+* The number of slices is caused by precision of scanner
+* What kind of normalization should be done?
+* Normazation: [0,1], [-1,1] - Evaluate which one or other exists
+* Is data augmentation ok? (when time allow us)
+* Focus on RPN before data augmentation
+## TODO
+* Based on severity of AD/CN/MCI can we detect with only lowest/highest/mixed distribution of images
+* Add NifTi images without disorder in order to make that an alternative (or is it bad decision? Will it only classify it as normal?)
+    * For Fredrik what is CN is this "normal"?
+* Add scores on plot. Research meaning behind scores
+* Change library for plotting brain scans (Green color is not correct)
+* Verify what preprocessing steps that is done by ADNI
+### Send mail with following:
+* To ask for next meeting. How do we input data to neural network?? Time-Series? Indivual images?
+* Dates given from slawomir
