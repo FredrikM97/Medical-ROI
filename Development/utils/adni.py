@@ -11,16 +11,22 @@ from dataclasses import dataclass
 class Disorders:
     "Data class for disorders"
     root:str
-    AD:str = '/AD'
-    CN:str = '/CN'
-    MCI:str = '/MCI'
+    AD:str = 'AD/'
+    CN:str = 'CN/'
+    MCI:str = 'MCI/'
         
     def __post_init__(self):
-        self.root = self.root + '/SPM_categorised'
-        self.AD:str=self.root+self.AD
-        self.CN:str=self.root+self.CN
-        self.MCI:str=self.root+self.MCI
-    
+        
+        self.root = self.root + 'SPM_categorised/'
+        self.AD=self.root+self.AD
+        self.CN=self.root+self.CN
+        self.MCI=self.root+self.MCI
+        
+        misc_util.create_directory(self.root)
+        misc_util.create_directory(self.AD)
+        misc_util.create_directory(self.CN)
+        misc_util.create_directory(self.MCI)
+        
     def get(self,name=None):
         if name:
             return self.__dict__[name]
@@ -29,9 +35,9 @@ class Disorders:
 @dataclass
 class AdniPaths:
     root:str
-    meta:str='/meta'
-    raw:str='/adni_raw'
-    processed:str='/SPM_preprocessed_normalized'
+    meta:str='meta/'
+    raw:str='adni_raw/'
+    processed:str='SPM_preprocessed_normalized/'
     disorders:Disorders=None
         
     def __post_init__(self): 
@@ -39,6 +45,10 @@ class AdniPaths:
         self.meta=self.root + self.meta
         self.raw=self.root + self.raw
         self.processed=self.root + self.processed
+        
+        misc_util.create_directory(self.meta)
+        misc_util.create_directory(self.raw)
+        misc_util.create_directory(self.processed)
     
     def get(self,name=None):
         if name:
@@ -79,8 +89,9 @@ class AdniProperties:
     
 class Adni(AdniProperties):
     
-    def __init__(self, root_dir='../data'):
-        self.path = AdniPaths(root=misc_util.absolute_path(root_dir))
+    def __init__(self, root='../data/', processed=False):
+        self.processed=processed
+        self.path = AdniPaths(root=root)
         
     def load_meta(self, path=None, show_output=True) -> iter:
         "Load meta to list. Creates a iterator"
@@ -91,19 +102,28 @@ class Adni(AdniProperties):
         
     def load_files(self,path=None, columns=None, show_output=True) -> iter:
         "Load image paths from image_dir"
-        (path,columns,func) = (
-            path,columns,
-            misc_util.split_custom_filename
-        ) if path and columns else (
-            self.path.raw,
-            self.columns,
-            self.info_from_raw_filename
-        )
+        if path and columns:
+            (path,columns,func) = (
+                path,columns,
+                misc_util.split_custom_filename
+        ) 
+        elif self.processed:
+            (path,columns,func) = (
+                self.path.processed,
+                self.columns,
+                self.info_from_raw_filename 
+        ) 
+        elif not self.processed:
+            (path,columns,func) = (
+                self.path.raw,
+                self.columns,
+                self.info_from_raw_filename 
+            )
         
-        
+        print((path,columns,func))
         files =  [
             dict(
-                zip(columns,[*func(filename), filename, path+"/"+filename])
+                zip(columns,[*func(filename), filename, path+ '/'+filename])
             ) 
             for path, dirs, files in os.walk(path) 
             for filename in files if filename.endswith('.nii')
@@ -128,7 +148,7 @@ class Adni(AdniProperties):
         def split(strng, sep, pos):
             strng = strng.split(sep)
             return sep.join(strng[:pos]), sep.join(strng[pos:])
-        filename = misc_util.remove_preprocessed_filename_definition(filename)
+        if self.processed: filename = misc_util.remove_preprocessed_filename_definition(filename)
         i = filename
         for s in split_order:
             e,i = split(i, s[0],s[1])
@@ -231,6 +251,7 @@ class Adni(AdniProperties):
     
     def files_to_df(self, show_output=True):
         "Convert files list to dataframe"
+        
         files_df = pd.DataFrame(list(self.get_files()),columns=self.columns)
         files_df = misc_util.convert_df_types(files_df, types={},show_output=show_output)
         
@@ -267,6 +288,7 @@ class Adni(AdniProperties):
         }
         def inner(row):
             filename = f"{'#'.join([row[p] for p in self.category_filename])}.nii"
+
             response = misc_util.copy_file(str(row['path']), f"{path.get(row['subject.researchGroup'])}/{filename}")
             stats[row['subject.researchGroup']][conv[response]] += 1 
         

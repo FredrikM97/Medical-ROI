@@ -57,7 +57,7 @@ def convert_df_types(
 
 def copy_file(src, dest)-> bool:
     "Copy file from source dir to dest dir. Note that the path must exist where folders should be placed!"
-    assert not os.path.exists(src), "Source file does not exists"
+    assert os.path.exists(src), "Source file does not exists"
     
     if not os.path.exists(dest):
         shutil.copy(src, dest)
@@ -79,7 +79,7 @@ def get_nii_files(srcdir):
         ] 
 def remove_preprocessed_filename_definition(filename):
     "remove the three first letters to hyandle preprocessed names"
-    return filename[3:]
+    return filename[2:]
 
 def absolute_path(path):
     return os.path.abspath(path)
@@ -132,8 +132,8 @@ def generator(content:list, func:types.FunctionType=None) -> iter:
     for c in content:
         yield func(c)
         
-def default_print(input:str)->bool:
-    print(input)
+def default_print(inpute:str)->bool:
+    print(inpute)
     return True
     
 def merge_df(one_df,two_df, cols:list=None):
