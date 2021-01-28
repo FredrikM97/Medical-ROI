@@ -21,7 +21,6 @@ class Segmentation2DDataset(BaseDataset):
         
         img = nib.load(img_path)
         x = torch.from_numpy(img.get_fdata())
-        print("asdasd",img_path, x.shape)
         y = img_path.split("#",1)
         return (x, y)
 

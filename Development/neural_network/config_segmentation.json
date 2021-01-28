@@ -1,7 +1,7 @@
 {
     "train_dataset_params": {
         "dataset_name": "segmentation2d",
-        "dataset_path": "../data/adni",
+        "dataset_path": "../data/SPM_categorised",
         "loader_params": {
             "batch_size": 24,
             "shuffle": true,
@@ -12,7 +12,7 @@
     },
     "val_dataset_params": {
         "dataset_name": "segmentation2d",
-        "dataset_path": "../data/adni",
+        "dataset_path": "../data/SPM_categorised",
         "loader_params": {
             "batch_size": 24,
             "shuffle": false,
