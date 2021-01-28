@@ -1,29 +1,50 @@
 import os
-import xml.etree.ElementTree as ET
-import nibabel as nib
+
 import pandas as pd
 from . import misc_util
 import numpy as np
 from .display import display_dict_to_yaml
 import enum
-    
-class AdniPaths:
-    processed=None
-    raw=None
-    category=None
-    meta=None
+from dataclasses import dataclass
 
-    def update_paths(self,rootpath):
-        self.processed=rootpath+'/processed/'
-        self.raw=rootpath+'/adni_raw/'
-        self.category={
-            'root':rootpath+'/adni/',
-            'AD':rootpath+'/adni/' + 'AD/',
-            'CN':rootpath+'/adni/' + 'CN/',
-            'MCI':rootpath+'/adni/' + 'MCI/',
-        }
-        self.meta=rootpath+'/meta/'
+@dataclass
+class Disorders:
+    "Data class for disorders"
+    root:str
+    AD:str = '/AD'
+    CN:str = '/CN'
+    MCI:str = '/MCI'
         
+    def __post_init__(self):
+        self.root = self.root + '/SPM_categorised'
+        self.AD:str=self.root+self.AD
+        self.CN:str=self.root+self.CN
+        self.MCI:str=self.root+self.MCI
+    
+    def get(self,name=None):
+        if name:
+            return self.__dict__[name]
+        return self.__dict__
+    
+@dataclass
+class AdniPaths:
+    root:str
+    meta:str='/meta'
+    raw:str='/adni_raw'
+    processed:str='/SPM_preprocessed_normalized'
+    disorders:Disorders=None
+        
+    def __post_init__(self): 
+        self.disorders=Disorders(self.root)
+        self.meta=self.root + self.meta
+        self.raw=self.root + self.raw
+        self.processed=self.root + self.processed
+    
+    def get(self,name=None):
+        if name:
+            return self.__dict__[name]
+        return self.__dict__
+    
 class AdniProperties:
     columns:list = [
             'projectIdentifier', 
@@ -54,30 +75,31 @@ class AdniProperties:
         'subject.study.imagingProtocol.imageUID',
         'image_nbr',
     ]
-    path = AdniPaths()
+    path:AdniPaths
     
 class Adni(AdniProperties):
     
-    def __init__(self, root_dir):
-        self.path.update_paths(root_dir)
+    def __init__(self, root_dir='../data'):
+        self.path = AdniPaths(root=misc_util.absolute_path(root_dir))
         
     def load_meta(self, path=None, show_output=True) -> iter:
         "Load meta to list. Creates a iterator"
         path = path if path else self.path.meta
-        files = [self.__xml_to_dict(root.findall('./*')[0], delimiter='') for root in self.__load_xml(path)]
-        if show_output: print(f'Root path: {path}\nLoaded files: {len(files)}')
+        files = [misc_util.xml_to_dict(root.findall('./*')[0], delimiter='') for root in misc_util.load_xml(path)]
+        if show_output: misc_util.default_print(f'Root path: {path}\nLoaded files: {len(files)}')
         return files
         
     def load_files(self,path=None, columns=None, show_output=True) -> iter:
         "Load image paths from image_dir"
         (path,columns,func) = (
             path,columns,
-            self.info_from_custom_filename
+            misc_util.split_custom_filename
         ) if path and columns else (
             self.path.raw,
             self.columns,
             self.info_from_raw_filename
         )
+        
         
         files =  [
             dict(
@@ -86,29 +108,28 @@ class Adni(AdniProperties):
             for path, dirs, files in os.walk(path) 
             for filename in files if filename.endswith('.nii')
         ]
-        if show_output: print(f"Root path: {path}\nLoaded files: {len(files)}\nColumns:\n\t" + '\n\t'.join(columns))
+        if show_output: misc_util.default_print(
+            f"Root path: {path}\
+            \nLoaded files: {len(files)}\
+            \nColumns:\n\t" \
+            + '\n\t'.join(columns)
+        )
         return files
 
-    def load(self,show_output=True):
+    def load(self,show_output=True) -> None:
         "Load both images and meta"
         self.files = self.load_files(show_output=show_output)
         self.meta = self.load_meta(show_output=show_output)
     
-    def info_from_custom_filename(self, file, sep='#'):
-        "Split filenames based on custom seperator."
-        slices= file.split(sep)
-        slices[-1] = slices[-1].split(".")[0]
-
-        return slices
-    
-    def info_from_raw_filename(self,file):
+    def info_from_raw_filename(self,filename) -> str:
         "Get all info from filename instead (bit slower and could do wrong but removes need of multiple folders)"
         split_order = [('_',1),('_',3),('_',1),('_br_raw_',1),('_',1),('_',1),('_',1),('.',1)] 
         c =[]
         def split(strng, sep, pos):
             strng = strng.split(sep)
             return sep.join(strng[:pos]), sep.join(strng[pos:])
-        i = file
+        filename = misc_util.remove_preprocessed_filename_definition(filename)
+        i = filename
         for s in split_order:
             e,i = split(i, s[0],s[1])
             c.append(e)
@@ -117,30 +138,20 @@ class Adni(AdniProperties):
     def get_files(self, path=None,columns=None) -> iter:
         "Get files from class"
         files = self.load_files(path=path,columns=columns) if path and columns else self.files   
-        
-        def _generator():
-            for file in files:
-                yield file
                 
-        return _generator()
+        return misc_util.generator(files)
             
-    def get_images(self, files=None) -> iter:
+    def load_images(self, files=None) -> iter:
         "Load image file into memory"
-        files = files if files else self.files
-
-        def _generator():
-            for file in files:
-                yield self.get_image(file['path'])
-                
-        return _generator()
+        files = files if files else self.get_path_from_files(self.files)
+        return misc_util.load_images(files)
         
     
     def get_metas(self) -> iter:
         "Get metdata"
-        for meta in self.meta:
-            yield meta
+        return misc_util.generator(self.meta)
     
-    def get_dataset(self, dist:list=[0.6, 0.15]):
+    def get_dataset(self, dist:list=[0.6, 0.15])-> (list,list, list):
         "Load dataset and assign labels. Double check that labels always are the same!"
         
         df = self.to_df()
@@ -149,7 +160,7 @@ class Adni(AdniProperties):
 
         DATASET_SIZE = len(df)
         train, validate, test = np.split(dataset.sample(frac=1), [int(dist[0]*DATASET_SIZE), int((1-dist[1])*DATASET_SIZE)])
-        print(
+        misc_util.default_print(
             f"Dataset sizes:\n\tTrain: {len(train)}({dist[0]})\
             \n\tValidation: {len(validate)}({dist[1]})\
             \n\tTest: {len(test)}({dist[1]})\
@@ -162,33 +173,29 @@ class Adni(AdniProperties):
     
     def to_slices(self, image_list=None) -> iter:
         "Get each slice from each image in path"
-        image_list = image_list if image_list else self.get_images()
+        image_list = image_list if image_list else self.load_images()
         
-        def _generator():
-            for image in self.to_array(image_list=image_list):
+        def func(img_array):
+            for image in img_array:
                 for slices in image:
                     for one_slice in slices:
-                        print("derp",one_slice.shape,slices.shape)
                         yield one_slice
                 
-        return _generator()
+        return misc_util.generator(self.to_array(image_list=image_list), func)
             
     def to_array(self, image_list=None) -> iter:
         "Convert images into numpy arrays and transpose from (x,y,z,n) -> (n,z,x,y)"
-        image_list = image_list if image_list else self.get_images()
+        image_list = image_list if image_list else self.load_images()
+        func = lambda file: file.get_fdata().T
 
-        def _generator():   
-            for file in image_list:
-                yield file.get_fdata().T
-                
-        return _generator()
+        return misc_util.generator(image_list, func)
     
     def to_df(self, show_output=True):
         "Convert image list and meta list to "
         files_df = self.files_to_df(show_output=show_output)
         meta_df = self.meta_to_df(show_output=show_output)        
         
-        df = self.__merge_df(files_df,meta_df)
+        df = misc_util.merge_df(files_df,meta_df, cols=['subject.subjectIdentifier','subject.study.imagingProtocol.imageUID'])
         return df
     
     def meta_to_df(self, show_output=True):
@@ -218,6 +225,9 @@ class Adni(AdniProperties):
             ]
         }, show_output=show_output)
         return meta_df
+    def get_path_from_files(self, files:dict):
+        for file in files:
+            yield file['path']
     
     def files_to_df(self, show_output=True):
         "Convert files list to dataframe"
@@ -226,19 +236,17 @@ class Adni(AdniProperties):
         
         return files_df
     
-    def get_image(self, path):
-        "Load one image"
-        return nib.load(path)
-    
     def get_meta(self, path):
         "Get metadata from path"
         return self.load_meta(path)
     
-    def save_to_category(self,output_df, path:dict=None, show_output=True)->None:
+    def save_to_category(self,output_df, path:Disorders=None, show_output=True)->None:
         "Save images to categories based on parameters from dataframe"
-        path = path if path else self.path.category
+        path= path if path else self.path.disorders
+
+        func = lambda path: f"Copy files: \n\t"+ "\n\t".join([f'{key}: {path.get(key)}' for key in path.get().keys()])
         
-        if show_output: print(f"Copy files: \n\t"+ "\n\t".join([f'{key}: {value}' for key, value in path.items()]))
+        if show_output: misc_util.default_print(func(path))
         stats = {
             'AD':{
                 'Skip':0, # Skip
@@ -259,38 +267,10 @@ class Adni(AdniProperties):
         }
         def inner(row):
             filename = f"{'#'.join([row[p] for p in self.category_filename])}.nii"
-            response = misc_util.copy_file(str(row['path']), f"{path[row['subject.researchGroup']]}/{filename}")
+            response = misc_util.copy_file(str(row['path']), f"{path.get(row['subject.researchGroup'])}/{filename}")
             stats[row['subject.researchGroup']][conv[response]] += 1 
         
         output_df.apply(lambda row: inner(row), axis=1)
-        
         if show_output: display_dict_to_yaml({'Statistics':stats})
-   
-        
-    def __xml_to_dict(self,r, parent='', delimiter=".") -> list:
-        "Iterate through all xml files and add them to a dictionary"
-        param = lambda r:"_"+list(r.attrib.values())[0] if r.attrib else ''
-        def recursive(r, parent='', delimiter=".") -> list:
-            cont = {}
-            # If list
-            if layers := r.findall("./*"):
-                [cont.update(recursive(x, parent=parent +delimiter+ x.tag)) for x in layers]
-                return cont
 
-            elif r.text and '\n' not in r.text: # get text
-                return {parent + param(r):r.text}
-            else:
-                return {}
-        return recursive(r, parent=parent, delimiter=delimiter)
     
-    def __load_xml(self, path:str):
-        "Load XML from dictory and return a generator"
-        assert path, "No path defined"
-        for filename in os.listdir(path):
-            if not filename.endswith('.xml'): continue
-            fullname = os.path.join(path, filename)
-            yield ET.parse(fullname)
-            
-    def __merge_df(self,image_df,meta_df, cols=['subject.subjectIdentifier','subject.study.imagingProtocol.imageUID']):
-        """Merge two dataframes based on 'subject.subjectIdentifier' and 'subject.study.imagingProtocol.imageUID'"""
-        return image_df.merge(meta_df,on=cols)
