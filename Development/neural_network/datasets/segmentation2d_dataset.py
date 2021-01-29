@@ -16,13 +16,15 @@ class Segmentation2DDataset(BaseDataset):
         super().__init__(config)
         #self.img_files = os.listdir(config['dataset_path'])
         self.img_files = get_nii_files(config['dataset_path'])
+        
     def __getitem__(self, idx):
         img_path = self.img_files[idx]
         
         img = nib.load(img_path)
         x = torch.from_numpy(img.get_fdata())
-        y = img_path.split("#",1)
-        return (x, y)
+        y = img_path.rsplit("/",1)[1].split("#",1)[0]
+
+        return x, y
 
     def __len__(self):
         # return the size of the dataset
