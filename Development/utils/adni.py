@@ -7,6 +7,7 @@ from .display import display_dict_to_yaml
 import enum
 from dataclasses import dataclass
 
+
 @dataclass
 class Disorders:
     "Data class for disorders"
@@ -123,7 +124,7 @@ class Adni(AdniProperties):
         print((path,columns,func))
         files =  [
             dict(
-                zip(columns,[*func(filename), filename, path+ '/'+filename])
+                zip(columns,[*func(filename), filename, path+filename])
             ) 
             for path, dirs, files in os.walk(path) 
             for filename in files if filename.endswith('.nii')
