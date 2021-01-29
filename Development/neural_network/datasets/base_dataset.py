@@ -23,7 +23,7 @@ class BaseDataset(data.Dataset, ABC):
         return 0
 
     @abstractmethod
-    def __getitem__(self, index):
+    def __getitem__(self, idx):
         """Return a data point (usually data and labels in
             a supervised setting).
         """
