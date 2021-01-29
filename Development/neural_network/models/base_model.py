@@ -37,6 +37,7 @@ class BaseModel(ABC):
         The implementation here is just a basic setting of input and label. You may implement
         other functionality in your own model.
         """
+
         self.input = transfer_to_device(input[0], self.device)
         self.label = transfer_to_device(input[1], self.device)
 
@@ -74,7 +75,7 @@ class BaseModel(ABC):
                 for _ in range(last_checkpoint):
                     s.step()
 
-        self.print_networks()
+        #self.print_networks()
 
     def train(self):
         """Make models train mode during test time."""
