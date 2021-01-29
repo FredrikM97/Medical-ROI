@@ -40,3 +40,34 @@
 1. Add infinity generator (Assume Keras/Pytorch need it)
 2. Implement CNN network 
 3. Add so each dataset load images
+
+
+# Meeting 2 (2021-01-29)
+
+## Questions
+1. What should be logged? 
+	* Loss, metrics for train, validation and test? 
+	* Images, and what kind of images? 
+
+2. Anything we should keep an eye on? 
+3. Allocating to much time ~40 hours this week (Fredrik). Limit Todo list or spread it over additional weeks? 
+4. How should we split data? 
+	* Train, val, test (0.7,0.15,0.15)? 
+	* Testset: Manually extract images or random? 
+
+5. 259 Images (unique subjects, latest nii files) 
+	* More data needed for DL?
+	* Augmentation,bad to fix it?
+	* Pretrained model? 
+
+## Finished
+1. Implemented framework in pytorch
+2. Implemented dataloader (waiting for preprocess)
+3. Implemented CNN network (waiting for dataloader) 
+4. Fixed categorise and analyse SPM images. 
+
+## Todo
+1. Add split for datasets (Waiting for dataloader) 
+2. Fix CNN 
+3. Add tensorboard for logging
+4. Visualise activation map? 
