@@ -16,5 +16,3 @@ def data_filter(in_dir, out_dir):
     for file in files_to_create:
         assert create_directory(out_dir + file[0] + '\\'), "Could not create directory"
         assert copy_file(in_dir + file[0] + '\\' + file[1], out_dir + file[0] + '\\' + file[1]), "Source file already exists"
-        
-data_filter('..\\data\\adni_raw', '..\\data\\adni_raw_filtered')
