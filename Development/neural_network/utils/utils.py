@@ -11,12 +11,6 @@ def setup():
 def freeze_params(model):
     for param in model.parameters():
         param.requires_grad = False
-        
-def save_model():
-    pass
-
-def load_model():
-    pass
 
 def get_nii_files(srcdir):
     return [
@@ -24,3 +18,6 @@ def get_nii_files(srcdir):
             for path, _, files in os.walk(srcdir) 
             for filename in files if filename.endswith('.nii')
         ] 
+
+def do_print(string):
+    print(string)
