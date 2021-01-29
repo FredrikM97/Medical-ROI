@@ -6,7 +6,10 @@ from pathlib import Path
 import torch
 from torch.optim import lr_scheduler
 
+# Limit access to functions
+from .visualizer import Visualizer
 
+# Global functions to module
 def transfer_to_device(x, device):
     """Transfers pytorch tensors or lists of tensors to GPU. This
         function is recursive to be able to deal with lists of lists.
