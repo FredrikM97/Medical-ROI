@@ -143,6 +143,9 @@ class Adni(AdniProperties):
     
     def info_from_raw_filename(self,filename) -> str:
         "Get all info from filename instead (bit slower and could do wrong but removes need of multiple folders)"
+        if len(filename.split('_br_raw_')[1].split('_')) == 3:
+            return self.info_from_raw_filename_no_image_number(filename)
+        
         split_order = [('_',1),('_',3),('_',1),('_br_raw_',1),('_',1),('_',1),('_',1),('.',1)] 
         c =[]
         def split(strng, sep, pos):
@@ -153,6 +156,21 @@ class Adni(AdniProperties):
         for s in split_order:
             e,i = split(i, s[0],s[1])
             c.append(e)
+        return c
+    
+    def info_from_raw_filename_no_image_number(self, filename) -> str:
+        "Get all info from filenames where no image number is included"
+        split_order = [('_',1),('_',3),('_',1),('_br_raw_',1),('_',1),('_',1),('.',1)] 
+        c =[]
+        def split(strng, sep, pos):
+            strng = strng.split(sep)
+            return sep.join(strng[:pos]), sep.join(strng[pos:])
+        if self.processed: filename = misc_util.remove_preprocessed_filename_definition(filename)
+        i = filename
+        for s in split_order:
+            e,i = split(i, s[0],s[1])
+            c.append(e)
+        c.insert(5, '')
         return c
         
     def get_files(self, path=None,columns=None) -> iter:
@@ -213,7 +231,7 @@ class Adni(AdniProperties):
     def to_df(self, show_output=True):
         "Convert image list and meta list to "
         files_df = self.files_to_df(show_output=show_output)
-        meta_df = self.meta_to_df(show_output=show_output)        
+        meta_df = self.meta_to_df(show_output=show_output)
         
         df = misc_util.merge_df(files_df,meta_df, cols=['subject.subjectIdentifier','subject.study.imagingProtocol.imageUID'])
         return df
@@ -228,11 +246,11 @@ class Adni(AdniProperties):
             'float':[
                 'subject.study.subjectAge',
                 'subject.study.weightKg',
-                'subject.visit.assessment.component.assessmentScore_MMSCORE',
-                'subject.visit.assessment.component.assessmentScore_GDTOTAL',
-                'subject.visit.assessment.component.assessmentScore_CDGLOBAL',
-                'subject.visit.assessment.component.assessmentScore_NPISCORE',
-                'subject.visit.assessment.component.assessmentScore_FAQTOTAL'
+                #'subject.visit.assessment.component.assessmentScore_MMSCORE',  # Not available in the raw metadata/*.xml file for ADNI3
+                #'subject.visit.assessment.component.assessmentScore_GDTOTAL',
+                #'subject.visit.assessment.component.assessmentScore_CDGLOBAL',
+                #'subject.visit.assessment.component.assessmentScore_NPISCORE',
+                #'subject.visit.assessment.component.assessmentScore_FAQTOTAL'
             ],
             'cat':[
                 'subject.researchGroup'
