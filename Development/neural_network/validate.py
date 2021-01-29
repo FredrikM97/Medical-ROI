@@ -34,10 +34,11 @@ def validate(config_file):
         model.test()           # run inference
 
     model.post_epoch_callback(configuration['model_params']['load_checkpoint'])
-
+"""
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Perform model validation.')
     parser.add_argument('configfile', help='path to the configfile')
 
     args = parser.parse_args()
     validate(args.configfile)
+"""
