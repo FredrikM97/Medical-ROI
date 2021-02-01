@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<idaxs xmlns="http://ida.loni.usc.edu" 
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="/xsds/idaxs_2_0.xsd">
+<project xmlns="">
+ <projectIdentifier>ADNI</projectIdentifier>
+ <projectDescription>Alzheimer&#039;s Disease Neuroimaging Initiative</projectDescription>
+ <siteKey>098</siteKey>
+ <subject>
+  <subjectIdentifier>098_S_0149</subjectIdentifier>
+  <researchGroup>AD</researchGroup>
+  <subjectSex>M</subjectSex>
+  <subjectInfo item="APOE A1">3</subjectInfo>
+  <subjectInfo item="APOE A2">3</subjectInfo>
+  <visit>
+   <visitIdentifier>ADNI Baseline</visitIdentifier>
+   <assessment name="Neuropsychiatric Inventory-Questionnaire (NPI-Q)">
+    <component name="Neuropsychiatric Inventory Q - Total Score">
+     <assessmentScore attribute="NPISCORE">3.0</assessmentScore>
+    </component>
+   </assessment>
+   <assessment name="Functional Assessment Questionnaire">
+    <component name="FAQ Total score">
+     <assessmentScore attribute="FAQTOTAL">11.0</assessmentScore>
+    </component>
+   </assessment>
+  </visit>
+  <study>
+   <studyIdentifier>3169</studyIdentifier>
+   <subjectAge>87.95</subjectAge>
+   <ageQualifier>Y</ageQualifier>
+   <weightKg>74.39</weightKg>
+   <postMortem>F</postMortem>
+   <series>
+    <seriesIdentifier>12054</seriesIdentifier>
+    <modality>PET</modality>
+    <dateAcquired>2006-03-08</dateAcquired>
+   </series>
+   <imagingProtocol>
+    <imageUID>11767</imageUID>
+    <description>BRAIN DYN EM 6i/16s</description>
+    <protocolTerm>
+     <protocol term="Manufacturer">Siemens/CTI</protocol>
+     <protocol term="Mfg Model">EXACT (ACS 1)</protocol>
+     <protocol term="Radiopharmaceutical">18F-FDG</protocol>
+     <protocol term="Number of Rows">128.0</protocol>
+     <protocol term="Number of Columns">128.0</protocol>
+     <protocol term="Number of Slices">47.0</protocol>
+     <protocol term="Frames">6.0</protocol>
+     <protocol term="Pixel Spacing X">2.0594</protocol>
+     <protocol term="Pixel Spacing Y">2.0594</protocol>
+     <protocol term="Slice Thickness">3.375</protocol>
+     <protocol term="Convolution Kernel">ramp</protocol>
+     <protocol term="Counts Source">Dynamic emission</protocol>
+     <protocol term="Randoms Correction"/>
+     <protocol term="Attenuation Correction">Measured</protocol>
+     <protocol term="Decay Correction">Start</protocol>
+     <protocol term="Reconstruction">CPU terative</protocol>
+     <protocol term="Scatter Correction">Simulated 3D</protocol>
+     <protocol term="Radioisotope">F-18</protocol>
+    </protocolTerm>
+   </imagingProtocol>
+  </study>
+ </subject>
+</project>
+</idaxs>
