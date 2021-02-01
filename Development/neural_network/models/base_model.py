@@ -26,10 +26,15 @@ class BaseModel(ABC):
         self.device = torch.device('cuda:0') if self.use_cuda else torch.device('cpu')
         torch.backends.cudnn.benchmark = True
         self.save_dir = configuration['checkpoint_path']
-        self.network_names = []
-        self.loss_names = []
+        #self.network_names = []
+        #self.loss_names = []
         self.optimizers = []
         self.visual_names = []
+        
+        self.epoch_metrics = {}
+        self.epoch_loss = []
+        self.metrics = {}
+        self.loss = None
 
 
     def set_input(self, input):
@@ -51,7 +56,19 @@ class BaseModel(ABC):
     def optimize_parameters(self):
         """Calculate losses, gradients, and update network weights; called in every training iteration"""
         pass
+    
+    def compile_metrics(self, metrics:dict):
+        self.metrics.update(metrics)
+        for metric in metrics.keys():
+            self.epoch_metrics.update({metric:[]})
 
+            
+    def update_metrics(self, metrics,y_pred, y):
+        for name, metric in metrics:
+            self.epoch_metrics[name].append(metric(y, y_pred).item())
+
+            
+    
     def setup(self):
         """Load and print networks; create schedulers.
         """
@@ -86,6 +103,7 @@ class BaseModel(ABC):
 
     def eval(self):
         """Make models eval mode during test time."""
+        self.val_metrics = {f'val_{k}': v for k, v in self.metrics.items()}
         for name in self.network_names:
             if isinstance(name, str):
                 net = getattr(self, 'net' + name)
@@ -122,7 +140,7 @@ class BaseModel(ABC):
                     net.to(self.device)
                 else:
                     torch.save(net.cpu().state_dict(), save_path)
-
+    
 
     def load_networks(self, epoch):
         """Load all the networks from the disk.
@@ -177,6 +195,24 @@ class BaseModel(ABC):
                     num_params += param.numel()
                 print(net)
                 print('[Network {0}] Total number of parameters : {1:.3f} M'.format(name, num_params / 1e6))
+    
+    def print_info(self):
+        #Parameters
+        print(
+            f"use_cuda: {self.use_cuda}\
+            \ndevice: {self.device}\
+            \nsave_dir: {self.save_dir}\
+            \noptimizers: {self.optimizers}\
+            \nmetrics: {self.metrics }\
+            \nloss: {self.criterion_loss}\
+            "
+        )
+        # GPU or CPU
+        # Checkpoint save dir
+        # Loss names
+        # Network name
+        # Optimizers
+        
 
 
     def set_requires_grad(self, requires_grad=False):
@@ -191,13 +227,17 @@ class BaseModel(ABC):
 
     def get_current_losses(self):
         """Return traning losses / errors. train.py will print out these errors on console"""
-        errors_ret = OrderedDict()
-        for name in self.loss_names:
-            if isinstance(name, str):
-                errors_ret[name] = float(getattr(self, 'loss_' + name))  # float(...) works for both scalar tensor and float number
-        return errors_ret
+        #errors_ret = OrderedDict()
+        #for name in self.loss_names:
+        #    if isinstance(name, str):
+        #        errors_ret[name] = float(getattr(self, 'loss_' + name))  # float(...) works for both scalar tensor and float number
+        #return errors_ret
+        return self.compiled_metrics
+            
 
-
+    def post_step_callback(self, epoch):
+        pass
+    
     def pre_epoch_callback(self, epoch):
         pass
 
