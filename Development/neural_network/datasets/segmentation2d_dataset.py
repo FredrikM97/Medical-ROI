@@ -15,8 +15,6 @@ class Segmentation2DDataset(BaseDataset):
     def __init__(self, config):
         super().__init__(config)
         # This is probobly really bad but lets roll with it.
-        predefined_labels = {'MCI':0,'AD':1,'CN':2}
-        #self.img_files = os.listdir(config['dataset_path'])
         self.img_files = get_nii_files(config['dataset_path'])
         self.img_labels = label_encoder([img_path.rsplit("/",1)[1].split("#",1)[0] for img_path in self.img_files])
         
@@ -27,8 +25,6 @@ class Segmentation2DDataset(BaseDataset):
         img = nib.load(img_path)
         x = torch.from_numpy(img.get_fdata())
         y = self.img_labels[idx]
-        #y = img_path.rsplit("/",1)[1].split("#",1)[0]
-        print("What numpy type am I ", type(x), type(y))
         return x, y
 
     def __len__(self):
