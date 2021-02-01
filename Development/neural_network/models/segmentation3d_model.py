@@ -122,7 +122,7 @@ class Segmentation3DModel(BaseModel):
         """
         super().__init__(configuration)
 
-        self.loss_names = ['segmentation']
+        #self.loss_names = ['segmentation']
         self.network_names = ['unet']
 
         self.netunet = UNet(1, 3)
@@ -137,7 +137,8 @@ class Segmentation3DModel(BaseModel):
         self.val_predictions = []
         self.val_labels = []
         self.val_images = []
-
+        
+        self.compile_metrics(self.metrics)
 
     def forward(self):
         """Run forward pass.
@@ -148,13 +149,13 @@ class Segmentation3DModel(BaseModel):
     def backward(self):
         """Calculate losses; called in every training iteration.
         """
-        self.loss_segmentation = self.criterion_loss(self.output, self.label)
-
-
+        self.loss = self.criterion_loss(self.output, self.label)
+        self.compiled_loss.append(self.loss.item())
+        
     def optimize_parameters(self):
         """Calculate gradients and update network weights.
         """
-        self.loss_segmentation.backward() # calculate gradients
+        self.loss.backward() # calculate gradients
         self.optimizer.step()
         self.optimizer.zero_grad()
         torch.cuda.empty_cache()
@@ -164,10 +165,11 @@ class Segmentation3DModel(BaseModel):
         super().test() # run the forward pass
 
         # save predictions and labels as flat tensors
-        self.val_images.append(self.input)
-        self.val_predictions.append(self.output)
-        self.val_labels.append(self.label)
-
+        #self.val_images.append(self.input)
+        #self.val_predictions.append(self.output)
+        #self.val_labels.append(self.label)
+        
+        self.update_metrics(self.val_metrics, self.output, self.input)
 
     def post_epoch_callback(self, epoch, visualizer):
         self.val_predictions = torch.cat(self.val_predictions, dim=0)
