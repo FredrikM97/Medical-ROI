@@ -140,3 +140,16 @@ How does the region affect the classification result? Is any of the regions dome
 ## TODO:
 * Finish preprocess
 * Present CNN model next week
+
+# Meeting 8 (2021-01-28)
+* Reported MCI cases for ADNI1 ADNI2 but not ADNI3. (Early MCI to AD)
+	*  Exclude cases that never developed AD from MCI.
+	* ADNI1 is recommended.
+* ~300 samples should be enough 
+* Crossvalidation
+* Question: Should we care for data imbalance?
+* Confidence interval.
+* For later: send report to why test set should not be changed.
+* Create basic model to compare with. (3D CNN and sailency guided)
+* Visualise activation maps till next week
+
