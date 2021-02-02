@@ -140,3 +140,15 @@ How does the region affect the classification result? Is any of the regions dome
 ## TODO:
 * Finish preprocess
 * Present CNN model next week
+
+# Meeting 8 (2021-02-01)
+* Only use data of ADNI1. Exclude subjects with MCI that never developed AD - list can be found by searching 'MCI conversion' - all subjects in this file eventually developed AD. Reasoning?
+
+* Cross-validation - k: {8, 9, 10} supposedly good. Re-run lots of times, present average + std
+
+* Randomize testset
+
+* Wait with transfer-learning etc.
+
+## TODO
+* Activation map until next week
