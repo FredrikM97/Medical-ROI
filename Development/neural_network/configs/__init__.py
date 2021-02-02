@@ -3,6 +3,9 @@
 """
 import os
 import json
+
+from utils import get_availible_files
+
 def load_configs():
     configs = {}
     for pos_json in os.listdir('configs/'):
@@ -13,6 +16,9 @@ def load_configs():
                         raise Exception(f"Config from {pos_json} with name {name} already exists!")
                     configs.update({name:config})
     return configs
+
 def load_config(name):
     return load_configs()[name]
     
+def get_availible_configs():
+    return get_availible_files('configs', contains='.json')
