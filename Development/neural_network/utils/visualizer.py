@@ -2,7 +2,7 @@ import numpy as np
 import sys
 from subprocess import Popen, PIPE
 import utils
-import visdom
+#import visdom
 
 
 def show_images(images, nmax=64):
