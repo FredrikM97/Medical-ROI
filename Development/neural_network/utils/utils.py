@@ -21,3 +21,12 @@ def get_nii_files(srcdir):
 
 def do_print(string):
     print(string)
+    
+def label_encoder(labels):
+    "Convert list of string labels to tensors"
+    from sklearn import preprocessing
+    import torch
+    le = preprocessing.LabelEncoder()
+    targets = le.fit_transform(labels)
+                  
+    return torch.as_tensor(targets)
