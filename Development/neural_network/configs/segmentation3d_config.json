@@ -1,5 +1,5 @@
 {
-    "segmetation3d_model_1":{
+    "segmentation3d_model_1":{
         "train_dataset_params": {
             "dataset_name": "segmentation3d",
             "dataset_path": "../data/SPM_categorised",
@@ -9,7 +9,8 @@
                 "num_workers": 1,
                 "pin_memory": true
             },
-            "input_size": [79, 95, 79]
+            "input_size": [79, 95, 79],
+            "preprocess": ["resize", "totensor"]
         },
         "val_dataset_params": {
             "dataset_name": "segmentation3d",
@@ -20,47 +21,8 @@
                 "num_workers": 1,
                 "pin_memory": true
             },
-            "input_size": [79, 95, 79]
-        },
-        "model_params": {
-            "model_name": "segmentation3d",
-            "is_train": true,
-            "max_epochs": 40,
-            "lr": 0.01,
-            "export_path": "",
-            "checkpoint_path": "",
-            "load_checkpoint": -1,
-            "lr_policy": "step",
-            "lr_decay_iters": 10
-        },
-        "visualization_params": {
-            "name": "3d segmentation"
-        },
-        "printout_freq": 10,
-        "model_update_freq": 1
-    },
-    "segmetation3d_model_2":{
-        "train_dataset_params": {
-            "dataset_name": "segmentation3d",
-            "dataset_path": "../data/SPM_categorised",
-            "loader_params": {
-                "batch_size": 24,
-                "shuffle": true,
-                "num_workers": 4,
-                "pin_memory": true
-            },
-            "input_size": [79, 95, 79]
-        },
-        "val_dataset_params": {
-            "dataset_name": "segmentation3d",
-            "dataset_path": "../data/SPM_categorised",
-            "loader_params": {
-                "batch_size": 24,
-                "shuffle": false,
-                "num_workers": 4,
-                "pin_memory": true
-            },
-            "input_size": [79, 95, 79]
+            "input_size": [79, 95, 79],
+            "preprocess": ["resize"]
         },
         "model_params": {
             "model_name": "segmentation3d",

@@ -1,5 +1,5 @@
 {
-    "segmetation2d_model_1":{
+    "segmentation2d_model_1":{
         "train_dataset_params": {
             "dataset_name": "segmentation2d",
             "dataset_path": "../data/SPM_categorised",
