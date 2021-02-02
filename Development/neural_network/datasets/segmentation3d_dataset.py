@@ -5,6 +5,7 @@ import torch
 import os
 import numpy as np
 import nibabel as nib
+import torch.nn.functional as F
 
 class Segmentation3DDataset(BaseDataset):
     """Represents a 3D segmentation dataset.
@@ -19,11 +20,20 @@ class Segmentation3DDataset(BaseDataset):
         self.img_labels = label_encoder(
             [img_path.rsplit("/",1)[1].split("#",1)[0] for img_path in self.img_files]
         )
-        
+        self.augmentation = get_transform(config)
         
     def __getitem__(self, idx): 
-        x = torch.from_numpy(nib.load(self.img_files[idx]).get_fdata()).unsqueeze(0).float()
+        x = nib.load(self.img_files[idx]).get_fdata()
         y = self.img_labels[idx]
+        
+        # Transform dataset
+        x = torch.from_numpy(x)#.unsqueeze(0).float()
+        #print("AWDASDASD",x.shape)
+        #x = self.augmentation(x)
+        #print("asasdad",x)
+        #x = torch.from_numpy(x).unsqueeze(0).float()
+        #x = x.unsqueeze(0).float()
+        x = x.unsqueeze(0).float()
         return x, y
 
     def __len__(self):
