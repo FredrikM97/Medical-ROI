@@ -30,3 +30,6 @@ def label_encoder(labels):
     targets = le.fit_transform(labels)
                   
     return torch.as_tensor(targets)
+
+def get_availible_files(path, contains:str=''):
+    return [f for f in os.listdir(path) if contains in f]

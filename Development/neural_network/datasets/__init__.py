@@ -4,7 +4,7 @@
 import importlib
 from torch.utils import data
 from datasets.base_dataset import BaseDataset
-
+from utils import get_availible_files
 
 def find_dataset_using_name(dataset_name):
     """Import the module "data/[dataset_name]_dataset.py".
@@ -27,6 +27,8 @@ def find_dataset_using_name(dataset_name):
 
     return dataset
 
+def get_availible_datasets():
+    return get_availible_files('datasets', contains='_dataset')
 
 def create_dataset(configuration):
     """Create a dataset given the configuration (loaded from the json file).
