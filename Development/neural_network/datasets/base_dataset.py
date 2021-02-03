@@ -2,12 +2,9 @@
     includes some transformation functions.
 """
 from abc import ABC, abstractmethod
-import cv2
 import numpy as np
 import torch.utils.data as data
-from torchvision import transforms as T 
-#from torchvision.transforms import functional as F
-from torch.nn import functional as F
+
 
 class BaseDataset(data.Dataset, ABC):
     """This class is an abstract base class (ABC) for datasets.
@@ -41,15 +38,3 @@ class BaseDataset(data.Dataset, ABC):
         pass
 
 
-def get_transform(config, method=cv2.INTER_LINEAR):
-    transform_list = []
-
-    if 'preprocess' in config:
-        if 'resize' in config['preprocess']:
-            transform_list.append(T.Lambda(lambda img: F.interpolate(img, size=tuple(config['input_size']), mode='nearest')))
-            #transform_list.append(T.Resize(config['input_size'], interpolation=2))
-        
-        if 'totensor' in config['preprocess']:
-            transform_list.append(T.ToTensor())
-
-    return T.Compose(transform_list)
