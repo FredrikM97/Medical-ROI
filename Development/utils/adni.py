@@ -247,11 +247,11 @@ class Adni(AdniProperties):
             'float':[
                 'subject.study.subjectAge',
                 'subject.study.weightKg',
-                #'subject.visit.assessment.component.assessmentScore_MMSCORE',  # Not available in the raw metadata/*.xml file for ADNI3
-                #'subject.visit.assessment.component.assessmentScore_GDTOTAL',
-                #'subject.visit.assessment.component.assessmentScore_CDGLOBAL',
-                #'subject.visit.assessment.component.assessmentScore_NPISCORE',
-                #'subject.visit.assessment.component.assessmentScore_FAQTOTAL'
+                'subject.visit.assessment.component.assessmentScore_MMSCORE',
+                'subject.visit.assessment.component.assessmentScore_GDTOTAL',
+                'subject.visit.assessment.component.assessmentScore_CDGLOBAL',
+                'subject.visit.assessment.component.assessmentScore_NPISCORE',
+                'subject.visit.assessment.component.assessmentScore_FAQTOTAL'
             ],
             'cat':[
                 'subject.researchGroup'
@@ -275,6 +275,10 @@ class Adni(AdniProperties):
         files_df = misc_util.convert_df_types(files_df, types={},show_output=show_output)
         
         return files_df
+    
+    def set_meta(self, path):
+        "Set metadata path"
+        self.path.meta = path
     
     def get_meta(self, path):
         "Get metadata from path"
