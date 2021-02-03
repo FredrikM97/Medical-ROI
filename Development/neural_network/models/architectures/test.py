@@ -22,15 +22,11 @@ class testModel(nn.Module):
 
     def forward(self, x):
         # Set 1
-        print("asdasd",x.shape)
         out = self.conv_layer1(x)
         out = self.conv_layer2(out)
         out1 = out.view(out.size(0), 64*18*22*18)
-        print("the new viewie", out.shape, out.size(2),out1.shape)
         out = self.fc1(out1)
-        print("2")
         out = self.relu(out)
-        print("3")
         out = self.batch(out)
         out = self.drop(out)
         out = self.fc2(out)

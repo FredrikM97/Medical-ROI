@@ -64,6 +64,7 @@ class SegmentationVGG163DModel(BaseModel):
         self.update_metrics(self.val_metrics, self.output, self.input)
 
     def post_epoch_callback(self, epoch, visualizer):
+        """
         self.val_predictions = torch.cat(self.val_predictions, dim=0)
         predictions = torch.argmax(self.val_predictions, dim=1)
         predictions = torch.flatten(predictions).cpu()
@@ -88,3 +89,4 @@ class SegmentationVGG163DModel(BaseModel):
         self.val_images = []
         self.val_predictions = []
         self.val_labels = []
+        """

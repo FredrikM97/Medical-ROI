@@ -123,7 +123,7 @@ class BaseModel(ABC):
             scheduler.step()
 
         lr = self.optimizers[0].param_groups[0]['lr']
-        print('learning rate = {0:.7f}'.format(lr))
+        #print('learning rate = {0:.7f}'.format(lr))
 
 
     def save_networks(self, epoch):

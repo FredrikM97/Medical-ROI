@@ -38,7 +38,7 @@ class Agent:
         
         # Other meta
         
-    def fit(self):
+    def fit(self, export=False):
         # Setup epochs 
         starting_epoch = self.config['model_params']['load_checkpoint'] + 1
         num_epochs = self.config['model_params']['max_epochs']
@@ -57,22 +57,23 @@ class Agent:
     
             # Train model
             self.model.train()
-            for step, data in enumerate(self.train_dataset,0):  # inner loop within one epoch
+            for step, data in enumerate(self.train_dataset,1):  # inner loop within one epoch
                 self.train_step(data)
                 self.post_step_callback(epoch, step)
+                
             
             # Evaluate model
             self.evaluate()
 
-            print('Saving model at the end of epoch {0}'.format(epoch))
-            self.model.save_networks(epoch)
-            self.model.save_optimizers(epoch)
+            #print('Saving model at the end of epoch {0}'.format(epoch))
+            #self.model.save_networks(epoch)
+            #self.model.save_optimizers(epoch)
             self.model.update_learning_rate() # update learning rates every epoch
             
             self.post_epoch_callback(epoch)
             
-            print('End of epoch {0} / {1} \t Time Taken: {2} sec'.format(epoch, num_epochs, time.time() - epoch_start_time), sep="\r")
-            
+            #print('End of epoch {0} / {1} \t Time Taken: {2} sec'.format(epoch, num_epochs, time.time() - epoch_start_time), sep="\r")
+            print('[%d/%d] Loss: %s Metrics %s: ' % (epoch,self.config['model_params']['max_epochs'], self.model.loss.item(), self.model.epoch_metrics.items()), sep="\r")
             
         if export: self.export()
             
@@ -98,12 +99,13 @@ class Agent:
     def post_step_callback(self, epoch, step):
         "Do something when step is finished"
         self.model.update_metrics(self.model.metrics, self.model.output, self.model.label)
-        print('[%d/%d][%d/%d]\tLoss%s\tMetrics%s: ' % (epoch, self.config['model_params']['max_epochs'], step, len(self.train_dataset),  self.model.loss.item(), self.model.loss.item()), sep="\r")
+        #print('Loss%s\tMetrics%s: ' % (self.model.loss.item(), self.model.loss.item()), sep="\r")
         
     def pre_epoch_callback(self, epoch):
         "Do something before epoch starts"
         self.train_dataset.dataset.pre_epoch_callback(epoch)
         self.model.pre_epoch_callback(epoch)
+        
     
     def post_epoch_callback(self, epoch):
         "Do something after epoch"

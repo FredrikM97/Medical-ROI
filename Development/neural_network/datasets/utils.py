@@ -11,7 +11,6 @@ def get_transform(config, method=cv2.INTER_LINEAR):
             #transform_list.append(T.Resize(config['input_size'], interpolation=2))
         
         if 'pad' in config['preprocess']:
-            print("do mai padding",config['input_size'])
             transform_list.append(T.Lambda(lambda img: pad_to_shape(img, (config['input_channels'],*config['input_size']))))
             
         if 'totensor' in config['preprocess']:
