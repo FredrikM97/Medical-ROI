@@ -1,4 +1,4 @@
-from datasets.base_dataset import get_transform
+from datasets.utils import get_transform,pad_to_shape
 from datasets.base_dataset import BaseDataset
 from utils.utils import get_nii_files, label_encoder
 import torch
@@ -27,13 +27,9 @@ class Segmentation3DDataset(BaseDataset):
         y = self.img_labels[idx]
         
         # Transform dataset
-        x = torch.from_numpy(x)#.unsqueeze(0).float()
-        #print("AWDASDASD",x.shape)
-        #x = self.augmentation(x)
-        #print("asasdad",x)
-        #x = torch.from_numpy(x).unsqueeze(0).float()
-        #x = x.unsqueeze(0).float()
-        x = x.unsqueeze(0).float()
+        x = torch.from_numpy(x).unsqueeze(0).float()
+        x = self.augmentation(x)
+    
         return x, y
 
     def __len__(self):
