@@ -33,3 +33,18 @@ def label_encoder(labels):
 
 def get_availible_files(path, contains:str=''):
     return [f for f in os.listdir(path) if contains in f]
+
+def pad_to_shape(this, shp):
+    """
+    Pads this image with zeroes to shp.
+    Args:
+        this: image tensor to pad
+        shp: desired output shape
+    Returns:
+        Zero-padded tensor of shape shp.
+    """
+    if len(shp) == 4:
+        pad = (0, shp[3] - this.shape[3], 0, shp[2] - this.shape[2])
+    elif len(shp) == 5:
+        pad = (0, shp[4] - this.shape[4], 0, shp[3] - this.shape[3], 0, shp[2] - this.shape[2])
+    return F.pad(this, pad)
