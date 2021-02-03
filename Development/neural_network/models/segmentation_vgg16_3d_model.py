@@ -6,7 +6,7 @@ import torch
 from sklearn.metrics import accuracy_score
 import sys
 import torchvision.models as models
-
+from models.architectures import vgg16
 
 class SegmentationVGG163DModel(BaseModel):
     def __init__(self, configuration):
@@ -17,7 +17,7 @@ class SegmentationVGG163DModel(BaseModel):
         #self.loss_names = ['segmentation']
         self.network_names = ['vgg16']
 
-        self.netvgg16 = models.vgg16(pretrained=False, num_classes=3,progress=True)
+        self.netvgg16 = vgg16()
         self.netvgg16 = self.netvgg16.to(self.device)
         
         if self.is_train:  # only defined during training time
