@@ -41,6 +41,7 @@ class Segmentation3DModel(BaseModel):
     def backward(self):
         """Calculate losses; called in every training iteration.
         """
+
         self.loss = self.criterion_loss(self.output, self.label)
         self.compiled_loss.append(self.loss.item())
         

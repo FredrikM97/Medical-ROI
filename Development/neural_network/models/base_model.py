@@ -35,7 +35,7 @@ class BaseModel(ABC):
         self.epoch_loss = []
         self.metrics = {}
         self.loss = None
-
+        self.compiled_loss = []
 
     def set_input(self, input):
         """Unpack input data from the dataloader and perform necessary pre-processing steps.
@@ -232,7 +232,7 @@ class BaseModel(ABC):
         #    if isinstance(name, str):
         #        errors_ret[name] = float(getattr(self, 'loss_' + name))  # float(...) works for both scalar tensor and float number
         #return errors_ret
-        return self.compiled_metrics
+        return self.epoch_metrics
             
 
     def post_step_callback(self, epoch):

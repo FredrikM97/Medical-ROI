@@ -59,7 +59,7 @@ class Agent:
             self.model.train()
             for step, data in enumerate(self.train_dataset,0):  # inner loop within one epoch
                 self.train_step(data)
-                self.post_step_callback(epoch)
+                self.post_step_callback(epoch, step)
             
             # Evaluate model
             self.evaluate()
@@ -87,7 +87,7 @@ class Agent:
         #if i % model_update_freq == 0:
         self.model.optimize_parameters()   # calculate loss functions, get gradients, update network weights
         
-        return model.get_current_losses()
+        return self.model.get_current_losses()
 
     def test_step(self, data):
         "Testing model by enumerate one item of mini batch"
@@ -95,10 +95,10 @@ class Agent:
         self.model.set_input(data)
         self.model.test()
     
-    def post_step_callback(self, epoch):
+    def post_step_callback(self, epoch, step):
         "Do something when step is finished"
-        self.update_metrics(self.metrics, self.output, self.label)
-        print('[%d/%d][%d/%d]\tLoss%s\tMetrics%s: ' % (epoch, num_epochs, step, len(self.train_dataset),  self.model.loss.item(), f'{k}:{v}'.join(self.model.compiled_metrics.items())), sep="\r")
+        self.model.update_metrics(self.model.metrics, self.model.output, self.model.label)
+        print('[%d/%d][%d/%d]\tLoss%s\tMetrics%s: ' % (epoch, self.config['model_params']['max_epochs'], step, len(self.train_dataset),  self.model.loss.item(), self.model.loss.item()), sep="\r")
         
     def pre_epoch_callback(self, epoch):
         "Do something before epoch starts"
@@ -109,6 +109,12 @@ class Agent:
         "Do something after epoch"
         self.model.post_epoch_callback(epoch, self.visualizer)
         self.train_dataset.dataset.post_epoch_callback(epoch)
+    
+    def pre_eval_callback(self):
+        pass
+    
+    def post_eval_callback(self):
+        pass
     
     def export_model(self):
         print('Exporting model')
@@ -126,7 +132,7 @@ class Agent:
         self.model.eval()
         for step, data in enumerate(self.val_dataset,0):
             self.test_step(data)
-            self.post_step_callback(epoch)
+            self.post_step_callback(0,step)
 
         self.post_eval_callback()
         

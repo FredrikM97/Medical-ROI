@@ -9,6 +9,7 @@
                 "num_workers": 1,
                 "pin_memory": true
             },
+            "input_channels":1,
             "input_size": [80, 96, 80],
             "preprocess": ["pad"]
         },
@@ -21,6 +22,7 @@
                 "num_workers": 1,
                 "pin_memory": true
             },
+            "input_channels":1,
             "input_size": [80, 96, 80],
             "preprocess": ["pad"]
         },

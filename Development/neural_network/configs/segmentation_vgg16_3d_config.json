@@ -4,23 +4,27 @@
             "dataset_name": "segmentation3d",
             "dataset_path": "../data/SPM_categorised",
             "loader_params": {
-                "batch_size": 24,
+                "batch_size": 6,
                 "shuffle": true,
                 "num_workers": 1,
                 "pin_memory": true
             },
-            "input_size": [79, 95, 79]
+            "input_channels":1,
+            "input_size": [80, 96, 80],
+            "preprocess": ["pad"]
         },
         "val_dataset_params": {
             "dataset_name": "segmentation3d",
             "dataset_path": "../data/SPM_categorised",
             "loader_params": {
-                "batch_size": 24,
+                "batch_size": 6,
                 "shuffle": false,
                 "num_workers": 1,
                 "pin_memory": true
             },
-            "input_size": [79, 95, 79]
+            "input_channels":1,
+            "input_size": [80, 96, 80],
+            "preprocess": ["pad"]
         },
         "model_params": {
             "model_name": "segmentation_vgg16_3d",
