@@ -63,8 +63,6 @@ class NiiDataset(Dataset):
         else:
             data = data_dir[num_train_samples:]
         
-        # To be deleted just for debug!
-        data = data_dir
         self.labels = label_encoder(
             [img_path.rsplit("/",1)[1].split("#",1)[0] for img_path in data]
         )
