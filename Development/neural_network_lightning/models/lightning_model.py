@@ -19,8 +19,8 @@ class LightningModel(testModel):
         loss = self.loss(logits, y) 
         
         # log values
-        self.logger.experiment.add_scalar('Train/Loss', loss)
-
+        #self.logger.experiment.add_scalar('Train/Loss', loss)
+        self.log('Train/Loss', loss) #, on_step=True, on_epoch=True, prog_bar=True, logger=True
         return {'loss': loss}
   
     def validation_step(self, batch: dict, batch_idx: int) -> dict:
@@ -29,7 +29,8 @@ class LightningModel(testModel):
         loss = self.loss(logits, y) 
         
         # log values
-        self.logger.experiment.add_scalar('Val/Loss', loss)
+        #self.logger.experiment.add_scalar('Val/Loss', loss)
+        self.log('Val/Loss', loss) #, on_step=True, on_epoch=True, prog_bar=True, logger=True
         return {'val_loss': loss}
     
     def test_step(self, batch: dict, batch_idx: int) -> dict:
@@ -38,22 +39,23 @@ class LightningModel(testModel):
         loss = self.loss(logits, y)
         
         # log values
-        self.logger.experiment.add_scalar('Test/Loss', loss)
+        #self.logger.experiment.add_scalar('Test/Loss', loss)
         
         return {'test_loss': loss}
       
     def validation_epoch_end(self, outputs):
-        avg_loss = torch.stack([x['val_loss'] for x in outputs]).mean()
-        tensorboard_logs = {'val_loss': avg_loss}
+        #avg_loss = torch.stack([x['val_loss'] for x in outputs]).mean()
+        #tensorboard_logs = {'val_loss': avg_loss}
         #self.log({'avg_val_loss': avg_loss, 'log': tensorboard_logs})
-        self.log("val_loss", avg_loss)
-
+        #self.log("val_loss", avg_loss)
+        pass
     def test_epoch_end(self, outputs):
-        avg_loss = torch.stack([x['test_loss'] for x in outputs]).mean()
+        #avg_loss = torch.stack([x['test_loss'] for x in outputs]).mean()
         #tensorboard_logs = {'test_loss': avg_loss}
-        self.log("test_loss", avg_loss)
+        #self.log("test_loss", avg_loss)
         #self.log({'avg_test_loss': avg_loss, 'log': tensorboard_logs})
-
+        pass
+    
     def configure_optimizers(self):
         optimizer = torch.optim.Adam(self.parameters(), lr=self.lr)
         lr_scheduler = {'scheduler': torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma = 0.95),
