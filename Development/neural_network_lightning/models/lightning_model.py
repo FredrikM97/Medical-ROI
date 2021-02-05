@@ -24,7 +24,7 @@ class LightningModel(testModel):
         # log values
         #self.logger.experiment.add_scalar('Train/Loss', loss)
 
-        self.log_dict( {'train/acc': acc, 'train/loss': loss})
+        self.log_dict( {'train/acc': acc, 'train/loss': loss}, on_epoch=True, on_step=False)
         return  {'acc': acc, 'loss': loss}
   
     def validation_step(self, batch: dict, batch_idx: int) -> dict:
@@ -36,13 +36,13 @@ class LightningModel(testModel):
         # log values
         #self.logger.experiment.add_scalar('Val/Loss', loss)
         metrics = {'val/acc': acc, 'val/loss': loss}
-        self.log_dict(metrics)
+        self.log_dict(metrics,prog_bar=True, on_epoch=True, on_step=False)
         return metrics
     
     def test_step(self, batch: dict, batch_idx: int) -> dict:
         metrics = self.validation_step(batch, batch_idx)
         metrics = {'test/acc': metrics['val/acc'], 'test/loss': metrics['val/loss']}
-        self.log_dict(metrics)
+        self.log_dict(metrics,prog_bar=True, on_epoch=True, on_step=False)
         return metrics
         
     def validation_epoch_end(self, outputs):
