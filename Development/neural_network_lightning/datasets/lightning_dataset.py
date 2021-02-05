@@ -1,23 +1,18 @@
-import rising.transforms as rtr
+#import rising.transforms as rtr
 import torch
-from rising.loading import DataLoader
+#from rising.loading import DataLoader
 import pytorch_lightning as pl 
-from rising.loading import Dataset
+#from rising.loading import Dataset
 from utils import get_nii_files, label_encoder
 import nibabel as nib
-
+from torch.utils.data import DataLoader, Dataset
 class LightningDataset(pl.LightningModule): 
     
     def __init__(self, hparams):
         super().__init__()
         
-        #if hparams is None:
-            #hparams = {}
-        #super().__init__(hparams)
-        
         self.img_files = get_nii_files(hparams['dataset_path'])
         self.dims = hparams['input_size']
-        #self.hparams = hparams
         self.save_hyperparameters()
         
     def train_dataloader(self):

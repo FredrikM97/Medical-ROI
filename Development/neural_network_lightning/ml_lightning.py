@@ -10,6 +10,7 @@ from pytorch_lightning.callbacks.progress import ProgressBarBase
 #import torch
 #from pytorch_lightning.callbacks import Callback
 import sys
+import torch
 
 class Agent:
     def __init__(self, config_name:str, export:bool=True):
@@ -43,13 +44,19 @@ class Agent:
         
         print(f"Size of:\n\tTrainset: {len(self.train_loader)}\n\tValset: {len(self.val_loader)}")
         
+        # ****** Check if gpu exists ******
+        if torch.cuda.is_available():
+            gpu_availible = self.config['gpus']
+
+        else:
+            gpu_availible = None
         # ****** Setup trainer ******
         
         self.trainer = pl.Trainer(
             max_epochs=self.config['model_params']['max_epochs'], 
             profiler=None, 
             reload_dataloaders_every_epoch=self.config['reload_dataloaders_every_epoch'],
-            gpus=self.config['gpus'], 
+            gpus=gpu_availible, 
             logger=tb_logger,
             callbacks=[checkpoint_callback,progressbar_callback],
             progress_bar_refresh_rate=self.config['progress_bar_refresh_rate']
