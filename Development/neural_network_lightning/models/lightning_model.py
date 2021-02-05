@@ -23,9 +23,9 @@ class LightningModel(testModel):
         
         # log values
         #self.logger.experiment.add_scalar('Train/Loss', loss)
-        metrics = {'acc': acc, 'loss': loss}
-        self.log_dict(metrics)
-        return metrics
+
+        self.log_dict( {'train/acc': acc, 'train/loss': loss})
+        return  {'acc': acc, 'loss': loss}
   
     def validation_step(self, batch: dict, batch_idx: int) -> dict:
         x, y = batch
