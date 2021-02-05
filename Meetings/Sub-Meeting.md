@@ -50,12 +50,11 @@
 	* Images, and what kind of images? 
 
 2. Anything we should keep an eye on? 
-3. Allocating to much time ~40 hours this week (Fredrik). Limit Todo list or spread it over additional weeks? 
-4. How should we split data? 
+3. How should we split data? 
 	* Train, val, test (0.7,0.15,0.15)? 
 	* Testset: Manually extract images or random? 
 
-5. 259 Images (unique subjects, latest nii files) 
+4. 259 Images (unique subjects, latest nii files) 
 	* More data needed for DL?
 	* Augmentation,bad to fix it?
 	* Pretrained model? 
@@ -71,3 +70,15 @@
 2. Fix CNN 
 3. Add tensorboard for logging
 4. Visualise activation map? 
+
+# Meeting 3
+## Questions
+1. Should we change size of input or is 79,95,79 good?
+
+## Finished
+1. Support for tensorboard
+2. Trained on test model.
+
+## Todo
+1. Implement VGG16?
+2. What to do after activation map? Scientific reports? Combine something?
