@@ -23,7 +23,7 @@ class LightningModel(testModel):
         
         # log values
         #self.logger.experiment.add_scalar('Train/Loss', loss)
-        metrics = {'train/acc': acc, 'train/loss': loss}
+        metrics = {'acc': acc, 'loss': loss}
         self.log_dict(metrics)
         return metrics
   
