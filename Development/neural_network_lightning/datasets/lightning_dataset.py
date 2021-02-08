@@ -21,7 +21,6 @@ class LightningDataset(pl.LightningModule):
         #batch_transforms = rtr.Compose([
             #rtr.Lambda(lambda img: img.unsqueeze(0).float())
         #])
-        print("asdas",self.hparams['hparams']['train_params']['batch_size'])
         dataloader = DataLoader(dataset,
                                 batch_size=self.hparams['hparams']['train_params']['batch_size'],
                                 #batch_transforms=batch_transforms,

@@ -46,10 +46,9 @@ class LightningModel(testModel):
         return metrics
         
     def validation_epoch_end(self, outputs):
-
         pass
+    
     def test_epoch_end(self, outputs):
-
         pass
     
     def configure_optimizers(self):
