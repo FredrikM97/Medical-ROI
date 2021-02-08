@@ -23,7 +23,7 @@ class LightningModel(pl.LightningModule):
         # log values
         #self.logger.experiment.add_scalar('Train/Loss', loss)  
         metrics = self.step_metrics(pred, target)
-        self.log_dict({f'train/{k}':v for k,v in metrics})
+        self.log_dict({f'train/{k}':v for k,v in metrics.items()})
         return metrics
   
     def validation_step(self, batch: dict, batch_idx: int) -> dict:
@@ -31,7 +31,7 @@ class LightningModel(pl.LightningModule):
         pred = self.model(x) 
         
         metrics = self.step_metrics(pred, target)
-        self.log_dict({f'val/{k}':v for k,v in metrics})
+        self.log_dict({f'val/{k}':v for k,v in metrics.items()})
         
         return metrics
     
@@ -40,7 +40,7 @@ class LightningModel(pl.LightningModule):
         pred = self.model(x) 
 
         metrics = self.step_metrics(pred, target)
-        self.log_dict({f'test/{k}':v for k,v in metrics})
+        self.log_dict({f'test/{k}':v for k,v in metrics.items()})
         
         return metrics
     """
