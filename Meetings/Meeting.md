@@ -146,10 +146,35 @@ How does the region affect the classification result? Is any of the regions dome
 
 * Cross-validation - k: {8, 9, 10} supposedly good. Re-run lots of times, present average + std
 
+* ~300 samples should be enough 
+
+* Confidence interval.
+
 * Randomize testset
 
 * Wait with transfer-learning etc.
 
 ## TODO
+* Create basic model. (3D CNN and sailency guided)
 * Activation map until next week
 
+
+# Meeting 9 (2021-02-09)
+* Exploratory Data Analysis
+	* Study in detail how networks responds to each class, to make sure the model actually identifies something interesting before moving on to ROI
+	* Techniques: Saliency Map, CAM, t-SNE
+
+* Spend at most 2-3 more weeks with developing a good CNN. If no good results, Amira should have a good model to hopefully share.
+	* VGG-16 ?
+
+* A good thesis often have a comparative part
+	* Could be input: Individual slices, mosaic, full 3D
+	* Compare R-CNN, Fast, Faster, Mask in medical domain
+
+* Comparing suggested ROIs with actual anatomical regions of the brain
+	* If the suggested ROI stretch over multiple anatomical regions, is it less reliable?
+		* Compare overlap for regions from a correct decision to that of a incorrect decision
+
+## TODO:
+* Ask Amira about GitHub invite
+* Continue CNN + EDA, techniques for exploring the model - saliency map, t-SNE
