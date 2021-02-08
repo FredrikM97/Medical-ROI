@@ -84,33 +84,30 @@ class LitProgressBar(progress.ProgressBarBase):
     def disable(self):
         self.enable = False
     
-    def on_train_start(self, trainer, pl_module):
+    def on_epoch_start(self, trainer, pl_module):
         super().on_train_start(trainer, pl_module)
-        print('  ', end="\r", flush=True)
+        print()
+        print("",end="", flush=True)
         
-    def on_validation_start(self, trainer, pl_module):
-        super().on_train_start(trainer, pl_module)
-        pass
-        #sys.stdout.write('\r\n')
+    #def on_validation_start(self, trainer, pl_module):
+    #    super().on_train_start(trainer, pl_module)
+    #    pass
+
         
     def on_train_batch_end(self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx):
         super().on_train_batch_end(trainer, pl_module, outputs,batch, batch_idx, dataloader_idx) 
-        percent = (self.train_batch_idx / self.total_train_batches) * 100
-        self.val_content = ''
         
-                         
-        con = f'Epoch {trainer.current_epoch} [{self.train_batch_idx:.00f}/{self.total_train_batches:.00f}] {str(trainer.progress_bar_dict)[1:-1]}'
-
-        self._update(con)
+        del trainer.progress_bar_dict['v_num']
         
-    def on_validation_batch_end(self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx):
-        super().on_validation_batch_end(trainer, pl_module, outputs, batch, batch_idx, dataloader_idx) 
-        #percent = (self.train_batch_idx / self.total_train_batches) * 100
-        con = f'{self.val_batch_idx:.00f}/{ self.total_val_batches:.00f} {str(trainer.progress_bar_dict)[1:-1]}'
-
-        self._update(con)
+        self.train_content = f'Epoch {trainer.current_epoch+1} [{batch_idx+1:.00f}/{self.total_train_batches:.00f}] {trainer.progress_bar_dict}'
         
-    def _update(self,con):
-        #sys.stdout.write(self.train_content + self.val_content +'\r')
-        #sys.stdout.flush()
-        print(con, end="\r", flush=True)
+        self._update()
+        
+    #def on_validation_batch_end(self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx):
+    #    super().on_validation_batch_end(trainer, pl_module, outputs, batch, batch_idx, dataloader_idx) 
+    #    
+    #    self.val_content = f'Epoch {trainer.current_epoch+1} [{batch_idx:.00f}/{self.total_train_batches:.00f}] {str(trainer.progress_bar_dict)[1:-1]}'
+    #    self._update()
+        
+    def _update(self):
+        print(self.train_content + self.val_content, end="\r", flush=True)
