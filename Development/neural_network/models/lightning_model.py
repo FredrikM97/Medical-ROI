@@ -6,58 +6,70 @@ import torch
 from pytorch_lightning.metrics import functional as FM
 
 # https://pytorch-lightning.readthedocs.io/en/latest/metrics.html
-class LightningModel(testModel): 
+class LightningModel(pl.LightningModule): 
     def __init__(self, hparams):
+        super().__init__() 
         
-        if hparams is None:
-            hparams = {}
-        super().__init__(input_channels=1, num_classes=3) #hparams
-        
+        self.model = testModel(input_channels=1, num_classes=3)
         self.loss = nn.CrossEntropyLoss() 
         self.lr = hparams.get('lr')
+           
         self.save_hyperparameters()
-        
-        self.train_metrics = torch.nn.ModuleDict({
-            'accuracy': pl.metrics.Accuracy(),
-        })
-        self.val_metrics = torch.nn.ModuleDict({
-            'accuracy': pl.metrics.Accuracy(),
-        })
-        self.test_metrics = torch.nn.ModuleDict({
-            'accuracy': pl.metrics.Accuracy()
-        })
-        
         
     def training_step(self, batch: dict, batch_idx: int) -> dict:
         x, target = batch
-        pred = self.forward(x) 
-        loss = self.loss(pred, target) 
+        pred = self.model(x) 
         
         # log values
         #self.logger.experiment.add_scalar('Train/Loss', loss)  
-        
-        #Calculate metrics
-        logs = {f"{'train'}/{key}":metric(pred,target) for key,metric in self.train_metrics.items()}
-        logs.update({'train/loss': loss})
-        self.log_dict(logs)
-        
-        return {'loss': loss}
+        metrics = self.step_metrics(pred, target)
+        self.log_dict({f'train/{k}':v for k,v in metrics})
+        return metrics
   
     def validation_step(self, batch: dict, batch_idx: int) -> dict:
         x, target = batch
-        pred = self.forward(x) 
-        loss = self.loss(pred, target) 
+        pred = self.model(x) 
         
-        logs = {f"{'val'}/{key}":metric(pred,target) for key,metric in self.val_metrics.items()}
-        logs.update({'val/loss': loss})
-        self.log_dict(logs, prog_bar=True)
-  
+        metrics = self.step_metrics(pred, target)
+        self.log_dict({f'val/{k}':v for k,v in metrics})
+        
+        return metrics
+    
     def test_step(self, batch: dict, batch_idx: int) -> dict:
-        logs = {f"{'test'}/{key}":metric(pred,target) for key,metric in self.test_metrics.items()}
+        x, target = batch
+        pred = self.model(x) 
+
+        metrics = self.step_metrics(pred, target)
+        self.log_dict({f'test/{k}':v for k,v in metrics})
         
-        self.log_dict(logs)
+        return metrics
+    """
+    def training_epoch_end(self, outputs):
+        self.log_epoch_end('train', outputs)
         
+    def validation_epoch_end(self, outputs):
+        self.log_epoch_end('val', outputs)
+        
+    def test_epoch_end(self, outputs):
+        self.log_epoch_end('test', outputs)
+    """
     def configure_optimizers(self):
         optimizer = torch.optim.Adam(self.parameters(), lr=self.lr)
 
         return [optimizer]
+    
+    def step_metrics(self, pred, target):
+        loss = self.loss(pred, target) 
+        accuracy = FM.accuracy(pred, target)
+        
+        return {'loss':loss, 'accuracy':accuracy}
+    
+    def log_epoch_end(self,prefix, outputs):
+        loss = avg_metric(outputs, 'loss')
+        acc = avg_metric(outputs, 'accuracy')
+
+        self.log_dict({f'{prefix}/loss':loss, f'{prefix}/accuracy':acc})
+
+def avg_metric(outputs, metric):
+    return torch.stack([x[metric] for x in outputs]).mean()
+
