@@ -39,7 +39,7 @@
         },
         "printout_freq": 10,
         "model_update_freq": 1,
-        "log_path":"logs/",
+        "log_path":"../logs/",
         "gpus":1,
         "reload_dataloaders_every_epoch":true,
         "progress_bar_refresh_rate":50
