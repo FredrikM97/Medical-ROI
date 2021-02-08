@@ -19,6 +19,3 @@ def load_configs():
 
 def load_config(name):
     return load_configs()[name]
-    
-def get_availible_configs():
-    return get_availible_files('configs', contains='.json')

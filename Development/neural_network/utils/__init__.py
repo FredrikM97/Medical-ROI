@@ -7,7 +7,6 @@ import torch
 from torch.optim import lr_scheduler
 
 # Limit access to functions
-from .visualizer import Visualizer
 from .utils import *
 
 # Global functions to module

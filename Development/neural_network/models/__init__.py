@@ -11,9 +11,7 @@ In the function <__init__>, you need to define four lists:
 """
 
 import importlib
-from models.base_model import BaseModel
-from torch.optim import lr_scheduler
-from utils import get_availible_files
+from pytorch_lightning import LightningModule
 
 def find_model_using_name(model_name):
     """Import the module "models/[model_name]_model.py".
@@ -27,7 +25,7 @@ def find_model_using_name(model_name):
     target_model_name = model_name.replace('_', '') + 'model'
     for name, cls in modellib.__dict__.items():
         if name.lower() == target_model_name.lower() \
-           and issubclass(cls, BaseModel):
+           and issubclass(cls, LightningModule):
             model = cls
 
     if model is None:
@@ -36,12 +34,6 @@ def find_model_using_name(model_name):
 
     return model
 
-def get_availible_models():
-    return get_availible_files('models', contains='_model')
-
-def get_subclasses():
-    print("Subies",BaseModel.__subclasses__())
-    
 def create_model(configuration):
     """Create a model given the configuration.
     This is the main interface between this package and train.py/validate.py
