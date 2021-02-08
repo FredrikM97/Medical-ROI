@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<idaxs xmlns="http://ida.loni.usc.edu" 
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="/xsds/idaxs_2_0.xsd">
+<project xmlns="">
+ <projectIdentifier>ADNI</projectIdentifier>
+ <projectDescription>Alzheimer&#039;s Disease Neuroimaging Initiative</projectDescription>
+ <siteKey>037</siteKey>
+ <subject>
+  <subjectIdentifier>037_S_1078</subjectIdentifier>
+  <researchGroup>MCI</researchGroup>
+  <subjectSex>M</subjectSex>
+  <subjectInfo item="APOE A1">4</subjectInfo>
+  <subjectInfo item="APOE A2">4</subjectInfo>
+  <visit>
+   <visitIdentifier>ADNI1/GO Month 36</visitIdentifier>
+   <assessment name="MMSE">
+    <component name="MMSE Total Score">
+     <assessmentScore attribute="MMSCORE">24.0</assessmentScore>
+    </component>
+   </assessment>
+   <assessment name="GDSCALE">
+    <component name="GDS Total Score">
+     <assessmentScore attribute="GDTOTAL">2.0</assessmentScore>
+    </component>
+   </assessment>
+   <assessment name="CDR">
+    <component name="CDR Total Score">
+     <assessmentScore attribute="CDGLOBAL">3.0</assessmentScore>
+    </component>
+   </assessment>
+   <assessment name="Neuropsychiatric Inventory-Questionnaire (NPI-Q)">
+    <component name="Neuropsychiatric Inventory Q - Total Score">
+     <assessmentScore attribute="NPISCORE">4.0</assessmentScore>
+    </component>
+   </assessment>
+   <assessment name="Functional Assessment Questionnaire">
+    <component name="FAQ Total score">
+     <assessmentScore attribute="FAQTOTAL">21.0</assessmentScore>
+    </component>
+   </assessment>
+  </visit>
+  <study>
+   <studyIdentifier>25153</studyIdentifier>
+   <subjectAge>73.91</subjectAge>
+   <ageQualifier>Y</ageQualifier>
+   <weightKg>88.27</weightKg>
+   <postMortem>F</postMortem>
+   <series>
+    <seriesIdentifier>80517</seriesIdentifier>
+    <modality>PET</modality>
+    <dateAcquired>2010-03-01</dateAcquired>
+   </series>
+   <imagingProtocol>
+    <imageUID>167055</imageUID>
+    <description>ADNI_ 3D FDG 4i/16s</description>
+    <protocolTerm>
+     <protocol term="Manufacturer">Siemens/CTI</protocol>
+     <protocol term="Mfg Model">HR+</protocol>
+     <protocol term="Radiopharmaceutical">18F-FDG</protocol>
+     <protocol term="Number of Rows">128.0</protocol>
+     <protocol term="Number of Columns">128.0</protocol>
+     <protocol term="Number of Slices">63.0</protocol>
+     <protocol term="Frames">1.0</protocol>
+     <protocol term="Pixel Spacing X">2.57426</protocol>
+     <protocol term="Pixel Spacing Y">2.57426</protocol>
+     <protocol term="Slice Thickness">2.425</protocol>
+     <protocol term="Convolution Kernel">ramp</protocol>
+     <protocol term="Counts Source">Static emission</protocol>
+     <protocol term="Randoms Correction"/>
+     <protocol term="Attenuation Correction">Measured</protocol>
+     <protocol term="Decay Correction">Start</protocol>
+     <protocol term="Reconstruction">CPU terative</protocol>
+     <protocol term="Scatter Correction">Simulated 3D</protocol>
+     <protocol term="Radioisotope">F-18</protocol>
+    </protocolTerm>
+   </imagingProtocol>
+  </study>
+ </subject>
+</project>
+</idaxs>
