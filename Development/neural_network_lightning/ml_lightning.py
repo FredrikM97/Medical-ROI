@@ -45,11 +45,12 @@ class Agent:
         print(f"Size of:\n\tTrainset: {len(self.train_loader)}\n\tValset: {len(self.val_loader)}")
         
         # ****** Check if gpu exists ******
-        if torch.cuda.is_available():
-            gpu_availible = self.config['gpus']
+        device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
+        #if torch.cuda.is_available():
+            #gpu_availible = self.config['gpus']
 
-        else:
-            gpu_availible = None
+        #else:
+        #    gpu_availible = None
         # ****** Setup trainer ******
         
         self.trainer = pl.Trainer(
