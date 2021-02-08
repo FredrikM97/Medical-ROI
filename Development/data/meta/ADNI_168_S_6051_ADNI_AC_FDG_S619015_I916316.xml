@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<idaxs xmlns="http://ida.loni.usc.edu" 
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="/xsds/idaxs_2_0.xsd">
+<project xmlns="">
+ <projectIdentifier>ADNI</projectIdentifier>
+ <projectDescription>Alzheimer&#039;s Disease Neuroimaging Initiative</projectDescription>
+ <siteKey>168</siteKey>
+ <subject>
+  <subjectIdentifier>168_S_6051</subjectIdentifier>
+  <researchGroup>CN</researchGroup>
+  <subjectSex>F</subjectSex>
+  <visit>
+   <visitIdentifier>ADNI Baseline</visitIdentifier>
+  </visit>
+  <study>
+   <studyIdentifier>116306</studyIdentifier>
+   <subjectAge>66.3874</subjectAge>
+   <ageQualifier>Y</ageQualifier>
+   <weightKg>84.0</weightKg>
+   <postMortem>F</postMortem>
+   <series>
+    <seriesIdentifier>619015</seriesIdentifier>
+    <modality>PET</modality>
+    <dateAcquired>2017-08-02</dateAcquired>
+   </series>
+   <imagingProtocol>
+    <imageUID>916316</imageUID>
+    <description>ADNI AC FDG</description>
+    <protocolTerm>
+     <protocol term="Manufacturer">GE MEDICAL SYSTEMS</protocol>
+     <protocol term="Mfg Model">Discovery STE</protocol>
+     <protocol term="Radiopharmaceutical">18F-FDG</protocol>
+     <protocol term="Number of Rows">128.0</protocol>
+     <protocol term="Number of Columns">128.0</protocol>
+     <protocol term="Number of Slices">47.0</protocol>
+     <protocol term="Frames">6.0</protocol>
+     <protocol term="Pixel Spacing X">2.0</protocol>
+     <protocol term="Pixel Spacing Y">2.0</protocol>
+     <protocol term="Slice Thickness">3.27</protocol>
+     <protocol term="Convolution Kernel"/>
+     <protocol term="Counts Source">EMISSION</protocol>
+     <protocol term="Randoms Correction">SING</protocol>
+     <protocol term="Attenuation Correction">measured,, 0.096000 cm-1,</protocol>
+     <protocol term="Decay Correction">START</protocol>
+     <protocol term="Reconstruction">3D IR</protocol>
+     <protocol term="Scatter Correction">Model Based</protocol>
+     <protocol term="Radioisotope">F-18</protocol>
+    </protocolTerm>
+   </imagingProtocol>
+  </study>
+ </subject>
+</project>
+</idaxs>
