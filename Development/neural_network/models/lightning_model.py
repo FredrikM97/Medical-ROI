@@ -5,7 +5,7 @@ import torch.nn as nn
 import torch
 from pytorch_lightning.metrics import functional as FM
 
-
+# https://pytorch-lightning.readthedocs.io/en/latest/metrics.html
 class LightningModel(testModel): 
     def __init__(self, hparams):
         
@@ -16,43 +16,47 @@ class LightningModel(testModel):
         self.loss = nn.CrossEntropyLoss() 
         self.lr = hparams.get('lr')
         self.save_hyperparameters()
-
+        
+        self.train_metrics = torch.nn.ModuleDict({
+            'accuracy': pl.metrics.Accuracy(),
+        })
+        self.val_metrics = torch.nn.ModuleDict({
+            'accuracy': pl.metrics.Accuracy(),
+        })
+        self.test_metrics = torch.nn.ModuleDict({
+            'accuracy': pl.metrics.Accuracy()
+        })
+        
+        
     def training_step(self, batch: dict, batch_idx: int) -> dict:
-        x, y = batch
-        logits = self.forward(x) 
-        loss = self.loss(logits, y) 
-        acc = FM.accuracy(logits, y)
+        x, target = batch
+        pred = self.forward(x) 
+        loss = self.loss(pred, target) 
         
         # log values
-        #self.logger.experiment.add_scalar('Train/Loss', loss)
-
-        self.log_dict( {'train/acc': acc, 'train/loss': loss}, on_epoch=True, on_step=False)
-        return  {'acc': acc, 'loss': loss}
+        #self.logger.experiment.add_scalar('Train/Loss', loss)  
+        
+        #Calculate metrics
+        logs = {f"{'train'}/{key}":metric(pred,target) for key,metric in self.train_metrics.items()}
+        logs.update({'train/loss': loss})
+        self.log_dict(logs)
+        
+        return {'loss': loss}
   
     def validation_step(self, batch: dict, batch_idx: int) -> dict:
-        x, y = batch
-        logits = self.forward(x) 
-        loss = self.loss(logits, y) 
-        acc = FM.accuracy(logits, y)
+        x, target = batch
+        pred = self.forward(x) 
+        loss = self.loss(pred, target) 
         
-        # log values
-        #self.logger.experiment.add_scalar('Val/Loss', loss)
-        metrics = {'val/acc': acc, 'val/loss': loss}
-        self.log_dict(metrics,prog_bar=True, on_epoch=True, on_step=False)
-        return metrics
-    
+        logs = {f"{'val'}/{key}":metric(pred,target) for key,metric in self.val_metrics.items()}
+        logs.update({'val/loss': loss})
+        self.log_dict(logs, prog_bar=True)
+  
     def test_step(self, batch: dict, batch_idx: int) -> dict:
-        metrics = self.validation_step(batch, batch_idx)
-        metrics = {'test/acc': metrics['val/acc'], 'test/loss': metrics['val/loss']}
-        self.log_dict(metrics,prog_bar=True, on_epoch=True, on_step=False)
-        return metrics
+        logs = {f"{'test'}/{key}":metric(pred,target) for key,metric in self.test_metrics.items()}
         
-    def validation_epoch_end(self, outputs):
-        pass
-    
-    def test_epoch_end(self, outputs):
-        pass
-    
+        self.log_dict(logs)
+        
     def configure_optimizers(self):
         optimizer = torch.optim.Adam(self.parameters(), lr=self.lr)
 
