@@ -77,9 +77,6 @@ class LitProgressBar(progress.ProgressBarBase):
     def __init__(self):
         super().__init__()  # don't forget this :)
         self.enable = True
-        self.train_content = ''
-        self.val_content = ''
-        
 
     def disable(self):
         self.enable = False
@@ -89,25 +86,14 @@ class LitProgressBar(progress.ProgressBarBase):
         print()
         print("",end="", flush=True)
         
-    #def on_validation_start(self, trainer, pl_module):
-    #    super().on_train_start(trainer, pl_module)
-    #    pass
-
-        
     def on_train_batch_end(self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx):
         super().on_train_batch_end(trainer, pl_module, outputs,batch, batch_idx, dataloader_idx) 
         
         del trainer.progress_bar_dict['v_num']
         
-        self.train_content = f'Epoch {trainer.current_epoch+1} [{batch_idx+1:.00f}/{self.total_train_batches:.00f}] {trainer.progress_bar_dict}'
+        con = f'Epoch {trainer.current_epoch+1} [{batch_idx+1:.00f}/{self.total_train_batches:.00f}] {trainer.progress_bar_dict}'
         
-        self._update()
+        self._update(con)
         
-    #def on_validation_batch_end(self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx):
-    #    super().on_validation_batch_end(trainer, pl_module, outputs, batch, batch_idx, dataloader_idx) 
-    #    
-    #    self.val_content = f'Epoch {trainer.current_epoch+1} [{batch_idx:.00f}/{self.total_train_batches:.00f}] {str(trainer.progress_bar_dict)[1:-1]}'
-    #    self._update()
-        
-    def _update(self):
-        print(self.train_content + self.val_content, end="\r", flush=True)
+    def _update(self,con):
+        print(con, end="\r", flush=True)
