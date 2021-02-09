@@ -1,7 +1,7 @@
 import pytorch_lightning as pl
 import torch.nn as nn
 
-class testModel(pl.LightningModule):
+class testModel(nn.Module):
     def __init__(self, input_channels=1, num_classes=3):
         # Model for input (batch, channel, slices, with, height) -> (batch,1,79, 96, 79)
         super().__init__()
