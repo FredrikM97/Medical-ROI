@@ -4,6 +4,7 @@ import pytorch_lightning as pl
 import torch.nn as nn
 import torch
 from pytorch_lightning.metrics import functional as FM
+from pytorch_lightning.metrics import Accuracy
 
 # https://pytorch-lightning.readthedocs.io/en/latest/metrics.html
 class LightningModel(pl.LightningModule): 
@@ -16,60 +17,62 @@ class LightningModel(pl.LightningModule):
            
         self.save_hyperparameters()
         
+        # These have internal memory
+        self.train_metric = Accuracy(compute_on_step=False)
+        self.val_metric = Accuracy(compute_on_step=False)
+        
     def training_step(self, batch: dict, batch_idx: int) -> dict:
         x, target = batch
         pred = self.model(x) 
+        loss = self.loss(pred, target) 
         
-        # log values
-        #self.logger.experiment.add_scalar('Train/Loss', loss)  
-        metrics = self.step_metrics(pred, target)
-        self.log_dict({f'train/{k}':v for k,v in metrics.items()})
-        return metrics
+        self.train_metric(pred,target)
+        
+        return {'loss':loss}
   
     def validation_step(self, batch: dict, batch_idx: int) -> dict:
         x, target = batch
         pred = self.model(x) 
+        loss = self.loss(pred, target) 
         
-        metrics = self.step_metrics(pred, target)
-        self.log_dict({f'val/{k}':v for k,v in metrics.items()})
+        self.val_metric(pred,target)
         
-        return metrics
+        return {'loss':loss}
     
-    def test_step(self, batch: dict, batch_idx: int) -> dict:
-        x, target = batch
-        pred = self.model(x) 
-
-        metrics = self.step_metrics(pred, target)
-        self.log_dict({f'test/{k}':v for k,v in metrics.items()})
-        
-        return metrics
-    """
     def training_epoch_end(self, outputs):
-        self.log_epoch_end('train', outputs)
+        # logging histograms
+        self.custom_histogram_adder()
+        
+        loss = avg_metric(outputs, 'loss')
+        acc = self.train_metric.compute()
+        
+        self._add_metric('train', loss, acc)
+    
         
     def validation_epoch_end(self, outputs):
-        self.log_epoch_end('val', outputs)
+        loss = avg_metric(outputs, 'loss')
+        acc = self.val_metric.compute()
         
-    def test_epoch_end(self, outputs):
-        self.log_epoch_end('test', outputs)
-    """
+        self._add_metric('val', loss, acc)
+        
+    
     def configure_optimizers(self):
         optimizer = torch.optim.Adam(self.parameters(), lr=self.lr)
-
         return [optimizer]
     
-    def step_metrics(self, pred, target):
-        loss = self.loss(pred, target) 
-        accuracy = FM.accuracy(pred, target)
-        
-        return {'loss':loss, 'accuracy':accuracy}
+    def custom_histogram_adder(self):
+        # iterating through all parameters
+        for name,params in self.model.named_parameters():
+            self.logger.experiment.add_histogram(name,params,self.current_epoch)
     
-    def log_epoch_end(self,prefix, outputs):
-        loss = avg_metric(outputs, 'loss')
-        acc = avg_metric(outputs, 'accuracy')
-
-        self.log_dict({f'{prefix}/loss':loss, f'{prefix}/accuracy':acc})
-
+    def _add_scalar(self, prefix, loss, acc):
+        self.logger.experiment.add_scalar(f"loss/"+prefix,
+                                            loss,
+                                            self.current_epoch)
+        
+        self.logger.experiment.add_scalar(f"accuracy/"+prefix,
+                                            acc,
+                                            self.current_epoch)
 def avg_metric(outputs, metric):
     return torch.stack([x[metric] for x in outputs]).mean()
 

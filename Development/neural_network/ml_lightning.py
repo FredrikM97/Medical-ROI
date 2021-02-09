@@ -89,8 +89,6 @@ class LitProgressBar(progress.ProgressBarBase):
     def on_train_batch_end(self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx):
         super().on_train_batch_end(trainer, pl_module, outputs,batch, batch_idx, dataloader_idx) 
         
-        del trainer.progress_bar_dict['v_num']
-        
         con = f'Epoch {trainer.current_epoch+1} [{batch_idx+1:.00f}/{self.total_train_batches:.00f}] {trainer.progress_bar_dict}'
         
         self._update(con)
