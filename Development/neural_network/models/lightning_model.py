@@ -1,4 +1,4 @@
-from architectures import testModel
+from architectures import create_architecture #testModel
 
 import pytorch_lightning as pl
 import torch.nn as nn
@@ -12,7 +12,7 @@ class LightningModel(pl.LightningModule):
         super().__init__() 
         self.save_hyperparameters()
         
-        self.model = testModel(input_channels=1, num_classes=3)
+        self.model = create_architecture(architecture=self.hparams.architecture,input_channels=1, num_classes=3)#testModel(input_channels=1, num_classes=3)
         self.loss = nn.CrossEntropyLoss() 
         self.lr = self.hparams.lr
         
@@ -28,8 +28,9 @@ class LightningModel(pl.LightningModule):
         x, target = batch
         pred = self.model(x) 
         loss = self.loss(pred, target) 
-        
+        print("target",target,"predict",pred)
         self.train_metric(pred,target)
+        self.logger.experiment.add_scalars(f"prediction_vs_target/train",{'predict':pred, 'target':target})
         
         return {'loss':loss, 'predict':pred, 'target':target}
   
@@ -55,14 +56,6 @@ class LightningModel(pl.LightningModule):
         
         self._add_scalar('train', loss, acc)
     
-        img_grid = torchvision.utils.make_grid(images)
-
-        # show images
-        matplotlib_imshow(img_grid, one_channel=True)
-
-        # write to tensorboard
-        writer.add_image('four_fashion_mnist_images', img_grid)
-        
     def validation_epoch_end(self, outputs):
         loss = avg_metric(outputs, 'loss')
         acc = self.val_metric.compute()

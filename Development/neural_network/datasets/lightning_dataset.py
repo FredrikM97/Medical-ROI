@@ -36,7 +36,7 @@ class LightningDataset(pl.LightningDataModule):
             self.train_set, self.val_set = next(self.trainer.datamodule.kfold_splits)
          
     def train_dataloader(self):
-        assert len(self.train_set) % self._hparams['train_params']['batch_size'] != 1, "A batch of size 1 is not allowed!"
+        #assert len(self.train_set) % self._hparams['train_params']['batch_size'] != 1, "A batch of size 1 is not allowed!"
 
         dataloader = DataLoader(self.train_set,
                                 batch_size=self._hparams['train_params']['batch_size'],
@@ -45,7 +45,7 @@ class LightningDataset(pl.LightningDataModule):
         return dataloader
     
     def val_dataloader(self):
-        assert len(self.val_set) % self._hparams['train_params']['batch_size'] != 1, "A batch of size 1 is not allowed!"
+        #assert len(self.val_set) % self._hparams['train_params']['batch_size'] != 1, "A batch of size 1 is not allowed!"
         #dataset = NiiDataset(train=False, data_dir=self.img_files)
         
         dataloader = DataLoader(self.val_set,
