@@ -28,7 +28,6 @@ class Agent:
             #monitor='val_loss', 
             mode='min', 
         )
-        #progressbar_callback = ProgressBar()
         progressbar_callback = LitProgressBar()
         
         tb_logger = pl.loggers.TensorBoardLogger(self.config['logs']['tensorboard'], name=self.config['model_params']['model_name'])
@@ -37,16 +36,13 @@ class Agent:
         self.model = create_model(self.config['model_params'])#create_model(self.config['model_params'])
         
         # ****** Setup dataloader ******
-        self.dataset = create_dataset(self.config['dataset_params'], )
+        self.dataset = create_dataset(self.config['dataset_params'])
         
         #print(f"Dataset size: Train: {len(self.train_loader)} Val: {len(self.val_loader)}")
         
         # ****** Check if gpu exists ******
-        if torch.cuda.is_available():
-            gpu_availible = self.config['gpus']
-
-        else:
-            gpu_availible = None
+        gpu_availible = self.config['gpus'] if torch.cuda.is_available() else None
+        
         # ****** Setup trainer ******
         
         self.trainer = pl.Trainer(
