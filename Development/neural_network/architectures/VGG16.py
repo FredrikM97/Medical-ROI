@@ -1,8 +1,9 @@
 import pytorch_lightning as pl
 import torch
+import torch.nn as nn
+import torch.nn.functional as F
 
-
-class VGG16(nn.Module):
+class VGG16(pl.LightningModule):
     def __init__(self):
         super(Net3D, self).__init__()
         
