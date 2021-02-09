@@ -3,11 +3,11 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-class VGG16(pl.LightningModule):
-    def __init__(self):
-        super(Net3D, self).__init__()
+class VGG16(nn.Module):
+    def __init__(self,input_channels=1, num_classes=3, **kwargs):
+        super().__init__()
         
-        self.conv1 = nn.Conv3d(1, 64, 3, padding = 1)
+        self.conv1 = nn.Conv3d(input_channels, 64, 3, padding = 1)
         self.conv2 = nn.Conv3d(64, 64, 3, padding = 1)
         
         self.conv3 = nn.Conv3d(64, 128, 3, padding = 1)
@@ -27,7 +27,7 @@ class VGG16(pl.LightningModule):
         
         self.fc1 = nn.Linear(512*2*2*2, 4096) # Depends on input size
         self.fc2 = nn.Linear(4096, 4096)
-        self.fc3 = nn.Linear(4096, 3)
+        self.fc3 = nn.Linear(4096, num_classes)
         
     def forward(self, x):
         x = self.conv1(x)
