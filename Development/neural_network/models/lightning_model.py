@@ -8,18 +8,19 @@ from pytorch_lightning.metrics import Accuracy
 
 # https://pytorch-lightning.readthedocs.io/en/latest/metrics.html
 class LightningModel(pl.LightningModule): 
-    def __init__(self, hparams):
+    def __init__(self, **hparams):
         super().__init__() 
+        self.save_hyperparameters()
         
         self.model = testModel(input_channels=1, num_classes=3)
         self.loss = nn.CrossEntropyLoss() 
-        self.lr = hparams.get('lr')
-           
-        self.save_hyperparameters()
+        self.lr = self.hparams.lr
         
         # These have internal memory
         self.train_metric = Accuracy(compute_on_step=False)
         self.val_metric = Accuracy(compute_on_step=False)
+        
+        self.save_hyperparameters()
         
     def training_step(self, batch: dict, batch_idx: int) -> dict:
         x, target = batch
@@ -39,6 +40,16 @@ class LightningModel(pl.LightningModule):
         
         return {'loss':loss}
     
+    def on_epoch_end(self):
+        if self._hparams['val_type'] == 'kfold':
+            print("Going to new epoch", flush=True)
+            print(flush=True)
+            self.train_set, self.val_set = next(self.kfold_splits)
+            
+        #else:    
+        #    self.train_set, self.val_set = tts_dataset(self.ds, self.model_params.val_pct)
+    
+    
     def training_epoch_end(self, outputs):
         # logging histograms
         self.custom_histogram_adder()
@@ -46,14 +57,14 @@ class LightningModel(pl.LightningModule):
         loss = avg_metric(outputs, 'loss')
         acc = self.train_metric.compute()
         
-        self._add_metric('train', loss, acc)
+        self._add_scalar('train', loss, acc)
     
         
     def validation_epoch_end(self, outputs):
         loss = avg_metric(outputs, 'loss')
         acc = self.val_metric.compute()
         
-        self._add_metric('val', loss, acc)
+        self._add_scalar('val', loss, acc)
         
     
     def configure_optimizers(self):
