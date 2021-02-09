@@ -20,6 +20,8 @@ class LightningModel(pl.LightningModule):
         self.train_metric = Accuracy(compute_on_step=False)
         self.val_metric = Accuracy(compute_on_step=False)
         
+        
+        
         self.save_hyperparameters()
         
     def training_step(self, batch: dict, batch_idx: int) -> dict:
@@ -29,7 +31,7 @@ class LightningModel(pl.LightningModule):
         
         self.train_metric(pred,target)
         
-        return {'loss':loss}
+        return {'loss':loss, 'predict':pred, 'target':target}
   
     def validation_step(self, batch: dict, batch_idx: int) -> dict:
         x, target = batch
@@ -38,17 +40,11 @@ class LightningModel(pl.LightningModule):
         
         self.val_metric(pred,target)
         
-        return {'loss':loss}
+        return {'loss':loss, 'predict':pred, 'target':target}
     
     def on_epoch_end(self):
-        if self._hparams['val_type'] == 'kfold':
-            print("Going to new epoch", flush=True)
-            print(flush=True)
-            self.train_set, self.val_set = next(self.kfold_splits)
-            
-        #else:    
-        #    self.train_set, self.val_set = tts_dataset(self.ds, self.model_params.val_pct)
-    
+        self.trainer.datamodule._on_epoch_end()
+       
     
     def training_epoch_end(self, outputs):
         # logging histograms
@@ -59,6 +55,13 @@ class LightningModel(pl.LightningModule):
         
         self._add_scalar('train', loss, acc)
     
+        img_grid = torchvision.utils.make_grid(images)
+
+        # show images
+        matplotlib_imshow(img_grid, one_channel=True)
+
+        # write to tensorboard
+        writer.add_image('four_fashion_mnist_images', img_grid)
         
     def validation_epoch_end(self, outputs):
         loss = avg_metric(outputs, 'loss')
