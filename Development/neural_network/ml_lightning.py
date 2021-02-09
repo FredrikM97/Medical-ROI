@@ -9,6 +9,7 @@ import pytorch_lightning as pl
 
 import sys
 import torch
+import numpy as np
 
 class Agent:
     def __init__(self, config_name:str, export:bool=True):
@@ -16,6 +17,8 @@ class Agent:
         # ****** Setup configurations ******
         self.config = load_config(config_name)
         
+        # ****** Setup seed *******
+        np.random.seed(self.config['seed'])
         
         # ****** Setup loggers ******
        
@@ -31,15 +34,12 @@ class Agent:
         tb_logger = pl.loggers.TensorBoardLogger(self.config['logs']['tensorboard'], name=self.config['model_params']['model_name'])
         
         # ****** Setup model ******
-        self.model = create_model(self.config['model_params'])
+        self.model = create_model(self.config['model_params'])#create_model(self.config['model_params'])
         
         # ****** Setup dataloader ******
-        dataset = create_dataset(self.config['dataset_params'])
+        self.dataset = create_dataset(self.config['dataset_params'], )
         
-        self.train_loader = dataset.train_dataloader()
-        self.val_loader = dataset.val_dataloader()
-        
-        print(f"Dataset size: Train: {len(self.train_loader)} Val: {len(self.val_loader)}")
+        #print(f"Dataset size: Train: {len(self.train_loader)} Val: {len(self.val_loader)}")
         
         # ****** Check if gpu exists ******
         if torch.cuda.is_available():
@@ -62,13 +62,16 @@ class Agent:
     def fit(self):
         self.trainer.fit(
             self.model, 
-            train_dataloader=self.train_loader, 
-            val_dataloaders=self.val_loader
+            datamodule=self.dataset
+            #train_dataloader=self.train_loader, 
+            #val_dataloaders=self.val_loader
         )
     
     def test(self):
         trainer.test(
-            test_dataloaders=self.test_dataloader
+            self.model, 
+            datamodule=self.dataset
+            #test_dataloaders=self.test_dataloader
         )
         
 
@@ -89,9 +92,15 @@ class LitProgressBar(progress.ProgressBarBase):
     def on_train_batch_end(self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx):
         super().on_train_batch_end(trainer, pl_module, outputs,batch, batch_idx, dataloader_idx) 
         
-        con = f'Epoch {trainer.current_epoch+1} [{batch_idx+1:.00f}/{self.total_train_batches:.00f}] {trainer.progress_bar_dict}'
+        con = f'Epoch {trainer.current_epoch+1} [{batch_idx+1:.00f}/{self.total_train_batches:.00f}] {self.get_progress_bar_dict(trainer)}'
         
         self._update(con)
         
     def _update(self,con):
         print(con, end="\r", flush=True)
+        
+    def get_progress_bar_dict(self,trainer):
+        tqdm_dict = trainer.progress_bar_dict
+        if 'v_num' in tqdm_dict:
+            del tqdm_dict['v_num']
+        return tqdm_dict
