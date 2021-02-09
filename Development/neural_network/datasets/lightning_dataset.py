@@ -18,33 +18,19 @@ class LightningDataset(pl.LightningModule):
         
     def train_dataloader(self):
         dataset = NiiDataset(train=True, data_dir=self.img_files)
-        
-        #batch_transforms = rtr.Compose([
-            #rtr.Lambda(lambda img: img.unsqueeze(0).float())
-        #])
 
         dataloader = DataLoader(dataset,
                                 batch_size=self.hparams['hparams']['train_params']['batch_size'],
-                                #batch_transforms=batch_transforms,
                                 shuffle=True,
-                                #sample_transforms=common_per_sample_trafos(),
-                                #pseudo_batch_dim=True,
                                 num_workers=self.hparams['hparams']['train_params']['num_workers'])
         return dataloader
     
     def val_dataloader(self):
         dataset = NiiDataset(train=False, data_dir=self.img_files)
         
-        #batch_transforms = rtr.Compose([
-            #rtr.Lambda(lambda img: (img['data'].unsqueeze(0).float(), img['label']))
-        #])
-        
         dataloader = DataLoader(dataset,
                                 batch_size=self.hparams['hparams']['val_params']['batch_size'],
-                                #batch_transforms=batch_transforms,
                                 shuffle=False,
-                                #sample_transforms=common_per_sample_trafos(),
-                                #pseudo_batch_dim=True,
                                 num_workers=self.hparams['hparams']['val_params']['num_workers'])
 
         return dataloader
@@ -52,6 +38,7 @@ class LightningDataset(pl.LightningModule):
 class NiiDataset(Dataset):
     def __init__(self, train: bool, data_dir: list):
         
+        # TODO: Fix this. If data not shuffle it will always prio data in the bottom!
         num_train_samples = int(len(data_dir) * 0.9)
         
         if train:
