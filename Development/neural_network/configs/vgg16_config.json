@@ -2,7 +2,7 @@
     "vgg16":{
         "dataset_params":{
             "dataset_name": "lightning",
-            "dataset_path": "../data/SPM_categorised",
+            "dataset_path": "../data/SPM_categorised/ADNI1",
             "input_size":[79, 95, 79],
             "val_type":"kfold",
             "fold_splits":5,
