@@ -16,24 +16,31 @@ class LightningDataset(pl.LightningDataModule):
         super().__init__()
         self._hparams = hparams
         self.img_files = get_nii_files(self._hparams['dataset_path'])
+        
         assert len(self.img_files) > 0, f"No images found at path: {self._hparams['dataset_path']}"
+        self._setup_kfold()
     
-    def setup(self,stage=None):
+    def _setup_kfold(self): 
+        np.random.shuffle(self.img_files)
         dataset = NiiDataset(self.img_files)
         
-        if self._hparams['val_type'] == 'kfold':
-            print("Going with kfold!")
-            self.kfold_splits = kfold(dataset, n_splits=self._hparams['fold_splits'])
-            self.train_set, self.val_set = next(self.kfold_splits)
-        else:
-            print("Going with default split!")
-            # If not kfold then do something else...
-            num_train_samples = len(dataset)*0.9
-            self.train_set, self.val_set = (dataset[:num_train_samples], dataset[num_train_samples:])
-
-    def _on_epoch_end(self):
-        if self._hparams['val_type'] == 'kfold':
-            self.train_set, self.val_set = next(self.trainer.datamodule.kfold_splits)
+        self.get_current_fold = 0
+        self.kfold_splits = kfold(dataset, n_splits=self._hparams['fold_splits'])
+        self._next_fold()
+        
+    def _get_subset(self):
+        return self.train_set, self.val_set
+    
+    def _get_fold(self) -> int:
+        return self.get_current_fold
+    
+    def _has_folds(self) -> bool:
+        return self.get_current_fold < self._hparams['fold_splits']
+        
+    def _next_fold(self) -> None:
+        assert self._has_folds(), "Cant find more folds!"
+        self.get_current_fold += 1
+        self.train_set, self.val_set = next(self.kfold_splits)
          
     def train_dataloader(self):
         #assert len(self.train_set) % self._hparams['train_params']['batch_size'] != 1, "A batch of size 1 is not allowed!"
@@ -75,7 +82,7 @@ class NiiDataset(Dataset):
         return len(self.data)
 
 def kfold(dataset, n_splits=5):
-    idxs = itertools.cycle(KFold(n_splits).split(np.arange(len(dataset))))
+    idxs = KFold(n_splits).split(np.arange(len(dataset)))
     for train_idxs, val_idxs in idxs:
         yield torch.utils.data.Subset(dataset, train_idxs), torch.utils.data.Subset(dataset, val_idxs)
         
