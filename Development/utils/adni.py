@@ -23,10 +23,10 @@ class Disorders:
         self.CN=self.root+self.CN
         self.MCI=self.root+self.MCI
         
-        misc_util.create_directory(self.root)
-        misc_util.create_directory(self.AD)
-        misc_util.create_directory(self.CN)
-        misc_util.create_directory(self.MCI)
+        #misc_util.create_directory(self.root)
+        #misc_util.create_directory(self.AD)
+        #misc_util.create_directory(self.CN)
+        #misc_util.create_directory(self.MCI)
         
     def get(self,name=None):
         if name:
