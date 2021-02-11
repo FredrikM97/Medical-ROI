@@ -62,7 +62,7 @@ class LightningModel(pl.LightningModule):
         
     def configure_optimizers(self):
         # Note: dont use list if only one item.. Causes silent crashes
-        optimizer = torch.optim.Adam(self.model.parameters(), lr=self.hparams.lr)
+        optimizer = torch.optim.Adam(self.model.parameters(), lr=self.hparams.lr, weight_decay=self.hparams.opt_weight_decay, amsgrad=self.hparams.opt_amsgrad)
         return optimizer
     
     def loss_fn(self,out,target):

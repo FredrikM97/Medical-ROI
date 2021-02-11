@@ -23,10 +23,12 @@
             "architecture":"VGG16",
             "is_train": true,
             "max_epochs": 40,
-            "lr": 0.001,
+            "lr": 0.01,
             "load_checkpoint": -1,
             "lr_policy": "step",
-            "lr_decay_iters": 10
+            "lr_decay_iters": 10,
+            "opt_weight_decay":2e-5,
+            "opt_amsgrad":false
         },
         "agent":{
             "seed":420,
