@@ -31,54 +31,54 @@ class VGG16(nn.Module):
         
     def forward(self, x):
         x = self.conv1(x)
-        x = F.relu(x)
+        x = F.leaky_relu(x)
         x = self.conv2(x)
-        x = F.relu(x)
+        x = F.leaky_relu(x)
         x = F.max_pool3d(x, 2)
         #BN?
         
         x = self.conv3(x)
-        x = F.relu(x)
+        x = F.leaky_relu(x)
         x = self.conv4(x)
-        x = F.relu(x)
+        x = F.leaky_relu(x)
         x = F.max_pool3d(x, 2)
         #BN?
         
         x = self.conv5(x)
-        x = F.relu(x)
+        x = F.leaky_relu(x)
         x = self.conv6(x)
-        x = F.relu(x)
+        x = F.leaky_relu(x)
         x = self.conv7(x)
-        x = F.relu(x)
+        x = F.leaky_relu(x)
         x = F.max_pool3d(x, 2)
         #BN?
         
         x = self.conv8(x)
-        x = F.relu(x)
+        x = F.leaky_relu(x)
         x = self.conv9(x)
-        x = F.relu(x)
+        x = F.leaky_relu(x)
         x = self.conv10(x)
-        x = F.relu(x)
+        x = F.leaky_relu(x)
         x = F.max_pool3d(x, 2)
         #BN?
         
         x = self.conv11(x)
-        x = F.relu(x)
+        x = F.leaky_relu(x)
         x = self.conv12(x)
-        x = F.relu(x)
+        x = F.leaky_relu(x)
         x = self.conv13(x)
-        x = F.relu(x)
+        x = F.leaky_relu(x)
         x = F.max_pool3d(x, 2)
         #BN?
         
         x = x.view(-1, self.num_flat_features(x))
         
         x = self.fc1(x)
-        x = F.relu(x)
+        x = F.leaky_relu(x)
         x = F.dropout(x, 0.5)
         
         x = self.fc2(x)
-        x = F.relu(x)
+        x = F.leaky_relu(x)
         x = F.dropout(x, 0.5)
         
         x = self.fc3(x)
