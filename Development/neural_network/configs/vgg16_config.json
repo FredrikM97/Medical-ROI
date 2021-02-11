@@ -3,22 +3,17 @@
         "dataset_params":{
             "dataset_name": "lightning",
             "dataset_path": "../data/SPM_categorised/ADNI1",
-            "input_size":[79, 95, 79],
-            "val_type":"kfold",
-            "fold_splits":5,
-            "num_classes":3,
-            "input_channels":1,
-
+            "fold_splits":10,
             "train_params": {
-                "batch_size": 2,
+                "batch_size": 4,
                 "shuffle": true,
-                "num_workers": 4,
+                "num_workers": 12,
                 "pin_memory": true
             },
             "val_params": {
-                "batch_size": 2,
+                "batch_size": 4,
                 "shuffle": false,
-                "num_workers": 4,
+                "num_workers": 12,
                 "pin_memory": true
             }
         },
@@ -28,10 +23,14 @@
             "architecture":"VGG16",
             "is_train": true,
             "max_epochs": 40,
-            "lr": 0.01,
+            "lr": 0.001,
             "load_checkpoint": -1,
             "lr_policy": "step",
             "lr_decay_iters": 10
+        },
+        "agent":{
+            "seed":420,
+            "kfold":true
         },
         "visualization_params": {
             "name": "3d ligtning"
@@ -40,10 +39,8 @@
             "checkpoint": "../logs/checkpoints/",
             "tensorboard":"../logs/tb_logs/"
         },      
-        "printout_freq": 10,
-        "model_update_freq": 1,
         "gpus":1,
-        "seed":42,
+        "num_sanity_val_steps":2,
         "reload_dataloaders_every_epoch":false,
         "progress_bar_refresh_rate":50
     }
