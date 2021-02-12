@@ -147,6 +147,12 @@ class ActivationMap(Callback):
                 self.hooks.append(ActivationMapHook(module, name))
     
     def on_epoch_end(self, trainer, pl_module):
+        set_to_train = False
+        if trainer.model.training:
+            set_to_train = True
+            
+        trainer.model.eval()
+        
         for hook in self.hooks:
             hook.register()
             
@@ -191,3 +197,6 @@ class ActivationMap(Callback):
             
         for hook in self.hooks:
             hook.unregister()
+            
+        if set_to_train:
+            trainer.model.train()
