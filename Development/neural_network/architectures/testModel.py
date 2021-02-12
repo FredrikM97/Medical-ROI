@@ -2,7 +2,7 @@ import pytorch_lightning as pl
 import torch.nn as nn
 
 class testModel(nn.Module):
-    def __init__(self, input_channels=1, num_classes=3):
+    def __init__(self,input_channels=1, num_classes=3, **kwargs):
         # Model for input (batch, channel, slices, with, height) -> (batch,1,79, 96, 79)
         super().__init__()
         self.conv_layer1 = self._conv_layer_set(input_channels, 32)
