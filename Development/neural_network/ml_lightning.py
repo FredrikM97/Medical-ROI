@@ -23,7 +23,7 @@ class Agent:
         
         # ****** Setup model ******
         self.model = create_model(**self.config['model_params'], class_weights=self.dataset._get_class_weights())
-        
+        self.setup_trainer()
         
         
     def setup_trainer(self):
@@ -57,14 +57,12 @@ class Agent:
         return -1 if torch.cuda.is_available() else None
     
     def fit(self, cv=False) -> None:
-        self.setup_trainer()
         if self.config['agent']['kfold']:
             self.__fit_cv()
         else:
             self.__fit()
     
     def __fit(self):
-        self.setup_trainer()
         self.trainer.fit(
             self.model, 
             datamodule=self.dataset
@@ -75,7 +73,9 @@ class Agent:
          
         while self.dataset._has_folds():
             # call fit
-            print(f"Validation on fold: {self.dataset._get_fold()}")
+            fold_idx = self.dataset._get_fold()
+            print(f"Validation on fold: {fold_idx}")
+            self.setup_trainer()
             self.__fit()
             if self.trainer._state == TrainerState.INTERRUPTED: break
 
