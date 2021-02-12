@@ -17,15 +17,16 @@ class Agent:
         
         # ****** Setup seed *******
         #np.random.seed(self.config['agent']['seed'])
-
-        # ****** Setup model ******
-        self.model = create_model(self.config['model_params'])
         
         # ****** Setup dataloader ******
-        self.dataset = create_dataset(self.config['dataset_params'])
+        self.dataset = create_dataset(**self.config['dataset_params'])
         
-        # ****** Setup trainer ******
+        # ****** Setup model ******
+        self.model = create_model(**self.config['model_params'], class_weights=self.dataset._get_class_weights())
         
+        
+        
+    def setup_trainer(self):
         self.trainer = pl.Trainer(
             max_epochs=self.config['model_params']['max_epochs'], 
             profiler=None, 
@@ -39,6 +40,7 @@ class Agent:
             auto_lr_find=True,
             
         )
+        
     def logger(self):
         return pl.loggers.TensorBoardLogger(self.config['logs']['tensorboard'], name=self.config['model_params']['model_name'])
      
@@ -55,12 +57,14 @@ class Agent:
         return -1 if torch.cuda.is_available() else None
     
     def fit(self, cv=False) -> None:
+        self.setup_trainer()
         if self.config['agent']['kfold']:
             self.__fit_cv()
         else:
-            self.__fit_no_cv()
+            self.__fit()
     
-    def __fit_no_cv(self) -> None:
+    def __fit(self):
+        self.setup_trainer()
         self.trainer.fit(
             self.model, 
             datamodule=self.dataset
@@ -72,11 +76,7 @@ class Agent:
         while self.dataset._has_folds():
             # call fit
             print(f"Validation on fold: {self.dataset._get_fold()}")
-        
-            self.trainer.fit(
-                self.model, 
-                datamodule=self.dataset
-            )
+            self.__fit()
             if self.trainer._state == TrainerState.INTERRUPTED: break
 
             # store metrics
