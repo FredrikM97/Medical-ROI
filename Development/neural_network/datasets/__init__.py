@@ -26,7 +26,7 @@ def find_dataset_using_name(dataset_name):
 
     return dataset
 
-def create_dataset(configuration:dict):
+def create_dataset(**configuration:dict):
     """Create a dataset given the configuration (loaded from the json file).
     This function wraps the class CustomDatasetDataLoader.
         This is the main interface between this package and train.py/validate.py
