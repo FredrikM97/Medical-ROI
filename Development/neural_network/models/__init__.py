@@ -34,7 +34,7 @@ def find_model_using_name(model_name):
 
     return model
 
-def create_model(configuration:dict):
+def create_model(**configuration:dict):
     """Create a model given the configuration.
     This is the main interface between this package and train.py/validate.py
     """
