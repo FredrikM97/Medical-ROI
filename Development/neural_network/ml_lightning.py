@@ -46,12 +46,13 @@ class Agent:
      
     def callbacks(self) -> list:
         lit_progress = LitProgressBar()
+        activation_map = ActivationMap(self.model)
         checkpoint_callback = ModelCheckpoint(
             save_top_k=0, # disable?
             filename=self.config['logs']['checkpoint']+'{epoch}-{val_loss:.2f}',
             mode='min', 
         )
-        return [lit_progress, checkpoint_callback]
+        return [lit_progress, checkpoint_callback, activation_map]
     
     def get_gpu(self):
         return -1 if torch.cuda.is_available() else None
@@ -119,3 +120,73 @@ class LitProgressBar(progress.ProgressBarBase):
         if 'v_num' in tqdm_dict:
             del tqdm_dict['v_num']
         return tqdm_dict
+    
+class ActivationMapHook():
+    
+    def __init__(self, module, name):
+        self.module = module
+        self.name = name
+        self.hook = None
+        self.features = None
+        
+    def register(self):
+        self.hook = self.module.register_forward_hook(self.callback)
+        
+    def unregister(self):
+        self.hook.remove()
+        
+    def callback(self, module, input, output):
+        self.features = output.cpu().data.numpy()
+    
+class ActivationMap(Callback):
+    
+    def __init__(self, model):
+        self.hooks = []
+        for name, module in model.named_modules():
+            if type(module) == torch.nn.modules.conv.Conv3d:
+                self.hooks.append(ActivationMapHook(module, name))
+    
+    def on_epoch_start(self, trainer, pl_module):
+        for hook in self.hooks:
+            hook.register()
+            
+        for i, sample in enumerate(pl_module.val_dataloader()):   # Stepping through dataloader might mess up validation elsewhere ?
+            trainer.model(sample[0][0, np.newaxis, :, :, :, :].cuda())
+            break
+            
+        for hook in self.hooks:
+            
+            hard_filter_limit = 100
+            filters_to_use = min(hook.features.shape[1], hard_filter_limit)
+            
+            width = 10
+            height = int(np.ceil(filters_to_use / width))
+            size = 1
+            slice_index = int(hook.features.shape[4] / 2)
+            min_value = hook.features[0].min()
+            max_value = hook.features[0].max()
+            
+            fig, axs = plt.subplots(height, width, figsize = (width * size, height * size))
+            plt.subplots_adjust(wspace = 0, hspace = 0)
+            fig.suptitle(hook.name + ' (Showing ' + str(filters_to_use) + '/' + str(hook.features.shape[1]) + ' filters)' + ' (slice [:, : ' + str(slice_index) + '])' + ' (size [' + str(hook.features.shape[2]) + ', ' + str(hook.features.shape[3]) + '])' )
+            
+            for i in range(width * height):
+                ax = axs[int(i / width), i % width]
+                if i < filters_to_use:
+                    colorplot = ax.imshow(hook.features[0][i][:, :, slice_index], vmin = min_value, vmax = max_value, cmap = 'viridis')
+                    ax.set_xticks([])
+                    ax.set_yticks([])
+                else:
+                    ax.set_visible(False)
+                    
+            fig.subplots_adjust(right = 0.8)
+            cbar_ax = fig.add_axes([0.85, 0.15, 0.05, 0.7])
+            fig.colorbar(colorplot, cax = cbar_ax)
+                    
+            #fig.show()
+            
+            # https://www.tensorflow.org/tensorboard/image_summaries
+            # Save to buffer, write to tb
+            
+        for hook in self.hooks:
+            hook.unregister()
