@@ -13,9 +13,9 @@ import matplotlib.pyplot as plt
 class LightningModel(pl.LightningModule): 
     def __init__(self, **hparams):
         super().__init__() 
+        self.save_hyperparameters()
         
-        
-        self.model = create_architecture(architecture=hparams['architecture'],input_channels=1, num_classes=3)
+        self.model = create_architecture(architecture=self.hparams.architecture,input_channels=1, num_classes=3)
         
         self.save_hyperparameters()
         
