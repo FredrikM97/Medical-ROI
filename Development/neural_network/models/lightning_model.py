@@ -15,9 +15,11 @@ class LightningModel(pl.LightningModule):
         super().__init__() 
         
         
-        self.model = create_architecture(architecture=hparams['architecture'],input_channels=1, num_classes=3)#testModel(input_channels=1, num_classes=3)
+        self.model = create_architecture(architecture=hparams['architecture'],input_channels=1, num_classes=3)
         
         self.save_hyperparameters()
+        
+        self.loss_class_weights = self.hparams.class_weights if self.hparams.loss_weight_balance else None
         
         # These have internal memory
         self.train_metric = Accuracy(compute_on_step=False)
@@ -66,7 +68,7 @@ class LightningModel(pl.LightningModule):
         return optimizer
     
     def loss_fn(self,out,target):
-        return nn.CrossEntropyLoss()(out,target)
+        return nn.CrossEntropyLoss(weight=self.loss_class_weights)(out,target)
 
     def custom_histogram_adder(self):
         # iterating through all parameters
@@ -83,15 +85,12 @@ class LightningModel(pl.LightningModule):
                                             self.current_epoch)
     def _log_cm(self):
         fig=plt.figure();
-        #plt.ylabel('True label')
-        #plt.xlabel('Predicted label')
         cm = self.train_cm.compute()
         ax = sns.heatmap(cm.cpu(), annot=True, annot_kws={"size": 12})
         ax.set_xlabel("Predicted label")
         ax.set_ylabel("True label")
         self.logger.experiment.add_figure("confmat/train", fig,self.current_epoch)
-        #print("show confusion matrix",cm)
-        
+
 def avg_metric(outputs, metric):
     return torch.stack([x[metric] for x in outputs]).mean()
 
