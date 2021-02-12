@@ -38,7 +38,7 @@ class AdniPaths:
     root:str
     meta:str='meta/'
     raw:str='adni_raw/'
-    processed:str='SPM_preprocessed_normalized/'
+    processed:str='SPM_preprocessed_normalized/ADNI1/'
     disorders:Disorders=None
         
     def __post_init__(self): 
