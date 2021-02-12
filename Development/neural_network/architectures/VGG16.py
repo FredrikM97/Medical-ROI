@@ -6,7 +6,7 @@ import torch.nn.functional as F
 class VGG16(nn.Module):
     def __init__(self,input_channels=1, num_classes=3, **kwargs):
         super().__init__()
-        self.convDropout = nn.Dropout3d(p=0.2)  
+        self.convDropout = nn.Dropout3d(p=0.4)  
         
         self.conv1 = nn.Conv3d(input_channels, 64, 3, padding = 1)
         self.conv2 = nn.Conv3d(64, 64, 3, padding = 1)
