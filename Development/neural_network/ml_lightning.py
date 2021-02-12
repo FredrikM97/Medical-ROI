@@ -2,9 +2,9 @@ from configs import load_config
 from models import create_model
 from datasets import create_dataset
 from pytorch_lightning.trainer.states import TrainerState
-from pytorch_lightning.callbacks import ModelCheckpoint, progress
+from pytorch_lightning.callbacks import ModelCheckpoint, progress, Callback
 import pytorch_lightning as pl
-
+import matplotlib.pyplot as plt
 import sys
 import torch
 import numpy as np
@@ -146,7 +146,7 @@ class ActivationMap(Callback):
             if type(module) == torch.nn.modules.conv.Conv3d:
                 self.hooks.append(ActivationMapHook(module, name))
     
-    def on_epoch_start(self, trainer, pl_module):
+    def on_epoch_end(self, trainer, pl_module):
         for hook in self.hooks:
             hook.register()
             
@@ -182,7 +182,8 @@ class ActivationMap(Callback):
             fig.subplots_adjust(right = 0.8)
             cbar_ax = fig.add_axes([0.85, 0.15, 0.05, 0.7])
             fig.colorbar(colorplot, cax = cbar_ax)
-                    
+            
+            trainer.logger.experiment.add_figure("featuremap",fig,trainer.current_epoch)
             #fig.show()
             
             # https://www.tensorflow.org/tensorboard/image_summaries
