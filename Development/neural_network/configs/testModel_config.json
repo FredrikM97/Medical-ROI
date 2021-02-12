@@ -1,5 +1,5 @@
 {
-    "vgg16":{
+    "testModel":{
         "dataset_params":{
             "dataset_name": "lightning",
             "dataset_path": "../data/SPM_categorised/ADNI1",
