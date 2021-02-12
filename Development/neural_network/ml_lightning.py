@@ -146,7 +146,7 @@ class ActivationMap(Callback):
             if type(module) == torch.nn.modules.conv.Conv3d:
                 self.hooks.append(ActivationMapHook(module, name))
     
-    def on_epoch_start(self, trainer, pl_module):
+    def on_epoch_end(self, trainer, pl_module):
         for hook in self.hooks:
             hook.register()
             
