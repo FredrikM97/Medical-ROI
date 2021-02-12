@@ -9,6 +9,7 @@ from sklearn.model_selection import KFold
 #https://forums.pytorchlightning.ai/t/kfold-vs-monte-carlo-cross-validation/587
 import itertools
 import numpy as np
+import sklearn
 
 class LightningDataset(pl.LightningDataModule): 
     
@@ -41,7 +42,17 @@ class LightningDataset(pl.LightningDataModule):
         assert self._has_folds(), "Cant find more folds!"
         self.get_current_fold += 1
         self.train_set, self.val_set = next(self.kfold_splits)
-         
+        
+    def _get_class_weights(self):
+        labels = label_encoder(
+            [img_path.rsplit("/",1)[1].split("#",1)[0] for img_path in self.img_files]
+        )
+        
+        unique_classes = np.unique(labels)
+
+        # Compute weights
+        return torch.from_numpy(sklearn.utils.class_weight.compute_class_weight('balanced', classes=unique_classes, y=labels.numpy())).float().cuda()
+    
     def train_dataloader(self):
         #assert len(self.train_set) % self._hparams['train_params']['batch_size'] != 1, "A batch of size 1 is not allowed!"
 
