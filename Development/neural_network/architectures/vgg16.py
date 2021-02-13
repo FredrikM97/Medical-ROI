@@ -5,8 +5,7 @@ import torch.nn.functional as F
 
 class VGG16(nn.Module):
     def __init__(self,input_channels=1, num_classes=3, **kwargs):
-        super().__init__()
-        self.convDropout = nn.Dropout3d(p=0.4)  
+        super().__init__()  
         
         self.conv1 = nn.Conv3d(input_channels, 64, 3, padding = 1)
         self.conv2 = nn.Conv3d(64, 64, 3, padding = 1)
@@ -35,28 +34,22 @@ class VGG16(nn.Module):
         x = F.leaky_relu(x)
         x = self.conv2(x)
         x = F.leaky_relu(x)
-        x = self.convDropout(x)
         x = F.max_pool3d(x, 2)
         #BN?
         
         x = self.conv3(x)
         x = F.leaky_relu(x)
-        x = self.convDropout(x)
         x = self.conv4(x)
         x = F.leaky_relu(x)
-        x = self.convDropout(x)
         x = F.max_pool3d(x, 2)
         #BN?
         
         x = self.conv5(x)
         x = F.leaky_relu(x)
-        x = self.convDropout(x)
         x = self.conv6(x)
         x = F.leaky_relu(x)
-        x = self.convDropout(x)
         x = self.conv7(x)
         x = F.leaky_relu(x)
-        x = self.convDropout(x)
         x = F.max_pool3d(x, 2)
         #BN?
         
@@ -89,7 +82,7 @@ class VGG16(nn.Module):
         x = F.dropout(x, 0.5)
         
         x = self.fc3(x)
-        x = F.softmax(x, 1)
+        #x = F.softmax(x, 1)
         
         return x
     
