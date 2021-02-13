@@ -22,11 +22,10 @@ class LightningDataset(pl.LightningDataModule):
         self._setup_kfold()
     
     def _setup_kfold(self): 
-        np.random.shuffle(self.img_files)
         dataset = NiiDataset(self.img_files)
         
         self.get_current_fold = 0
-        self.kfold_splits = kfold(dataset, n_splits=self._hparams['fold_splits'])
+        self.kfold_splits = kfold(dataset, n_splits=self._hparams['fold_splits'], shuffle=True)
         self._next_fold()
         
     def _get_subset(self):
@@ -92,8 +91,8 @@ class NiiDataset(Dataset):
         # return the size of the dataset
         return len(self.data)
 
-def kfold(dataset, n_splits=5):
-    idxs = KFold(n_splits).split(np.arange(len(dataset)))
+def kfold(dataset, n_splits=5, shuffle=False):
+    idxs = KFold(n_splits, shuffle=shuffle).split(np.arange(len(dataset)))
     for train_idxs, val_idxs in idxs:
         yield torch.utils.data.Subset(dataset, train_idxs), torch.utils.data.Subset(dataset, val_idxs)
         
