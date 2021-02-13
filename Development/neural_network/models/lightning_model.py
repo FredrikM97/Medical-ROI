@@ -37,7 +37,7 @@ class LightningModel(pl.LightningModule):
         
         self.train_metric(pred,target)
         self.train_cm(pred,target)
-        return {'loss':loss}
+        return {'loss':loss, 'predicted':pred, 'target':target}
   
     def validation_step(self, batch: dict, batch_idx: int) -> dict:
         x, target = batch
@@ -45,7 +45,7 @@ class LightningModel(pl.LightningModule):
         loss = self.loss_fn(pred, target) 
         
         self.val_metric(pred,target)
-        return {'loss':loss}
+        return {'loss':loss, 'predicted':pred, 'target':target}
     
     def training_epoch_end(self, outputs):
         # logging histograms
@@ -53,7 +53,7 @@ class LightningModel(pl.LightningModule):
         
         loss = avg_metric(outputs, 'loss')
         acc = self.train_metric.compute()
-        self._log_cm()
+        #self._log_cm()
         self._log_scalar('train', loss, acc)
     
     def validation_epoch_end(self, outputs):
@@ -83,13 +83,6 @@ class LightningModel(pl.LightningModule):
         self.logger.experiment.add_scalar(f"accuracy/"+prefix,
                                             acc,
                                             self.current_epoch)
-    def _log_cm(self):
-        fig=plt.figure();
-        cm = self.train_cm.compute()
-        ax = sns.heatmap(cm.cpu(), annot=True, annot_kws={"size": 12})
-        ax.set_xlabel("Predicted label")
-        ax.set_ylabel("True label")
-        self.logger.experiment.add_figure("confmat/train", fig,self.current_epoch)
 
 def avg_metric(outputs, metric):
     return torch.stack([x[metric] for x in outputs]).mean()

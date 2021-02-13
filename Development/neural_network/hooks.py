@@ -13,4 +13,4 @@ class ActivationMapHook():
         self.hook.remove()
         
     def callback(self, module, input, output):
-        self.features = output.cpu().data.numpy()
+        self.features = output.detach().cpu().data.numpy()
