@@ -4,6 +4,7 @@ from pytorch_lightning.callbacks import Callback
 import torch
 import numpy as np
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 class ActivationMap(Callback):
     
@@ -14,6 +15,7 @@ class ActivationMap(Callback):
                 self.hooks.append(ActivationMapHook(module, name))
     
     def on_epoch_end(self, trainer, pl_module):
+        
         set_to_train = False
         if trainer.model.training:
             set_to_train = True
@@ -67,3 +69,15 @@ class ActivationMap(Callback):
             
         if set_to_train:
             trainer.model.train()
+        
+            
+class ConfusionMatrix(Callback):
+    # TODO: Add so model store predicted and target. Then we can reuse that instead of external stuff..
+    def on_epoch_end(self, trainer, pl_module):
+     
+        fig=plt.figure();
+        cm = trainer.model.train_cm.compute()
+        ax = sns.heatmap(cm.detach().cpu().numpy(), annot=True, annot_kws={"size": 12})
+        ax.set_xlabel("Predicted label")
+        ax.set_ylabel("True label")
+        trainer.logger.experiment.add_figure("confmat/train", fig,trainer.current_epoch)
