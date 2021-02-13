@@ -12,29 +12,34 @@ class VGG16BN(nn.Module):
             *self._conv_layer(64,64),
             ),
             nn.MaxPool3d(2),
+            nn.BatchNorm3d(64),
             nn.Sequential(
                 *self._conv_layer(64,128),
                 *self._conv_layer(128,128),  
             ),
             nn.MaxPool3d(2),
+            nn.BatchNorm3d(128),
             nn.Sequential(
                 *self._conv_layer(128,256),
                 *self._conv_layer(256,256),
                 *self._conv_layer(256,256),
             ),
-            nn.MaxPool3d(2)
+            nn.MaxPool3d(2),
+            nn.BatchNorm3d(256),
             nn.Sequential(
                 *self._conv_layer(256,512),
                 *self._conv_layer(512,512),
                 *self._conv_layer(512,512),
             ),
             nn.MaxPool3d(2),
+            nn.BatchNorm3d(512),
             nn.Sequential(
                 *self._conv_layer(512,512),
                 *self._conv_layer(512,512),
                 *self._conv_layer(512,512), 
             ),
-            nn.MaxPool3d(2),  
+            nn.MaxPool3d(2),
+            nn.BatchNorm3d(512),
         )
         
 
@@ -74,6 +79,5 @@ class VGG16BN(nn.Module):
     def _conv_layer(self, input, output, kernel=3):
         return nn.ModuleList([
             Conv3dAuto(input, output, kernel),
-            nn.BatchNorm3d(output),
             nn.LeakyReLU(),
         ])
