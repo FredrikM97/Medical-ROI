@@ -14,3 +14,4 @@ class ActivationMapHook():
         
     def callback(self, module, input, output):
         self.features = output.detach().cpu().data.numpy()
+        #self.features = output.cpu().data.numpy()
