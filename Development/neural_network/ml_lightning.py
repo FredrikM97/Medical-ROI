@@ -1,7 +1,7 @@
 from configs import load_config
 from models import create_model
 from datasets import create_dataset
-from callbacks import ActivationMap
+from callbacks import ActivationMap, ConfusionMatrix
 from progress import LitProgressBar
 
 from pytorch_lightning.trainer.states import TrainerState
@@ -31,15 +31,16 @@ class Agent:
     def setup_trainer(self):
         self.trainer = pl.Trainer(
             max_epochs=self.config['model_params']['max_epochs'], 
-            profiler=None, 
-            reload_dataloaders_every_epoch=self.config['reload_dataloaders_every_epoch'],
+            profiler=self.config['trainer_profiler'], 
+            reload_dataloaders_every_epoch=self.config['trainer_reload_dataloaders_every_epoch'],
             gpus=self.get_gpu(), 
             logger=self.logger(),
             callbacks=self.callbacks(),
-            progress_bar_refresh_rate=self.config['progress_bar_refresh_rate'],
-            num_sanity_val_steps=self.config['num_sanity_val_steps'],
+            progress_bar_refresh_rate=self.config['trainer_progress_bar_refresh_rate'],
+            num_sanity_val_steps=self.config['trainer_num_sanity_val_steps'],
             benchmark=True,
             auto_lr_find=True,
+            precision=self.config['trainer_precision']
             
         )
         
@@ -54,7 +55,7 @@ class Agent:
             filename=self.config['logs']['checkpoint']+'{epoch}-{val_loss:.2f}',
             mode='min', 
         )
-        return [lit_progress, checkpoint_callback, activation_map]
+        return [lit_progress, checkpoint_callback, activation_map,ConfusionMatrix()]
     
     def get_gpu(self):
         return -1 if torch.cuda.is_available() else None
