@@ -42,9 +42,11 @@
             "checkpoint": "../logs/checkpoints/",
             "tensorboard":"../logs/tb_logs/"
         },      
-        "gpus":1,
-        "num_sanity_val_steps":2,
-        "reload_dataloaders_every_epoch":false,
-        "progress_bar_refresh_rate":50
+        "trainer_gpus":1,
+        "trainer_num_sanity_val_steps":2,
+        "trainer_reload_dataloaders_every_epoch":false,
+        "trainer_progress_bar_refresh_rate":50,
+        "trainer_precision":16,
+        "trainer_profiler":true
     }
 }
