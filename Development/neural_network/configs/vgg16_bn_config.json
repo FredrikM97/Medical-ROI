@@ -2,7 +2,7 @@
     "vgg16_bn":{
         "dataset_params":{
             "dataset_name": "lightning",
-            "dataset_path": "../data/SPM_categorised/ADNI1",
+            "dataset_path": "../data/SPM_categorised/AIH",
             "fold_splits":10,
             "train_params": {
                 "batch_size": 6,
@@ -33,7 +33,7 @@
         },
         "agent":{
             "seed":420,
-            "kfold":true
+            "kfold":false
         },
         "visualization_params": {
             "name": "3d ligtning"
