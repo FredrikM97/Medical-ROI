@@ -1,5 +1,5 @@
 from utils.hooks import ActivationMapHook, SaveFeaturesHook
-from utils import meanMetric
+from utils import meanMetric, ROC
 import pytorch_lightning as pl
 import torch
 import numpy as np
@@ -84,24 +84,50 @@ class MetricCallback(pl.callbacks.Callback):
     # TODO: Add so model store predicted and target. Then we can reuse that instead of external stuff..
     def __init__(self, num_classes=3):
         self.num_classes = 3
+        self.train_loss = meanMetric(compute_on_step=False).cuda()
+        
         self.val_cm = pl.metrics.ConfusionMatrix(num_classes, compute_on_step=False).cuda()
         self.val_accuracy = pl.metrics.Accuracy(compute_on_step=False).cuda()
         self.val_loss = meanMetric(compute_on_step=False).cuda()
+        self.val_roc = pl.metrics.ROC(num_classes=num_classes, compute_on_step=False).cuda()
         
+    def on_train_batch_end(self,trainer, pl_module, outputs, batch, batch_idx, dataloader_idx):  
+        self.train_loss(outputs[0][0]['minimize'].detach())# This is loss?
+    
     def on_validation_batch_end(self,trainer, pl_module, outputs, batch, batch_idx, dataloader_idx):
-        self.val_cm(outputs['predicted'], outputs['target'])
-        self.val_accuracy(outputs['predicted'], outputs['target'])
-        self.val_loss(outputs['loss'])
+        pred = outputs['predicted/val'].detach()
+        targ = outputs['target/val'].detach()
+        loss = outputs['loss/val'].detach()
+        prob = outputs['probability/val'].detach()
+        self.val_cm(pred, targ)
+        self.val_accuracy(pred, targ)
+        self.val_loss(loss)
+        self.val_roc(prob, targ)
+        #print("asdads", outputs['probability/val'], outputs['target/val'])
         
-    def on_validation_epoch_end(self, trainer, pl_module):
+    def on_epoch_end(self, trainer, pl_module):
+        train_loss = self.train_loss.compute()
+        self.add_scalar(trainer, train_loss, metric_prefix='loss',prefix='train')
+ 
         self.custom_histogram_adder(trainer)
-        cm = self.val_cm.compute()
-        acc = self.val_accuracy.compute()
-        loss = self.val_loss.compute()
-        self.cm_plot(trainer, cm, prefix='val')
-        self.add_scalar(trainer, acc, metric_prefix='accuracy',prefix='val')
-        self.add_scalar(trainer, acc, metric_prefix='loss',prefix='val')
+        val_cm = self.val_cm.compute()
+        val_acc = self.val_accuracy.compute()
+        val_loss = self.val_loss.compute()
+        val_roc = self.val_roc.compute()
         
+        self.cm_plot(trainer, val_cm, prefix='val')
+        ROC(trainer, val_roc, prefix='val')
+        self.add_scalar(trainer, val_acc, metric_prefix='accuracy',prefix='val')
+        self.add_scalar(trainer, val_loss, metric_prefix='loss',prefix='val')
+        
+        # Do this last since it seem to be very buggy but useful. Note: we add hparam so it does not try to overwrite existing data
+        trainer.logger.log_hyperparams(
+            dict(pl_module.hparams), {
+            f'hparam/loss/train':train_loss,
+            f'hparam/loss/val':val_loss,
+            f'hparam/accuracy/val':val_acc,
+        })
+  
     def cm_plot(self, trainer, cm, prefix=''):
      
         fig=plt.figure();
@@ -115,7 +141,7 @@ class MetricCallback(pl.callbacks.Callback):
         trainer.logger.experiment.add_scalar(f"{metric_prefix}/{prefix}",
                                             metric,
                                             trainer.current_epoch)
-
+        
     def custom_histogram_adder(self, trainer):
         # iterating through all parameters
         for name,params in trainer.model.named_parameters():
