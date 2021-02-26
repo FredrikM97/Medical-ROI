@@ -39,7 +39,7 @@ class LightningModel(pl.LightningModule):
         _, predicted = torch.max(logits, 1)
         probability = F.softmax(logits,dim=0)
         
-        return {'loss/val':loss.detach(), 'predicted/val':predicted.detach(), 'target/val':target.detach(), "probability/val":probability.detach()}
+        return {'loss/val':loss, 'predicted/val':predicted, 'target/val':target, "probability/val":probability}
 
     def configure_optimizers(self):
         # Note: dont use list if only one item.. Causes silent crashes

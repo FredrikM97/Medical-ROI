@@ -131,7 +131,7 @@ class MetricCallback(pl.callbacks.Callback):
     def cm_plot(self, trainer, cm, prefix=''):
      
         fig=plt.figure();
-        ax = sns.heatmap(cm.detach().cpu().numpy(), annot=True, annot_kws={"size": 12})
+        ax = sns.heatmap(cm.cpu().numpy(), annot=True, annot_kws={"size": 12})
         ax.set_xlabel("Predicted label")
         ax.set_ylabel("True label")
         trainer.logger.experiment.add_figure(f"confmat/{prefix}", fig,trainer.current_epoch)

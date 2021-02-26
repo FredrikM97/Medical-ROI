@@ -34,13 +34,14 @@ class Agent:
             num_sanity_val_steps=self.config['trainer_num_sanity_val_steps'],
             benchmark=True,
             auto_lr_find=True,
+            #accelerator='ddp',
             precision=self.config['trainer_precision']
             
         )
         
     def logger(self):
         return pl.loggers.TensorBoardLogger(
-            self.config['logs']['tensorboard'], name=self.config['model_params']['model_name'] + "/" + self.config['model_params']['architecture']
+            self.config['logs']['tensorboard'], name=self.config['model_params']['model_name'] + "/" + self.config['model_params']['architecture'], default_hp_metric=False,log_graph=True,
         )
      
     def callbacks(self) -> list:
