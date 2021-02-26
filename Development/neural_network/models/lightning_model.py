@@ -12,12 +12,11 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 class LightningModel(pl.LightningModule): 
-    def __init__(self, **hparams):
+    def __init__(self,architecture=None, class_weights=None,loss_weight_balance=None,**hparams):
         super().__init__() 
         self.save_hyperparameters()
         
         self.model = create_architecture(architecture=self.hparams.architecture,input_channels=1, num_classes=3)
-        
         self.save_hyperparameters()
         
         self.loss_class_weights = self.hparams.class_weights if self.hparams.loss_weight_balance else None
@@ -30,7 +29,7 @@ class LightningModel(pl.LightningModule):
         logits = self.forward(x)
         loss = self.loss_fn(logits, target) 
         
-        return {'loss':loss}
+        return loss
   
     def validation_step(self, batch: dict, batch_idx: int) -> dict:
         x, target = batch
@@ -40,7 +39,7 @@ class LightningModel(pl.LightningModule):
         _, predicted = torch.max(logits, 1)
         probability = F.softmax(logits,dim=0)
         
-        return {'loss':loss, 'predicted':predicted, 'target':target, "probability":probability}
+        return {'loss/val':loss, 'predicted/val':predicted, 'target/val':target, "probability/val":probability}
 
     def configure_optimizers(self):
         # Note: dont use list if only one item.. Causes silent crashes
