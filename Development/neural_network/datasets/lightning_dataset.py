@@ -53,18 +53,11 @@ class LightningDataset(pl.LightningDataModule):
         else:
             self.trainset = self._files
         
-        
-        #self.kfold()
-        #self.get_current_fold = 0
-        #self.kfold_splits = kfold(dataset, n_splits=self._hparams['fold_splits'], shuffle=True)
-        #self._next_fold()
         self.trainset, self.valset = split_data(self.trainset)
 
         print(f"Dataset sizes - Training: {len(self.trainset)} Validation: {len(self.valset)} Test: {len(self.testset)}")
     
     def train_dataloader(self):
-        #assert len(self.train_set) % self._hparams['train_params']['batch_size'] != 1, "A batch of size 1 is not allowed!"
-
         dataloader = DataLoader(NiiDataset(self.trainset, self.classes),
                                 batch_size=self._trainparams['batch_size'],
                                 shuffle=True,
@@ -72,9 +65,6 @@ class LightningDataset(pl.LightningDataModule):
         return dataloader
     
     def val_dataloader(self):
-        #assert len(self.val_set) % self._hparams['train_params']['batch_size'] != 1, "A batch of size 1 is not allowed!"
-        #dataset = NiiDataset(train=False, data_dir=self.img_files)
-        
         dataloader = DataLoader(NiiDataset(self.valset, self.classes),
                                 batch_size=self._valparams['batch_size'],
                                 shuffle=False,
