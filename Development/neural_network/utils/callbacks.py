@@ -92,13 +92,13 @@ class MetricCallback(pl.callbacks.Callback):
         self.val_roc = pl.metrics.ROC(num_classes=num_classes, compute_on_step=False).cuda()
         
     def on_train_batch_end(self,trainer, pl_module, outputs, batch, batch_idx, dataloader_idx):  
-        self.train_loss(outputs[0][0]['minimize'].detach())# This is loss?
+        self.train_loss(outputs[0][0]['minimize'])# This is loss?
     
     def on_validation_batch_end(self,trainer, pl_module, outputs, batch, batch_idx, dataloader_idx):
-        pred = outputs['predicted/val'].detach()
-        targ = outputs['target/val'].detach()
-        loss = outputs['loss/val'].detach()
-        prob = outputs['probability/val'].detach()
+        pred = outputs['predicted/val']
+        targ = outputs['target/val']
+        loss = outputs['loss/val']
+        prob = outputs['probability/val']
         self.val_cm(pred, targ)
         self.val_accuracy(pred, targ)
         self.val_loss(loss)

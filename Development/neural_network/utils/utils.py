@@ -43,11 +43,13 @@ def ROC(trainer, roc_classes, prefix=''):
 
         #self.logger.experiment.add_text(f"sensitivity/{phase}", str(tpr))
         #self.logger.experiment.add_text(f"specificity/{phase}", str(1-fpr))
-
-        plt.plot(fpr, tpr, color=color, lw=lw,
-                 label='ROC curve of class {0} tpr={1:0.2f} fpr={2:0.2f})'
-                 ''.format(i,tpr.mean(), 1-fpr.mean())) #(area={1:0.2f}
-
+        try:
+            plt.plot(fpr, tpr, color=color, lw=lw,
+                     label='ROC curve of class {0} tpr={1:0.2f} fpr={2:0.2f})'
+                     ''.format(i,tpr.mean(), 1-fpr.mean())) #(area={1:0.2f}
+        except Exception as e:
+            print(e)
+            
     plt.plot([0, 1], [0, 1], 'k--', lw=lw)
     plt.xlim([0.0, 1.0])
     plt.ylim([0.0, 1.05])
