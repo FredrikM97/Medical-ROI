@@ -83,6 +83,7 @@ class MetricCallback(pl.callbacks.Callback):
     
     # TODO: Add so model store predicted and target. Then we can reuse that instead of external stuff..
     def __init__(self, num_classes=3):
+        super().__init__()
         self.num_classes = 3
         self.train_loss = meanMetric(compute_on_step=False).cuda()
         
@@ -90,6 +91,7 @@ class MetricCallback(pl.callbacks.Callback):
         self.val_accuracy = pl.metrics.Accuracy(compute_on_step=False).cuda()
         self.val_loss = meanMetric(compute_on_step=False).cuda()
         self.val_roc = pl.metrics.ROC(num_classes=num_classes, compute_on_step=False).cuda()
+        
         
     def on_train_batch_end(self,trainer, pl_module, outputs, batch, batch_idx, dataloader_idx):  
         self.train_loss(outputs[0][0]['minimize'])# This is loss?
@@ -127,7 +129,13 @@ class MetricCallback(pl.callbacks.Callback):
             f'hparam/loss/val':val_loss,
             f'hparam/accuracy/val':val_acc,
         })
-  
+        
+        # Reset the states.. we dont want to keep it in memory!
+        self.val_cm.reset()
+        self.val_accuracy.reset()
+        self.val_loss.reset()
+        self.val_roc.reset()
+        
     def cm_plot(self, trainer, cm, prefix=''):
      
         fig=plt.figure();

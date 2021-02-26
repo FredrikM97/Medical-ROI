@@ -31,10 +31,13 @@ def ROC(trainer, roc_classes, prefix=''):
     fig = plt.figure(figsize = (10,7))
     lw = 2
     colors = ['aqua', 'darkorange', 'cornflowerblue']
+    fpr, tpr, threshold = roc_classes
     for i,(_,color) in enumerate(zip(roc_classes,colors)):
-        fpr, tpr, threshold = roc_classes[i]
-        tpr = tpr.cpu().numpy()
-        fpr = fpr.cpu().numpy()
+        
+        _fpr = fpr[i]
+        _tpr = tpr[i]
+        _threshold = threshold[i]
+        
         #threshold = threshold#.detach()
         #print("ASdasdasd", fpr, tpr, threshold)
         #
@@ -44,10 +47,13 @@ def ROC(trainer, roc_classes, prefix=''):
         #self.logger.experiment.add_text(f"sensitivity/{phase}", str(tpr))
         #self.logger.experiment.add_text(f"specificity/{phase}", str(1-fpr))
         try:
-            auc = pl.metrics.functional.auc(fpr,tpr).cpu().numpy()
-            plt.plot(fpr, tpr, color=color, lw=lw,
+            auc = pl.metrics.functional.auc(_fpr,_tpr).cpu().numpy()
+            
+            _fpr = _fpr.cpu().numpy()
+            _tpr = _tpr.cpu().numpy()
+            plt.plot(_fpr, _tpr, color=color, lw=lw,
                      label='ROC curve of class {0} (area={1:0.2f} tpr={2:0.2f} fpr={3:0.2f})'
-                     ''.format(i,auc, tpr.mean(), 1-fpr.mean())) #
+                     ''.format(i,auc, _tpr.mean(), 1-_fpr.mean())) #
         except Exception as e:
             print(e)
             
