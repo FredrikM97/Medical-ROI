@@ -2,7 +2,7 @@ import torch
 import pytorch_lightning as pl
 import os
 import matplotlib.pyplot as plt
-
+import numpy as np
 def label_encoder(labels):
     "Convert list of string labels to tensors"
     from sklearn import preprocessing
@@ -26,36 +26,29 @@ class meanMetric(pl.metrics.Metric):
         
     def compute(self):
         return self.val/self.num
+
     
-def ROC(trainer, roc_classes, prefix=''):
+def ROC(roc_classes, prefix=''):
+    # Returns (auc, fpr, tpr), roc_fig
     fig = plt.figure(figsize = (10,7))
     lw = 2
-    colors = ['aqua', 'darkorange', 'cornflowerblue']
+    colors = np.array(['aqua', 'darkorange', 'cornflowerblue'])
     fpr, tpr, threshold = roc_classes
-    for i,(_,color) in enumerate(zip(roc_classes,colors)):
+    
+    metric_list = np.zeros(3)
+    for i in range(len(roc_classes)):
+        auc = to_cpu_numpy(pl.metrics.functional.auc(fpr[i],tpr[i]))
         
-        _fpr = fpr[i]
-        _tpr = tpr[i]
-        _threshold = threshold[i]
+        _fpr = to_cpu_numpy(fpr[i])
+        _tpr = to_cpu_numpy(tpr[i])
         
-        #threshold = threshold#.detach()
-        #print("ASdasdasd", fpr, tpr, threshold)
-        #
-
+        metric_list[0]+=auc
+        metric_list[1]+=_fpr.mean()
+        metric_list[2]+=_tpr.mean()
         
-
-        #self.logger.experiment.add_text(f"sensitivity/{phase}", str(tpr))
-        #self.logger.experiment.add_text(f"specificity/{phase}", str(1-fpr))
-        try:
-            auc = pl.metrics.functional.auc(_fpr,_tpr).cpu().numpy()
-            
-            _fpr = _fpr.cpu().numpy()
-            _tpr = _tpr.cpu().numpy()
-            plt.plot(_fpr, _tpr, color=color, lw=lw,
-                     label='ROC curve of class {0} (area={1:0.2f} tpr={2:0.2f} fpr={3:0.2f})'
-                     ''.format(i,auc, _tpr.mean(), 1-_fpr.mean())) #
-        except Exception as e:
-            print(e)
+        plt.plot(_fpr, _tpr, color=colors[i], lw=lw,
+                 label='ROC curve of class {0} (area={1:0.2f} tpr={2:0.2f} fpr={3:0.2f})'
+                 ''.format(i,auc, _tpr.mean(), 1-_fpr.mean())) #
             
     plt.plot([0, 1], [0, 1], 'k--', lw=lw)
     plt.xlim([0.0, 1.0])
@@ -65,5 +58,11 @@ def ROC(trainer, roc_classes, prefix=''):
     plt.title('Receiver operating characteristic to multi-class')
     plt.legend(loc="lower right")
     plt.close()
-
-    trainer.logger.experiment.add_figure(f"ROC/{prefix}", fig, trainer.current_epoch)
+    
+    metric_list = metric_list/3
+    
+    return metric_list, fig
+    
+def to_cpu_numpy(data):
+    # Send to CPU. If computational graph is connected then detach it as well.
+    return data.detach().cpu().numpy() if data.requires_grad else data.cpu().numpy()
