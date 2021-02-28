@@ -22,7 +22,7 @@
             "model_name": "lightning",
             "architecture":"vgg16_bn",
             "is_train": true,
-            "max_epochs": 2000,
+            "max_epochs": 10,
             "lr": 0.0002,
             "load_checkpoint": -1,
             "lr_policy": "step",
@@ -40,7 +40,15 @@
         },
         "logs":{
             "checkpoint": "../logs/checkpoints/",
-            "tensorboard":"../logs/tb_logs/"
+            "tensorboard":"../logs/tb_logs/",
+            "hp_metrics":[
+                "loss/val",
+                "loss/train",
+                "accuracy/val",
+                "auc/val",
+                "specificity/val",
+                "sensitivity/val"
+            ]
         },      
         "trainer_gpus":1,
         "trainer_num_sanity_val_steps":2,
