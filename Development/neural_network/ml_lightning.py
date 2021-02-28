@@ -1,15 +1,13 @@
 from configs import load_config
 from models import create_model
 from datasets import create_dataset
-from utils.callbacks import ActivationMap, MetricCallback, CAM
+from callbacks import ActivationMapCallback, MetricCallback, CAMCallback
 from utils.progress import LitProgressBar
 
 from pytorch_lightning.trainer.states import TrainerState
 from pytorch_lightning.callbacks import ModelCheckpoint
 import pytorch_lightning as pl
 
-import torch
-from pytorch_model_summary import summary
 
 class Agent:
     def __init__(self, config_name:str, export:bool=True):
@@ -18,7 +16,7 @@ class Agent:
 
         self.dataset = create_dataset(**self.config['dataset_params'])
         
-        self.model = create_model(**self.config['model_params'], class_weights=self.dataset.weights)#._get_class_weights())
+        self.model = create_model(**self.config['model_params'], class_weights=self.dataset.weights, hp_metrics=self.config['logs']['hp_metrics'])#._get_class_weights())
         self.setup_trainer()
         
         
@@ -33,30 +31,29 @@ class Agent:
             progress_bar_refresh_rate=self.config['trainer_progress_bar_refresh_rate'],
             num_sanity_val_steps=self.config['trainer_num_sanity_val_steps'],
             benchmark=True,
-            auto_lr_find=True,
-            #accelerator='ddp',
+            #auto_lr_find=True,
+            accelerator='ddp',
             precision=self.config['trainer_precision']
             
         )
         
     def logger(self):
         return pl.loggers.TensorBoardLogger(
-            self.config['logs']['tensorboard'], name=self.config['model_params']['model_name'] + "/" + self.config['model_params']['architecture'], default_hp_metric=False,log_graph=True,
+            self.config['logs']['tensorboard'], name=self.config['model_params']['model_name'] + "/" + self.config['model_params']['architecture'], default_hp_metric=False,log_graph=False,
         )
      
     def callbacks(self) -> list:
         lit_progress = LitProgressBar()
-        activation_map = ActivationMap(self.model)
+        activation_map = ActivationMapCallback(self.model)
         checkpoint_callback = ModelCheckpoint(
-            save_top_k=0, # disable?
-            filename=self.config['logs']['checkpoint']+'{epoch}-{val_loss:.2f}',
-            mode='min', 
+            filename=self.config['logs']['checkpoint']+'{epoch}',
+            #save_top_k=1, # disable?
         )
         return [lit_progress, checkpoint_callback, activation_map,MetricCallback()]
     
     @property
     def gpus(self):
-        return -1 if torch.cuda.is_available() else None
+        return -1# if torch.cuda.is_available() else None
     
     def fit(self, cv=False) -> None:
         if self.config['agent']['kfold']:
@@ -84,10 +81,4 @@ class Agent:
             # store metrics
             # get next fold
             self.dataset._next_fold()
-     
-    def model_summary(self):
-        summary(self.model.model)
-        
-
-
     
