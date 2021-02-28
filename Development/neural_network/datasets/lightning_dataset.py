@@ -17,7 +17,7 @@ class LightningDataset(pl.LightningDataModule):
     
     def __init__(self,dataset_path=None,enable_testset=False,input_shuffle=True, input_seed=0, test_size=0.1,train_params={},val_params={},**hparams:dict):
         super().__init__()
-        self.trainset,self.testset,self.valset = ([],[],[])
+        self.trainset,self.testset,self.valset = (np.array([]),np.array([]),np.array([]))
         
         self._datadir = dataset_path
         
@@ -26,7 +26,7 @@ class LightningDataset(pl.LightningDataModule):
         
         self._enable_testset=enable_testset
         self._input_shuffle = input_shuffle
-        self._files = get_nii_files(dataset_path)
+        self._files = np.array(get_nii_files(dataset_path))
         self._input_seed = input_seed
         self._test_size = test_size
         
@@ -55,7 +55,7 @@ class LightningDataset(pl.LightningDataModule):
         
         self.trainset, self.valset = split_data(self.trainset)
 
-        print(f"Dataset sizes - Training: {len(self.trainset)} Validation: {len(self.valset)} Test: {len(self.testset)}")
+        #print(f"Dataset sizes - Training: {len(self.trainset)} Validation: {len(self.valset)} Test: {len(self.testset)}")
     
     def train_dataloader(self):
         dataloader = DataLoader(NiiDataset(self.trainset, self.classes),

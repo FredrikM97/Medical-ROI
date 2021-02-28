@@ -12,14 +12,22 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 class LightningModel(pl.LightningModule): 
-    def __init__(self,architecture=None, class_weights=None,loss_weight_balance=None,**hparams):
+    def __init__(self,architecture=None, class_weights=None,loss_weight_balance=None, hp_metrics:list=None,**hparams):
         super().__init__() 
         self.save_hyperparameters()
-        
-        self.model = create_architecture(architecture=self.hparams.architecture,input_channels=1, num_classes=3)
+        #self.example_input_array = torch.rand(64, 1, 79, 69, 79)
+        self.model = create_architecture(architecture=architecture,input_channels=1, num_classes=3)
+        self.hp_metrics = hp_metrics
         self.save_hyperparameters()
         
-        self.loss_class_weights = self.hparams.class_weights if self.hparams.loss_weight_balance else None
+        self.loss_class_weights = class_weights if loss_weight_balance else None
+        
+    def on_train_start(self):
+        self.logger.log_hyperparams(
+            self.hparams, {
+                metric:0 for metric in self.hp_metrics
+            }
+        )
         
     def forward(self, x):
         return self.model(x)
@@ -30,7 +38,7 @@ class LightningModel(pl.LightningModule):
         loss = self.loss_fn(logits, target) 
         
         return loss
-  
+    
     def validation_step(self, batch: dict, batch_idx: int) -> dict:
         x, target = batch
         logits = self.forward(x)
@@ -40,7 +48,11 @@ class LightningModel(pl.LightningModule):
         probability = F.softmax(logits,dim=0)
         
         return {'loss/val':loss, 'predicted/val':predicted, 'target/val':target, "probability/val":probability}
-
+    
+    def training_epoch_end(self, outputs):
+        #Just here to fix a bug..
+        pass
+    
     def configure_optimizers(self):
         # Note: dont use list if only one item.. Causes silent crashes
         optimizer = torch.optim.Adam(self.model.parameters(), lr=self.hparams.lr, weight_decay=self.hparams.opt_weight_decay, amsgrad=self.hparams.opt_amsgrad)
@@ -48,3 +60,4 @@ class LightningModel(pl.LightningModule):
     
     def loss_fn(self,out,target):
         return nn.CrossEntropyLoss(weight=self.loss_class_weights)(out,target)
+    
