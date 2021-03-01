@@ -8,7 +8,6 @@ from pytorch_lightning.trainer.states import TrainerState
 from pytorch_lightning.callbacks import ModelCheckpoint
 import pytorch_lightning as pl
 
-
 class Agent:
     def __init__(self, config_name:str, export:bool=True):
         print('Setup configurations...')
@@ -44,12 +43,12 @@ class Agent:
      
     def callbacks(self) -> list:
         lit_progress = LitProgressBar()
-        activation_map = ActivationMapCallback(self.model)
+        #activation_map = ActivationMapCallback(self.model)
         checkpoint_callback = ModelCheckpoint(
             filename=self.config['logs']['checkpoint']+'{epoch}',
-            #save_top_k=1, # disable?
+            save_top_k=0, # disable?
         )
-        return [lit_progress, checkpoint_callback, activation_map,MetricCallback()]
+        return [lit_progress, checkpoint_callback,MetricCallback()]
     
     @property
     def gpus(self):

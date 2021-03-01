@@ -12,6 +12,7 @@ class ActivationMapCallback(pl.callbacks.Callback):
                 self.hooks.append(ActivationMapHook(module, name))
     
     def on_epoch_end(self, trainer, pl_module):
+        print("Activation map!")
         set_to_train = False
         if trainer.model.training:
             set_to_train = True
@@ -26,7 +27,7 @@ class ActivationMapCallback(pl.callbacks.Callback):
         
         for i, sample in enumerate(pl_module.val_dataloader()):   # Stepping through dataloader might mess up validation elsewhere ?
             # Dont call cuda directly (this is not optimized :( ))
-            trainer.model((sample[0].cuda(), sample[1].cuda()), i) #sample[:,0, np.newaxis, :, :, :, :] .cuda()
+            trainer.model((sample[0][0, np.newaxis, :, :, :, :].cuda(),sample[1][0, np.newaxis].cuda()), i) #trainer.model(sample[0][0, np.newaxis, :, :, :, :].cuda())
             break
  
               
