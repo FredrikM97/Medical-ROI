@@ -29,7 +29,7 @@ class Agent:
             callbacks=self.callbacks(),
             progress_bar_refresh_rate=self.config['trainer_progress_bar_refresh_rate'],
             num_sanity_val_steps=self.config['trainer_num_sanity_val_steps'],
-            benchmark=True,
+            #benchmark=True,
             #auto_lr_find=True,
             accelerator='ddp',
             precision=self.config['trainer_precision']
