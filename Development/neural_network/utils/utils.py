@@ -1,68 +1,123 @@
-import torch
-import pytorch_lightning as pl
 import os
 import matplotlib.pyplot as plt
 import numpy as np
-def label_encoder(labels):
-    "Convert list of string labels to tensors"
-    from sklearn import preprocessing
-    import torch
-    le = preprocessing.LabelEncoder()
-    targets = le.fit_transform(labels)
-                  
-    return torch.as_tensor(targets)
 
 def get_availible_files(path, contains:str=''):
     return [f for f in os.listdir(path) if contains in f]
-
-class meanMetric(pl.metrics.Metric):
-    def __init__(self,compute_on_step=False):
-        super().__init__(compute_on_step=compute_on_step, dist_sync_on_step=False)
-        self.add_state('val',default=torch.tensor(0.), dist_reduce_fx='mean')
-        self.add_state('num',default=torch.tensor(0.), dist_reduce_fx='mean')
-    def update(self, loss):
-        self.val+=loss.mean()
-        self.num +=1
-        
-    def compute(self):
-        return self.val/self.num
-
-    
-def ROC(roc_classes, prefix=''):
-    # Returns (auc, fpr, tpr), roc_fig
-    fig = plt.figure(figsize = (10,7))
-    lw = 2
-    colors = np.array(['aqua', 'darkorange', 'cornflowerblue'])
-    fpr, tpr, threshold = roc_classes
-    
-    metric_list = np.zeros(3)
-    for i in range(len(roc_classes)):
-        auc = to_cpu_numpy(pl.metrics.functional.auc(fpr[i],tpr[i]))
-        
-        _fpr = to_cpu_numpy(fpr[i])
-        _tpr = to_cpu_numpy(tpr[i])
-        
-        metric_list[0]+=auc
-        metric_list[1]+=_fpr.mean()
-        metric_list[2]+=_tpr.mean()
-        
-        plt.plot(_fpr, _tpr, color=colors[i], lw=lw,
-                 label='ROC curve of class {0} (area={1:0.2f} tpr={2:0.2f} fpr={3:0.2f})'
-                 ''.format(i,auc, _tpr.mean(), 1-_fpr.mean())) #
-            
-    plt.plot([0, 1], [0, 1], 'k--', lw=lw)
-    plt.xlim([0.0, 1.0])
-    plt.ylim([0.0, 1.05])
-    plt.xlabel('False Positive Rate')
-    plt.ylabel('True Positive Rate')
-    plt.title('Receiver operating characteristic to multi-class')
-    plt.legend(loc="lower right")
-    plt.close()
-    
-    metric_list = metric_list/3
-    
-    return metric_list, fig
     
 def to_cpu_numpy(data):
     # Send to CPU. If computational graph is connected then detach it as well.
-    return data.detach().cpu().numpy() if data.requires_grad else data.cpu().numpy()
+    if data.requires_grad:
+        print("Disconnect graph!")
+        return data.detach().cpu().numpy()
+    else:
+        return data.cpu().numpy()
+    
+class interactive_slices:
+    def __init__(self):
+        self.ax=None
+        self.fig=None
+    def remove_keymap_conflicts(self,new_keys_set):
+        for prop in plt.rcParams:
+            if prop.startswith('keymap.'):
+                keys = plt.rcParams[prop]
+                remove_list = set(keys) & new_keys_set
+                for key in remove_list:
+                    keys.remove(key)
+
+    def multi_slice_viewer(self,volume):
+        self.remove_keymap_conflicts({'j', 'k'})
+        fig, ax = plt.subplots()
+        ax.volume = volume
+        ax.index = volume.shape[0] // 2
+        ax.imshow(volume[ax.index])
+        fig.canvas.mpl_connect('key_press_event', self.process_key)
+        self.ax = ax
+        self.fig=fig
+        self.draw()
+
+    def process_key(self,event):
+        fig = event.canvas.figure
+        ax = fig.axes[0]
+        if event.key == 'j':
+            self.previous_slice(ax)
+        elif event.key == 'k':
+            self.next_slice(ax)
+        
+        fig.canvas.draw()
+        self.draw()
+
+    def previous_slice(self,ax):
+        volume = ax.volume
+        ax.index = (ax.index - 1) % volume.shape[0]  # wrap around using %
+        ax.images[0].set_array(volume[ax.index])
+
+    def next_slice(self,ax):
+        volume = ax.volume
+        ax.index = (ax.index + 1) % volume.shape[0]
+        ax.images[0].set_array(volume[ax.index])
+        
+    def draw(self):
+        self.ax.set_title(f'Layer: {self.ax.index}')
+        self.fig.canvas.draw()
+        
+class interactive_slices_masked:
+    
+    def __init__(self):
+        self.ax=None
+        self.fig=None
+
+    def remove_keymap_conflicts(self,new_keys_set):
+        for prop in plt.rcParams:
+            if prop.startswith('keymap.'):
+                keys = plt.rcParams[prop]
+                remove_list = set(keys) & new_keys_set
+                for key in remove_list:
+                    keys.remove(key)
+
+    def multi_slice_viewer(self, image, mask):
+        # Expects an input image: torch.Size([1, 79, 224, 224]) and an activation map: (79, 224, 224)
+        self.remove_keymap_conflicts({'j', 'k'})
+        fig, ax = plt.subplots()
+        ax.image = self.image(image)
+        ax.mask = self.mask(mask)
+        ax.index = ax.image.shape[0] // 2
+        ax.imshow(ax.image[ax.index],**{'cmap':'gray'})
+        ax.imshow(ax.mask[ax.index],**{'cmap':'jet', 'alpha':0.3})
+        
+        
+        self.ax = ax
+        self.fig=fig
+        self.fig.canvas.mpl_connect('key_press_event', self.process_key)
+        self.draw()
+        
+
+    def process_key(self,event):
+        if event.key == 'j':
+            self.update(direction=-1)
+        elif event.key == 'k':
+            self.update(direction=1)
+    
+    def update(self, direction=1):
+        ax = self.ax
+        ax.index = (ax.index + direction) % ax.image.shape[0]
+        ax.images[0].set_array(ax.image[ax.index])
+        ax.images[1].set_array(ax.mask[ax.index])
+        
+        self.draw()
+        
+    def draw(self):
+        self.ax.set_title(f'Layer: {self.ax.index}')
+        self.fig.canvas.draw()
+        
+    def image(self, image):
+        return (image.squeeze(0) * 255).numpy().astype(np.uint8)
+    
+    def mask(self, mask):
+        return (mask * 255).astype(np.uint8)
+
+    def cycle(self, timer):
+        import time
+        while True:
+            self.update()
+            time.sleep(timer)
