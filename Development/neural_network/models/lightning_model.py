@@ -3,7 +3,7 @@ from ..architectures import create_architecture #testModel
 import pytorch_lightning as pl
 import torch.nn as nn
 import torch
-
+import torch.nn.functional as F
 import numpy as np
 
 class LightningModel(pl.LightningModule): 

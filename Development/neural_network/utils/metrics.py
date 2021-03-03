@@ -2,6 +2,7 @@ import pytorch_lightning as pl
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
+from .utils import to_cpu_numpy
 
 class storeMetrics(pl.metrics.Metric):
     def __init__(self,compute_on_step=False):
@@ -62,7 +63,7 @@ def ROC(roc_classes, prefix=''):
         plt.plot(_fpr, _tpr, color=colors[i], lw=lw,
                  label='ROC curve of class {0} (area={1:0.2f} tpr={2:0.2f} fpr={3:0.2f})'
                  ''.format(i,auc, _tpr.mean(), 1-_fpr.mean())) #
-            
+    
     plt.plot([0, 1], [0, 1], 'k--', lw=lw)
     plt.xlim([0.0, 1.0])
     plt.ylim([0.0, 1.05])

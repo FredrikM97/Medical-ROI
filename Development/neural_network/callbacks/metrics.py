@@ -69,15 +69,16 @@ class MetricCallback(pl.callbacks.Callback):
         self.val_metrics.reset()
     
     def cm_plot(self, trainer, cm, prefix=''):
-     
         fig=plt.figure();
         ax = sns.heatmap(utils.to_cpu_numpy(cm), annot=True, annot_kws={"size": 12})
         ax.set_xlabel("Predicted label")
         ax.set_ylabel("True label")
+        plt.close()
         trainer.logger.experiment.add_figure(f"confmat/{prefix}", fig,trainer.current_epoch)
-    
+        
+        
     def roc_plot(self, trainer, roc_classes, prefix=''):
-        (auc, fpr, tpr), roc_fig = utils.ROC(roc_classes)
+        (auc, fpr, tpr), roc_fig = utils.metrics.ROC(roc_classes)
         
         trainer.logger.log_metrics(
             {

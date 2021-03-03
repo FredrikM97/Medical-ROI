@@ -58,8 +58,6 @@ class Agent:
     def gpus(self):
         return -1 if torch.cuda.is_available() else None
     
-    
-    
     def __fit(self):
         self.trainer.fit(
             self.model, 

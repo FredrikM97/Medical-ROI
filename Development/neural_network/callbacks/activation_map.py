@@ -62,7 +62,7 @@ class ActivationMapCallback(pl.callbacks.Callback):
 
             trainer.logger.experiment.add_figure("featuremap",fig,trainer.current_epoch) 
             #fig.show()
-            
+            plt.close()
             # https://www.tensorflow.org/tensorboard/image_summaries
             # Save to buffer, write to tb
             
