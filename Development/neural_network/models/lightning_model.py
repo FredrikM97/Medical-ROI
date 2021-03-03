@@ -1,4 +1,4 @@
-from ..architectures import create_architecture #testModel
+#from ..architectures import create_architecture #testModel
 
 import pytorch_lightning as pl
 import torch.nn as nn
@@ -7,11 +7,12 @@ import torch.nn.functional as F
 import numpy as np
 
 class LightningModel(pl.LightningModule): 
-    def __init__(self,architecture=None, class_weights=None,loss_weight_balance=None, hp_metrics:list=None,**hparams):
+    def __init__(self, architecture=None,class_weights=None,loss_weight_balance=None,hp_metrics:list=None,**hparams):
         super().__init__() 
-        self.save_hyperparameters()
+        #self.save_hyperparameters()
         #self.example_input_array = torch.rand(64, 1, 79, 69, 79)
-        self.model = create_architecture(architecture=architecture,input_channels=1, num_classes=3)
+        self.model = architecture
+
         self.hp_metrics = hp_metrics
         self.save_hyperparameters()
         

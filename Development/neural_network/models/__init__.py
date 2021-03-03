@@ -1,5 +1,7 @@
+from ..architectures import create_architecture 
 import importlib
 from pytorch_lightning import LightningModule
+import os
 
 BASEDIR = 'neural_network.'
 def find_model_using_name(model_name):
@@ -28,6 +30,13 @@ def create_model(**configuration:dict):
     This is the main interface between this package and train.py/validate.py
     """
     model = find_model_using_name(configuration['model_name'])
-    instance = model(**configuration)
-    print("model [{0}] was created".format(type(instance).__name__))
+    if configuration['checkpoint_path']:
+        assert os.path.isfile(configuration['checkpoint_path']), "The provided checkpoint_path is not valid! Does it exist?"
+        print(f"Loading architecture from {configuration['checkpoint_path']} (checkpoint)..")
+        instance = model.load_from_checkpoint(checkpoint_path=configuration['checkpoint_path'])
+    else:
+        architecture = create_architecture(**configuration)
+        instance = model(architecture=architecture,**configuration)
+        
+    print("Model [{0}] was created".format(type(instance).__name__))
     return instance

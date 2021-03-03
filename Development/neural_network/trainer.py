@@ -3,21 +3,21 @@ from .models import create_model
 from .datasets import create_dataset
 from .callbacks import ActivationMapCallback, MetricCallback, CAMCallback
 from .utils.progress import LitProgressBar
+from .utils import merge_dict
 
 from pytorch_lightning.trainer.states import TrainerState
 from pytorch_lightning.callbacks import ModelCheckpoint
 import pytorch_lightning as pl
 import torch
+import json
+BASECONFIG = 'neural_network'
 
 class Agent:
     def __init__(self, config_name:str, export:bool=True):
         print('Setup configurations...')
-        self.config = load_config(config_name)
-
+        self.config = merge_dict(load_config(BASECONFIG),load_config(config_name))
         self.dataset = create_dataset(**self.config['dataset_params'])
-        
-        self.model = create_model(**self.config['model_params'], class_weights=self.dataset.weights, hp_metrics=self.config['logs']['hp_metrics'])#._get_class_weights())
-        self._setup_trainer()
+        self.load_model()
         
     def fit(self, cv=False) -> None:
         if self.config['agent']['kfold']:
@@ -40,9 +40,17 @@ class Agent:
             
         )
         
+    def load_model(self, checkpoint_path=None):
+        self.model = create_model(class_weights=self.dataset.weights, hp_metrics=self.config['logs']['hp_metrics'],**self.config['model_params'])
+        self._setup_trainer()
+        
+    def save_model(self, filename):
+        filename = filename if filename else 'model_checkpoint.ckpt'
+        self.trainer.save_checkpoint(filename+".ckpt")
+        
     def logger(self):
         return pl.loggers.TensorBoardLogger(
-            self.config['logs']['tensorboard'], name=self.config['model_params']['model_name'] + "/" + self.config['model_params']['architecture'], default_hp_metric=False,log_graph=False,
+            self.config['logs']['tensorboard'], name=self.config['model_params']['model_name'] + "/" + self.config['model_params']['architecture_name'], default_hp_metric=False,log_graph=False,
         )
      
     def callbacks(self) -> list:

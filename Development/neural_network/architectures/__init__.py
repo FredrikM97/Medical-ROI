@@ -14,7 +14,9 @@ import importlib
 import torch.nn as nn 
 from .resnet import *
 from .vgg import *
+
 BASEDIR = 'neural_network.'
+
 def find_architecture_using_name(model_name):
     #The local module is already defined as 'architectures.'
     model_name = BASEDIR+'architectures.' + model_name
@@ -28,7 +30,9 @@ def create_architecture(**configuration:dict):
     """Create a model given the configuration.
     This is the main interface between this package and train.py/validate.py
     """
-    model = find_architecture_using_name(configuration['architecture'])
+    
+    model = find_architecture_using_name(configuration['architecture_name'])
     instance = model(**configuration)
-    print("architecture [{0}] was created".format(type(instance).__name__))
+        
+    print("Architecture [{0}] was created".format(type(instance).__name__))
     return instance
