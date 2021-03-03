@@ -118,6 +118,6 @@ class interactive_slices_masked:
 
     def cycle(self, timer):
         import time
-        while True:
+        for _ in range(self.ax.index):
             self.update()
             time.sleep(timer)
