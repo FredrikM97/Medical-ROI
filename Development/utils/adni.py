@@ -7,92 +7,53 @@ from .display import display_dict_to_yaml
 import enum
 from dataclasses import dataclass
 
+__all__ = ["Adni"]
 
-@dataclass
-class Disorders:
-    "Data class for disorders"
-    root:str
-    AD:str = 'AD/'
-    CN:str = 'CN/'
-    MCI:str = 'MCI/'
-        
-    def __post_init__(self):
-        
-        self.root = self.root + 'SPM_categorised/'
-        self.AD=self.root+self.AD
-        self.CN=self.root+self.CN
-        self.MCI=self.root+self.MCI
-        
-        #misc_util.create_directory(self.root)
-        #misc_util.create_directory(self.AD)
-        #misc_util.create_directory(self.CN)
-        #misc_util.create_directory(self.MCI)
-        
-    def get(self,name=None):
-        if name:
-            return self.__dict__[name]
-        return self.__dict__
-    
 @dataclass
 class AdniPaths:
     root:str
-    meta:str='meta/'
-    raw:str='adni_raw/'
-    processed:str='SPM_preprocessed_normalized/ADNI1/'
-    disorders:Disorders=None
+    meta:str=None
+    raw:str=None
+    processed:str=None
+    category:str=None
         
     def __post_init__(self): 
-        self.disorders=Disorders(self.root)
         self.meta=self.root + self.meta
         self.raw=self.root + self.raw
         self.processed=self.root + self.processed
-        
-        misc_util.create_directory(self.meta)
-        misc_util.create_directory(self.raw)
-        misc_util.create_directory(self.processed)
-    
+        self.category=self.root+self.category
+
     def get(self,name=None):
         if name:
             return self.__dict__[name]
         return self.__dict__
     
 class AdniProperties:
-    columns:list = [
-            'projectIdentifier', 
-            'subject.subjectIdentifier',
-            'subject.study.series.modality',
-            'subject.study.imagingProtocol.description',
-            'subject.study.series.dateAcquiredPrecise', 
-            'image_nbr',
-            'series',
-            'subject.study.imagingProtocol.imageUID',
-            'filename',
-            'path',
-        ]
+    filename_raw:list = None
+    filename_processed = None
+    filename_columns = None
     projectIdentifier:str = 'ADNI'
     files:list = []
     meta:list = []
-    category_cols =[
-        'subject.researchGroup',
-        'subject.subjectIdentifier',
-        'subject.study.imagingProtocol.imageUID',
-        'image_nbr',
-        'filename',
-        'path',
-    ]
-    category_filename = [
-        'subject.researchGroup',
-        'subject.subjectIdentifier',
-        'subject.study.imagingProtocol.imageUID',
-        'image_nbr',
-    ]
     path:AdniPaths
     
 class Adni(AdniProperties):
     
-    def __init__(self, root='../data/', processed=False):
-        self.processed=processed
-        self.path = AdniPaths(root=root)
+    def __init__(self, rootdir=None, metadir=None,
+                 rawdir=None,processeddir=None, 
+                 filename_raw=None,filename_processed=None,
+                 filename_category=None,images_category=None,use_processed=False):
+        self.use_processed=use_processed
+        self.filename_raw=filename_raw 
+        self.filename_processed=filename_processed
+        self.filename_category=filename_category
+        self.path = AdniPaths(
+            root=rootdir, 
+            meta=metadir,
+            raw=rawdir,
+            processed=processeddir,
+            category=images_category
+        )
         
     def load_meta(self, path=None, show_output=True) -> iter:
         "Load meta to list. Creates a iterator"
@@ -101,23 +62,25 @@ class Adni(AdniProperties):
         if show_output: misc_util.default_print(f'Root path: {path}\nLoaded files: {len(files)}')
         return files
         
-    def load_files(self,path=None, columns=None, show_output=True) -> iter:
+    def load_files(self,path=None, columns=None, show_output=True, use_processed=None) -> iter:
         "Load image paths from image_dir"
-        if path and columns:
+        use_processed = use_processed if use_processed else self.use_processed 
+        
+        if path and columns: # Categorised
             (path,columns,func) = (
                 path,columns,
                 misc_util.split_custom_filename
         ) 
-        elif self.processed:
+        elif use_processed: # Preprocessed
             (path,columns,func) = (
                 self.path.processed,
-                self.columns,
+                self.filename_raw,
                 self.info_from_raw_filename 
         ) 
-        elif not self.processed:
+        elif not use_processed: # Raw
             (path,columns,func) = (
                 self.path.raw,
-                self.columns,
+                self.filename_raw,
                 self.info_from_raw_filename 
             )
         
@@ -144,6 +107,7 @@ class Adni(AdniProperties):
     
     def info_from_raw_filename(self,filename) -> str:
         "Get all info from filename instead (bit slower and could do wrong but removes need of multiple folders)"
+        assert '_br_raw_' in filename, "The imported filenames does not contain the expected split: '_br_raw_'"
         if len(filename.split('_br_raw_')[1].split('_')) == 3:
             return self.info_from_raw_filename_no_image_number(filename)
         
@@ -152,7 +116,7 @@ class Adni(AdniProperties):
         def split(strng, sep, pos):
             strng = strng.split(sep)
             return sep.join(strng[:pos]), sep.join(strng[pos:])
-        if self.processed: filename = misc_util.remove_preprocessed_filename_definition(filename)
+        if self.use_processed: filename = misc_util.remove_preprocessed_filename_definition(filename)
         i = filename
         for s in split_order:
             e,i = split(i, s[0],s[1])
@@ -166,7 +130,7 @@ class Adni(AdniProperties):
         def split(strng, sep, pos):
             strng = strng.split(sep)
             return sep.join(strng[:pos]), sep.join(strng[pos:])
-        if self.processed: filename = misc_util.remove_preprocessed_filename_definition(filename)
+        if self.use_processed: filename = misc_util.remove_preprocessed_filename_definition(filename)
         i = filename
         for s in split_order:
             e,i = split(i, s[0],s[1])
@@ -178,17 +142,12 @@ class Adni(AdniProperties):
         "Get files from class"
         files = self.load_files(path=path,columns=columns) if path and columns else self.files   
                 
-        return misc_util.generator(files)
+        return files
             
     def load_images(self, files=None) -> iter:
         "Load image file into memory"
-        files = files if files else self.get_path_from_files(self.files)
+        files = (file['path'] for file in (files if files else self.files))
         return misc_util.load_images(files)
-        
-    
-    def get_metas(self) -> iter:
-        "Get metdata"
-        return misc_util.generator(self.meta)
     
     def get_dataset(self, dist:list=[0.6, 0.15])-> (list,list, list):
         "Load dataset and assign labels. Double check that labels always are the same!"
@@ -206,9 +165,6 @@ class Adni(AdniProperties):
             \n\tTotal: {DATASET_SIZE}"
         )
         return train, validate, test
-        
-    def get_dataset_images(self):
-        pass
     
     def to_slices(self, image_list=None) -> iter:
         "Get each slice from each image in path"
@@ -239,51 +195,23 @@ class Adni(AdniProperties):
     
     def meta_to_df(self, show_output=True):
         "Convert metadata list to dataframe"
-        meta_df = pd.DataFrame(list(self.get_metas())).sort_values('subject.subjectIdentifier')
+        meta_df = pd.DataFrame(self.meta).sort_values('subject.subjectIdentifier')
         # Add I so that images and meta is named the same!
-        meta_df['subject.study.imagingProtocol.imageUID'] = 'I' + meta_df['subject.study.imagingProtocol.imageUID']
+        meta_df['subject.study.imagingProtocol.imageUID'] = 'I'+meta_df['subject.study.imagingProtocol.imageUID'].astype(str)
         
         meta_df = misc_util.convert_df_types(meta_df, types={
-            'float':[
-                'subject.study.subjectAge',
-                'subject.study.weightKg',
-                'subject.visit.assessment.component.assessmentScore_MMSCORE',
-                'subject.visit.assessment.component.assessmentScore_GDTOTAL',
-                'subject.visit.assessment.component.assessmentScore_CDGLOBAL',
-                'subject.visit.assessment.component.assessmentScore_NPISCORE',
-                'subject.visit.assessment.component.assessmentScore_FAQTOTAL'
-            ],
-            'cat':[
-                'subject.researchGroup'
-            ],
-            'str':[
-                'subject.subjectSex'
-            ],
-            'datetime':[
-                'subject.study.series.dateAcquired'
-            ]
-        }, show_output=show_output)
+            'cat':['subject.researchGroup'],'datetime':['subject.study.series.dateAcquired' ]}, show_output=show_output)
+
         return meta_df
-    def get_path_from_files(self, files:dict):
-        for file in files:
-            yield file['path']
     
     def files_to_df(self, show_output=True):
         "Convert files list to dataframe"
-        
-        files_df = pd.DataFrame(list(self.get_files()),columns=self.columns)
+        files_df = pd.DataFrame(self.get_files(),columns=self.filename_raw)
         files_df = misc_util.convert_df_types(files_df, types={},show_output=show_output)
         
         return files_df
     
-    def set_meta(self, path):
-        "Set metadata path"
-        self.path.meta = path
-    
-    def get_meta(self, path):
-        "Get metadata from path"
-        return self.load_meta(path)
-    
+    """
     def save_to_category(self,output_df, path:Disorders=None, show_output=True)->None:
         "Save images to categories based on parameters from dataframe"
         path= path if path else self.path.disorders
@@ -310,12 +238,12 @@ class Adni(AdniProperties):
             1:'Transfer'
         }
         def inner(row):
-            filename = f"{'#'.join([row[p] for p in self.category_filename])}.nii"
+            filename = f"{'#'.join([row[p] for p in self.filename_columns])}.nii"
 
             response = misc_util.copy_file(str(row['path']), f"{path.get(row['subject.researchGroup'])}/{filename}")
             stats[row['subject.researchGroup']][conv[response]] += 1 
         
         output_df.apply(lambda row: inner(row), axis=1)
         if show_output: display_dict_to_yaml({'Statistics':stats})
-
+        """
     

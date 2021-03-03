@@ -1,12 +1,13 @@
 from configs import load_config
-from models import create_model
-from datasets import create_dataset
-from callbacks import ActivationMapCallback, MetricCallback, CAMCallback
-from utils.progress import LitProgressBar
+from .models import create_model
+from .datasets import create_dataset
+from .callbacks import ActivationMapCallback, MetricCallback, CAMCallback
+from .utils.progress import LitProgressBar
 
 from pytorch_lightning.trainer.states import TrainerState
 from pytorch_lightning.callbacks import ModelCheckpoint
 import pytorch_lightning as pl
+import torch
 
 class Agent:
     def __init__(self, config_name:str, export:bool=True):
@@ -16,10 +17,15 @@ class Agent:
         self.dataset = create_dataset(**self.config['dataset_params'])
         
         self.model = create_model(**self.config['model_params'], class_weights=self.dataset.weights, hp_metrics=self.config['logs']['hp_metrics'])#._get_class_weights())
-        self.setup_trainer()
+        self._setup_trainer()
         
-        
-    def setup_trainer(self):
+    def fit(self, cv=False) -> None:
+        if self.config['agent']['kfold']:
+            self.__fit_cv()
+        else:
+            self.__fit()
+            
+    def _setup_trainer(self):
         self.trainer = pl.Trainer(
             max_epochs=self.config['model_params']['max_epochs'], 
             profiler=self.config['trainer_profiler'], 
@@ -29,8 +35,6 @@ class Agent:
             callbacks=self.callbacks(),
             progress_bar_refresh_rate=self.config['trainer_progress_bar_refresh_rate'],
             num_sanity_val_steps=self.config['trainer_num_sanity_val_steps'],
-            #benchmark=True,
-            #auto_lr_find=True,
             accelerator='ddp',
             precision=self.config['trainer_precision']
             
@@ -52,13 +56,9 @@ class Agent:
     
     @property
     def gpus(self):
-        return -1# if torch.cuda.is_available() else None
+        return -1 if torch.cuda.is_available() else None
     
-    def fit(self, cv=False) -> None:
-        if self.config['agent']['kfold']:
-            self.__fit_cv()
-        else:
-            self.__fit()
+    
     
     def __fit(self):
         self.trainer.fit(

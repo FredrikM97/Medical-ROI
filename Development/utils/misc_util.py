@@ -7,25 +7,10 @@ import sys
 import types
 from typing import List,Dict
 import xml.etree.ElementTree as ET
+import json
 
-def list_to_pandas(input_list, columns=None):
-    return pd.DataFrame(input_list,columns=columns)
-
-def split_dataset(files:list, split_ratio={'train':0.70,'validation':0.15, 'test':0.15})-> (list,list,list):
-    DATASET_SIZE = len(files) 
-    set_sizes = {
-        'train':int(DATASET_SIZE*split_ratio['train']),
-        'validation':int(DATASET_SIZE*split_ratio['validation']),
-        'test':int(DATASET_SIZE*split_ratio['test'])
-    }
-    
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
-
-    X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.25, random_state=1) # 0.25 x 0.8 = 0.2
-
-    
-    return train_set, validation_set, test_set
-
+#def list_to_pandas(input_list, columns=None):
+#    return pd.DataFrame(input_list,columns=columns)
 
 def convert_df_types(
     input_df,
@@ -94,22 +79,32 @@ def load_xml(path:str):
         
 def xml_to_dict(r, parent='', delimiter=".") -> list:
     "Iterate through all xml files and add them to a dictionary"
-    param = lambda r:"_"+list(r.attrib.values())[0] if r.attrib else ''
-    def recursive(r, parent='', delimiter=".") -> list:
+    param = lambda r,delimiter:delimiter+list(r.attrib.values())[0].replace(" ", "_") if r.attrib else ''
+    def recursive(r, parent, delimiter='.') -> list:
         cont = {}
         # If list
         if layers := r.findall("./*"):
-            [cont.update(recursive(x, parent=parent +delimiter+ x.tag)) for x in layers]
+            [cont.update(recursive(x, parent +delimiter+ x.tag)) for x in layers]
             return cont
 
         elif r.text and '\n' not in r.text: # get text
-            return {parent + param(r):r.text}
+            return {parent + param(r,delimiter):object2type(r.text)}
         else:
             return {}
-    return recursive(r, parent=parent, delimiter=delimiter)
+    return recursive(r, parent, delimiter=delimiter)
+
+def object2type(data):
+    if data.replace('.', '', 1).lstrip('-').isdigit():
+        if data.isdigit():
+            return int(data)
+        else:
+            return float(data)
+    return data
+
 
 def split_custom_filename(filename:str, sep='#'):
         "Split filenames based on custom seperator."
+        assert sep in filename, f"The expected seperator ({sep}) could not be found in filename"
         slices= filename.split(sep)
         slices[-1] = slices[-1].split(".")[0]
 
@@ -117,6 +112,7 @@ def split_custom_filename(filename:str, sep='#'):
     
 def load_image(path:str):
     "Load one image"
+    print(path)
     return nib.load(path)
 
 def load_images(files:List[str]) -> iter:
@@ -139,3 +135,16 @@ def default_print(inpute:str)->bool:
 def merge_df(one_df,two_df, cols:list=None):
     """Merge two dataframes where columns are equal'"""
     return one_df.merge(two_df,on=cols)
+
+def load_configs(dirpath=None):
+    # Expects at least one file that ends with .json
+    configs = {}
+    dirpath = absolute_path(dirpath if dirpath else '.')
+    for pos_json in os.listdir(dirpath):
+        if pos_json.endswith('.json'):
+            with open(dirpath +'/'+pos_json) as json_file:
+                for name, config in json.load(json_file).items():
+                    if name in configs:
+                        raise Exception(f"Config from {pos_json} with name {name} already exists!")
+                    configs.update({name:config})
+    return configs

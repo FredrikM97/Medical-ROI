@@ -1,5 +1,5 @@
 import pytorch_lightning as pl
-import utils 
+from .. import utils
 import matplotlib.pyplot as plt
 import seaborn as sns
 import torch
@@ -8,9 +8,15 @@ class MetricCallback(pl.callbacks.Callback):
     def __init__(self, num_classes=3):
         super().__init__()
         self.num_classes = 3
-        self.logger_struct = lambda metric_prefix, prefix, metric: {f"{metric_prefix}/{prefix}": metric}
+        self.logger_struct = lambda metric_prefix, prefix, metric: (f"{metric_prefix}/{prefix}", metric)
         self.val_metrics = utils.storeMetrics().cuda()
-            
+    
+    def on_fit_start(self, trainer, pl_module):
+        #for i, img in enumerate(pl_module.val_dataloader()):
+        #    trainer.logger.experiment.add_figure(f"PET/{'val'}", plt.imshow(img),i)
+        #    break
+        pass
+    
     def on_validation_batch_end(self,trainer, pl_module, outputs, batch, batch_idx, dataloader_idx):
         self.val_metrics(
             outputs['predicted/val'],
@@ -20,14 +26,19 @@ class MetricCallback(pl.callbacks.Callback):
         )
 
     def on_train_epoch_end(self,trainer, pl_module, outputs):
-        avg_loss = torch.stack([x[0]['minimize'] for x in outputs[0]]).mean()
-        self.add_scalar(trainer, pl_module, avg_loss, metric_prefix='loss',prefix='train')
+        self.add_scalar(
+            trainer, 
+            pl_module, 
+            torch.stack([x[0]['minimize'] for x in outputs[0]]).mean(),
+            metric_prefix='loss',
+            prefix='train'
+        )
 
     def on_validation_epoch_end(self,trainer, pl_module):
         pred, target, prob, loss = self.val_metrics.compute()
         
         # Log data from validation
-        self.custom_histogram_adder(trainer)
+        #self.custom_histogram_adder(trainer)
         self.cm_plot(
             trainer, 
             pl.metrics.functional.confusion_matrix(pred, target, num_classes=self.num_classes), 
@@ -78,8 +89,9 @@ class MetricCallback(pl.callbacks.Callback):
         trainer.logger.experiment.add_figure(f"ROC/{prefix}", roc_fig, trainer.current_epoch)
         
     def add_scalar(self, trainer, pl_module, metric, metric_prefix=None,prefix=''):
-        assert metric_prefix
-        trainer.logger.log_metrics(self.logger_struct(metric_prefix, prefix, metric), step=trainer.current_epoch)
+        #assert metric_prefix
+        #trainer.logger.log_metrics(self.logger_struct(metric_prefix, prefix, metric), step=trainer.current_epoch)
+        trainer.logger.experiment.add_scalar(*self.logger_struct(metric_prefix, prefix, metric), trainer.current_epoch)
         
     def custom_histogram_adder(self, trainer):
         # iterating through all parameters

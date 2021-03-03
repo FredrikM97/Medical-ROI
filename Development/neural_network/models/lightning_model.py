@@ -1,15 +1,10 @@
-from architectures import create_architecture #testModel
+from ..architectures import create_architecture #testModel
 
 import pytorch_lightning as pl
 import torch.nn as nn
 import torch
-from pytorch_lightning.metrics import functional as FM
-import torch.nn.functional as F
-from pytorch_lightning.metrics import Accuracy
-#from pytorch_lightning.metrics.classification import ConfusionMatrix
+
 import numpy as np
-import seaborn as sns 
-import matplotlib.pyplot as plt
 
 class LightningModel(pl.LightningModule): 
     def __init__(self,architecture=None, class_weights=None,loss_weight_balance=None, hp_metrics:list=None,**hparams):

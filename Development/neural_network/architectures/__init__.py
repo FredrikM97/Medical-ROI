@@ -12,27 +12,17 @@ In the function <__init__>, you need to define four lists:
 
 import importlib
 import torch.nn as nn 
-
+from .resnet import *
+from .vgg import *
+BASEDIR = 'neural_network.'
 def find_architecture_using_name(model_name):
-    """Import the module "models/[model_name]_model.py".
-        In the file, the class called DatasetNameModel() will
-        be instantiated. It has to be a subclass of BaseModel,
-        and it is case-insensitive.
-    """
-    model_filename = "architectures." + model_name
-    modellib = importlib.import_module(model_filename)
-    model = None
-    target_model_name = model_name.replace('_', '')
-    for name, cls in modellib.__dict__.items():
-        if name.lower() == target_model_name.lower() \
-           and issubclass(cls, nn.Module):
-            model = cls
-
-    if model is None:
-        print("In %s.py, there should be a subclass of BaseModel with class name that matches %s in lowercase." % (model_filename, target_model_name))
-        exit(0)
-
-    return model
+    #The local module is already defined as 'architectures.'
+    model_name = BASEDIR+'architectures.' + model_name
+    components =  model_name.split('.')
+    mod = __import__(components[0])
+    for comp in components[1:]:
+        mod = getattr(mod, comp)
+    return mod
 
 def create_architecture(**configuration:dict):
     """Create a model given the configuration.

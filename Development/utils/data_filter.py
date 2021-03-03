@@ -1,5 +1,4 @@
 import os
-from shutil import copy
 from .misc_util import copy_file, create_directory
 
 def data_filter(in_dir, out_dir):

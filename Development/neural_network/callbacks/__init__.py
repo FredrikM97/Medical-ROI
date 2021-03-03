@@ -1,3 +1,3 @@
-from callbacks.activation_map import ActivationMapCallback
-from callbacks.metrics import MetricCallback
-from callbacks.cam import CAMCallback
+from .activation_map import ActivationMapCallback
+from .metrics import MetricCallback
+from .cam import CAMCallback

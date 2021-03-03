@@ -4,6 +4,7 @@
 import importlib
 from torch.utils import data
 from pytorch_lightning import LightningDataModule
+BASEDIR = 'neural_network.'
 
 def find_dataset_using_name(dataset_name):
     """Import the module "data/[dataset_name]_dataset.py".
@@ -11,7 +12,7 @@ def find_dataset_using_name(dataset_name):
     be instantiated. It has to be a subclass of BaseDataset,
     and it is case-insensitive.
     """
-    dataset_filename = "datasets." + dataset_name + "_dataset"
+    dataset_filename = BASEDIR+"datasets." + dataset_name + "_dataset"
     datasetlib = importlib.import_module(dataset_filename)
 
     dataset = None

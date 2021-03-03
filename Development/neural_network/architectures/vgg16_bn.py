@@ -2,6 +2,8 @@ from architectures.blocks import conv_bn, Conv3dAuto,activation_func
 import torch.nn as nn
 from functools import partial
 
+__all__ = ['VGG16BN',]
+
 class VGG16BN(nn.Module):
     def __init__(self,input_channels=1, num_classes=3, **kwargs):
         super().__init__()  
@@ -58,15 +60,7 @@ class VGG16BN(nn.Module):
         x = x.view(-1, self.num_flat_features(x))
         
         x = self.dense(x)
-        #x = self.block1(x)
-        """
-        x = self.block2(x)
-        x = self.block3(x)
-        x = self.block4(x)
-        x = self.block5(x)
-        
-        x = self.dense(x)
-        """
+
         return x
     
     def num_flat_features(self, x):
