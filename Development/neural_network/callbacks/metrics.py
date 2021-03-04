@@ -11,12 +11,6 @@ class MetricCallback(pl.callbacks.Callback):
         self.logger_struct = lambda metric_prefix, prefix, metric: (f"{metric_prefix}/{prefix}", metric)
         self.val_metrics = utils.storeMetrics().cuda()
     
-    def on_fit_start(self, trainer, pl_module):
-        #for i, img in enumerate(pl_module.val_dataloader()):
-        #    trainer.logger.experiment.add_figure(f"PET/{'val'}", plt.imshow(img),i)
-        #    break
-        pass
-    
     def on_validation_batch_end(self,trainer, pl_module, outputs, batch, batch_idx, dataloader_idx):
         self.val_metrics(
             outputs['predicted/val'],
@@ -76,7 +70,6 @@ class MetricCallback(pl.callbacks.Callback):
         plt.close()
         trainer.logger.experiment.add_figure(f"confmat/{prefix}", fig,trainer.current_epoch)
         
-        
     def roc_plot(self, trainer, roc_classes, prefix=''):
         (auc, fpr, tpr), roc_fig = utils.metrics.ROC(roc_classes)
         
@@ -88,6 +81,7 @@ class MetricCallback(pl.callbacks.Callback):
             },step=trainer.current_epoch
         ) 
         trainer.logger.experiment.add_figure(f"ROC/{prefix}", roc_fig, trainer.current_epoch)
+        #plt.close(roc_fig)
         
     def add_scalar(self, trainer, pl_module, metric, metric_prefix=None,prefix=''):
         #assert metric_prefix

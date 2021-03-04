@@ -8,11 +8,13 @@
         "model_params": {
             "model_name": "lightning",
             "architecture_name":"resnet50",
-            "checkpoint_path":null,
-            "max_epochs": 100
+            "checkpoint_path":"logs/tb_logs/lightning/resnet50/version_2/checkpoints/epoch=34-step=2424.ckpt",
+            "max_epochs": 200
         },
         "logs":{
             "tensorboard":"logs/tb_logs/"
-        }     
+        },
+        "trainer_enable_checkpoints":true,
+        "trainer_debug":false
     }
 }

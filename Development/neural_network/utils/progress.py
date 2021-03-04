@@ -1,5 +1,7 @@
 from pytorch_lightning.callbacks import progress
 
+__all__ = ['LitProgressBar']
+
 class LitProgressBar(progress.ProgressBarBase):
 #https://pytorch-lightning.readthedocs.io/en/latest/_modules/pytorch_lightning/callbacks/progress.html#ProgressBarBase.on_validation_batch_end
     def __init__(self):

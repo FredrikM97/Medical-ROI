@@ -4,6 +4,8 @@ import numpy as np
 import torch
 from .utils import to_cpu_numpy
 
+__all__ = ['storeMetrics','meanMetric','ROC']
+
 class storeMetrics(pl.metrics.Metric):
     def __init__(self,compute_on_step=False):
         super().__init__(compute_on_step=compute_on_step, dist_sync_on_step=False)
@@ -71,7 +73,7 @@ def ROC(roc_classes, prefix=''):
     plt.ylabel('True Positive Rate')
     plt.title('Receiver operating characteristic to multi-class')
     plt.legend(loc="lower right")
-    plt.close()
+    plt.close(fig)
     
     metric_list = metric_list/3
     

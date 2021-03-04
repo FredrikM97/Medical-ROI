@@ -1,3 +1,5 @@
+__all__ = ['ActivationMapHook','SaveFeaturesHook']
+
 class ActivationMapHook():
     
     def __init__(self, module, name):

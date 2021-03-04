@@ -9,7 +9,7 @@ import numpy as np
 class LightningModel(pl.LightningModule): 
     def __init__(self, architecture=None,class_weights=None,loss_weight_balance=None,hp_metrics:list=None,**hparams):
         super().__init__() 
-        #self.save_hyperparameters()
+        self.save_hyperparameters()
         #self.example_input_array = torch.rand(64, 1, 79, 69, 79)
         self.model = architecture
 
@@ -19,11 +19,7 @@ class LightningModel(pl.LightningModule):
         self.loss_class_weights = class_weights if loss_weight_balance else None
         
     def on_train_start(self):
-        self.logger.log_hyperparams(
-            self.hparams, {
-                metric:0 for metric in self.hp_metrics
-            }
-        )
+        self.logger.log_hyperparams(self.hparams, {metric:0 for metric in self.hp_metrics})
         
     def forward(self, x):
         return self.model(x)

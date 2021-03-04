@@ -15,8 +15,8 @@
         },
         "logs":{
             "root":"logs/",
-            "nn":"neural_network/",
-            "vis":"visualisation/" 
+            "nn":"logs/neural_network/",
+            "vis":"logs/visualisation/"
         },
         "meta":{
             "filename_raw":[
@@ -80,7 +80,6 @@
             "is_train": true,
             "max_epochs": 10,
             "lr": 0.0002,
-            "load_checkpoint": -1,
             "lr_policy": "step",
             "lr_decay_iters": 10,
             "opt_weight_decay":1e-5,
@@ -110,6 +109,8 @@
         "trainer_reload_dataloaders_every_epoch":false,
         "trainer_progress_bar_refresh_rate":50,
         "trainer_precision":16,
-        "trainer_profiler":true
+        "trainer_profiler":true,
+        "trainer_enable_checkpoints": false,
+        "trainer_debug":false
     }
 }
