@@ -52,6 +52,7 @@ def get_cam(model, image, extractor_name='SmoothGradCAMpp', input_shape=(1,79,22
     
     # If we want to overwride the label we want to observe!
     predicted_label = score.squeeze(0).argmax().item() if not observed_class else observed_class
+    
     # Retrieve the CAM
     if not extractor_name == 'Saliency':
         activation_map = cam_extractor(predicted_label, score)
