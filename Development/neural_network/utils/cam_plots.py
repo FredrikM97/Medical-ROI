@@ -3,10 +3,12 @@ import torchvision
 import numpy as np
 from skimage.transform import resize
 import torch
+from . import utils
 
 __all__ = ['plot_CAM_grid','interactive_slices','interactive_slices_masked']
 
-def plot_CAM_grid(image, mask, layer=None, label=None, resize_shape=(79,224,224), cmap='jet', alpha=0.3):
+@utils.figure_decorator
+def plot_CAM_grid(image, mask, layer=None, label=None, observed_class=None, resize_shape=(79,224,224), cmap='jet', alpha=0.3,extractor=None, fig=None):
     assert len(image.shape) == 3 and len(mask.shape) == 3
     assert isinstance(image, np.ndarray) and isinstance(mask, np.ndarray)
     
@@ -22,13 +24,17 @@ def plot_CAM_grid(image, mask, layer=None, label=None, resize_shape=(79,224,224)
     grid_img = torchvision.utils.make_grid(plt_image, nrow=10)[0]
     grid_mask = torchvision.utils.make_grid(plt_mask, nrow=10)[0]
     
-    # Remove color and replace it with cmap!
-    fig = plt.figure(figsize=(20,20))
-    plt.imshow(grid_img,**{'cmap':'gray'}) #,**{'cmap':'gray'}
-    plt.imshow(grid_mask,**{'cmap':cmap, 'alpha':alpha}) #,**{'cmap':'jet', 'alpha':0.3}
-    plt.title(f"Layer: {layer} label: {label}")
-    #plt.close()
+    use_expected_label = "Observed class: '" + observed_class + "'"  if observed_class else ""
     
+    # Remove color and replace it with cmap!
+    #fig = plt.figure(figsize=(20,20))
+    plt.imshow(grid_img,**{'cmap':'gray'}) 
+    im = plt.imshow(grid_mask,**{'cmap':cmap, 'alpha':alpha}) 
+    plt.title(f"Layar()er: '{layer}', Extractor: '{extractor}', Predicted: '{label}', {use_expected_label}")
+    plt.xlabel('Slices')
+    plt.ylabel('Slices')
+    fig.colorbar(im, shrink=0.65)
+
     return fig
 
 class interactive_slices:
@@ -43,7 +49,7 @@ class interactive_slices:
                 remove_list = set(keys) & new_keys_set
                 for key in remove_list:
                     keys.remove(key)
-
+    
     def multi_slice_viewer(self,volume):
         self.remove_keymap_conflicts({'j', 'k'})
         fig, ax = plt.subplots()
@@ -79,6 +85,9 @@ class interactive_slices:
     def draw(self):
         self.ax.set_title(f'Layer: {self.ax.index}')
         self.fig.canvas.draw()
+        
+    def close(self):
+        plt.close(self.fig)
         
 class interactive_slices_masked:
     # In order to use this enable %matplotlib widget return with %matplotlib inline

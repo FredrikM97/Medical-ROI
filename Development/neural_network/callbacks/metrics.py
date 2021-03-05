@@ -62,12 +62,13 @@ class MetricCallback(pl.callbacks.Callback):
         # Reset the states.. we dont want to keep it in memory! As of pytorch-lightning 1.2 this is not done automatically!
         self.val_metrics.reset()
     
-    def cm_plot(self, trainer, cm, prefix=''):
-        fig=plt.figure();
+    @utils.figure_decorator
+    def cm_plot(self, trainer, cm, prefix='', fig=None):
+        #fig=plt.figure();
         ax = sns.heatmap(utils.to_cpu_numpy(cm), annot=True, annot_kws={"size": 12})
         ax.set_xlabel("Predicted label")
         ax.set_ylabel("True label")
-        plt.close()
+        #plt.close()
         trainer.logger.experiment.add_figure(f"confmat/{prefix}", fig,trainer.current_epoch)
         
     def roc_plot(self, trainer, roc_classes, prefix=''):

@@ -1,17 +1,20 @@
-from neural_network.utils.hooks import ActivationMapHook
+#from neural_network.utils.hooks import ActivationMapHook
+from .. import utils
 import pytorch_lightning as pl
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
+
 class ActivationMapCallback(pl.callbacks.Callback):
     
     def __init__(self, model):
         self.hooks = []
         for name, module in model.named_modules():
             if type(module) == torch.nn.modules.conv.Conv3d:
-                self.hooks.append(ActivationMapHook(module, name))
-    
-    def on_epoch_end(self, trainer, pl_module):
+                self.hooks.append(utils.hooks.ActivationMapHook(module, name))
+                
+    @utils.figure_decorator  
+    def on_epoch_end(self, trainer, pl_module, fig=None):
         print("Activation map!")
         set_to_train = False
         if trainer.model.training:
@@ -43,6 +46,7 @@ class ActivationMapCallback(pl.callbacks.Callback):
             min_value = 0
             max_value = 1
             
+            # TODO: Dont create a new image at each hook.. Or split this function into two and call figure_decorator
             fig, axs = plt.subplots(height, width, figsize = (width * size, height * size))
             plt.subplots_adjust(wspace = 0, hspace = 0)
             fig.suptitle(f"{hook.name} (Showing {filters_to_use}/{hook.features.shape[1]} filters) (slice [:, :{slice_index}]) size [{hook.features.shape[2]}, {hook.features.shape[3]}])")
@@ -62,7 +66,7 @@ class ActivationMapCallback(pl.callbacks.Callback):
 
             trainer.logger.experiment.add_figure("featuremap",fig,trainer.current_epoch) 
             #fig.show()
-            plt.close()
+            #plt.close()
             # https://www.tensorflow.org/tensorboard/image_summaries
             # Save to buffer, write to tb
             

@@ -2,7 +2,7 @@ import pytorch_lightning as pl
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
-from .utils import to_cpu_numpy
+from . import utils
 
 __all__ = ['storeMetrics','meanMetric','ROC']
 
@@ -44,19 +44,20 @@ class meanMetric(pl.metrics.Metric):
     def compute(self):
         return self.val/self.num
     
-def ROC(roc_classes, prefix=''):
+@utils.figure_decorator  
+def ROC(roc_classes, prefix='', fig=None):
     # Returns (auc, fpr, tpr), roc_fig
-    fig = plt.figure(figsize = (10,7))
+    #fig = plt.figure(figsize = (10,7))
     lw = 2
     colors = np.array(['aqua', 'darkorange', 'cornflowerblue'])
     fpr, tpr, threshold = roc_classes
     
     metric_list = np.zeros(3)
     for i in range(len(roc_classes)):
-        auc = to_cpu_numpy(pl.metrics.functional.auc(fpr[i],tpr[i]))
+        auc = utils.to_cpu_numpy(pl.metrics.functional.auc(fpr[i],tpr[i]))
         
-        _fpr = to_cpu_numpy(fpr[i])
-        _tpr = to_cpu_numpy(tpr[i])
+        _fpr = utils.to_cpu_numpy(fpr[i])
+        _tpr = utils.to_cpu_numpy(tpr[i])
         
         metric_list[0]+=auc
         metric_list[1]+=_fpr.mean()
@@ -73,7 +74,6 @@ def ROC(roc_classes, prefix=''):
     plt.ylabel('True Positive Rate')
     plt.title('Receiver operating characteristic to multi-class')
     plt.legend(loc="lower right")
-    plt.close(fig)
     
     metric_list = metric_list/3
     
