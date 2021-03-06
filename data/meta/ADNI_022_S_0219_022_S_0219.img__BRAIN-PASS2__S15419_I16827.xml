@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<idaxs xmlns="http://ida.loni.usc.edu" 
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="/xsds/idaxs_2_0.xsd">
+<project xmlns="">
+ <projectIdentifier>ADNI</projectIdentifier>
+ <projectDescription>Alzheimer&#039;s Disease Neuroimaging Initiative</projectDescription>
+ <siteKey>022</siteKey>
+ <subject>
+  <subjectIdentifier>022_S_0219</subjectIdentifier>
+  <researchGroup>AD</researchGroup>
+  <subjectSex>M</subjectSex>
+  <subjectInfo item="APOE A1">3</subjectInfo>
+  <subjectInfo item="APOE A2">4</subjectInfo>
+  <visit>
+   <visitIdentifier>ADNI Baseline</visitIdentifier>
+   <assessment name="Neuropsychiatric Inventory-Questionnaire (NPI-Q)">
+    <component name="Neuropsychiatric Inventory Q - Total Score">
+     <assessmentScore attribute="NPISCORE">6.0</assessmentScore>
+    </component>
+   </assessment>
+   <assessment name="Functional Assessment Questionnaire">
+    <component name="FAQ Total score">
+     <assessmentScore attribute="FAQTOTAL">2.0</assessmentScore>
+    </component>
+   </assessment>
+  </visit>
+  <study>
+   <studyIdentifier>4152</studyIdentifier>
+   <subjectAge>74.81</subjectAge>
+   <ageQualifier>Y</ageQualifier>
+   <weightKg>79.15</weightKg>
+   <postMortem>F</postMortem>
+   <series>
+    <seriesIdentifier>15419</seriesIdentifier>
+    <modality>PET</modality>
+    <dateAcquired>2006-06-09</dateAcquired>
+   </series>
+   <imagingProtocol>
+    <imageUID>16827</imageUID>
+    <description>022_S_0219.img: BRAIN-PASS2*</description>
+    <protocolTerm>
+     <protocol term="Manufacturer">Philips Medical Systems</protocol>
+     <protocol term="Mfg Model">G-PET Brain(C)</protocol>
+     <protocol term="Radiopharmaceutical">18F-FDG</protocol>
+     <protocol term="Number of Rows">128.0</protocol>
+     <protocol term="Number of Columns">128.0</protocol>
+     <protocol term="Number of Slices">768.0</protocol>
+     <protocol term="Frames">6.0</protocol>
+     <protocol term="Pixel Spacing X">2.0</protocol>
+     <protocol term="Pixel Spacing Y">2.0</protocol>
+     <protocol term="Slice Thickness">2.0</protocol>
+     <protocol term="Convolution Kernel"/>
+     <protocol term="Counts Source">EMISSION</protocol>
+     <protocol term="Randoms Correction">SING</protocol>
+     <protocol term="Attenuation Correction">Attenuation Cor=CTAC,Emission Contamination Cor=NONE</protocol>
+     <protocol term="Decay Correction">NONE</protocol>
+     <protocol term="Reconstruction">RAMLA_3D</protocol>
+     <protocol term="Scatter Correction"/>
+     <protocol term="Radioisotope">F-18</protocol>
+    </protocolTerm>
+   </imagingProtocol>
+  </study>
+ </subject>
+</project>
+</idaxs>

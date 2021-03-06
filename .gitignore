@@ -145,3 +145,5 @@ jupyterhub.sqlite
 setupJupyter.sh
 .jupyterhub_config.py.swp
 Development/.vscode/settings.json
+results/halftime
+
