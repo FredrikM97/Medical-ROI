@@ -6,15 +6,26 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import torch
 
+__all__ = ['MetricCallback']
+
 class MetricCallback(pl.callbacks.Callback):
     def __init__(self, num_classes=3):
         super().__init__()
         self.num_classes = 3
         self.logger_struct = lambda metric_prefix, prefix, metric: (f"{metric_prefix}/{prefix}", metric)
+<<<<<<< HEAD:src/classifier/callbacks/metrics.py
         self.val_metrics = MetricTracker().cuda()
+=======
+        self.metricsTracker = utils.MetricsTracker().cuda()
+>>>>>>> Bug fixes to improve speed and changed some functionality to reduce complexity:Development/neural_network/callbacks/metrics.py
     
+    def on_train_start(self, trainer, *args, **kwargs):
+        if not trainer.logger:
+            raise Exception('Cannot use GPUStatsMonitor callback with Trainer that has no logger.')
+        
+        
     def on_validation_batch_end(self,trainer, pl_module, outputs, batch, batch_idx, dataloader_idx):
-        self.val_metrics(
+        self.metricsTracker(
             outputs['predicted/val'],
             outputs['target/val'],
             outputs['probability/val'],
@@ -22,16 +33,10 @@ class MetricCallback(pl.callbacks.Callback):
         )
 
     def on_train_epoch_end(self,trainer, pl_module, outputs):
-        self.add_scalar(
-            trainer, 
-            pl_module, 
-            torch.stack([x[0]['minimize'] for x in outputs[0]]).mean(),
-            metric_prefix='loss',
-            prefix='train'
-        )
+        trainer.logger.experiment.add_scalar(*self.logger_struct('loss', 'train', torch.stack([x[0]['minimize'] for x in outputs[0]]).mean()), trainer.current_epoch)
 
     def on_validation_epoch_end(self,trainer, pl_module):
-        pred, target, prob, loss = self.val_metrics.compute()
+        pred, target, prob, loss = self.metricsTracker.compute()
         
         # Log data from validation
         #self.custom_histogram_adder(trainer)
@@ -46,31 +51,25 @@ class MetricCallback(pl.callbacks.Callback):
             pl.metrics.functional.roc(prob, target, num_classes=self.num_classes), 
             prefix='val'
         )
-        self.add_scalar(
-            trainer, 
-            pl_module,
-            pl.metrics.functional.accuracy(pred, target),
-            metric_prefix='accuracy',
-            prefix='val'
-        )
-        self.add_scalar(
-            trainer,
-            pl_module,
-            loss.mean(),
-            metric_prefix='loss',
-            prefix='val'
-        )
+ 
+        trainer.logger.experiment.add_scalar(*self.logger_struct('accuracy', 'val',pl.metrics.functional.accuracy(pred, target)), trainer.current_epoch)
+        trainer.logger.experiment.add_scalar(*self.logger_struct('loss', 'val', loss.mean()), trainer.current_epoch)
 
         # Reset the states.. we dont want to keep it in memory! As of pytorch-lightning 1.2 this is not done automatically!
-        self.val_metrics.reset()
+        self.metricsTracker.reset()
     
+<<<<<<< HEAD:src/classifier/callbacks/metrics.py
     @plot.figure_decorator
     def cm_plot(self, trainer, cm, prefix='', fig=None):
         #fig=plt.figure();
         ax = sns.heatmap(utils.tensor2numpy(cm), annot=True, annot_kws={"size": 12})
+=======
+    def cm_plot(self, trainer, cm, prefix=''):
+        fig = plt.figure(figsize=(20,20))
+        ax = sns.heatmap(utils.to_cpu_numpy(cm), annot=True, annot_kws={"size": 12})
+>>>>>>> Bug fixes to improve speed and changed some functionality to reduce complexity:Development/neural_network/callbacks/metrics.py
         ax.set_xlabel("Predicted label")
         ax.set_ylabel("True label")
-        #plt.close()
         trainer.logger.experiment.add_figure(f"confmat/{prefix}", fig,trainer.current_epoch)
         
     def roc_plot(self, trainer, roc_classes, prefix=''):
@@ -84,13 +83,7 @@ class MetricCallback(pl.callbacks.Callback):
             },step=trainer.current_epoch
         ) 
         trainer.logger.experiment.add_figure(f"ROC/{prefix}", roc_fig, trainer.current_epoch)
-        #plt.close(roc_fig)
-        
-    def add_scalar(self, trainer, pl_module, metric, metric_prefix=None,prefix=''):
-        #assert metric_prefix
-        #trainer.logger.log_metrics(self.logger_struct(metric_prefix, prefix, metric), step=trainer.current_epoch)
-        trainer.logger.experiment.add_scalar(*self.logger_struct(metric_prefix, prefix, metric), trainer.current_epoch)
-        
+
     def custom_histogram_adder(self, trainer):
         # iterating through all parameters
         for name,params in trainer.model.named_parameters():

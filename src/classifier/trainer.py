@@ -1,11 +1,18 @@
+<<<<<<< HEAD:src/classifier/trainer.py
 #from ..architectures import create_architecture #testModel
 from . import models
+=======
+from ..architectures import create_architecture #testModel
+from ..utils import MetricsTracker
+
+>>>>>>> Bug fixes to improve speed and changed some functionality to reduce complexity:Development/neural_network/models/lightning_model.py
 import pytorch_lightning as pl
 import torch.nn as nn
 import torch
 import torch.nn.functional as F
 import numpy as np
 
+<<<<<<< HEAD:src/classifier/trainer.py
 def create_model(checkpoint_path=None,**cfg_model):
     if checkpoint_path:
         assert os.path.isfile(checkpoint_path), "The provided checkpoint_path is not valid! Does it exist?"
@@ -20,14 +27,29 @@ class Trainer(pl.LightningModule):
         self.save_hyperparameters()
         #self.example_input_array = torch.rand(64, 1, 79, 69, 79)
         self.model = create_model(**self.hparams)
-
-        self.hp_metrics = hp_metrics
-        self.save_hyperparameters()
+=======
+class LightningModel(pl.LightningModule): 
+    def __init__(self, class_weights=None,loss_weight_balance=None,hp_metrics:list=[],**hparams):
+        super().__init__() 
+        self.save_hyperparameters() # Dangerous, if architecture get in here the program will freeze..
         
+        if hparams['checkpoint_path']:
+            assert os.path.isfile(hparams['checkpoint_path']), "The provided checkpoint_path is not valid! Does it exist?"
+            print(f"Loading architecture from {hparams['checkpoint_path']} (checkpoint)..")
+            self.model = self.load_from_checkpoint(checkpoint_path=hparams['checkpoint_path'])
+        else:
+            self.model = create_architecture(**hparams)
+>>>>>>> Bug fixes to improve speed and changed some functionality to reduce complexity:Development/neural_network/models/lightning_model.py
+
+        #self.example_input_array = torch.rand(64, 1, 79, 69, 79)
+        self.hp_metrics = hp_metrics
         self.loss_class_weights = class_weights if loss_weight_balance else None
         
+        print(f"***Defined hyperparameters:***\n{self.hparams}")
+        
     def on_train_start(self):
-        self.logger.log_hyperparams(self.hparams, {metric:0 for metric in self.hp_metrics})
+        if self.logger:
+            self.logger.log_hyperparams(self.hparams, {metric:0 for metric in self.hp_metrics})
         
     def forward(self, x):
         return self.model(x)

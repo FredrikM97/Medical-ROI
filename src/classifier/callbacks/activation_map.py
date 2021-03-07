@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import torch
 
+__all__ = []
+
 class ActivationMapCallback(pl.callbacks.Callback):
     
     def __init__(self, model):

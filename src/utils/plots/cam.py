@@ -7,7 +7,7 @@ from . import utils
 
 __all__ = ['plot_CAM_grid','interactive_slices','interactive_slices_masked']
 
-@utils.figure_decorator
+
 def plot_CAM_grid(image, mask, layer=None, predicted_label=None, expected_label=None, resize_shape=(79,224,224), cmap='jet', alpha=0.3,extractor=None, predicted_override=False, fig=None):
     assert len(image.shape) == 3 and len(mask.shape) == 3
     assert isinstance(image, np.ndarray) and isinstance(mask, np.ndarray)
@@ -26,13 +26,13 @@ def plot_CAM_grid(image, mask, layer=None, predicted_label=None, expected_label=
 
     # Remove color and replace it with cmap!
     #fig = plt.figure(figsize=(20,20))
+    fig = plt.subplots(figsize=figsize)
     plt.imshow(grid_img,**{'cmap':'gray'}) 
     im = plt.imshow(grid_mask,**{'cmap':cmap, 'alpha':alpha}) 
     plt.title(f"Layar()er: '{layer}', Extractor: '{extractor}', Predicted: '{predicted_label}', Expected: {expected_label}, Predicted overrided: '{predicted_override}'")
     plt.xlabel('Slices')
     plt.ylabel('Slices')
     fig.colorbar(im, shrink=0.65)
-
     return fig
 
 class interactive_slices:

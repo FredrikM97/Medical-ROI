@@ -6,6 +6,8 @@ import seaborn as sns
 import torchvision
 import skimage.transform
 
+__all__ = []
+
 class CAMCallback(pl.callbacks.Callback):
     #https://stackoverflow.com/questions/62494963/how-to-do-class-activation-mapping-in-pytorch-vgg16-model
     display_transform = torchvision.transforms.Compose([

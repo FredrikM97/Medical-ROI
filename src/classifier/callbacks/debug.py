@@ -1,5 +1,7 @@
 import pytorch_lightning as pl
 
+__all__ = ['DebugCallback']
+
 class DebugCallback(pl.callbacks.Callback):
     def __init__(self):
         super().__init__()

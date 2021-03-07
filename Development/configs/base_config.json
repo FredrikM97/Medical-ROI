@@ -1,0 +1,116 @@
+{
+    "base":{
+        "data":{
+            "root":"data/",
+            "images_raw":"adni_raw/",
+            "images_processed":"SPM_preprocessed_normalized/ADNI1/",
+            "images_category":"SPM_categorised/ADNI1/",
+            "images_meta":"meta/",
+            "delimiter":"_",
+            "classes":{
+                "CN":0,
+                "MCI":1,
+                "AD":2
+            }
+        },
+        "logs":{
+            "root":"logs/",
+            "nn":"logs/neural_network/",
+            "vis":"logs/visualisation/"
+        },
+        "meta":{
+            "filename_raw":[
+                "projectIdentifier", 
+                "subject.subjectIdentifier",
+                "subject.study.series.modality",
+                "subject.study.imagingProtocol.description",
+                "subject.study.series.dateAcquiredPrecise", 
+                "image_nbr",
+                "series",
+                "subject.study.imagingProtocol.imageUID",
+                "filename",
+                "path"
+            ],
+            "filename_category":[
+                "subject.researchGroup",
+                "subject.subjectIdentifier",
+                "subject.study.imagingProtocol.imageUID",
+                "image_nbr",
+                "filename",
+                "path"
+            ],
+            "filename_processed":[
+                "projectIdentifier", 
+                "subject.subjectIdentifier",
+                "subject.study.series.modality",
+                "subject.study.imagingProtocol.description",
+                "subject.study.series.dateAcquiredPrecise", 
+                "image_nbr",
+                "series",
+                "subject.study.imagingProtocol.imageUID",
+                "filename",
+                "path"
+            ]
+        }
+    },
+    "neural_network":{
+        "dataset_params":{
+            "dataset_name": null,
+            "dataset_path": null,
+            "fold_splits":null,
+            "train_params": {
+                "batch_size": 6,
+                "shuffle": true,
+                "num_workers": 6,
+                "pin_memory": true
+            },
+            "val_params": {
+                "batch_size": 6,
+                "shuffle": false,
+                "num_workers": 6,
+                "pin_memory": true
+            },
+            "img_shape":[95,79]
+        },
+
+        "model_params": {
+            "model_name": null,
+            "architecture_name":null,
+            "checkpoint_path":null,
+            "is_train": true,
+            "max_epochs": 10,
+            "lr": 0.0002,
+            "lr_policy": "step",
+            "lr_decay_iters": 10,
+            "opt_weight_decay":1e-5,
+            "loss_weight_balance":true,
+            "opt_amsgrad":false
+        },
+        "agent":{
+            "seed":420,
+            "kfold":false
+        },
+        "visualization_params": {
+            "name": "Name is not defined in config!"
+        },
+        "logs":{
+            "checkpoint": "logs/checkpoints/",
+            "tensorboard":"logs/tb_logs/",
+            "hp_metrics":[
+                "loss/val",
+                "loss/train",
+                "accuracy/val",
+                "auc/val",
+                "specificity/val",
+                "sensitivity/val"
+            ]
+        },      
+        "trainer_num_sanity_val_steps":2,
+        "trainer_reload_dataloaders_every_epoch":false,
+        "trainer_progress_bar_refresh_rate":50,
+        "trainer_precision":16,
+        "trainer_profiler":true,
+        "trainer_save_checkpoints": false,
+        "trainer_debug":false
+    }
+}
