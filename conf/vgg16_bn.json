@@ -3,8 +3,14 @@
         "dataset_params":{
             "dataset_name": "lightning",
             "dataset_path": "data/SPM_categorised/AIH",
-            "img_shape":[224,224]
-        }, 
+            "img_shape":[224,224],
+            "train_params": {
+                "batch_size": 4
+            },
+            "val_params": {
+                "batch_size": 4
+            }
+        },
         "model_params": {
             "model_name": "lightning",
             "architecture_name":"vgg16_bn",
