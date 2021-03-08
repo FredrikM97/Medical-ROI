@@ -178,3 +178,27 @@ How does the region affect the classification result? Is any of the regions dome
 ## TODO:
 * Ask Amira about GitHub invite
 * Continue CNN + EDA, techniques for exploring the model - saliency map, t-SNE
+
+# Meeting 12 (2021-03-08)
+* Permanent ROI
+	- Motivated:
+		* Computationally less exhaustive
+		* Clinically, radiologists don't look at the entire image either [source?]
+
+	- Different ways of extracting ROIs, perform some comparative analysis
+	 	* Hard atlas (anatomical regions)
+		* Find discriminative regions through ML
+			- Different weakly supervised techniqes
+				* CAM, saliency etc
+
+* Adjust plots:
+	- Average brain reference image behind saliency map plot
+	- Create one average plot for every class, of all instances where the class was correctly predicted
+	- Also include some randomly chosen mis-classified sample
+	- Flip CAM plots and change to (axial?) view (top-down)
+
+* Increase discussion about model selection.
+	- And then present final model in results
+
+* Discussion section
+	- Saliency results matches [Ding]
