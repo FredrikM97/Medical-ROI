@@ -25,13 +25,14 @@ def load_trainer(config_name, load_model=False):
     logger = pl.loggers.TensorBoardLogger(
         config['logs']['tensorboard'], 
         name=cfg_model['model_name'] + "/" +cfg_model['architecture_name'], 
-        default_hp_metric=True,
+        default_hp_metric=False,
         log_graph=False,
     )
     
     callbacks = [
         LitProgressBar(),
-        MetricCallback()
+        MetricCallback(),
+        ModelCheckpoint(filename='checkpoint')
     ]
     
     trainer = pl.Trainer(
@@ -44,7 +45,6 @@ def load_trainer(config_name, load_model=False):
             callbacks=callbacks,
             progress_bar_refresh_rate=0,
             num_sanity_val_steps=2,
-            #accelerator='ddp',
             fast_dev_run=False,
             precision=config['trainer_precision'],
         )

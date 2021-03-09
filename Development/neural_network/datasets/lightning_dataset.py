@@ -9,7 +9,7 @@ import torchvision
 import itertools
 import numpy as np
 import sklearn
-
+from ..utils import utils
 
 class LightningDataset(pl.LightningDataModule): 
     delimiter = "_"
@@ -100,7 +100,8 @@ class NiiDataset(Dataset):
             x = self.transform(x)
         else:
             x = torch.from_numpy(x)
-        x = x.unsqueeze(0).float()
+        x = utils.normalize(x.unsqueeze(0).float()) # Think normalization was missing
+        
         return x, y
 
     def __len__(self):

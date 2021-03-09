@@ -1,0 +1,19 @@
+{
+    "resnext50":{
+        "dataset_params":{
+            "dataset_name": "lightning",
+            "dataset_path": "data/SPM_categorised/AIH"
+        }, 
+        "model_params": {
+            "model_name": "lightning",
+            "architecture_name":"resnext50_32x4d",
+            "checkpoint_path":"logs/tb_logs/lightning/resnext50_32x4d/version_0/checkpoints/checkpoint-v1.ckpt",
+            "max_epochs": 200
+        },
+        "logs":{
+            "tensorboard":"logs/tb_logs/"
+        },
+        "trainer_enable_checkpoints":true,
+        "trainer_debug":false
+    }
+}

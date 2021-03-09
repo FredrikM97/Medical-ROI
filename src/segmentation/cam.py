@@ -5,7 +5,7 @@ import torch
 __all__ = ['get_cam']
 
     
-def get_cam(model, image, extractor_name='SmoothGradCAMpp', input_shape=(1,79,224,224),target_layer=None, observed_class=None):
+def get_cam(model, image, extractor_name='SmoothGradCAMpp', input_shape=(1,79,95,79),target_layer=None, observed_label=None):
     assert tuple(image.shape) == input_shape[1:], f"Got image shape: {image.shape} expected: {input_shape[1:]}"
     assert model.device == image.device, f"Model and image are not on same device: Model: {model.device} Image: {image.device}"
     extractor = {
@@ -27,8 +27,10 @@ def get_cam(model, image, extractor_name='SmoothGradCAMpp', input_shape=(1,79,22
     img_tensor = utils.batchisize_to_5D(image)
     img_tensor.requires_grad = True
 
+    assert tuple(img_tensor.shape) == (1,*input_shape), f"Wrong shape, Image: {tuple(img_tensor.shape)}, Expected: {(1,*input_shape)}"
+    assert len(img_tensor.shape) == 5, f"Wrong length, Image: {len(img_tensor.shape)}, Expected: 5"
     # Hook your model before the forward pass
-    
+
     cam_extractor = extractor(model,input_shape=input_shape, target_layer=target_layer)
     
     # By default the last conv layer will be selected
@@ -36,14 +38,16 @@ def get_cam(model, image, extractor_name='SmoothGradCAMpp', input_shape=(1,79,22
     score = model(img_tensor)
     
     # If we want to overwride the label we want to observe!
-    predicted_label = score.squeeze(0).argmax().item() if not observed_class else observed_class
-    
+    predicted_label = score.squeeze(0).argmax().item() if observed_label == None else observed_label
+
     # Retrieve the CAM
     if not extractor_name == 'Saliency':
         activation_map = cam_extractor(predicted_label, score)
     else:
         activation_map = cam_extractor(predicted_label, score, img_tensor)
     
+    assert activation_map != None
+    assert predicted_label != None
     return utils.to_cpu_numpy(activation_map), predicted_label
 
 class Saliency:
@@ -52,7 +56,8 @@ class Saliency:
         self.target_layer = None
         self.input_shape = input_shape
         
-    def __call__(self,label, preds, image):       
+    def __call__(self,label, preds, image): 
+        # Return an activation map which is not normalized
         #assert image.shape == input_shape
         for param in self.model.parameters():
             param.requires_grad = False
@@ -64,10 +69,7 @@ class Saliency:
         score.backward()
 
         # Get max along channel axis
-        slc, _ = torch.max(torch.abs(image.grad[0]), dim=0)
-
-        # normalize to [0..1]
-        activation_map = utils.normalize(slc)
+        activation_map, _ = torch.max(torch.abs(image.grad[0]), dim=0)
 
         # Not sure If this should be done?
         for param in self.model.parameters():

@@ -4,8 +4,12 @@ from . import models
 =======
 from ..architectures import create_architecture #testModel
 from ..utils import MetricsTracker
+<<<<<<< HEAD:src/classifier/trainer.py
 
 >>>>>>> Bug fixes to improve speed and changed some functionality to reduce complexity:Development/neural_network/models/lightning_model.py
+=======
+import os
+>>>>>>> Added feature for merge slices. More backbone networks. Minor fixes:Development/neural_network/models/lightning_model.py
 import pytorch_lightning as pl
 import torch.nn as nn
 import torch
