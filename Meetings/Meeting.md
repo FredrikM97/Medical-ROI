@@ -202,3 +202,25 @@ How does the region affect the classification result? Is any of the regions dome
 
 * Discussion section
 	- Saliency results matches [Ding]
+
+# Meeting 13 (2021-03-22)
+* Half-time presentation:
+	* Meeting notes in slides
+
+* Physical regions, extract using atlas - AAL [Xiaoxi]
+
+* Main approach suggestions:
+	* Keep BBR in final network: Learn to construct BB from input image, without having to produce CAM. During training, CAM is used as label. Results in different BB for different input images.
+	* Construct global average heatmap (CAM, etc), and extract permanent ROIs. Then train a new classifier to predict using only those ROIs. Results in same BB for different input images.
+
+* Make a simple initial complete solution
+	* Segmentation
+	* Expect bad results, backtrack
+
+* Investigate BBR immediately on intensity, rather than segmented image
+
+* This week:
+	* Presentation
+	* Construct 9 global average CAMs
+	* Construct average CAM for same input image, over multiple attempts
+	* Refine code structure
