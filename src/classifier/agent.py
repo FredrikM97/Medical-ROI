@@ -1,80 +1,58 @@
-from configs import load_config
-from .models import create_model
-from .datasets import create_dataset
-from .callbacks import ActivationMapCallback, MetricCallback, CAMCallback
-from .utils.progress import LitProgressBar
-from .utils import merge_dict
-
+from src.utils import load
+from . import models
+from . import dataloader
+from .callbacks import ActivationMapCallback, MetricCallback, CAMCallback, LitProgressBar
+from src.utils import utils
+from src.classifier.trainer import Trainer
 from pytorch_lightning.trainer.states import TrainerState
 from pytorch_lightning.callbacks import ModelCheckpoint
 import pytorch_lightning as pl
 import torch
 
-BASECONFIG = 'neural_network'
+CONFIGDIR = 'conf/'
 
 class Agent:
     def __init__(self, config_name:str, export:bool=True):
         print('Setup configurations...')
         
-        self.load_config()
-        self.dataset = create_dataset(**self.config['dataset_params'])
+        self.load_config(config_name)
+        self.load_logger()
+        self.dataset = dataloader.create_dataset(**self.config['dataloader'])
         self.load_model()
+        self.setup_trainer()
         
     def fit(self, cv=False) -> None:
-        if self.config['agent']['kfold']:
+        if self.config['model']['kfold']['enable']:
             self.__fit_cv()
         else:
             self.__fit()
             
-    def _setup_trainer(self):
+    def setup_trainer(self):
         self.trainer = pl.Trainer(
-            max_epochs=self.config['model_params']['max_epochs'], 
-            profiler=self.config['trainer_profiler'], 
-            reload_dataloaders_every_epoch=self.config['trainer_reload_dataloaders_every_epoch'],
-            checkpoint_callback=self.config['trainer_enable_checkpoints'],
             gpus=self.gpus, 
-            logger=self.logger(),
+            logger=self.writer,
             callbacks=self.callbacks(),
-            progress_bar_refresh_rate=self.config['trainer_progress_bar_refresh_rate'],
-            num_sanity_val_steps=self.config['trainer_num_sanity_val_steps'],
             accelerator='ddp',
-            fast_dev_run=self.config['trainer_debug'],
-            #precision=self.config['trainer_precision'],
+            **self.config['trainer']
         )
         
     def load_model(self):
         cfg_model = self.config['model']
-        self.model = create_model(class_weights=self.dataset.weights, hp_metrics=self.config['logs']['hp_metrics'],**self.config['model_params'])
-        self._setup_trainer()
+        checkpoint_path = self.config['checkpoint_path']
+        self.model = Trainer(checkpoint_path=checkpoint_path,**cfg_model)
         
     def save_model(self, filename=None):
         filename = filename if filename else 'checkpoint'
         self.trainer.save_checkpoint(filename+".ckpt")
     
-    def load_config(self):
-        self.config = merge_dict(load_config(BASECONFIG),load_config(self.config_name))
-        cfg_trainer = config['trainer']
-        self.max_epochs = cfg_trainer['max_epochs']
-        self.save_period = cfg_trainer['save_period']
-        self.monitor = cfg_trainer.get('monitor', 'off')
-        "max_epochs": 100,
-        "tensorboard": true,
-        "precision":16,
-        "profiler":true,
-        "enable_checkpoints": false,
-        "num_sanity_val_steps":2,
-        "save_dir": "saved/",
-        
-        
-        self.model = model
-        self.criterion = criterion
-        self.metric_ftns = metric_ftns
-        self.optimizer = optimizer
-        
-    def logger(self):
+    def load_config(self,config_name):
+        configs = load.load_configs(CONFIGDIR)
+        self.config = utils.merge_dict(configs['base']['classifier'],configs[config_name])
+
+    def load_logger(self):
         self.writer = pl.loggers.TensorBoardLogger(
-            self.config['logs']['tensorboard'], 
-            name=self.config['model_params']['model_name'] + "/" + self.config['model_params']['architecture_name'],
+            self.config['logging']['tensorboard'], 
+            name=self.config['model']['arch']['name'],
             default_hp_metric=False,
             log_graph=False,
         )

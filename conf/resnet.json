@@ -1,20 +1,14 @@
 {
     "resnet50":{
-        "dataset_params":{
-            "dataset_name": "lightning",
-            "dataset_path": "data/SPM_categorised/AIH",
-            "img_shape":[224,224]
+        "checkpoint_path":null,
+        "model":{
+            "arch": {
+                "name": "resnet50",
+                "args": {}
+            }
         }, 
-        "model_params": {
-            "model_name": "lightning",
-            "architecture_name":"resnet50",
-            "checkpoint_path":"logs/tb_logs/lightning/resnet50/version_2/checkpoints/epoch=34-step=2424.ckpt",
-            "max_epochs": 200
-        },
-        "logs":{
-            "tensorboard":"logs/tb_logs/"
-        },
-        "trainer_enable_checkpoints":true,
-        "trainer_debug":false
+        "trainer":{
+            "checkpoint_callback":true
+        }
     }
 }

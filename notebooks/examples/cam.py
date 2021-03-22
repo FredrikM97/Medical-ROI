@@ -1,8 +1,7 @@
-from neural_network.utils.cam import get_cam
-from neural_network.utils.cam_plots import plot_CAM_grid
-from neural_network.utils import move_to_device, to_cpu_numpy
-from neural_network.utils import interactive_slices, interactive_slices_masked
-from neural_network import trainer
+from src.classifier.utils.cam import get_cam
+from src.classifier.utils.cam_plots import plot_CAM_grid
+from src.classifier.utils import move_to_device, tensor2numpy
+from src.classifier import trainer
 
 def example_plot_cam()
     plot_grid(example_cam())
@@ -33,8 +32,6 @@ def example_cam():
     
     # Move to cuda device
     model, image = move_to_device(model, image, 'cuda')
-    # model = type(agent.model.model).__name__
-    
     
     mask, predicted_label = get_cam(
         model, image, extractor_name=extractor_name, target_layer=target_layer, observed_class=class_to_label[observed_class]
@@ -45,7 +42,7 @@ def example_cam():
 
 def plot_grid(image, mask, target_layer, predicted_label, target_label, extractor_name):
     fig = plot_CAM_grid(
-            to_cpu_numpy(image), 
+            tensor2numpy(image), 
             mask,
             layer=target_layer, 
             label=label_to_class[predicted_label], 

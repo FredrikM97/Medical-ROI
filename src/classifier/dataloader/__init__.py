@@ -4,16 +4,28 @@
 import importlib
 from torch.utils import data
 from pytorch_lightning import LightningDataModule
-BASEDIR = 'neural_network.'
+from src.utils import load
+from . import *
+import sys
+BASEDIR = '.'.join([str(__name__),'dataloader'])
 
+def find_dataset_using_name(datadir, dataset_name):
+    # datadir should be full path to file and dataset_name is the class within the file!
+    dataset_filename = datadir
+    datasetlib = importlib.import_module(dataset_filename)
 
-def create_dataset(**configuration:dict):
-    """Create a dataset given the configuration (loaded from the json file).
-    This function wraps the class CustomDatasetDataLoader.
-        This is the main interface between this package and train.py/validate.py
-    Example:
-        from datasets import create_dataset
-        dataset = create_dataset(configuration)
-    """
-    return find_dataset_using_name(configuration['dataset_name'])(**configuration)
+    dataset = None
+    target_dataset_name = dataset_name.replace('_', '')
+    for name, cls in datasetlib.__dict__.items():
+        if name.lower() == target_dataset_name.lower() \
+           and issubclass(cls, LightningDataModule):
+            dataset = cls
+
+    if dataset is None:
+        raise NotImplementedError('In {0}.py, there should be a subclass of BaseDataset with class name that matches {1} in lowercase.'.format(dataset_filename, target_dataset_name))
+
+    return dataset
+
+def create_dataset(name:str=None, args:dict={}):
+    return find_dataset_using_name(BASEDIR,name)(**args)
 

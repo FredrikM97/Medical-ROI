@@ -1,4 +1,4 @@
-from .utils import load_files, filename2labels
+from src.utils import preprocess
 
 import nibabel as nib
 from torch.utils.data import Dataset
@@ -6,10 +6,11 @@ import torch
 
 class AdniDataset(Dataset):
     def __init__(self, data:list, classes={'CN':0,'MCI':1,'AD':2}, delimiter='_',transform=None):
+        super().__init__()
         self.transform = transform
         self.delimiter=delimiter
         self.classes=classes
-        self.labels = filename2labels(data, classes, delimiter)
+        self.labels = preprocess.filename2labels(data, classes, delimiter)
         self.data = data
         
     def __getitem__(self, idx): 
