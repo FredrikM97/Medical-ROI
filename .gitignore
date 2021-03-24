@@ -147,3 +147,4 @@ setupJupyter.sh
 Development/.vscode/settings.json
 results/halftime
 
+logs/
