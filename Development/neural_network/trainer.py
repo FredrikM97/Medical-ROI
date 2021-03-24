@@ -1,33 +1,36 @@
-from configs import load_config
-from .models import create_model
-from .datasets import create_dataset
+from src.utils import load
+from src.classifier.trainer import Trainer
+from . import dataloader
 from .callbacks import MetricCallback,DebugCallback,LitProgressBar
-from .utils import merge_dict
+from src.utils.utils import merge_dict
 
 from pytorch_lightning.trainer.states import TrainerState
 from pytorch_lightning.callbacks import ModelCheckpoint
 import pytorch_lightning as pl
 import torch
 
-BASECONFIG = 'neural_network'
+CONFIGDIR = 'conf/'
 
-def load_trainer(config_name, load_model=False):
-    config = merge_dict(load_config(BASECONFIG),load_config(config_name))
+def load_trainer(config_name):
+    configs = load.load_configs(CONFIGDIR)
+    config = merge_dict(configs['base']['classifier'],configs[config_name])
 
     gpus_availible= 1 if torch.cuda.is_available() else None
-
-    cfg_dataset = config['dataset_params']
-    cfg_model = config['model_params']
     
-    dataset = create_dataset(**cfg_dataset)
-    model = create_model(class_weights=dataset.weights, hp_metrics=config['logs']['hp_metrics'],**cfg_model)
+    cfg_dataset = config['dataloader']
+    cfg_model = config['model']
+    checkpoint_path = config['checkpoint_path']
+    
+    dataset = dataloader.create_dataset(**cfg_dataset)
+    model = Trainer(checkpoint_path=checkpoint_path,**cfg_model)
     
     logger = pl.loggers.TensorBoardLogger(
-        config['logs']['tensorboard'], 
-        name=cfg_model['model_name'] + "/" +cfg_model['architecture_name'], 
+        config['logging']['tensorboard'], 
+        name=config['model']['arch']['name'],
         default_hp_metric=False,
         log_graph=False,
     )
+    
     
     callbacks = [
         LitProgressBar(),
@@ -36,17 +39,15 @@ def load_trainer(config_name, load_model=False):
     ]
     
     trainer = pl.Trainer(
-            max_epochs=cfg_model['max_epochs'], 
-            profiler=config['trainer_profiler'], 
-            reload_dataloaders_every_epoch=config['trainer_reload_dataloaders_every_epoch'],
-            checkpoint_callback=True,
-            gpus=gpus_availible, 
-            logger=logger,
-            callbacks=callbacks,
-            progress_bar_refresh_rate=0,
-            num_sanity_val_steps=2,
-            fast_dev_run=False,
-            precision=config['trainer_precision'],
-        )
+        gpus=gpus_availible, 
+        logger=logger,
+        callbacks=callbacks,
+        accelerator='ddp',
+        **config['trainer']
+    )
     
     return trainer, dataset, model
+
+def save_model(trainer, filename=None):
+    filename = filename if filename else 'checkpoint'
+    trainer.save_checkpoint(filename+".ckpt")

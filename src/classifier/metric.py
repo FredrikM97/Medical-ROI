@@ -4,6 +4,7 @@ import numpy as np
 import torch
 from src.utils import utils
 
+<<<<<<< HEAD
 <<<<<<< HEAD:src/classifier/metric.py
 class MetricTracker(pl.metrics.Metric):
     def __init__(self,compute_on_step=False):
@@ -15,16 +16,28 @@ class MetricTracker(pl.metrics.Metric):
         self.add_state('num_batch',default=torch.tensor(0.), dist_reduce_fx=None)
 =======
 __all__ = ['MetricsTracker','meanMetric','ROC']
+=======
 
-class MetricsTracker(pl.metrics.Metric):
+__all__ = ['MetricsTracker','meanMetric']
+>>>>>>> Minor bugfixes to run trainer
+
+class MetricTracker(pl.metrics.Metric):
     def __init__(self,compute_on_step=False, dist_sync_on_step=False):
         super().__init__(compute_on_step=compute_on_step, dist_sync_on_step=dist_sync_on_step)
+<<<<<<< HEAD
         self.add_state('predicted',default=[], dist_reduce_fx="sum")
         self.add_state('target',default=[], dist_reduce_fx="sum")
         self.add_state('probability',default=[], dist_reduce_fx="mean")
         self.add_state('loss',default=torch.tensor(0.), dist_reduce_fx="mean")
         self.add_state('num_batch',default=torch.tensor(0.), dist_reduce_fx="sum")
 >>>>>>> Bug fixes to improve speed and changed some functionality to reduce complexity:Development/neural_network/utils/metrics.py
+=======
+        self.add_state('predicted',default=[], dist_reduce_fx=None)
+        self.add_state('target',default=[], dist_reduce_fx=None)
+        self.add_state('probability',default=[], dist_reduce_fx=None)
+        self.add_state('loss',default=torch.tensor(0.), dist_reduce_fx=None)
+        self.add_state('num_batch',default=torch.tensor(0.), dist_reduce_fx=None)
+>>>>>>> Minor bugfixes to run trainer
         
     def update(self, predicted, target, probability, loss):
         self.predicted.append(predicted)
@@ -48,6 +61,7 @@ class Mean(pl.metrics.Metric):
         super().__init__(compute_on_step=compute_on_step, dist_sync_on_step=False)
         self.add_state('val',default=torch.tensor(0.), dist_reduce_fx='mean')
         self.add_state('num',default=torch.tensor(0.), dist_reduce_fx='mean')
+        
     def update(self, loss):
         self.val+=loss.mean()
         self.num +=1

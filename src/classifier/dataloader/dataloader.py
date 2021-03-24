@@ -7,6 +7,9 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 from src.utils import load
 
+from .weights import ClassWeights
+from .kfold import Kfold
+
 class AdniDataloader(pl.LightningDataModule): 
     def __init__(self,data_dir, seed=0, batch_size=6, shuffle=True, validation_split=0.1, num_workers=1, img_shape=(95,79),**hparams:dict):
         super().__init__()
@@ -16,13 +19,29 @@ class AdniDataloader(pl.LightningDataModule):
         self.img_shape = img_shape
         self.dataset = load.load_files(data_dir)
         
-        self.trainset, self.validset = self._split(self.validation_split)
+        self.trainset, self.valset = self._split(self.validation_split)
 
         self.init_kwargs = {
             'batch_size': batch_size,
             'num_workers': num_workers
         }
+<<<<<<< HEAD
      
+=======
+        self._weights = ClassWeights(delimiter=self.delimiter, classes=self.classes)
+        self._kfold = Kfold()
+        
+        print(f"Dataset sizes - Training: {len(self.trainset)} Validation: {len(self.valset)}")
+        
+    @property
+    def weights(self):
+        return self._weights.weights
+    
+    @property
+    def kfold(self):
+        return self._kfold
+    
+>>>>>>> Minor bugfixes to run trainer
     def train_dataloader(self):
         transform = torchvision.transforms.Compose([
             torchvision.transforms.ToTensor(),
@@ -37,7 +56,7 @@ class AdniDataloader(pl.LightningDataModule):
             torchvision.transforms.ToTensor(),
             torchvision.transforms.Resize(self.img_shape)
         ])
-        return DataLoader(AdniDataset(self.validset, transform=transform),
+        return DataLoader(AdniDataset(self.valset, transform=transform),
                                 shuffle=False,
                                 **self.init_kwargs)
 
