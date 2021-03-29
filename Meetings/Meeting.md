@@ -224,3 +224,16 @@ How does the region affect the classification result? Is any of the regions dome
 	* Construct 9 global average CAMs
 	* Construct average CAM for same input image, over multiple attempts
 	* Refine code structure
+
+# Meeting 14 (2021-03-29)
+* Slawomir feedback:
+	- Model excessively complex
+	- Improve motivation of project
+
+* Try to make model simpler
+	- Should have at least two models to compare (?)
+	- Again explain with CAM / saliency etc
+
+* Link between regions and atlases
+	- n regions -> n networks, then need to combine to reach a classification
+	- Talaraich, thesis from Amira, nibabel?
