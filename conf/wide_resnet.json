@@ -1,0 +1,14 @@
+{
+    "wide_resnet50_2":{
+        "checkpoint_path":null,
+        "model":{
+            "arch": {
+                "name": "wide_resnet50_2",
+                "args": {}
+            }
+        }, 
+        "trainer":{
+            "checkpoint_callback":true
+        }
+    }
+}

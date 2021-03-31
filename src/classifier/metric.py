@@ -5,6 +5,7 @@ import torch
 from src.utils import utils
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 <<<<<<< HEAD:src/classifier/metric.py
 class MetricTracker(pl.metrics.Metric):
     def __init__(self,compute_on_step=False):
@@ -21,6 +22,8 @@ __all__ = ['MetricsTracker','meanMetric','ROC']
 __all__ = ['MetricsTracker','meanMetric']
 >>>>>>> Minor bugfixes to run trainer
 
+=======
+>>>>>>> Bug fixes and cleanup
 class MetricTracker(pl.metrics.Metric):
     def __init__(self,compute_on_step=False, dist_sync_on_step=False):
         super().__init__(compute_on_step=compute_on_step, dist_sync_on_step=dist_sync_on_step)

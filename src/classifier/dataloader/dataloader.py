@@ -9,6 +9,7 @@ from src.utils import load
 
 from .weights import ClassWeights
 from .kfold import Kfold
+import src
 
 class AdniDataloader(pl.LightningDataModule): 
     def __init__(self,data_dir, seed=0, batch_size=6, shuffle=True, validation_split=0.1, num_workers=1, img_shape=(95,79),**hparams:dict):
@@ -17,7 +18,7 @@ class AdniDataloader(pl.LightningDataModule):
         self.shuffle = shuffle
         self.seed = seed
         self.img_shape = img_shape
-        self.dataset = load.load_files(data_dir)
+        self.dataset = load.load_files(src.BASEDIR + "/"+data_dir)
         
         self.trainset, self.valset = self._split(self.validation_split)
 

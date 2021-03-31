@@ -1,89 +1,83 @@
 from src.utils import load
-from . import models
+from src.classifier.model import Model
 from . import dataloader
-from .callbacks import ActivationMapCallback, MetricCallback, CAMCallback, LitProgressBar
-from src.utils import utils
-from src.classifier.trainer import Trainer
+from .callbacks import MetricCallback,DebugCallback,LitProgressBar
+from src.utils.utils import merge_dict
 from pytorch_lightning.trainer.states import TrainerState
 from pytorch_lightning.callbacks import ModelCheckpoint
 import pytorch_lightning as pl
 import torch
+from src import BASEDIR
+from typing import Tuple
 
-CONFIGDIR = 'conf/'
+def load_trainer(config_name:str, checkpoint_path:str=None):
+    """ Load an trainer based on the configuration from config_name. If checkpoint_path is given it will overwride the checkpoint_path in the config file.
+    If no checkpoint_path is given then the trainer will create a new model based on the config.
+    
+    Args:
+        * config_name:str - Name of config. The existing config should end with .json to be valid for the trainer
+        * checkpoint_path:str - Path to checkpoint. Home directory is within the src folder.
+        
+    Return:
+        * Trainer object
+        * Dataset object
+        * Model object
+    """
+    model_config = load.load_config(config_name, dirpath=BASEDIR + "/conf/")[config_name]
+    base_config = load.load_config('base', dirpath=BASEDIR + "/conf/")['base']['classifier']
 
-class Agent:
-    def __init__(self, config_name:str, export:bool=True):
-        print('Setup configurations...')
-        
-        self.load_config(config_name)
-        self.load_logger()
-        self.dataset = dataloader.create_dataset(**self.config['dataloader'])
-        self.load_model()
-        self.setup_trainer()
-        
-    def fit(self, cv=False) -> None:
-        if self.config['model']['kfold']['enable']:
-            self.__fit_cv()
-        else:
-            self.__fit()
-            
-    def setup_trainer(self):
-        self.trainer = pl.Trainer(
-            gpus=self.gpus, 
-            logger=self.writer,
-            callbacks=self.callbacks(),
-            accelerator='ddp',
-            **self.config['trainer']
-        )
-        
-    def load_model(self):
-        cfg_model = self.config['model']
-        checkpoint_path = self.config['checkpoint_path']
-        self.model = Trainer(checkpoint_path=checkpoint_path,**cfg_model)
-        
-    def save_model(self, filename=None):
-        filename = filename if filename else 'checkpoint'
-        self.trainer.save_checkpoint(filename+".ckpt")
-    
-    def load_config(self,config_name):
-        configs = load.load_configs(CONFIGDIR)
-        self.config = utils.merge_dict(configs['base']['classifier'],configs[config_name])
+    config = merge_dict(base_config,model_config)
 
-    def load_logger(self):
-        self.writer = pl.loggers.TensorBoardLogger(
-            self.config['logging']['tensorboard'], 
-            name=self.config['model']['arch']['name'],
-            default_hp_metric=False,
-            log_graph=False,
-        )
-     
-    def callbacks(self) -> list:
-        lit_progress = LitProgressBar()
-        #activation_map = ActivationMapCallback(self.model)
-        checkpoint_callback = ModelCheckpoint()
-        return [lit_progress, checkpoint_callback,MetricCallback()]
+    gpus_availible= 1 if torch.cuda.is_available() else None
     
-    @property
-    def gpus(self):
-        return -1 if torch.cuda.is_available() else None
+    cfg_dataset = config['dataloader']
+    cfg_model = config['model']
     
-    def __fit(self):
-        self.trainer.fit(
-            self.model, 
-            datamodule=self.dataset
-        )
+    # If we want to load a model directly without changing the config
+    checkpoint_path = BASEDIR + checkpoint_path if checkpoint_path else BASEDIR + config['checkpoint_path']
     
-    def __fit_cv(self) -> None:
-        print("Fitting with cv")
+    if checkpoint_path:
+        print(f"Loading model from {checkpoint_path} (checkpoint)..")
+        model = Model.load_from_checkpoint(checkpoint_path=checkpoint_path)
+    else:
+        model = Model(checkpoint_path=checkpoint_path,**cfg_model)
         
-        while self.dataset.kfold.has_folds():
-            # call fit
-            fold_idx = self.dataset.fold_idx
-            print(f"Validation on fold: {fold_idx}")
-            self.setup_trainer()
-            self.__fit()
-            if self.trainer._state == TrainerState.INTERRUPTED: break
+    dataset = dataloader.create_dataset(**cfg_dataset)
+    
+    
+    logger = pl.loggers.TensorBoardLogger(
+        BASEDIR +"/"+ config['logging']['tensorboard'], 
+        name=config['model']['arch']['name'],
+        default_hp_metric=False,
+        log_graph=False,
+    )
+    
+    
+    callbacks = [
+        LitProgressBar(),
+        MetricCallback(),
+        ModelCheckpoint(filename='checkpoint')
+    ]
+    
+    trainer = pl.Trainer(
+        gpus=gpus_availible, 
+        logger=logger,
+        callbacks=callbacks,
+        accelerator='ddp',
+        **config['trainer']
+    )
+    
+    return trainer, dataset, model
 
-            # store metrics
-            # get next fold
-            self.dataset._next_fold()
+def save_model(trainer, filename=None) -> None:
+    """ Save the model from a trainer. If no filename it will default to "checkpoint"
+    
+    Args:
+        * trainer:object - The trainer used to train a model
+        * filename:str - The filename that the file should be saved as. The default directory is at the logger directory. 
+    
+    Return:
+        * None
+    """
+    filename = filename if filename else 'checkpoint'
+    trainer.save_checkpoint(filename+".ckpt")

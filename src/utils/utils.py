@@ -6,10 +6,11 @@ from typing import List,Dict
 import xml.etree.ElementTree as ET
 
 def availible_files(path, contains:str=''):
+    """Returns the availible files in directory"""
     return [f for f in os.listdir(path) if contains in f]
     
 def tensor2numpy(data):
-    # Send to CPU. If computational graph is connected then detach it as well.
+    """Send to CPU. If computational graph is connected then detach it as well."""
     if data.requires_grad:
         return data.detach().cpu().numpy()
     else:
@@ -27,9 +28,6 @@ def merge_dict(a, b, path=None):
         else:
             a[key] = b[key]
     return a
-
-def move_to_device(model, image, device):
-    return (model.to(device), image.to(device))
 
 def df_object2type(
     input_df,
@@ -49,6 +47,8 @@ def df_object2type(
         'cat':'category',
         'datetime':'datetime64[ns]',
     }
+    """Convert the type of a dataframe into the defined type categories."""
+    
     if len(types.values()) and show_output:
         print("Processing type of:")
         
@@ -61,7 +61,7 @@ def df_object2type(
     return input_df
 
 def copy_file(src, dest)-> bool:
-    "Copy file from source dir to dest dir. Note that the path must exist where folders should be placed!"
+    """Copy file from source dir to dest dir. Note that the path must exist where folders should be placed!"""
     assert os.path.exists(src), "Source file does not exists"
     
     if not os.path.exists(dest):
@@ -70,22 +70,22 @@ def copy_file(src, dest)-> bool:
     return False
 
 def create_directory(dest)-> bool:
-    "Creates directory if not exists"
+    """Creates directory if not exists"""
     return os.makedirs(os.path.dirname(dest), exist_ok=True)
 
 def remove_preprocessed_filename_definition(filename):
-    "remove the three first letters to hyandle preprocessed names"
+    """remove the three first letters to hyandle preprocessed names"""
     return filename[2:]
 
 
         
 def xml2dict(r, parent='', delimiter=".") -> list:
-    "Iterate through all xml files and add them to a dictionary"
+    """Iterate through all xml files and add them to a dictionary"""
     param = lambda r,delimiter:delimiter+list(r.attrib.values())[0].replace(" ", "_") if r.attrib else ''
     def recursive(r, parent, delimiter='.') -> list:
         cont = {}
         # If list
-        if layers := r.findall("./*"):
+        if (layers := r.findall("./*")):
             [cont.update(recursive(x, parent +delimiter+ x.tag)) for x in layers]
             return cont
 
@@ -96,6 +96,9 @@ def xml2dict(r, parent='', delimiter=".") -> list:
     return recursive(r, parent, delimiter=delimiter)
 
 def object2type(data):
+    """Change the type of data.
+    Check if data is a int, float otherwise a string/object
+    """
     if data.replace('.', '', 1).lstrip('-').isdigit():
         if data.isdigit():
             return int(data)
@@ -105,12 +108,12 @@ def object2type(data):
 
 
 def split_custom_filename(filename:str, sep='#'):
-        "Split filenames based on custom seperator."
-        assert sep in filename, f"The expected seperator ({sep}) could not be found in filename"
-        slices= filename.split(sep)
-        slices[-1] = slices[-1].split(".")[0]
+    "Split filenames based on custom seperator."
+    assert sep in filename, f"The expected seperator ({sep}) could not be found in filename"
+    slices= filename.split(sep)
+    slices[-1] = slices[-1].split(".")[0]
 
-        return slices
+    return slices
 
 def data_filter(in_dir, out_dir):
     "Will remove all but 1 .nii file from each bottom-level folder, keeps in_dir intact and puts result in out_dir. Example usage: data_filter('..\\data\\adni_raw', '..\\data\\adni_raw_filtered')"

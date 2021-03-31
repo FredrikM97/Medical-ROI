@@ -15,6 +15,7 @@ import torch.nn as nn
 import torch
 import torch.nn.functional as F
 import numpy as np
+<<<<<<< HEAD:src/classifier/trainer.py
 
 <<<<<<< HEAD:src/classifier/trainer.py
 def create_model(checkpoint_path=None,**cfg_model):
@@ -24,12 +25,17 @@ def create_model(checkpoint_path=None,**cfg_model):
         return trainer.load_from_checkpoint(checkpoint_path=checkpoint_path)
     else:
         return models.create_model(**cfg_model['arch'])
+=======
+import os
+from src import BASEDIR
+>>>>>>> Bug fixes and cleanup:src/classifier/model.py
             
-class Trainer(pl.LightningModule): 
+class Model(pl.LightningModule): 
     def __init__(self,class_weights=None,loss_weight_balance=None,hp_metrics:list=None,**hparams):
         super().__init__() 
         self.save_hyperparameters()
         #self.example_input_array = torch.rand(64, 1, 79, 69, 79)
+<<<<<<< HEAD:src/classifier/trainer.py
         self.model = create_model(**self.hparams)
 =======
 class LightningModel(pl.LightningModule): 
@@ -44,6 +50,9 @@ class LightningModel(pl.LightningModule):
         else:
             self.model = create_architecture(**hparams)
 >>>>>>> Bug fixes to improve speed and changed some functionality to reduce complexity:Development/neural_network/models/lightning_model.py
+=======
+        self.model = models.create_model(**self.hparams['arch'])
+>>>>>>> Bug fixes and cleanup:src/classifier/model.py
 
         #self.example_input_array = torch.rand(64, 1, 79, 69, 79)
         self.hp_metrics = hp_metrics
