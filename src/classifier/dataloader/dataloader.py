@@ -45,7 +45,6 @@ class AdniDataloader(pl.LightningDataModule):
 >>>>>>> Minor bugfixes to run trainer
     def train_dataloader(self):
         transform = torchvision.transforms.Compose([
-            torchvision.transforms.ToTensor(),
             torchvision.transforms.Resize(self.img_shape)
         ])
         return DataLoader(AdniDataset(self.trainset,transform=transform),
@@ -54,7 +53,6 @@ class AdniDataloader(pl.LightningDataModule):
     
     def val_dataloader(self):
         transform = torchvision.transforms.Compose([
-            torchvision.transforms.ToTensor(),
             torchvision.transforms.Resize(self.img_shape)
         ])
         return DataLoader(AdniDataset(self.valset, transform=transform),
