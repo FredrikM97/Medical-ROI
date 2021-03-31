@@ -1,25 +1,14 @@
 {
     "vgg16_bn":{
-        "dataset_params":{
-            "dataset_name": "lightning",
-            "dataset_path": "data/SPM_categorised/AIH",
-            "train_params": {
-                "batch_size": 4
-            },
-            "val_params": {
-                "batch_size": 4
+        "checkpoint_path":null,
+        "model":{
+            "arch": {
+                "name": "vgg16_bn",
+                "args": {}
             }
-        },
-        "model_params": {
-            "model_name": "lightning",
-            "architecture_name":"vgg16_bn",
-            "checkpoint_path":null,
-            "max_epochs": 200
-        },
-        "logs":{
-            "tensorboard":"logs/tb_logs/"
-        },
-        "trainer_enable_checkpoints":true,
-        "trainer_debug":false
+        }, 
+        "trainer":{
+            "checkpoint_callback":true
+        }
     }
 }

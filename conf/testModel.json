@@ -1,17 +1,14 @@
 {
     "testModel":{
-        "dataset_params":{
-            "dataset_name": "lightning",
-            "dataset_path": "data/SPM_categorised/AIH",
-            "img_shape":[79,95,79]
+        "checkpoint_path":null,
+        "model":{
+            "arch": {
+                "name": "testModel",
+                "args": {}
+            }
         }, 
-        "model_params": {
-            "model_name": "lightning",
-            "architecture_name":"testModel",
-            "max_epochs": 100
-        },
-        "logs":{
-            "tensorboard":"logs/tb_logs/"
-        }     
+        "trainer":{
+            "checkpoint_callback":false
+        }
     }
 }
