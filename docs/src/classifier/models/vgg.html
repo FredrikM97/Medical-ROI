@@ -1,0 +1,612 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>src.classifier.models.vgg API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>src.classifier.models.vgg</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">import torch
+import torch.nn as nn
+
+
+__all__ = [
+    &#39;VGG&#39;, &#39;vgg11&#39;, &#39;vgg11_bn&#39;, &#39;vgg13&#39;, &#39;vgg13_bn&#39;, &#39;vgg16&#39;, &#39;vgg16_bn&#39;,
+    &#39;vgg19_bn&#39;, &#39;vgg19&#39;,
+]
+
+
+model_urls = {
+    &#39;vgg11&#39;: &#39;https://download.pytorch.org/models/vgg11-bbd30ac9.pth&#39;,
+    &#39;vgg13&#39;: &#39;https://download.pytorch.org/models/vgg13-c768596a.pth&#39;,
+    &#39;vgg16&#39;: &#39;https://download.pytorch.org/models/vgg16-397923af.pth&#39;,
+    &#39;vgg19&#39;: &#39;https://download.pytorch.org/models/vgg19-dcbb9e9d.pth&#39;,
+    &#39;vgg11_bn&#39;: &#39;https://download.pytorch.org/models/vgg11_bn-6002323d.pth&#39;,
+    &#39;vgg13_bn&#39;: &#39;https://download.pytorch.org/models/vgg13_bn-abd245e5.pth&#39;,
+    &#39;vgg16_bn&#39;: &#39;https://download.pytorch.org/models/vgg16_bn-6c64b313.pth&#39;,
+    &#39;vgg19_bn&#39;: &#39;https://download.pytorch.org/models/vgg19_bn-c79401a0.pth&#39;,
+}
+
+
+class VGG(nn.Module):
+
+    def __init__(self, features, num_classes=3, init_weights=True, **kwargs):
+        super(VGG, self).__init__()
+        self.features = features
+        self.avgpool = nn.AdaptiveAvgPool3d((1, 7, 7))
+        self.classifier = nn.Sequential(
+            nn.Linear(512 * 7 * 7, 4096),
+            nn.ReLU(True),
+            nn.Dropout(),
+            nn.Linear(4096, 4096),
+            nn.ReLU(True),
+            nn.Dropout(),
+            nn.Linear(4096, num_classes),
+        )
+        if init_weights:
+            self._initialize_weights()
+
+    def forward(self, x):
+        x = self.features(x)
+        x = self.avgpool(x)
+        x = torch.flatten(x, 1)
+        x = self.classifier(x)
+        return x
+
+    def _initialize_weights(self):
+        for m in self.modules():
+            if isinstance(m, nn.Conv3d):
+                nn.init.kaiming_normal_(m.weight, mode=&#39;fan_out&#39;, nonlinearity=&#39;relu&#39;)
+                if m.bias is not None:
+                    nn.init.constant_(m.bias, 0)
+            elif isinstance(m, nn.BatchNorm3d):
+                nn.init.constant_(m.weight, 1)
+                nn.init.constant_(m.bias, 0)
+            elif isinstance(m, nn.Linear):
+                nn.init.normal_(m.weight, 0, 0.01)
+                nn.init.constant_(m.bias, 0)
+
+
+def make_layers(cfg, batch_norm=False):
+    layers = []
+    in_channels = 1
+    for v in cfg:
+        if v == &#39;M&#39;:
+            layers += [nn.MaxPool3d(kernel_size=2, stride=2)]
+        else:
+            conv3d = nn.Conv3d(in_channels, v, kernel_size=3, padding=1)
+            if batch_norm:
+                layers += [conv3d, nn.BatchNorm3d(v), nn.ReLU(inplace=True)]
+            else:
+                layers += [conv3d, nn.ReLU(inplace=True)]
+            in_channels = v
+    return nn.Sequential(*layers)
+
+
+cfgs = {
+    &#39;A&#39;: [64, &#39;M&#39;, 128, &#39;M&#39;, 256, 256, &#39;M&#39;, 512, 512, &#39;M&#39;, 512, 512, &#39;M&#39;],
+    &#39;B&#39;: [64, 64, &#39;M&#39;, 128, 128, &#39;M&#39;, 256, 256, &#39;M&#39;, 512, 512, &#39;M&#39;, 512, 512, &#39;M&#39;],
+    &#39;D&#39;: [64, 64, &#39;M&#39;, 128, 128, &#39;M&#39;, 256, 256, 256, &#39;M&#39;, 512, 512, 512, &#39;M&#39;, 512, 512, 512, &#39;M&#39;],
+    &#39;E&#39;: [64, 64, &#39;M&#39;, 128, 128, &#39;M&#39;, 256, 256, 256, 256, &#39;M&#39;, 512, 512, 512, 512, &#39;M&#39;, 512, 512, 512, 512, &#39;M&#39;],
+}
+
+
+def _vgg(arch, cfg, batch_norm, pretrained, progress, **kwargs):
+    if pretrained:
+        kwargs[&#39;init_weights&#39;] = False
+    model = VGG(make_layers(cfgs[cfg], batch_norm=batch_norm), **kwargs)
+    
+    return model
+
+
+def vgg11(pretrained=False, progress=True, **kwargs):
+    r&#34;&#34;&#34;VGG 11-layer model (configuration &#34;A&#34;) from
+    `&#34;Very Deep Convolutional Networks For Large-Scale Image Recognition&#34; &lt;https://arxiv.org/pdf/1409.1556.pdf&gt;`_
+
+    Args:
+        pretrained (bool): If True, returns a model pre-trained on ImageNet
+        progress (bool): If True, displays a progress bar of the download to stderr
+    &#34;&#34;&#34;
+    return _vgg(&#39;vgg11&#39;, &#39;A&#39;, False, pretrained, progress, **kwargs)
+
+
+
+def vgg11_bn(pretrained=False, progress=True, **kwargs):
+    r&#34;&#34;&#34;VGG 11-layer model (configuration &#34;A&#34;) with batch normalization
+    `&#34;Very Deep Convolutional Networks For Large-Scale Image Recognition&#34; &lt;https://arxiv.org/pdf/1409.1556.pdf&gt;`_
+
+    Args:
+        pretrained (bool): If True, returns a model pre-trained on ImageNet
+        progress (bool): If True, displays a progress bar of the download to stderr
+    &#34;&#34;&#34;
+    return _vgg(&#39;vgg11_bn&#39;, &#39;A&#39;, True, pretrained, progress, **kwargs)
+
+
+
+def vgg13(pretrained=False, progress=True, **kwargs):
+    r&#34;&#34;&#34;VGG 13-layer model (configuration &#34;B&#34;)
+    `&#34;Very Deep Convolutional Networks For Large-Scale Image Recognition&#34; &lt;https://arxiv.org/pdf/1409.1556.pdf&gt;`_
+
+    Args:
+        pretrained (bool): If True, returns a model pre-trained on ImageNet
+        progress (bool): If True, displays a progress bar of the download to stderr
+    &#34;&#34;&#34;
+    return _vgg(&#39;vgg13&#39;, &#39;B&#39;, False, pretrained, progress, **kwargs)
+
+
+
+def vgg13_bn(pretrained=False, progress=True, **kwargs):
+    r&#34;&#34;&#34;VGG 13-layer model (configuration &#34;B&#34;) with batch normalization
+    `&#34;Very Deep Convolutional Networks For Large-Scale Image Recognition&#34; &lt;https://arxiv.org/pdf/1409.1556.pdf&gt;`_
+
+    Args:
+        pretrained (bool): If True, returns a model pre-trained on ImageNet
+        progress (bool): If True, displays a progress bar of the download to stderr
+    &#34;&#34;&#34;
+    return _vgg(&#39;vgg13_bn&#39;, &#39;B&#39;, True, pretrained, progress, **kwargs)
+
+
+
+def vgg16(pretrained=False, progress=True, **kwargs):
+    r&#34;&#34;&#34;VGG 16-layer model (configuration &#34;D&#34;)
+    `&#34;Very Deep Convolutional Networks For Large-Scale Image Recognition&#34; &lt;https://arxiv.org/pdf/1409.1556.pdf&gt;`_
+
+    Args:
+        pretrained (bool): If True, returns a model pre-trained on ImageNet
+        progress (bool): If True, displays a progress bar of the download to stderr
+    &#34;&#34;&#34;
+    return _vgg(&#39;vgg16&#39;, &#39;D&#39;, False, pretrained, progress, **kwargs)
+
+
+
+def vgg16_bn(pretrained=False, progress=True, **kwargs):
+    r&#34;&#34;&#34;VGG 16-layer model (configuration &#34;D&#34;) with batch normalization
+    `&#34;Very Deep Convolutional Networks For Large-Scale Image Recognition&#34; &lt;https://arxiv.org/pdf/1409.1556.pdf&gt;`_
+
+    Args:
+        pretrained (bool): If True, returns a model pre-trained on ImageNet
+        progress (bool): If True, displays a progress bar of the download to stderr
+    &#34;&#34;&#34;
+    return _vgg(&#39;vgg16_bn&#39;, &#39;D&#39;, True, pretrained, progress, **kwargs)
+
+
+
+def vgg19(pretrained=False, progress=True, **kwargs):
+    r&#34;&#34;&#34;VGG 19-layer model (configuration &#34;E&#34;)
+    `&#34;Very Deep Convolutional Networks For Large-Scale Image Recognition&#34; &lt;https://arxiv.org/pdf/1409.1556.pdf&gt;`_
+
+    Args:
+        pretrained (bool): If True, returns a model pre-trained on ImageNet
+        progress (bool): If True, displays a progress bar of the download to stderr
+    &#34;&#34;&#34;
+    return _vgg(&#39;vgg19&#39;, &#39;E&#39;, False, pretrained, progress, **kwargs)
+
+
+
+def vgg19_bn(pretrained=False, progress=True, **kwargs):
+    r&#34;&#34;&#34;VGG 19-layer model (configuration &#39;E&#39;) with batch normalization
+    `&#34;Very Deep Convolutional Networks For Large-Scale Image Recognition&#34; &lt;https://arxiv.org/pdf/1409.1556.pdf&gt;`_
+
+    Args:
+        pretrained (bool): If True, returns a model pre-trained on ImageNet
+        progress (bool): If True, displays a progress bar of the download to stderr
+    &#34;&#34;&#34;
+    return _vgg(&#39;vgg19_bn&#39;, &#39;E&#39;, True, pretrained, progress, **kwargs)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="src.classifier.models.vgg.vgg11"><code class="name flex">
+<span>def <span class="ident">vgg11</span></span>(<span>pretrained=False, progress=True, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>VGG 11-layer model (configuration "A") from
+<code>"Very Deep Convolutional Networks For Large-Scale Image Recognition" &lt;https://arxiv.org/pdf/1409.1556.pdf&gt;</code>_</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>pretrained</code></strong> :&ensp;<code>bool</code></dt>
+<dd>If True, returns a model pre-trained on ImageNet</dd>
+<dt><strong><code>progress</code></strong> :&ensp;<code>bool</code></dt>
+<dd>If True, displays a progress bar of the download to stderr</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def vgg11(pretrained=False, progress=True, **kwargs):
+    r&#34;&#34;&#34;VGG 11-layer model (configuration &#34;A&#34;) from
+    `&#34;Very Deep Convolutional Networks For Large-Scale Image Recognition&#34; &lt;https://arxiv.org/pdf/1409.1556.pdf&gt;`_
+
+    Args:
+        pretrained (bool): If True, returns a model pre-trained on ImageNet
+        progress (bool): If True, displays a progress bar of the download to stderr
+    &#34;&#34;&#34;
+    return _vgg(&#39;vgg11&#39;, &#39;A&#39;, False, pretrained, progress, **kwargs)</code></pre>
+</details>
+</dd>
+<dt id="src.classifier.models.vgg.vgg11_bn"><code class="name flex">
+<span>def <span class="ident">vgg11_bn</span></span>(<span>pretrained=False, progress=True, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>VGG 11-layer model (configuration "A") with batch normalization
+<code>"Very Deep Convolutional Networks For Large-Scale Image Recognition" &lt;https://arxiv.org/pdf/1409.1556.pdf&gt;</code>_</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>pretrained</code></strong> :&ensp;<code>bool</code></dt>
+<dd>If True, returns a model pre-trained on ImageNet</dd>
+<dt><strong><code>progress</code></strong> :&ensp;<code>bool</code></dt>
+<dd>If True, displays a progress bar of the download to stderr</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def vgg11_bn(pretrained=False, progress=True, **kwargs):
+    r&#34;&#34;&#34;VGG 11-layer model (configuration &#34;A&#34;) with batch normalization
+    `&#34;Very Deep Convolutional Networks For Large-Scale Image Recognition&#34; &lt;https://arxiv.org/pdf/1409.1556.pdf&gt;`_
+
+    Args:
+        pretrained (bool): If True, returns a model pre-trained on ImageNet
+        progress (bool): If True, displays a progress bar of the download to stderr
+    &#34;&#34;&#34;
+    return _vgg(&#39;vgg11_bn&#39;, &#39;A&#39;, True, pretrained, progress, **kwargs)</code></pre>
+</details>
+</dd>
+<dt id="src.classifier.models.vgg.vgg13"><code class="name flex">
+<span>def <span class="ident">vgg13</span></span>(<span>pretrained=False, progress=True, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>VGG 13-layer model (configuration "B")
+<code>"Very Deep Convolutional Networks For Large-Scale Image Recognition" &lt;https://arxiv.org/pdf/1409.1556.pdf&gt;</code>_</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>pretrained</code></strong> :&ensp;<code>bool</code></dt>
+<dd>If True, returns a model pre-trained on ImageNet</dd>
+<dt><strong><code>progress</code></strong> :&ensp;<code>bool</code></dt>
+<dd>If True, displays a progress bar of the download to stderr</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def vgg13(pretrained=False, progress=True, **kwargs):
+    r&#34;&#34;&#34;VGG 13-layer model (configuration &#34;B&#34;)
+    `&#34;Very Deep Convolutional Networks For Large-Scale Image Recognition&#34; &lt;https://arxiv.org/pdf/1409.1556.pdf&gt;`_
+
+    Args:
+        pretrained (bool): If True, returns a model pre-trained on ImageNet
+        progress (bool): If True, displays a progress bar of the download to stderr
+    &#34;&#34;&#34;
+    return _vgg(&#39;vgg13&#39;, &#39;B&#39;, False, pretrained, progress, **kwargs)</code></pre>
+</details>
+</dd>
+<dt id="src.classifier.models.vgg.vgg13_bn"><code class="name flex">
+<span>def <span class="ident">vgg13_bn</span></span>(<span>pretrained=False, progress=True, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>VGG 13-layer model (configuration "B") with batch normalization
+<code>"Very Deep Convolutional Networks For Large-Scale Image Recognition" &lt;https://arxiv.org/pdf/1409.1556.pdf&gt;</code>_</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>pretrained</code></strong> :&ensp;<code>bool</code></dt>
+<dd>If True, returns a model pre-trained on ImageNet</dd>
+<dt><strong><code>progress</code></strong> :&ensp;<code>bool</code></dt>
+<dd>If True, displays a progress bar of the download to stderr</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def vgg13_bn(pretrained=False, progress=True, **kwargs):
+    r&#34;&#34;&#34;VGG 13-layer model (configuration &#34;B&#34;) with batch normalization
+    `&#34;Very Deep Convolutional Networks For Large-Scale Image Recognition&#34; &lt;https://arxiv.org/pdf/1409.1556.pdf&gt;`_
+
+    Args:
+        pretrained (bool): If True, returns a model pre-trained on ImageNet
+        progress (bool): If True, displays a progress bar of the download to stderr
+    &#34;&#34;&#34;
+    return _vgg(&#39;vgg13_bn&#39;, &#39;B&#39;, True, pretrained, progress, **kwargs)</code></pre>
+</details>
+</dd>
+<dt id="src.classifier.models.vgg.vgg16"><code class="name flex">
+<span>def <span class="ident">vgg16</span></span>(<span>pretrained=False, progress=True, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>VGG 16-layer model (configuration "D")
+<code>"Very Deep Convolutional Networks For Large-Scale Image Recognition" &lt;https://arxiv.org/pdf/1409.1556.pdf&gt;</code>_</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>pretrained</code></strong> :&ensp;<code>bool</code></dt>
+<dd>If True, returns a model pre-trained on ImageNet</dd>
+<dt><strong><code>progress</code></strong> :&ensp;<code>bool</code></dt>
+<dd>If True, displays a progress bar of the download to stderr</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def vgg16(pretrained=False, progress=True, **kwargs):
+    r&#34;&#34;&#34;VGG 16-layer model (configuration &#34;D&#34;)
+    `&#34;Very Deep Convolutional Networks For Large-Scale Image Recognition&#34; &lt;https://arxiv.org/pdf/1409.1556.pdf&gt;`_
+
+    Args:
+        pretrained (bool): If True, returns a model pre-trained on ImageNet
+        progress (bool): If True, displays a progress bar of the download to stderr
+    &#34;&#34;&#34;
+    return _vgg(&#39;vgg16&#39;, &#39;D&#39;, False, pretrained, progress, **kwargs)</code></pre>
+</details>
+</dd>
+<dt id="src.classifier.models.vgg.vgg16_bn"><code class="name flex">
+<span>def <span class="ident">vgg16_bn</span></span>(<span>pretrained=False, progress=True, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>VGG 16-layer model (configuration "D") with batch normalization
+<code>"Very Deep Convolutional Networks For Large-Scale Image Recognition" &lt;https://arxiv.org/pdf/1409.1556.pdf&gt;</code>_</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>pretrained</code></strong> :&ensp;<code>bool</code></dt>
+<dd>If True, returns a model pre-trained on ImageNet</dd>
+<dt><strong><code>progress</code></strong> :&ensp;<code>bool</code></dt>
+<dd>If True, displays a progress bar of the download to stderr</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def vgg16_bn(pretrained=False, progress=True, **kwargs):
+    r&#34;&#34;&#34;VGG 16-layer model (configuration &#34;D&#34;) with batch normalization
+    `&#34;Very Deep Convolutional Networks For Large-Scale Image Recognition&#34; &lt;https://arxiv.org/pdf/1409.1556.pdf&gt;`_
+
+    Args:
+        pretrained (bool): If True, returns a model pre-trained on ImageNet
+        progress (bool): If True, displays a progress bar of the download to stderr
+    &#34;&#34;&#34;
+    return _vgg(&#39;vgg16_bn&#39;, &#39;D&#39;, True, pretrained, progress, **kwargs)</code></pre>
+</details>
+</dd>
+<dt id="src.classifier.models.vgg.vgg19"><code class="name flex">
+<span>def <span class="ident">vgg19</span></span>(<span>pretrained=False, progress=True, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>VGG 19-layer model (configuration "E")
+<code>"Very Deep Convolutional Networks For Large-Scale Image Recognition" &lt;https://arxiv.org/pdf/1409.1556.pdf&gt;</code>_</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>pretrained</code></strong> :&ensp;<code>bool</code></dt>
+<dd>If True, returns a model pre-trained on ImageNet</dd>
+<dt><strong><code>progress</code></strong> :&ensp;<code>bool</code></dt>
+<dd>If True, displays a progress bar of the download to stderr</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def vgg19(pretrained=False, progress=True, **kwargs):
+    r&#34;&#34;&#34;VGG 19-layer model (configuration &#34;E&#34;)
+    `&#34;Very Deep Convolutional Networks For Large-Scale Image Recognition&#34; &lt;https://arxiv.org/pdf/1409.1556.pdf&gt;`_
+
+    Args:
+        pretrained (bool): If True, returns a model pre-trained on ImageNet
+        progress (bool): If True, displays a progress bar of the download to stderr
+    &#34;&#34;&#34;
+    return _vgg(&#39;vgg19&#39;, &#39;E&#39;, False, pretrained, progress, **kwargs)</code></pre>
+</details>
+</dd>
+<dt id="src.classifier.models.vgg.vgg19_bn"><code class="name flex">
+<span>def <span class="ident">vgg19_bn</span></span>(<span>pretrained=False, progress=True, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>VGG 19-layer model (configuration 'E') with batch normalization
+<code>"Very Deep Convolutional Networks For Large-Scale Image Recognition" &lt;https://arxiv.org/pdf/1409.1556.pdf&gt;</code>_</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>pretrained</code></strong> :&ensp;<code>bool</code></dt>
+<dd>If True, returns a model pre-trained on ImageNet</dd>
+<dt><strong><code>progress</code></strong> :&ensp;<code>bool</code></dt>
+<dd>If True, displays a progress bar of the download to stderr</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def vgg19_bn(pretrained=False, progress=True, **kwargs):
+    r&#34;&#34;&#34;VGG 19-layer model (configuration &#39;E&#39;) with batch normalization
+    `&#34;Very Deep Convolutional Networks For Large-Scale Image Recognition&#34; &lt;https://arxiv.org/pdf/1409.1556.pdf&gt;`_
+
+    Args:
+        pretrained (bool): If True, returns a model pre-trained on ImageNet
+        progress (bool): If True, displays a progress bar of the download to stderr
+    &#34;&#34;&#34;
+    return _vgg(&#39;vgg19_bn&#39;, &#39;E&#39;, True, pretrained, progress, **kwargs)</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="src.classifier.models.vgg.VGG"><code class="flex name class">
+<span>class <span class="ident">VGG</span></span>
+<span>(</span><span>features, num_classes=3, init_weights=True, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing to nest them in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+class Model(nn.Module):
+    def __init__(self):
+        super(Model, self).__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will have their
+parameters converted too when you call :meth:<code>to</code>, etc.</p>
+<p>:ivar training: Boolean represents whether this module is in training or
+evaluation mode.
+:vartype training: bool</p>
+<p>Initializes internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class VGG(nn.Module):
+
+    def __init__(self, features, num_classes=3, init_weights=True, **kwargs):
+        super(VGG, self).__init__()
+        self.features = features
+        self.avgpool = nn.AdaptiveAvgPool3d((1, 7, 7))
+        self.classifier = nn.Sequential(
+            nn.Linear(512 * 7 * 7, 4096),
+            nn.ReLU(True),
+            nn.Dropout(),
+            nn.Linear(4096, 4096),
+            nn.ReLU(True),
+            nn.Dropout(),
+            nn.Linear(4096, num_classes),
+        )
+        if init_weights:
+            self._initialize_weights()
+
+    def forward(self, x):
+        x = self.features(x)
+        x = self.avgpool(x)
+        x = torch.flatten(x, 1)
+        x = self.classifier(x)
+        return x
+
+    def _initialize_weights(self):
+        for m in self.modules():
+            if isinstance(m, nn.Conv3d):
+                nn.init.kaiming_normal_(m.weight, mode=&#39;fan_out&#39;, nonlinearity=&#39;relu&#39;)
+                if m.bias is not None:
+                    nn.init.constant_(m.bias, 0)
+            elif isinstance(m, nn.BatchNorm3d):
+                nn.init.constant_(m.weight, 1)
+                nn.init.constant_(m.bias, 0)
+            elif isinstance(m, nn.Linear):
+                nn.init.normal_(m.weight, 0, 0.01)
+                nn.init.constant_(m.bias, 0)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="src.classifier.models.vgg.VGG.dump_patches"><code class="name">var <span class="ident">dump_patches</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="src.classifier.models.vgg.VGG.training"><code class="name">var <span class="ident">training</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="src.classifier.models.vgg.VGG.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self, x) ‑> Callable[..., Any]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the :class:<code>Module</code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(self, x):
+    x = self.features(x)
+    x = self.avgpool(x)
+    x = torch.flatten(x, 1)
+    x = self.classifier(x)
+    return x</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="src.classifier.models" href="index.html">src.classifier.models</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="two-column">
+<li><code><a title="src.classifier.models.vgg.vgg11" href="#src.classifier.models.vgg.vgg11">vgg11</a></code></li>
+<li><code><a title="src.classifier.models.vgg.vgg11_bn" href="#src.classifier.models.vgg.vgg11_bn">vgg11_bn</a></code></li>
+<li><code><a title="src.classifier.models.vgg.vgg13" href="#src.classifier.models.vgg.vgg13">vgg13</a></code></li>
+<li><code><a title="src.classifier.models.vgg.vgg13_bn" href="#src.classifier.models.vgg.vgg13_bn">vgg13_bn</a></code></li>
+<li><code><a title="src.classifier.models.vgg.vgg16" href="#src.classifier.models.vgg.vgg16">vgg16</a></code></li>
+<li><code><a title="src.classifier.models.vgg.vgg16_bn" href="#src.classifier.models.vgg.vgg16_bn">vgg16_bn</a></code></li>
+<li><code><a title="src.classifier.models.vgg.vgg19" href="#src.classifier.models.vgg.vgg19">vgg19</a></code></li>
+<li><code><a title="src.classifier.models.vgg.vgg19_bn" href="#src.classifier.models.vgg.vgg19_bn">vgg19_bn</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="src.classifier.models.vgg.VGG" href="#src.classifier.models.vgg.VGG">VGG</a></code></h4>
+<ul class="">
+<li><code><a title="src.classifier.models.vgg.VGG.dump_patches" href="#src.classifier.models.vgg.VGG.dump_patches">dump_patches</a></code></li>
+<li><code><a title="src.classifier.models.vgg.VGG.forward" href="#src.classifier.models.vgg.VGG.forward">forward</a></code></li>
+<li><code><a title="src.classifier.models.vgg.VGG.training" href="#src.classifier.models.vgg.VGG.training">training</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>
