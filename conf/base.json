@@ -103,7 +103,7 @@
                 "visualise":"logs/visualise"
             },
             "trainer":{
-                "max_epochs": 100,
+                "max_epochs": 200,
                 "precision":16,
                 "profiler":true,
                 "checkpoint_callback": false,

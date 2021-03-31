@@ -1,6 +1,6 @@
 {
     "resnet50":{
-        "checkpoint_path":"/logs/tb/resnet50/version_1/checkpoints/checkpoint-v2.ckpt",
+        "checkpoint_path":null,
         "model":{
             "arch": {
                 "name": "resnet50",
