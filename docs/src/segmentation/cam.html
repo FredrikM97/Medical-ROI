@@ -26,7 +26,8 @@
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">from src.utils import utils,plot, preprocess
+<pre><code class="python">from src.utils import utils, preprocess
+from src.utils.plots import plot
 from torchcam import cams
 import torch
 from torch import Tensor
@@ -382,7 +383,7 @@ tmp = cam.CAM(CAMS.GradCAM.value, model, tmp_image)</p>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li><a title="src.utils.plot.Plot" href="../utils/plot.html#src.utils.plot.Plot">Plot</a></li>
+<li><a title="src.utils.plots.plot.Plot" href="../utils/plots/plot.html#src.utils.plots.plot.Plot">Plot</a></li>
 </ul>
 <h3>Methods</h3>
 <dl>
@@ -524,10 +525,10 @@ Return a Tensor with activations from image</p></div>
 </dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
-<li><code><b><a title="src.utils.plot.Plot" href="../utils/plot.html#src.utils.plot.Plot">Plot</a></b></code>:
+<li><code><b><a title="src.utils.plots.plot.Plot" href="../utils/plots/plot.html#src.utils.plots.plot.Plot">Plot</a></b></code>:
 <ul class="hlist">
-<li><code><a title="src.utils.plot.Plot.grid" href="../utils/plot.html#src.utils.plot.Plot.grid">grid</a></code></li>
-<li><code><a title="src.utils.plot.Plot.preprocess" href="../utils/plot.html#src.utils.plot.Plot.preprocess">preprocess</a></code></li>
+<li><code><a title="src.utils.plots.plot.Plot.grid" href="../utils/plots/plot.html#src.utils.plots.plot.Plot.grid">grid</a></code></li>
+<li><code><a title="src.utils.plots.plot.Plot.preprocess" href="../utils/plots/plot.html#src.utils.plots.plot.Plot.preprocess">preprocess</a></code></li>
 </ul>
 </li>
 </ul>

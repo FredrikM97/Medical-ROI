@@ -1,6 +1,6 @@
 import pytorch_lightning as pl
-from src.utils import plot, utils
-from src.utils.plots import roc
+from src.utils import utils
+from src.utils.plots import roc,plot
 from src.classifier.metric import MetricTracker
 import matplotlib.pyplot as plt
 import seaborn as sns

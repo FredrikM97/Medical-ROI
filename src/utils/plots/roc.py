@@ -1,4 +1,5 @@
-from src.utils import plot, utils
+from src.utils import utils
+from . import plot
 import numpy as np
 import pytorch_lightning as pl
 import matplotlib.pyplot as plt

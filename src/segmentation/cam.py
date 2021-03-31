@@ -1,4 +1,5 @@
-from src.utils import utils,plot, preprocess
+from src.utils import utils, preprocess
+from src.utils.plots import plot
 from torchcam import cams
 import torch
 from torch import Tensor

@@ -71,10 +71,18 @@ def filename2labels(images:list, classes:dict, delimiter:str) -&gt; np.ndarray:
     assert delimiter in images[0], &#34;The defined delimiter could not be found in image input!&#34;
     return np.array([classes[img_path.rsplit(&#34;/&#34;,1)[1].split(delimiter,1)[0]] for img_path in images])
 
-def mask_threshold(image:np.ndarray, threshold:float):
-    &#34;&#34;&#34;Place a threshold on image and remove all values that are below the threshold&#34;&#34;&#34;
+def mask_threshold(image:np.ndarray, threshold:float) -&gt; None:
+    &#34;&#34;&#34;Place a threshold on image and remove all values that are below the threshold.
+    All values under the threshold is set to 0
+ 
+    
+    Args:
+        * image: Input image that threshold should be applied to.
+        * treshold: Value between 0-1 at which procent of the max value that should be taken as a mask
+    &#34;&#34;&#34;
     img_threshold = image.max()*threshold
-    return np.ma.masked_where(image &lt;= img_threshold,image)
+    image[image &lt; img_threshold] = 0
+    return image #np.ma.masked_where(image &lt;= img_threshold,image)
 
 def set_outside_of_scan_pixels_2_zero(image:np.ndarray, mask:np.ndarray) -&gt; np.ndarray:
     &#34;&#34;&#34;Everything that is zero outside of image is set to zero on the mask. Returns the modified mask&#34;&#34;&#34;
@@ -221,18 +229,32 @@ def greedy_split(arr:np.ndarray, n:int, axis=0) -&gt; list:
 </details>
 </dd>
 <dt id="src.utils.preprocess.mask_threshold"><code class="name flex">
-<span>def <span class="ident">mask_threshold</span></span>(<span>image: numpy.ndarray, threshold: float)</span>
+<span>def <span class="ident">mask_threshold</span></span>(<span>image: numpy.ndarray, threshold: float) ‑> NoneType</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Place a threshold on image and remove all values that are below the threshold</p></div>
+<div class="desc"><p>Place a threshold on image and remove all values that are below the threshold.
+All values under the threshold is set to 0</p>
+<h2 id="args">Args</h2>
+<ul>
+<li>image: Input image that threshold should be applied to.</li>
+<li>treshold: Value between 0-1 at which procent of the max value that should be taken as a mask</li>
+</ul></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def mask_threshold(image:np.ndarray, threshold:float):
-    &#34;&#34;&#34;Place a threshold on image and remove all values that are below the threshold&#34;&#34;&#34;
+<pre><code class="python">def mask_threshold(image:np.ndarray, threshold:float) -&gt; None:
+    &#34;&#34;&#34;Place a threshold on image and remove all values that are below the threshold.
+    All values under the threshold is set to 0
+ 
+    
+    Args:
+        * image: Input image that threshold should be applied to.
+        * treshold: Value between 0-1 at which procent of the max value that should be taken as a mask
+    &#34;&#34;&#34;
     img_threshold = image.max()*threshold
-    return np.ma.masked_where(image &lt;= img_threshold,image)</code></pre>
+    image[image &lt; img_threshold] = 0
+    return image #np.ma.masked_where(image &lt;= img_threshold,image)</code></pre>
 </details>
 </dd>
 <dt id="src.utils.preprocess.normalize"><code class="name flex">

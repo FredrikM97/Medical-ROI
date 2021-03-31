@@ -1,5 +1,5 @@
 #from neural_network.utils.hooks import ActivationMapHook
-from src.utils import plot
+from src.utils.plots import plot
 import pytorch_lightning as pl
 import matplotlib.pyplot as plt
 import numpy as np
