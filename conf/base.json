@@ -73,7 +73,7 @@
                     "args":{
                         "lr": 0.0002,
                         "weight_decay": 1e-5,
-                        "amsgrad": true
+                        "amsgrad": false
                     }
                 },
                 "arch": {
@@ -81,12 +81,12 @@
                     "args": {}
                 },
                 "hp_metrics":[
-                    "loss",
-                    "loss",
-                    "accuracy",
-                    "auc",
-                    "specificity",
-                    "sensitivity"
+                    "loss/train",
+                    "loss/val",
+                    "accuracy/val",
+                    "auc/val",
+                    "specificity/val",
+                    "sensitivity/val"
                 ],
                 "callbacks":[
                     "litprogressbar",
