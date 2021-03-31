@@ -10,7 +10,7 @@ from typing import Tuple
 from abc import abstractmethod
 
 
-def figure_decorator(func, figsize=(20,20)):
+def figure_decorator(func, figsize=(10,10)):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         fig, ax = plt.subplots(figsize=figsize)
@@ -51,9 +51,13 @@ class Plot:
         return image
     
 <<<<<<< HEAD
+<<<<<<< HEAD
     return image
 =======
     def grid(self, image:np.ndarray, max_num_slices=16) -> Tensor:
+=======
+    def grid(self, image:np.ndarray, max_num_slices=16,pad_value=0.5) -> Tensor:
+>>>>>>> Bug fixes for modules
         """ Create grid from image based on maximum number of slices.
         
         Args:
@@ -64,10 +68,9 @@ class Plot:
             * Return a grid image with reduced number of slices.
         
         """
-        image = self.preprocess(image2axial(image))
 
-        assert image.shape == self.input_shape[1:], f"Wrong shape, Image: {image.shape}, Expected: {self.input_shape[1:]}"
-        
+        assert image.shape == self.input_shape, f"Wrong shape, Image: {image.shape}, Expected: {self.input_shape}"
+        nrow=9
         if max_num_slices != None:
             image = np.stack([np.mean(x,axis=0) for x in greedy_split(image,max_num_slices)])
             nrow=4
@@ -75,6 +78,11 @@ class Plot:
         plt_image = torch.from_numpy(image).float().unsqueeze(1)
         
         # Convert to grid 
+<<<<<<< HEAD
         grid_image = torchvision.utils.make_grid(plt_image, nrow=nrow,pad_value=0.5, normalize=True)[0]*255
         return grid_image
 >>>>>>> Bug fixes and cleanup
+=======
+        grid_image = torchvision.utils.make_grid(plt_image, nrow=nrow,pad_value=pad_value, normalize=True)[0]*255
+        return grid_image
+>>>>>>> Bug fixes for modules

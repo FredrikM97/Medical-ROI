@@ -8,13 +8,6 @@ import xml.etree.ElementTree as ET
 def availible_files(path, contains:str=''):
     """Returns the availible files in directory"""
     return [f for f in os.listdir(path) if contains in f]
-    
-def tensor2numpy(data):
-    """Send to CPU. If computational graph is connected then detach it as well."""
-    if data.requires_grad:
-        return data.detach().cpu().numpy()
-    else:
-        return data.cpu().numpy()
             
 def merge_dict(a, b, path=None):
     "merges b into a"

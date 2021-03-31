@@ -61,12 +61,19 @@ class CAM(plot.Plot):
     
     tmp.plot(tmp.class_scores, [0,1,2], class_label="AD")
     """
-    def __init__(self, cam:str, model, image:np.ndarray, input_shape:Tuple[int,int,int,int]=(1,79,95,79), target_layer:str=None) -> None:
+    def __init__(self, cam:str, model, image:np.ndarray, input_shape:Tuple[int,int,int,int]=(79,95,79), target_layer:str=None) -> None:
+        """Expects an input image from axial view of shape Tuple[W,H,D]
+        
+        This code only works in the colormap is grayscale so C=1
+        The dataloaded support the axial view and return it as default
+        """
         super().__init__()
+        
+        assert len(image.shape) == 3
         self.cam = cam
         self.model = model
         self.image = image
-        self.extractor = cam(model, input_shape=input_shape, target_layer=target_layer)
+        self.extractor = cam(model, input_shape=(1,*input_shape), target_layer=target_layer)
         self.input_shape = input_shape
         self.class_scores, self.class_idx = self.evaluate()
 
@@ -75,23 +82,19 @@ class CAM(plot.Plot):
             
             Return a score vector with the propbability of each class
         """
+        device = 'cuda'
         
         # Apply preprocessing
         image = self.preprocess(self.image)
         image = preprocess.batchisize_to_5D(image)
         image_tensor = torch.from_numpy(image).float()
         
-        image_tensor.to(self.model.device)
+        self.model.to(device)
+        image_tensor = image_tensor.to(device)
         # Check that image have the correct shape
-        assert tuple(image_tensor.shape) == (1, *self.input_shape), f"Got image shape: {image_tensor.shape} expected: {(1, *self.input_shape)}"
+        assert tuple(image_tensor.shape) == (1, 1, *self.input_shape), f"Got image shape: {image_tensor.shape} expected: {(1, 1, *self.input_shape)}"
         #assert self.model.device == image.device, f"Model and image are not on same device: Model: {self.model.device} Image: {image.device}"
-        
-        #image_tensor.requires_grad = True
-        
-        # Enable grad and configure model
-        #for param in self.model.parameters():
-        #    param.requires_grad = False
-        
+  
         self.model.eval()
         class_scores = self.model(image_tensor)
         return class_scores
@@ -111,33 +114,34 @@ class CAM(plot.Plot):
     
     def activation_map(self, class_idx:int=None, class_scores:Tensor=None) -> np.ndarray:
         """ Retrieve the map based on the score from the model
-            Return a Tensor with activations from image
-        """
         
-        return utils.tensor2numpy(self.extractor(class_idx, class_scores))
+        Return:
+            * Tensor with activations from image with shape Tensor[D,H,W]
+        """
+        return preprocess.tensor2numpy(self.extractor(class_idx, class_scores))
        
-    def grid_class(self, class_scores:Tensor, class_idx:Union[List[int],int], max_num_slices:int=16) -> Tuple[Tensor, Tensor]:
+    def grid_class(self, class_scores:Tensor, class_idx:Union[List[int],int], max_num_slices:int=16,pad_value=0.5) -> Tuple[Tensor, Tensor]:
         """Creates a grid based on a class_idx."""
+        
+        image_process = lambda image: self.preprocess(image)
+        
         if isinstance(class_idx, list) and len(class_idx) == 1:
             class_idx = class_idx[0]
 
-        
         if isinstance(class_idx, list):
             grid_img = torch.hstack([
-                self.grid(self.image, max_num_slices=max_num_slices)
-                for _ in class_idx
-            ])
+                self.grid(image_process(self.image), max_num_slices=max_num_slices,pad_value=pad_value)
+            ]*len(class_idx))
             
-            print(class_scores, class_idx)
             grid_mask = torch.hstack([
-                self.grid(self.activation_map(class_idx, class_scores), max_num_slices=max_num_slices)
-                for class_idx in class_idx
+                self.grid(image_process(self.activation_map(idx, class_scores)), max_num_slices=max_num_slices,pad_value=pad_value)
+                for idx in class_idx
             ])
         
             
         elif isinstance(class_idx, int):
-            grid_mask = self.grid(self.activation_map(class_idx, class_scores), max_num_slices=max_num_slices)
-            grid_img = self.grid(self.image, max_num_slices=max_num_slices)
+            grid_mask = self.grid(image_process(self.activation_map(class_idx, class_scores)), max_num_slices=max_num_slices,pad_value=pad_value)
+            grid_img = self.grid(image_process(self.image), max_num_slices=max_num_slices,pad_value=pad_value)
             
         else:
             raise ValueError(f"Expected class_idx of type list or int, Got: {type(class_idx)}")
@@ -163,29 +167,31 @@ class CAM(plot.Plot):
             ]
             axis.set_title(', '.join(title_list))
             
+            axis.set_axis_off()
+            axis.set_xticklabels([])
+            axis.set_yticklabels([])
+                
         fig, axes = plt.subplots(ncols=len(class_idx),nrows=1,figsize=(len(class_idx)*8,8))
         fig.subplots_adjust(hspace=0)
         
         if len(class_idx) == 1:
-            image, mask = self.grid_class(class_scores, class_idx[0])
+            image, mask = self.grid_class(class_scores, class_idx[0],max_num_slices=max_num_slices)
             axes.imshow(image,cmap='Greys_r')
             im = axes.imshow(mask,cmap=cmap, alpha=alpha) 
             default_settings(axes,class_idx[0])
         else:
             for i, idx in enumerate(class_idx):
-                image, mask = self.grid_class(class_scores, idx)
+                image, mask = self.grid_class(class_scores, idx,max_num_slices=max_num_slices)
                 axes[i].imshow(image,cmap='Greys_r')
                 im = axes[i].imshow(mask,cmap=cmap, alpha=alpha) 
                 default_settings(axes[i], idx)
+                
+            
         
         # Remove axis data to show colorbar more clean
-        for ax in axes.flat:
-            ax.set_axis_off()
-            ax.set_xticklabels([])
-            ax.set_yticklabels([])
-    
+        ax = axes.ravel().tolist() if len(class_idx) > 1 else axes
         plt.subplots_adjust(wspace=0.01, hspace=0)
-        cbar = fig.colorbar(im, ax=axes.ravel().tolist(), shrink=1)
+        cbar = fig.colorbar(im, ax=ax, shrink=1)
 
         
         return fig

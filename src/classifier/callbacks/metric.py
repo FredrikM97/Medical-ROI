@@ -1,5 +1,5 @@
 import pytorch_lightning as pl
-from src.utils import utils
+from src.utils import utils, preprocess
 from src.utils.plots import roc,plot
 from src.classifier.metric import MetricTracker
 import matplotlib.pyplot as plt
@@ -64,12 +64,16 @@ class MetricCallback(pl.callbacks.Callback):
     
     def cm_plot(self, trainer, cm, prefix=''):
         fig = plt.figure(figsize=(20,20))
+<<<<<<< HEAD
 <<<<<<< HEAD:src/classifier/callbacks/metrics.py
         ax = sns.heatmap(utils.to_cpu_numpy(cm), annot=True, annot_kws={"size": 12})
 >>>>>>> Bug fixes to improve speed and changed some functionality to reduce complexity:Development/neural_network/callbacks/metrics.py
 =======
         ax = sns.heatmap(utils.tensor2numpy(cm), annot=True, annot_kws={"size": 12})
 >>>>>>> Minor bugfixes to run trainer:src/classifier/callbacks/metric.py
+=======
+        ax = sns.heatmap(preprocess.tensor2numpy(cm), annot=True, annot_kws={"size": 12})
+>>>>>>> Bug fixes for modules
         ax.set_xlabel("Predicted label")
         ax.set_ylabel("True label")
         trainer.logger.experiment.add_figure(f"confmat/{prefix}", fig,trainer.current_epoch)

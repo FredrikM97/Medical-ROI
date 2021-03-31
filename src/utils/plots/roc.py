@@ -1,4 +1,4 @@
-from src.utils import utils
+from src.utils import preprocess
 from . import plot
 import numpy as np
 import pytorch_lightning as pl
@@ -14,10 +14,10 @@ def ROC(roc_classes, prefix='', fig=None):
     
     metric_list = np.zeros(3)
     for i in range(len(roc_classes)):
-        auc = utils.tensor2numpy(pl.metrics.functional.auc(fpr[i],tpr[i]))
+        auc = preprocess.tensor2numpy(pl.metrics.functional.auc(fpr[i],tpr[i]))
         
-        _fpr = utils.tensor2numpy(fpr[i])
-        _tpr = utils.tensor2numpy(tpr[i])
+        _fpr = preprocess.tensor2numpy(fpr[i])
+        _tpr = preprocess.tensor2numpy(tpr[i])
         
         metric_list[0]+=auc
         metric_list[1]+=_fpr.mean()

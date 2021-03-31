@@ -84,4 +84,13 @@ def greedy_split(arr:np.ndarray, n:int, axis=0) -> list:
     ix = np.arange(block_size, length, block_size).astype(np.uint8)
     return np.split(arr, ix, axis)
 
+<<<<<<< HEAD
 >>>>>>> Bug fixes and cleanup
+=======
+def tensor2numpy(data):
+    """Send to CPU. If computational graph is connected then detach it as well."""
+    if data.requires_grad:
+        return data.detach().cpu().numpy()
+    else:
+        return data.cpu().numpy()
+>>>>>>> Bug fixes for modules

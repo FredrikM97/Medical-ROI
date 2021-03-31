@@ -34,13 +34,14 @@ def load_trainer(config_name:str, checkpoint_path:str=None):
     cfg_model = config['model']
     
     # If we want to load a model directly without changing the config
-    checkpoint_path = BASEDIR + checkpoint_path if checkpoint_path else BASEDIR + config['checkpoint_path']
+    checkpoint_path = checkpoint_path if checkpoint_path else config['checkpoint_path']
     
     if checkpoint_path:
+        checkpoint_path = BASEDIR + checkpoint_path
         print(f"Loading model from {checkpoint_path} (checkpoint)..")
         model = Model.load_from_checkpoint(checkpoint_path=checkpoint_path)
     else:
-        model = Model(checkpoint_path=checkpoint_path,**cfg_model)
+        model = Model(**cfg_model)
         
     dataset = dataloader.create_dataset(**cfg_dataset)
     
