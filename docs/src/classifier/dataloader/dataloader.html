@@ -72,7 +72,6 @@ class AdniDataloader(pl.LightningDataModule):
     
     def train_dataloader(self):
         transform = torchvision.transforms.Compose([
-            torchvision.transforms.ToTensor(),
             torchvision.transforms.Resize(self.img_shape)
         ])
         return DataLoader(AdniDataset(self.trainset,transform=transform),
@@ -81,7 +80,6 @@ class AdniDataloader(pl.LightningDataModule):
     
     def val_dataloader(self):
         transform = torchvision.transforms.Compose([
-            torchvision.transforms.ToTensor(),
             torchvision.transforms.Resize(self.img_shape)
         ])
         return DataLoader(AdniDataset(self.valset, transform=transform),
@@ -180,7 +178,6 @@ split transform and process the data</p></div>
     
     def train_dataloader(self):
         transform = torchvision.transforms.Compose([
-            torchvision.transforms.ToTensor(),
             torchvision.transforms.Resize(self.img_shape)
         ])
         return DataLoader(AdniDataset(self.trainset,transform=transform),
@@ -189,7 +186,6 @@ split transform and process the data</p></div>
     
     def val_dataloader(self):
         transform = torchvision.transforms.Compose([
-            torchvision.transforms.ToTensor(),
             torchvision.transforms.Resize(self.img_shape)
         ])
         return DataLoader(AdniDataset(self.valset, transform=transform),
@@ -299,7 +295,6 @@ There is no need to set it yourself.</p>
 </summary>
 <pre><code class="python">def train_dataloader(self):
     transform = torchvision.transforms.Compose([
-        torchvision.transforms.ToTensor(),
         torchvision.transforms.Resize(self.img_shape)
     ])
     return DataLoader(AdniDataset(self.trainset,transform=transform),
@@ -358,7 +353,6 @@ will have an argument <code>dataloader_idx</code> which matches the order here.<
 </summary>
 <pre><code class="python">def val_dataloader(self):
     transform = torchvision.transforms.Compose([
-        torchvision.transforms.ToTensor(),
         torchvision.transforms.Resize(self.img_shape)
     ])
     return DataLoader(AdniDataset(self.valset, transform=transform),

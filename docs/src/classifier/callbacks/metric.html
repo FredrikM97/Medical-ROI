@@ -27,7 +27,7 @@
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">import pytorch_lightning as pl
-from src.utils import utils
+from src.utils import utils, preprocess
 from src.utils.plots import roc,plot
 from src.classifier.metric import MetricTracker
 import matplotlib.pyplot as plt
@@ -83,7 +83,7 @@ class MetricCallback(pl.callbacks.Callback):
     
     def cm_plot(self, trainer, cm, prefix=&#39;&#39;):
         fig = plt.figure(figsize=(20,20))
-        ax = sns.heatmap(utils.tensor2numpy(cm), annot=True, annot_kws={&#34;size&#34;: 12})
+        ax = sns.heatmap(preprocess.tensor2numpy(cm), annot=True, annot_kws={&#34;size&#34;: 12})
         ax.set_xlabel(&#34;Predicted label&#34;)
         ax.set_ylabel(&#34;True label&#34;)
         trainer.logger.experiment.add_figure(f&#34;confmat/{prefix}&#34;, fig,trainer.current_epoch)
@@ -174,7 +174,7 @@ class MetricCallback(pl.callbacks.Callback):
     
     def cm_plot(self, trainer, cm, prefix=&#39;&#39;):
         fig = plt.figure(figsize=(20,20))
-        ax = sns.heatmap(utils.tensor2numpy(cm), annot=True, annot_kws={&#34;size&#34;: 12})
+        ax = sns.heatmap(preprocess.tensor2numpy(cm), annot=True, annot_kws={&#34;size&#34;: 12})
         ax.set_xlabel(&#34;Predicted label&#34;)
         ax.set_ylabel(&#34;True label&#34;)
         trainer.logger.experiment.add_figure(f&#34;confmat/{prefix}&#34;, fig,trainer.current_epoch)
@@ -214,7 +214,7 @@ class MetricCallback(pl.callbacks.Callback):
 </summary>
 <pre><code class="python">def cm_plot(self, trainer, cm, prefix=&#39;&#39;):
     fig = plt.figure(figsize=(20,20))
-    ax = sns.heatmap(utils.tensor2numpy(cm), annot=True, annot_kws={&#34;size&#34;: 12})
+    ax = sns.heatmap(preprocess.tensor2numpy(cm), annot=True, annot_kws={&#34;size&#34;: 12})
     ax.set_xlabel(&#34;Predicted label&#34;)
     ax.set_ylabel(&#34;True label&#34;)
     trainer.logger.experiment.add_figure(f&#34;confmat/{prefix}&#34;, fig,trainer.current_epoch)</code></pre>

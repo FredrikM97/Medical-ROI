@@ -24,7 +24,7 @@ def load_trainer(config_name:str, checkpoint_path:str=None):
         * Model object
     """
     model_config = load.load_config(config_name, dirpath=BASEDIR + "/conf/")[config_name]
-    base_config = load.load_config('base', dirpath=BASEDIR + "/conf/")['base']['classifier']
+    base_config = load.load_config('base', dirpath=BASEDIR + "/conf/")['classifier']
 
     config = merge_dict(base_config,model_config)
 

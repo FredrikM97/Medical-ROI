@@ -1,116 +1,115 @@
 {
-    "base":{
-        "visualise":{
-            "data":{
-                "root":"data/",
-                "images_raw":"adni_raw/",
-                "images_processed":"SPM_preprocessed_normalized/ADNI1/",
-                "images_category":"SPM_categorised/ADNI1/",
-                "images_meta":"meta/",
-                "delimiter":"_",
-                "classes":{
-                    "CN":0,
-                    "MCI":1,
-                    "AD":2
-                }
-            },
-            "meta":{
-                "filename_raw":[
-                    "projectIdentifier", 
-                    "subject.subjectIdentifier",
-                    "subject.study.series.modality",
-                    "subject.study.imagingProtocol.description",
-                    "subject.study.series.dateAcquiredPrecise", 
-                    "image_nbr",
-                    "series",
-                    "subject.study.imagingProtocol.imageUID",
-                    "filename",
-                    "path"
-                ],
-                "filename_category":[
-                    "subject.researchGroup",
-                    "subject.subjectIdentifier",
-                    "subject.study.imagingProtocol.imageUID",
-                    "image_nbr",
-                    "filename",
-                    "path"
-                ],
-                "filename_processed":[
-                    "projectIdentifier", 
-                    "subject.subjectIdentifier",
-                    "subject.study.series.modality",
-                    "subject.study.imagingProtocol.description",
-                    "subject.study.series.dateAcquiredPrecise", 
-                    "image_nbr",
-                    "series",
-                    "subject.study.imagingProtocol.imageUID",
-                    "filename",
-                    "path"
-                ]
+    "classes":{
+                "CN":0,
+                "MCI":1,
+                "AD":2
+    },
+    "visualise":{
+        "data":{
+            "root":"data/",
+            "images_raw":"adni_raw/",
+            "images_processed":"SPM_preprocessed_normalized/ADNI1/",
+            "images_category":"SPM_categorised/ADNI1/",
+            "images_meta":"meta/",
+            "delimiter":"_"
+        },
+        "meta":{
+            "filename_raw":[
+                "projectIdentifier", 
+                "subject.subjectIdentifier",
+                "subject.study.series.modality",
+                "subject.study.imagingProtocol.description",
+                "subject.study.series.dateAcquiredPrecise", 
+                "image_nbr",
+                "series",
+                "subject.study.imagingProtocol.imageUID",
+                "filename",
+                "path"
+            ],
+            "filename_category":[
+                "subject.researchGroup",
+                "subject.subjectIdentifier",
+                "subject.study.imagingProtocol.imageUID",
+                "image_nbr",
+                "filename",
+                "path"
+            ],
+            "filename_processed":[
+                "projectIdentifier", 
+                "subject.subjectIdentifier",
+                "subject.study.series.modality",
+                "subject.study.imagingProtocol.description",
+                "subject.study.series.dateAcquiredPrecise", 
+                "image_nbr",
+                "series",
+                "subject.study.imagingProtocol.imageUID",
+                "filename",
+                "path"
+            ]
+        }
+    },
+    "classifier":{
+        "name": "NiftiModel",
+        "n_gpu": 1,
+        "seed":420,
+        "checkpoint_path":null,
+        "tensorboard": true,
+        "dataloader": {
+            "name": "AdniDataloader",
+            "args":{
+                "data_dir": "data/SPM_categorised/AIH/",
+                "batch_size": 6,
+                "validation_split": 0.1,
+                "num_workers": 6,
+                "pin_memory": true,
+                "img_shape":[95,79]
             }
         },
-        "classifier":{
-            "name": "NiftiModel",
-            "n_gpu": 1,
-            "seed":420,
-            "checkpoint_path":null,
-            "tensorboard": true,
-            "dataloader": {
-                "name": "AdniDataloader",
+        "model":{
+            "loss": "CrossEntropyLoss",
+            "optimizer":{
+                "type": "Adam",
                 "args":{
-                    "data_dir": "data/SPM_categorised/AIH/",
-                    "batch_size": 6,
-                    "validation_split": 0.1,
-                    "num_workers": 6,
-                    "pin_memory": true,
-                    "img_shape":[95,79]
+                    "lr": 0.0002,
+                    "weight_decay": 1e-5,
+                    "amsgrad": false
                 }
             },
-            "model":{
-                "loss": "CrossEntropyLoss",
-                "optimizer":{
-                    "type": "Adam",
-                    "args":{
-                        "lr": 0.0002,
-                        "weight_decay": 1e-5,
-                        "amsgrad": false
-                    }
-                },
-                "arch": {
-                    "name": "resnet50",
-                    "args": {}
-                },
-                "hp_metrics":[
-                    "loss/train",
-                    "loss/val",
-                    "accuracy/val",
-                    "auc/val",
-                    "specificity/val",
-                    "sensitivity/val"
-                ],
-                "callbacks":[
-                    "litprogressbar",
-                    "modelcheckpoints",
-                    "metriccallback"
-                ],
-                "kfold":{
-                    "enable":false,
-                    "folds":10
-                }
-            }, 
-            "logging":{
-                "tensorboard":"logs/tb",
-                "visualise":"logs/visualise"
+            "arch": {
+                "name": "resnet50",
+                "args": {}
             },
-            "trainer":{
-                "max_epochs": 200,
-                "precision":16,
-                "profiler":true,
-                "checkpoint_callback": false,
-                "progress_bar_refresh_rate":0,
-                "fast_dev_run":false,
-                "num_sanity_val_steps":2
+            "hp_metrics":[
+                "loss/train",
+                "loss/val",
+                "accuracy/val",
+                "auc/val",
+                "specificity/val",
+                "sensitivity/val"
+            ],
+            "callbacks":[
+                "litprogressbar",
+                "modelcheckpoints",
+                "metriccallback"
+            ],
+            "kfold":{
+                "enable":false,
+                "folds":10
             }
+        }, 
+        "logging":{
+            "tensorboard":"logs/tb",
+            "visualise":"logs/visualise"
+        },
+        "trainer":{
+            "max_epochs": 200,
+            "precision":16,
+            "profiler":true,
+            "checkpoint_callback": false,
+            "progress_bar_refresh_rate":0,
+            "fast_dev_run":false,
+            "num_sanity_val_steps":2
         }
     }
+    
 }

@@ -83,7 +83,7 @@ class CAM(plot.Plot):
             Return a score vector with the propbability of each class
         """
         device = 'cuda'
-        
+
         # Apply preprocessing
         image = self.preprocess(self.image)
         image = preprocess.batchisize_to_5D(image)
@@ -118,6 +118,7 @@ class CAM(plot.Plot):
         Return:
             * Tensor with activations from image with shape Tensor[D,H,W]
         """
+
         return preprocess.tensor2numpy(self.extractor(class_idx, class_scores))
        
     def grid_class(self, class_scores:Tensor, class_idx:Union[List[int],int], max_num_slices:int=16,pad_value=0.5) -> Tuple[Tensor, Tensor]:

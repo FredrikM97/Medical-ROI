@@ -1,0 +1,19 @@
+{
+    "resnet50":{
+        "checkpoint_path":null,
+        "dataloader": {
+            "args":{
+                "img_shape":[40,40]
+            }
+        },
+        "model":{
+            "arch": {
+                "name": "resnet50",
+                "args": {}
+            }
+        }, 
+        "trainer":{
+            "checkpoint_callback":true
+        }
+    }
+}

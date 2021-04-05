@@ -25,7 +25,6 @@ def batchisize_to_5D(x:Union[Tensor,np.ndarray]) -> Union[Tensor,np.ndarray]:
     if isinstance(type(x), Tensor):
         return x.expand((*[1]*(5-len(x.shape)),*[-1]*len(x.shape)))
     else:
-        print(len(x.shape))
         return np.expand_dims(x,[i for i,_ in enumerate(range(5-len(x.shape)))])
     
 def filename2labels(images:list, classes:dict, delimiter:str) -> np.ndarray:

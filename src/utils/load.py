@@ -4,6 +4,8 @@ from typing import Dict
 import json
 import importlib
 import numpy as np
+from src.utils.preprocess import image2axial
+import nibabel as nib
 
 def load_json(dirpath:str=None) -> dict:
     """Open a json file and return the key name and config data if the file exists
@@ -18,12 +20,11 @@ def load_json(dirpath:str=None) -> dict:
         * ValueError: If file could not be loaded
     """
     with open(dirpath) as json_file:
+        name = ''
         try:
-            for name, config in json.load(json_file).items():
-                return {name:config}
-            
+            return {name:config for name, config in json.load(json_file).items()}
         except ValueError as e:
-            raise ValueError(f" Error when loading file: {name}") from e
+            raise ValueError(f" Error when loading file: {dirpath}") from e
 
 def load_config(filename:str,dirpath:str=None) -> Dict:
     """Load file with same name as the input filename and located in dirpath"""
@@ -75,7 +76,7 @@ def load_files(srcdir:str):
 =======
     return tmp
 
-def nifti2axial(path:str) -> np.ndarray:
+def load_nifti_axial(path:str) -> np.ndarray:
     """Load an nifti image from the axial view
     
     Args:

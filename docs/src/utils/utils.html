@@ -36,13 +36,6 @@ import xml.etree.ElementTree as ET
 def availible_files(path, contains:str=&#39;&#39;):
     &#34;&#34;&#34;Returns the availible files in directory&#34;&#34;&#34;
     return [f for f in os.listdir(path) if contains in f]
-    
-def tensor2numpy(data):
-    &#34;&#34;&#34;Send to CPU. If computational graph is connected then detach it as well.&#34;&#34;&#34;
-    if data.requires_grad:
-        return data.detach().cpu().numpy()
-    else:
-        return data.cpu().numpy()
             
 def merge_dict(a, b, path=None):
     &#34;merges b into a&#34;
@@ -358,23 +351,6 @@ Check if data is a int, float otherwise a string/object</p></div>
     return slices</code></pre>
 </details>
 </dd>
-<dt id="src.utils.utils.tensor2numpy"><code class="name flex">
-<span>def <span class="ident">tensor2numpy</span></span>(<span>data)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Send to CPU. If computational graph is connected then detach it as well.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def tensor2numpy(data):
-    &#34;&#34;&#34;Send to CPU. If computational graph is connected then detach it as well.&#34;&#34;&#34;
-    if data.requires_grad:
-        return data.detach().cpu().numpy()
-    else:
-        return data.cpu().numpy()</code></pre>
-</details>
-</dd>
 <dt id="src.utils.utils.xml2dict"><code class="name flex">
 <span>def <span class="ident">xml2dict</span></span>(<span>r, parent='', delimiter='.') ‑> list</span>
 </code></dt>
@@ -428,7 +404,6 @@ Check if data is a int, float otherwise a string/object</p></div>
 <li><code><a title="src.utils.utils.object2type" href="#src.utils.utils.object2type">object2type</a></code></li>
 <li><code><a title="src.utils.utils.remove_preprocessed_filename_definition" href="#src.utils.utils.remove_preprocessed_filename_definition">remove_preprocessed_filename_definition</a></code></li>
 <li><code><a title="src.utils.utils.split_custom_filename" href="#src.utils.utils.split_custom_filename">split_custom_filename</a></code></li>
-<li><code><a title="src.utils.utils.tensor2numpy" href="#src.utils.utils.tensor2numpy">tensor2numpy</a></code></li>
 <li><code><a title="src.utils.utils.xml2dict" href="#src.utils.utils.xml2dict">xml2dict</a></code></li>
 </ul>
 </li>

@@ -52,7 +52,7 @@ def load_trainer(config_name:str, checkpoint_path:str=None):
         * Model object
     &#34;&#34;&#34;
     model_config = load.load_config(config_name, dirpath=BASEDIR + &#34;/conf/&#34;)[config_name]
-    base_config = load.load_config(&#39;base&#39;, dirpath=BASEDIR + &#34;/conf/&#34;)[&#39;base&#39;][&#39;classifier&#39;]
+    base_config = load.load_config(&#39;base&#39;, dirpath=BASEDIR + &#34;/conf/&#34;)[&#39;classifier&#39;]
 
     config = merge_dict(base_config,model_config)
 
@@ -62,13 +62,14 @@ def load_trainer(config_name:str, checkpoint_path:str=None):
     cfg_model = config[&#39;model&#39;]
     
     # If we want to load a model directly without changing the config
-    checkpoint_path = BASEDIR + checkpoint_path if checkpoint_path else BASEDIR + config[&#39;checkpoint_path&#39;]
+    checkpoint_path = checkpoint_path if checkpoint_path else config[&#39;checkpoint_path&#39;]
     
     if checkpoint_path:
+        checkpoint_path = BASEDIR + checkpoint_path
         print(f&#34;Loading model from {checkpoint_path} (checkpoint)..&#34;)
         model = Model.load_from_checkpoint(checkpoint_path=checkpoint_path)
     else:
-        model = Model(checkpoint_path=checkpoint_path,**cfg_model)
+        model = Model(**cfg_model)
         
     dataset = dataloader.create_dataset(**cfg_dataset)
     
@@ -153,7 +154,7 @@ If no checkpoint_path is given then the trainer will create a new model based on
         * Model object
     &#34;&#34;&#34;
     model_config = load.load_config(config_name, dirpath=BASEDIR + &#34;/conf/&#34;)[config_name]
-    base_config = load.load_config(&#39;base&#39;, dirpath=BASEDIR + &#34;/conf/&#34;)[&#39;base&#39;][&#39;classifier&#39;]
+    base_config = load.load_config(&#39;base&#39;, dirpath=BASEDIR + &#34;/conf/&#34;)[&#39;classifier&#39;]
 
     config = merge_dict(base_config,model_config)
 
@@ -163,13 +164,14 @@ If no checkpoint_path is given then the trainer will create a new model based on
     cfg_model = config[&#39;model&#39;]
     
     # If we want to load a model directly without changing the config
-    checkpoint_path = BASEDIR + checkpoint_path if checkpoint_path else BASEDIR + config[&#39;checkpoint_path&#39;]
+    checkpoint_path = checkpoint_path if checkpoint_path else config[&#39;checkpoint_path&#39;]
     
     if checkpoint_path:
+        checkpoint_path = BASEDIR + checkpoint_path
         print(f&#34;Loading model from {checkpoint_path} (checkpoint)..&#34;)
         model = Model.load_from_checkpoint(checkpoint_path=checkpoint_path)
     else:
-        model = Model(checkpoint_path=checkpoint_path,**cfg_model)
+        model = Model(**cfg_model)
         
     dataset = dataloader.create_dataset(**cfg_dataset)
     

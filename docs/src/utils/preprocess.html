@@ -108,7 +108,14 @@ def greedy_split(arr:np.ndarray, n:int, axis=0) -&gt; list:
 
     # the indices at which the splits will occur
     ix = np.arange(block_size, length, block_size).astype(np.uint8)
-    return np.split(arr, ix, axis)</code></pre>
+    return np.split(arr, ix, axis)
+
+def tensor2numpy(data):
+    &#34;&#34;&#34;Send to CPU. If computational graph is connected then detach it as well.&#34;&#34;&#34;
+    if data.requires_grad:
+        return data.detach().cpu().numpy()
+    else:
+        return data.cpu().numpy()</code></pre>
 </details>
 </section>
 <section>
@@ -300,6 +307,23 @@ All values under the threshold is set to 0</p>
     return np.ma.masked_where(image == 0,mask)</code></pre>
 </details>
 </dd>
+<dt id="src.utils.preprocess.tensor2numpy"><code class="name flex">
+<span>def <span class="ident">tensor2numpy</span></span>(<span>data)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Send to CPU. If computational graph is connected then detach it as well.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def tensor2numpy(data):
+    &#34;&#34;&#34;Send to CPU. If computational graph is connected then detach it as well.&#34;&#34;&#34;
+    if data.requires_grad:
+        return data.detach().cpu().numpy()
+    else:
+        return data.cpu().numpy()</code></pre>
+</details>
+</dd>
 </dl>
 </section>
 <section>
@@ -325,6 +349,7 @@ All values under the threshold is set to 0</p>
 <li><code><a title="src.utils.preprocess.mask_threshold" href="#src.utils.preprocess.mask_threshold">mask_threshold</a></code></li>
 <li><code><a title="src.utils.preprocess.normalize" href="#src.utils.preprocess.normalize">normalize</a></code></li>
 <li><code><a title="src.utils.preprocess.set_outside_of_scan_pixels_2_zero" href="#src.utils.preprocess.set_outside_of_scan_pixels_2_zero">set_outside_of_scan_pixels_2_zero</a></code></li>
+<li><code><a title="src.utils.preprocess.tensor2numpy" href="#src.utils.preprocess.tensor2numpy">tensor2numpy</a></code></li>
 </ul>
 </li>
 </ul>
