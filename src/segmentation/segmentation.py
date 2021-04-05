@@ -82,10 +82,11 @@ def segment_mask(image_mask:np.ndarray) -> np.ndarray:
     """Simple segmentation of the mask input
     Note: This one might need some scientific rework since it is not very good
     """
-    n=32
+    n=1
     im = filters.gaussian(image_mask, sigma=1/(4.*n), mode='nearest')
-    mask = im > im.max()*0.6
-    label_im, nb_labels = ndimage.label(mask)
+    mask = im > im.max()*0.62
+    label_im = measure.label(mask, connectivity=1)
+    #label_im, nb_labels = ndimage.label(mask, connectivity=1)
     return label_im
 
 def extract_features(segmentation:np.ndarray, image_mask:np.ndarray):
@@ -98,11 +99,7 @@ def extract_features(segmentation:np.ndarray, image_mask:np.ndarray):
     Return:
         output: List[RegionProperties]
         """
-    #features = []
-    #for seg, mask in zip(segmentation, image_mask):
     return measure.regionprops(segmentation, intensity_image=image_mask)  # only one object
-        #features.append(props)
-    #return features
 
 def bounding_boxes(features):
     """Expects features from 2D images
@@ -110,23 +107,17 @@ def bounding_boxes(features):
     Args:
         features (List[RegionProperties])
     Return:
-        output List[K, 6] with the box coordinates in (y0, x0, y1, x1, z0, z1) and k is batch size.
+        output List[K, 6] with the box coordinates in  (x0, y0, x1, y1, z0, z1) and k is batch size.
     """
     boxes = []
     if isinstance(features, list):
     # Features must exist!
         for feature in features:
-
-            # For each bounding box:
-            # Wild guess that z0 and z1 is correct. x0 and x1 positions cant be depth
-
             z0, y0, x0, z1, y1, x1 = feature.bbox
-            boxes.append((y0, x0, y1, x1,z0,z1))
+            boxes.append((x0, y0, x1, y1,z0,z1))
     else:
-        #y0, x0, z0, y1, x1,z1 = features.bbox
-        z0, y0, x0, z1, y1, x1 = features.bbox
-        print(features)
-        return (y0, x0, y1, x1,z0,z1)
+        z0, y0, x0, z1, y1, x1  = features.bbox
+        return (x0, y0, x1, y1,z0,z1)
     return boxes
 
 def plot_features_regions(features:list, image_mask:np.ndarray,step=1):
@@ -143,33 +134,34 @@ def plot_features_regions(features:list, image_mask:np.ndarray,step=1):
 
         ax.set_xticks([])
         ax.set_yticks([])
-        
+
     # Add boundaries
     flatten_axis = axes.flatten()
     for feature in features:
-        y0, x0, y1, x1,z0, z1 = bounding_boxes(feature)
-        rect = mpatches.Rectangle((x0, y0), x1 - x0, y1 - y0,fill=False, edgecolor='red', linewidth=2)
-        print("asdasd",z0,z1, feature.bbox)
+        x0, y0, x1, y1,z0, z1 = bounding_boxes(feature)
         for z in range(z0,z1):
-            print(z)
-            #flatten_axis[z].add_patch(rect)
-            flatten_axis[z].patches.extend([rect])
-        print(feature.centroid)
-        #Note check that these coordinates are correct!
-        flatten_axis[int(feature.centroid[0])].plot(*feature.centroid[::-1], marker='x', color='r')
+            flatten_axis[z].add_patch(mpatches.Rectangle((x0, y0), x1 - x0, y1 - y0,fill=False, edgecolor='red', linewidth=2))
+
+        z,y,x = feature.centroid
+        flatten_axis[int(z)].plot(x,y, marker='x', color='y')
 
 def roi_align(image, features):
     """ Create aligned image rois for the neural network
     Arg:
-        * Image of shape Tuple[D,H,W]
-        * List of features of shape List[Tuple[int,int,int,int,int]] 
+        image: Image of shape Tuple[D,H,W]
+        features (List[Tuple[int,int,int,int,int]]): List of features (z0,y0,z1,y1,x0,x1). Shape is expected based on the input of ROIAlign
     """
-    image_tensor = torch.from_numpy(image).unsqueeze(1).float()
-    boxes = torch.Tensor(bounding_boxes(features))
+    def shapie(listie):
+        x0,y0,x1,y1,z0,z1 = listie
+        return torch.Tensor([z0,y0,z1,y1,x0,x1])
+
+    image_tensor = torch.from_numpy(image).unsqueeze(0).unsqueeze(0).float().cuda()
+    box_tensor = [torch.stack([shapie(torch.Tensor(x)) for x in bounding_boxes(features)]).cuda()]
     
-    roialign = RoIAlign((40,40,10),spatial_scale=1.0,sampling_ratio=-1).cuda()
-    image_rois = roialign.forward(image_tensor.cuda(),boxes.cuda())
-    display(tensor2numpy(image_rois).squeeze(1),step=1)
+    roialign = RoIAlign((40,40,40),spatial_scale=1.0,sampling_ratio=-1)
+    image_rois = roialign.forward(image_tensor,box_tensor)
+
+    [display(x[0],step=1) for x in tensor2numpy(image_rois)]
     
     return image_rois
 
