@@ -178,3 +178,62 @@ How does the region affect the classification result? Is any of the regions dome
 ## TODO:
 * Ask Amira about GitHub invite
 * Continue CNN + EDA, techniques for exploring the model - saliency map, t-SNE
+
+# Meeting 12 (2021-03-08)
+* Permanent ROI
+	- Motivated:
+		* Computationally less exhaustive
+		* Clinically, radiologists don't look at the entire image either [source?]
+
+	- Different ways of extracting ROIs, perform some comparative analysis
+	 	* Hard atlas (anatomical regions)
+		* Find discriminative regions through ML
+			- Different weakly supervised techniqes
+				* CAM, saliency etc
+
+* Adjust plots:
+	- Average brain reference image behind saliency map plot
+	- Create one average plot for every class, of all instances where the class was correctly predicted
+	- Also include some randomly chosen mis-classified sample
+	- Flip CAM plots and change to (axial?) view (top-down)
+
+* Increase discussion about model selection.
+	- And then present final model in results
+
+* Discussion section
+	- Saliency results matches [Ding]
+
+# Meeting 13 (2021-03-22)
+* Half-time presentation:
+	* Meeting notes in slides
+
+* Physical regions, extract using atlas - AAL [Xiaoxi]
+
+* Main approach suggestions:
+	* Keep BBR in final network: Learn to construct BB from input image, without having to produce CAM. During training, CAM is used as label. Results in different BB for different input images.
+	* Construct global average heatmap (CAM, etc), and extract permanent ROIs. Then train a new classifier to predict using only those ROIs. Results in same BB for different input images.
+
+* Make a simple initial complete solution
+	* Segmentation
+	* Expect bad results, backtrack
+
+* Investigate BBR immediately on intensity, rather than segmented image
+
+* This week:
+	* Presentation
+	* Construct 9 global average CAMs
+	* Construct average CAM for same input image, over multiple attempts
+	* Refine code structure
+
+# Meeting 14 (2021-03-29)
+* Slawomir feedback:
+	- Model excessively complex
+	- Improve motivation of project
+
+* Try to make model simpler
+	- Should have at least two models to compare (?)
+	- Again explain with CAM / saliency etc
+
+* Link between regions and atlases
+	- n regions -> n networks, then need to combine to reach a classification
+	- Talaraich, thesis from Amira, nibabel?
