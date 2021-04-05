@@ -120,7 +120,7 @@ def bounding_boxes(features):
             # For each bounding box:
             # Wild guess that z0 and z1 is correct. x0 and x1 positions cant be depth
 
-            y0, x0, z0, y1, x1,z1 = feature.bbox
+            z0, y0, x0, z1, y1, x1 = feature.bbox
             boxes.append((y0, x0, y1, x1,z0,z1))
     else:
         #y0, x0, z0, y1, x1,z1 = features.bbox
