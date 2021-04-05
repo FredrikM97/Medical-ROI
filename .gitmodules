@@ -1,3 +1,5 @@
 [submodule "Reports/halftime"]
 	path = Reports/halftime
 	url = https://git.overleaf.com/6007f76b99e4ecd7746439aa
+[submodule "src/segmentation/tmpROI"]
+	ignore = untracked
