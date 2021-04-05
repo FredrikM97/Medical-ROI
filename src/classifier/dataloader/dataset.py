@@ -27,23 +27,9 @@ class AdniDataset(Dataset):
         
         if self.transform:
             x = self.transform(x)
-<<<<<<< HEAD
-        else:
-            x = torch.from_numpy(x)
-<<<<<<< HEAD
-        return x.unsqueeze(0).float(), y
-=======
         x = preprocess.normalize(x.unsqueeze(0).float()) # Think normalization was missing
-=======
-        #else:
-        
-        #x = torch.from_numpy(x)
-        x = x.unsqueeze(0).float()
-        x = preprocess.normalize(x) # Think normalization was missing
->>>>>>> Bug fix
-        
         return x, y
->>>>>>> Minor bugfixes to run trainer
+
 
     def __len__(self):
         # return the size of the dataset

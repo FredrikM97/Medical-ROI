@@ -26,23 +26,10 @@ class AdniDataloader(pl.LightningDataModule):
             'batch_size': batch_size,
             'num_workers': num_workers
         }
-<<<<<<< HEAD
-     
-=======
-        self._weights = ClassWeights(delimiter=self.delimiter, classes=self.classes)
-        self._kfold = Kfold()
         
         print(f"Dataset sizes - Training: {len(self.trainset)} Validation: {len(self.valset)}")
         
-    @property
-    def weights(self):
-        return self._weights.weights
-    
-    @property
-    def kfold(self):
-        return self._kfold
-    
->>>>>>> Minor bugfixes to run trainer
+
     def train_dataloader(self):
         transform = torchvision.transforms.Compose([
             torchvision.transforms.Resize(self.img_shape)

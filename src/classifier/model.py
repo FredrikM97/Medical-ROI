@@ -1,23 +1,15 @@
-<<<<<<< HEAD:src/classifier/trainer.py
 #from ..architectures import create_architecture #testModel
 from . import models
-=======
-from ..architectures import create_architecture #testModel
-from ..utils import MetricsTracker
-<<<<<<< HEAD:src/classifier/trainer.py
 
->>>>>>> Bug fixes to improve speed and changed some functionality to reduce complexity:Development/neural_network/models/lightning_model.py
-=======
-import os
->>>>>>> Added feature for merge slices. More backbone networks. Minor fixes:Development/neural_network/models/lightning_model.py
 import pytorch_lightning as pl
 import torch.nn as nn
 import torch
 import torch.nn.functional as F
 import numpy as np
-<<<<<<< HEAD:src/classifier/trainer.py
 
-<<<<<<< HEAD:src/classifier/trainer.py
+import os
+from src import BASEDIR
+
 def create_model(checkpoint_path=None,**cfg_model):
     if checkpoint_path:
         assert os.path.isfile(checkpoint_path), "The provided checkpoint_path is not valid! Does it exist?"
@@ -25,36 +17,13 @@ def create_model(checkpoint_path=None,**cfg_model):
         return trainer.load_from_checkpoint(checkpoint_path=checkpoint_path)
     else:
         return models.create_model(**cfg_model['arch'])
-=======
-import os
-from src import BASEDIR
->>>>>>> Bug fixes and cleanup:src/classifier/model.py
-            
+
 class Model(pl.LightningModule): 
     def __init__(self,class_weights=None,loss_weight_balance=None,hp_metrics:list=None,**hparams):
         super().__init__() 
         self.save_hyperparameters()
-        #self.example_input_array = torch.rand(64, 1, 79, 69, 79)
-<<<<<<< HEAD:src/classifier/trainer.py
         self.model = create_model(**self.hparams)
-=======
-class LightningModel(pl.LightningModule): 
-    def __init__(self, class_weights=None,loss_weight_balance=None,hp_metrics:list=[],**hparams):
-        super().__init__() 
-        self.save_hyperparameters() # Dangerous, if architecture get in here the program will freeze..
-        
-        if hparams['checkpoint_path']:
-            assert os.path.isfile(hparams['checkpoint_path']), "The provided checkpoint_path is not valid! Does it exist?"
-            print(f"Loading architecture from {hparams['checkpoint_path']} (checkpoint)..")
-            self.model = self.load_from_checkpoint(checkpoint_path=hparams['checkpoint_path'])
-        else:
-            self.model = create_architecture(**hparams)
->>>>>>> Bug fixes to improve speed and changed some functionality to reduce complexity:Development/neural_network/models/lightning_model.py
-=======
-        self.model = models.create_model(**self.hparams['arch'])
->>>>>>> Bug fixes and cleanup:src/classifier/model.py
 
-        #self.example_input_array = torch.rand(64, 1, 79, 69, 79)
         self.hp_metrics = hp_metrics
         self.loss_class_weights = class_weights if loss_weight_balance else None
         

@@ -13,16 +13,8 @@ class MetricCallback(pl.callbacks.Callback):
         super().__init__()
         self.num_classes = 3
         self.logger_struct = lambda metric_prefix, prefix, metric: (f"{metric_prefix}/{prefix}", metric)
-<<<<<<< HEAD:src/classifier/callbacks/metrics.py
-<<<<<<< HEAD:src/classifier/callbacks/metrics.py
-        self.val_metrics = MetricTracker().cuda()
-=======
-        self.metricsTracker = utils.MetricsTracker().cuda()
->>>>>>> Bug fixes to improve speed and changed some functionality to reduce complexity:Development/neural_network/callbacks/metrics.py
-    
-=======
         self.metricsTracker = MetricTracker().cuda()  
->>>>>>> Minor bugfixes to run trainer:src/classifier/callbacks/metric.py
+
     def on_train_start(self, trainer, *args, **kwargs):
         if not trainer.logger:
             raise Exception('Cannot use callback with Trainer that has no logger.')
@@ -64,16 +56,7 @@ class MetricCallback(pl.callbacks.Callback):
     
     def cm_plot(self, trainer, cm, prefix=''):
         fig = plt.figure(figsize=(20,20))
-<<<<<<< HEAD
-<<<<<<< HEAD:src/classifier/callbacks/metrics.py
-        ax = sns.heatmap(utils.to_cpu_numpy(cm), annot=True, annot_kws={"size": 12})
->>>>>>> Bug fixes to improve speed and changed some functionality to reduce complexity:Development/neural_network/callbacks/metrics.py
-=======
-        ax = sns.heatmap(utils.tensor2numpy(cm), annot=True, annot_kws={"size": 12})
->>>>>>> Minor bugfixes to run trainer:src/classifier/callbacks/metric.py
-=======
         ax = sns.heatmap(preprocess.tensor2numpy(cm), annot=True, annot_kws={"size": 12})
->>>>>>> Bug fixes for modules
         ax.set_xlabel("Predicted label")
         ax.set_ylabel("True label")
         trainer.logger.experiment.add_figure(f"confmat/{prefix}", fig,trainer.current_epoch)

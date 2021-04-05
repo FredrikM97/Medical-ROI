@@ -71,9 +71,7 @@ def load_files(srcdir:str):
             for filename in files if filename.endswith('.nii')
         ])
     if len(tmp) == 0: raise ValueError(f"No files loaded from path {srcdir} that ends with extension .nii")
-<<<<<<< HEAD
-    return tmp
-=======
+
     return tmp
 
 def load_nifti_axial(path:str) -> np.ndarray:
@@ -87,4 +85,3 @@ def load_nifti_axial(path:str) -> np.ndarray:
     """
     # Load nifti image and convert to axial view
     return image2axial(nib.load(path).get_fdata())
->>>>>>> Bug fixes and cleanup

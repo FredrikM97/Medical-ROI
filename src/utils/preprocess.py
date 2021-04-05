@@ -41,8 +41,6 @@ def filename2labels(images:list, classes:dict, delimiter:str) -> np.ndarray:
     """
     assert delimiter in images[0], "The defined delimiter could not be found in image input!"
     return np.array([classes[img_path.rsplit("/",1)[1].split(delimiter,1)[0]] for img_path in images])
-<<<<<<< HEAD
-=======
 
 def mask_threshold(image:np.ndarray, threshold:float) -> None:
     """Place a threshold on image and remove all values that are below the threshold.
@@ -83,13 +81,10 @@ def greedy_split(arr:np.ndarray, n:int, axis=0) -> list:
     ix = np.arange(block_size, length, block_size).astype(np.uint8)
     return np.split(arr, ix, axis)
 
-<<<<<<< HEAD
->>>>>>> Bug fixes and cleanup
-=======
+
 def tensor2numpy(data):
     """Send to CPU. If computational graph is connected then detach it as well."""
     if data.requires_grad:
         return data.detach().cpu().numpy()
     else:
         return data.cpu().numpy()
->>>>>>> Bug fixes for modules

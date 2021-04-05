@@ -4,44 +4,15 @@ import numpy as np
 import torch
 from src.utils import utils
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD:src/classifier/metric.py
-class MetricTracker(pl.metrics.Metric):
-    def __init__(self,compute_on_step=False):
-        super().__init__(compute_on_step=compute_on_step, dist_sync_on_step=False)
-        self.add_state('predicted',default=[], dist_reduce_fx=None)
-        self.add_state('target',default=[], dist_reduce_fx=None)
-        self.add_state('probability',default=[], dist_reduce_fx=None)
-        self.add_state('loss',default=torch.tensor(0.), dist_reduce_fx=None)
-        self.add_state('num_batch',default=torch.tensor(0.), dist_reduce_fx=None)
-=======
-__all__ = ['MetricsTracker','meanMetric','ROC']
-=======
-
-__all__ = ['MetricsTracker','meanMetric']
->>>>>>> Minor bugfixes to run trainer
-
-=======
->>>>>>> Bug fixes and cleanup
 class MetricTracker(pl.metrics.Metric):
     def __init__(self,compute_on_step=False, dist_sync_on_step=False):
         super().__init__(compute_on_step=compute_on_step, dist_sync_on_step=dist_sync_on_step)
-<<<<<<< HEAD
-        self.add_state('predicted',default=[], dist_reduce_fx="sum")
-        self.add_state('target',default=[], dist_reduce_fx="sum")
-        self.add_state('probability',default=[], dist_reduce_fx="mean")
-        self.add_state('loss',default=torch.tensor(0.), dist_reduce_fx="mean")
-        self.add_state('num_batch',default=torch.tensor(0.), dist_reduce_fx="sum")
->>>>>>> Bug fixes to improve speed and changed some functionality to reduce complexity:Development/neural_network/utils/metrics.py
-=======
+
         self.add_state('predicted',default=[], dist_reduce_fx=None)
         self.add_state('target',default=[], dist_reduce_fx=None)
         self.add_state('probability',default=[], dist_reduce_fx=None)
         self.add_state('loss',default=torch.tensor(0.), dist_reduce_fx=None)
         self.add_state('num_batch',default=torch.tensor(0.), dist_reduce_fx=None)
->>>>>>> Minor bugfixes to run trainer
-        
     def update(self, predicted, target, probability, loss):
         self.predicted.append(predicted)
         self.target.append(target)
@@ -70,42 +41,4 @@ class Mean(pl.metrics.Metric):
         self.num +=1
         
     def compute(self):
-<<<<<<< HEAD:src/classifier/metric.py
         return self.val/self.num
-=======
-        return self.val/self.num
-    
-def ROC(roc_classes, prefix='', fig=None):
-    # Returns (auc, fpr, tpr), roc_fig
-    fig = plt.figure(figsize = (10,7))
-    lw = 2
-    colors = np.array(['aqua', 'darkorange', 'cornflowerblue'])
-    fpr, tpr, threshold = roc_classes
-    
-    metric_list = np.zeros(3)
-    for i in range(len(roc_classes)):
-        auc = utils.to_cpu_numpy(pl.metrics.functional.auc(fpr[i],tpr[i]))
-        
-        _fpr = utils.to_cpu_numpy(fpr[i])
-        _tpr = utils.to_cpu_numpy(tpr[i])
-        
-        metric_list[0]+=auc
-        metric_list[1]+=_fpr.mean()
-        metric_list[2]+=_tpr.mean()
-        
-        plt.plot(_fpr, _tpr, color=colors[i], lw=lw,
-                 label='ROC curve of class {0} (area={1:0.2f} tpr={2:0.2f} fpr={3:0.2f})'
-                 ''.format(i,auc, _tpr.mean(), 1-_fpr.mean())) #
-    
-    plt.plot([0, 1], [0, 1], 'k--', lw=lw)
-    plt.xlim([0.0, 1.0])
-    plt.ylim([0.0, 1.05])
-    plt.xlabel('False Positive Rate')
-    plt.ylabel('True Positive Rate')
-    plt.title('Receiver operating characteristic to multi-class')
-    plt.legend(loc="lower right")
-    
-    metric_list = metric_list/3
-    
-    return metric_list, fig
->>>>>>> Bug fixes to improve speed and changed some functionality to reduce complexity:Development/neural_network/utils/metrics.py

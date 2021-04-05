@@ -50,14 +50,7 @@ class Plot:
         
         return image
     
-<<<<<<< HEAD
-<<<<<<< HEAD
-    return image
-=======
-    def grid(self, image:np.ndarray, max_num_slices=16) -> Tensor:
-=======
     def grid(self, image:np.ndarray, max_num_slices=16,pad_value=0.5) -> Tensor:
->>>>>>> Bug fixes for modules
         """ Create grid from image based on maximum number of slices.
         
         Args:
@@ -78,11 +71,5 @@ class Plot:
         plt_image = torch.from_numpy(image).float().unsqueeze(1)
         
         # Convert to grid 
-<<<<<<< HEAD
-        grid_image = torchvision.utils.make_grid(plt_image, nrow=nrow,pad_value=0.5, normalize=True)[0]*255
-        return grid_image
->>>>>>> Bug fixes and cleanup
-=======
         grid_image = torchvision.utils.make_grid(plt_image, nrow=nrow,pad_value=pad_value, normalize=True)[0]*255
         return grid_image
->>>>>>> Bug fixes for modules
