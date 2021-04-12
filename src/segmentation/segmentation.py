@@ -4,10 +4,10 @@ import matplotlib.patches as mpatches
 import numpy as np
 import matplotlib.pyplot as plt
 import torch
-#from src.segmentation.roi import RoIAlign
 from src.segmentation.roi_align.roi_align import RoIAlign
 from src.utils.preprocess import tensor2numpy
 
+from typing import Tuple, Union, List
 from skimage import exposure, io, util
 from skimage import data, img_as_float
 from skimage.morphology import disk
@@ -101,7 +101,7 @@ def extract_features(segmentation:np.ndarray, image_mask:np.ndarray):
         """
     return measure.regionprops(segmentation, intensity_image=image_mask)  # only one object
 
-def bounding_boxes(features):
+def bounding_boxes(features:list):
     """Expects features from 2D images
     
     Args:
@@ -114,55 +114,58 @@ def bounding_boxes(features):
     # Features must exist!
         for feature in features:
             z0, y0, x0, z1, y1, x1 = feature.bbox
-            boxes.append((x0, y0, x1, y1,z0,z1))
+            #boxes.append((x0, y0, x1, y1,z0,z1))
+            boxes.append((z0,y0,z1,y1,x0,x1))
     else:
         z0, y0, x0, z1, y1, x1  = features.bbox
-        return (x0, y0, x1, y1,z0,z1)
+        return (z0,y0,z1,y1,x0,x1)
+        #return (x0, y0, x1, y1,z0,z1)
     return boxes
 
-def plot_features_regions(features:list, image_mask:np.ndarray,step=1):
+def plot_features_regions(features:list, image_mask:np.ndarray,step=1, plot_title=""):
     """Plot the extracted features"""
     ncols = 9
     nrows = 1 if len(image_mask) == 0 else int(np.ceil(len(image_mask)/ncols))
-    _, axes = plt.subplots(nrows=nrows, ncols=ncols, figsize=(10, 1*nrows))
+    fig, axes = plt.subplots(nrows=nrows, ncols=ncols, figsize=(10, 1*nrows))
 
     vmin = image_mask.min()
     vmax = image_mask.max()
-
-    for ax, image in zip(axes.flatten(), image_mask[::step]):
+    fig.suptitle(plot_title)
+    flatten_axis = axes.flatten()
+    for ax, image in zip(flatten_axis, image_mask[::step]):
         ax.imshow(image, cmap='jet', vmin=vmin, vmax=vmax)
 
         ax.set_xticks([])
         ax.set_yticks([])
 
     # Add boundaries
-    flatten_axis = axes.flatten()
+    
     for feature in features:
-        x0, y0, x1, y1,z0, z1 = bounding_boxes(feature)
+        z0,y0,z1,y1,x0,x1 = bounding_boxes(feature)
         for z in range(z0,z1):
             flatten_axis[z].add_patch(mpatches.Rectangle((x0, y0), x1 - x0, y1 - y0,fill=False, edgecolor='red', linewidth=2))
 
         z,y,x = feature.centroid
         flatten_axis[int(z)].plot(x,y, marker='x', color='y')
+        
+    plt.show()
 
-def roi_align(image, features):
+def roi_align(image, boxes:list, output_shape=(40,40,40), displayed=False):
     """ Create aligned image rois for the neural network
     Arg:
         image: Image of shape Tuple[D,H,W]
         features (List[Tuple[int,int,int,int,int]]): List of features (z0,y0,z1,y1,x0,x1). Shape is expected based on the input of ROIAlign
     """
-    def shapie(listie):
-        x0,y0,x1,y1,z0,z1 = listie
-        return torch.Tensor([z0,y0,z1,y1,x0,x1])
 
     image_tensor = torch.from_numpy(image).unsqueeze(0).unsqueeze(0).float().cuda()
-    box_tensor = [torch.stack([shapie(torch.Tensor(x)) for x in bounding_boxes(features)]).cuda()]
+    box_tensor = [torch.stack([torch.Tensor(x) for x in boxes]).cuda()]
     
-    roialign = RoIAlign((40,40,40),spatial_scale=1.0,sampling_ratio=-1)
+    roialign = RoIAlign(output_shape,spatial_scale=1.0,sampling_ratio=-1)
     image_rois = roialign.forward(image_tensor,box_tensor)
 
-    [display(x[0],step=1) for x in tensor2numpy(image_rois)]
-    
+    # None branched syntax
+    if displayed:
+        [display(x[0],step=1) for x in tensor2numpy(image_rois)]
     return image_rois
 
 def sequential_processing(image:np.ndarray, image_mask:np.ndarray) -> None:
@@ -180,3 +183,23 @@ def sequential_processing(image:np.ndarray, image_mask:np.ndarray) -> None:
     plot_features_regions(features, mask_no_background)
     
     return features
+
+class RoiTransform:
+    """Apply ROI transform to shange shape of images"""
+    
+    def __init__(self, output_shape:Tuple[int,int,int]=None, boundary_boxes:Union[List[Tuple[int,int,int,int,int,int]]]=None, batch_size=6,**args):
+        if not boundary_boxes: raise ValueError("bounding_boxes list can not be empty!")
+        from torchvision.ops._utils import convert_boxes_to_roi_format
+        self.batch_size = batch_size
+        self.roi = RoIAlign(output_shape,spatial_scale=1.0,sampling_ratio=-1)
+        self.num_bbox = len(boundary_boxes)
+        self.boundary_boxes = convert_boxes_to_roi_format([torch.stack([torch.Tensor(x) for x in boundary_boxes])])
+
+        
+    def __call__(self, x:torch.Tensor, y):
+        # Expect shape (B,C,D,H,W)
+        # Should be checked if this is correct by concatenate..
+        image_rois = self.roi.forward(x,torch.cat(x.shape[0]*[self.boundary_boxes.to(x.device)]))#.detach()
+        #[display(x[0],step=1) for x in tensor2numpy(image_rois)]
+
+        return image_rois, torch.cat(self.num_bbox*[y])#.type(x.type()), y #.to('cpu')

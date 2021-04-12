@@ -1,5 +1,4 @@
 from pytorch_lightning.callbacks import progress
-
 __all__ = ['LitProgressBar']
 
 class LitProgressBar(progress.ProgressBarBase):
@@ -16,9 +15,9 @@ class LitProgressBar(progress.ProgressBarBase):
         
     def on_epoch_start(self, trainer, pl_module):
         super().on_train_start(trainer, pl_module)
-        print()
+
         print("",end="", flush=True)
-        
+
     def on_train_batch_end(self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx):
         super().on_train_batch_end(trainer, pl_module, outputs,batch, batch_idx, dataloader_idx) 
         
@@ -27,6 +26,7 @@ class LitProgressBar(progress.ProgressBarBase):
         self._update(con)
         
     def _update(self,con):
+
         print(con, end="\r", flush=True)
         
     def get_progress_bar_dict(self,trainer):

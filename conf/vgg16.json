@@ -1,5 +1,6 @@
 {
     "vgg16":{
+        "name":"vgg16_bn",
         "checkpoint_path":null,
         "model":{
             "arch": {

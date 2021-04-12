@@ -4,6 +4,7 @@ import nibabel as nib
 from torch.utils.data import Dataset
 import torch
 from src.utils import preprocess
+from src.segmentation.roi_align.roi_align import RoIAlign
 
 class AdniDataset(Dataset):
     def __init__(self, data:list, classes={'CN':0,'MCI':1,'AD':2}, delimiter='_',transform=None):
@@ -24,10 +25,11 @@ class AdniDataset(Dataset):
         y = self.labels[idx]
         
         x = torch.from_numpy(x)
-        
+
         if self.transform:
             x = self.transform(x)
         x = preprocess.normalize(x.unsqueeze(0).float()) # Think normalization was missing
+
         return x, y
 
 

@@ -71,7 +71,7 @@ class CAMCallback(pl.callbacks.Callback):
             if isinstance(layer, torch.nn.Sequential):
                 self.get_all_layers(layer)
             else:
-                print(name)
+                print("Printing all layers:",name)
                 #layer.register_forward_hook(hook_fn)
     
     def get_layer_probability(self, prediction_var, layer:str):

@@ -27,6 +27,6 @@ def create_model(name:str=None, args:dict={}):
     """
     
     model = find_model_using_name(name)
-    instance = model(args)
+    instance = model(**args)
     print("Architecture [{0}] was created".format(type(instance).__name__))
     return instance

@@ -9,6 +9,7 @@ import numpy as np
 
 import os
 from src import BASEDIR
+from src.segmentation.segmentation import RoiTransform
 
 def create_model(checkpoint_path=None,**cfg_model):
     if checkpoint_path:
@@ -19,13 +20,16 @@ def create_model(checkpoint_path=None,**cfg_model):
         return models.create_model(**cfg_model['arch'])
 
 class Model(pl.LightningModule): 
-    def __init__(self,class_weights=None,loss_weight_balance=None,hp_metrics:list=None,**hparams):
+    def __init__(self,class_weights=None,loss_weight_balance=None,hp_metrics:list=None,roi_enabled:bool=False, roi_hparams={"enable":False,'roi_shape':None, 'bounding_boxes':[]},**hparams):
         super().__init__() 
         self.save_hyperparameters()
         self.model = create_model(**self.hparams)
-
+        self.roi_enabled = roi_hparams['enable']
         self.hp_metrics = hp_metrics
         self.loss_class_weights = class_weights if loss_weight_balance else None
+        
+        if self.roi_enabled:
+            self.roi_model = RoiTransform(**roi_hparams)
         
         print(f"***Defined hyperparameters:***\n{self.hparams}")
         
@@ -38,6 +42,10 @@ class Model(pl.LightningModule):
         
     def training_step(self, batch: dict, batch_idx: int) -> dict:
         x, target = batch
+        # Since we might want to apply ROI at any time we can enable and disable it here. ROIAlign needs to be on the GPU!
+        if self.roi_enabled:
+            x, target = self.roi_model(x, target)
+            
         logits = self.forward(x)
         loss = self.loss_fn(logits, target) 
         
@@ -45,6 +53,10 @@ class Model(pl.LightningModule):
     
     def validation_step(self, batch: dict, batch_idx: int) -> dict:
         x, target = batch
+        # Since we might want to apply ROI at any time we can enable and disable it here. ROIAlign needs to be on the GPU!
+        if self.roi_enabled:
+            x, target = self.roi_model(x, target)
+            
         logits = self.forward(x)
         loss = self.loss_fn(logits, target) 
 

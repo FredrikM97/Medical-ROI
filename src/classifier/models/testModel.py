@@ -3,11 +3,11 @@ import torch.nn as nn
 from collections import OrderedDict
 
 class testModel(nn.Module):
-    def __init__(self,input_channels=1, num_classes=3, **kwargs):
+    def __init__(self,num_channels:int=1,num_classes:int=3, **kwargs):
         # Model for input (batch, channel, slices, with, height) -> (batch,1,79, 96, 79)
         super().__init__()
-        
-        self.conv_layer1 = self._conv_layer_set(input_channels, 32)
+        print(num_channels)
+        self.conv_layer1 = self._conv_layer_set(num_channels, 32)
         self.conv_layer2 = self._conv_layer_set(32, 64)
         self.fc1 = nn.Linear(64*18*22*18, 64)
         self.fc2 = nn.Linear(64, num_classes)

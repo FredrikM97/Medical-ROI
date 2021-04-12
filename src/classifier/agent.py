@@ -48,7 +48,7 @@ def load_trainer(config_name:str, checkpoint_path:str=None):
     
     logger = pl.loggers.TensorBoardLogger(
         BASEDIR +"/"+ config['logging']['tensorboard'], 
-        name=config['model']['arch']['name'],
+        name=config['name'],
         default_hp_metric=False,
         log_graph=False,
     )

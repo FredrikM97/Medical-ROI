@@ -1,5 +1,6 @@
 {
     "testModel":{
+        "name":"testModel",
         "checkpoint_path":null,
         "model":{
             "arch": {
@@ -8,7 +9,7 @@
             }
         }, 
         "trainer":{
-            "checkpoint_callback":false
+            "checkpoint_callback":true
         }
     }
 }

@@ -1,5 +1,6 @@
 {
     "wide_resnet50_2":{
+        "name":"wide_resnet",
         "checkpoint_path":null,
         "model":{
             "arch": {
