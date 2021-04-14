@@ -237,3 +237,18 @@ How does the region affect the classification result? Is any of the regions dome
 * Link between regions and atlases
 	- n regions -> n networks, then need to combine to reach a classification
 	- Talaraich, thesis from Amira, nibabel?
+
+# Meeting 15 (2021-04-12)
+* AAL:
+	- Verify that regions appear to be correct
+	- Proceed to classify
+		- Zeroing vs bounding-boxes
+		- Summed intensity vs density from CAM
+
+* ROI:
+	- Non-maximum suppression
+	- Regional analysis
+		- What regions correspond to what condition, and how much of that region is covered etc
+
+* Utexpo:
+	- Encouraged, not required
