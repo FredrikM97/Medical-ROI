@@ -5,22 +5,34 @@ import numpy as np
 import matplotlib.pyplot as plt
 import torch
 from src.segmentation.roi_align.roi_align import RoIAlign
-from src.utils.preprocess import tensor2numpy
+from src.utils.preprocess import tensor2numpy, normalize
+from src.segmentation.nms.nms import batched_nms
+import ast
+from collections import defaultdict
 
 from typing import Tuple, Union, List
 from skimage import exposure, io, util
 from skimage import data, img_as_float
 from skimage.morphology import disk
 from skimage.filters import rank
+from skimage.draw import rectangle_perimeter
+
+from skimage import segmentation as seg
+from skimage.filters import sobel
+from scipy import ndimage as ndi
+
 
 def intensity_distribution(image, title=""):
     """Plot the intensity distribution of an input image"""
+    fig = plt.figure()
     b, bins, patches = plt.hist(image, 255)
     # Ignore the first value as it is only zeros
     _, counts = np.unique(image, return_counts=True)
     plt.xlim([0,255])
     plt.ylim([0,counts[1:].max()])
     plt.title(title)
+    plt.xlabel("Intensity")
+    plt.xlabel("Frequency")
     plt.show()
     
 
@@ -53,7 +65,7 @@ def display(im3d:np.ndarray, cmap:str="jet", step:int=2, plottype:str='imshow'):
     ncols = 9
     nrows = 1 if im3d.shape[0]//(ncols*step) == 0 else im3d.shape[0]//(ncols*step)
     
-    _, axes = plt.subplots(nrows=nrows, ncols=9, figsize=(10, 1*nrows))
+    fig, axes = plt.subplots(nrows=nrows, ncols=9, figsize=(10, 1*nrows))
 
     vmin = im3d.min()
     vmax = im3d.max()
@@ -66,6 +78,7 @@ def display(im3d:np.ndarray, cmap:str="jet", step:int=2, plottype:str='imshow'):
             
         ax.set_xticks([])
         ax.set_yticks([])
+    return fig
         
 def remove_known_background_from_mask(image:np.ndarray, image_mask:np.ndarray) -> np.ndarray:
     """We know that background cant be useful activations. Remove them"""
@@ -78,28 +91,38 @@ def check_join_segmentations(mask_one:np.ndarray, mask_two:np.ndarray) -> np.nda
     from skimage.segmentation import join_segmentations
     return join_segmentations(mask_one, mask_two)
 
-def segment_mask(image_mask:np.ndarray) -> np.ndarray:
+def segment_mask(background_mask:np.ndarray, image_mask:np.ndarray, upper_bound=0.9, lower_bound=0.3) -> np.ndarray:
     """Simple segmentation of the mask input
     Note: This one might need some scientific rework since it is not very good
+    """
     """
     n=1
     im = filters.gaussian(image_mask, sigma=1/(4.*n), mode='nearest')
     mask = im > im.max()*0.62
-    label_im = measure.label(mask, connectivity=1)
+    label_im = measure.label(mask, connectivity=None) # Use all three dimensions to decide labels
     #label_im, nb_labels = ndimage.label(mask, connectivity=1)
     return label_im
-
-def extract_features(segmentation:np.ndarray, image_mask:np.ndarray):
-    """Create objects of each slice where the selected regions are extract
+    """
+    elevation_map = sobel(image_mask)
     
-    Args:
-        segmentation (np.ndarray): A segmented image where the boundaries of each class is clearly defined
-        image_mask (np.ndarray): An image mask where the intensities is observed.
-        
-    Return:
-        output: List[RegionProperties]
-        """
-    return measure.regionprops(segmentation, intensity_image=image_mask)  # only one object
+    # Set to zero so it does not break background!
+    markers = np.zeros_like(image_mask)
+    
+    markers[(image_mask < upper_bound) | (background_mask == 0)] = 1
+    markers[image_mask > lower_bound] = 2
+
+    segmentation_masks = seg.watershed(elevation_map, markers)
+
+    segmentation_masks_new = ndi.binary_fill_holes(segmentation_masks - 1)
+    #labeled_masks, _ = ndi.label(segmentation_masks_new)
+    labeled_masks = measure.label(segmentation_masks_new)
+    #segmentation.display(labeled_coins, step=1)
+    return labeled_masks
+
+def get_bbox_coordinates(feature):
+    """Convert skimage format to x,y,x,y,z0,z1"""
+    z0, y0, x0, z1, y1, x1 = feature.bbox
+    return x0,y0,x1,y1,z0,z1
 
 def bounding_boxes(features:list):
     """Expects features from 2D images
@@ -109,18 +132,12 @@ def bounding_boxes(features:list):
     Return:
         output List[K, 6] with the box coordinates in  (x0, y0, x1, y1, z0, z1) and k is batch size.
     """
-    boxes = []
+
     if isinstance(features, list):
-    # Features must exist!
-        for feature in features:
-            z0, y0, x0, z1, y1, x1 = feature.bbox
-            #boxes.append((x0, y0, x1, y1,z0,z1))
-            boxes.append((z0,y0,z1,y1,x0,x1))
+        return [get_bbox_coordinates(feature) for feature in features]
+
     else:
-        z0, y0, x0, z1, y1, x1  = features.bbox
-        return (z0,y0,z1,y1,x0,x1)
-        #return (x0, y0, x1, y1,z0,z1)
-    return boxes
+        return get_bbox_coordinates(features)
 
 def plot_features_regions(features:list, image_mask:np.ndarray,step=1, plot_title=""):
     """Plot the extracted features"""
@@ -141,13 +158,10 @@ def plot_features_regions(features:list, image_mask:np.ndarray,step=1, plot_titl
     # Add boundaries
     
     for feature in features:
-        z0,y0,z1,y1,x0,x1 = bounding_boxes(feature)
+        x0,y0,x1,y1,z0,z1 = bounding_boxes(feature)
         for z in range(z0,z1):
             flatten_axis[z].add_patch(mpatches.Rectangle((x0, y0), x1 - x0, y1 - y0,fill=False, edgecolor='red', linewidth=2))
-
-        z,y,x = feature.centroid
-        flatten_axis[int(z)].plot(x,y, marker='x', color='y')
-        
+            
     plt.show()
 
 def roi_align(image, boxes:list, output_shape=(40,40,40), displayed=False):
@@ -172,17 +186,84 @@ def sequential_processing(image:np.ndarray, image_mask:np.ndarray) -> None:
     """Run each processing of mask to segmentation"""
     
     # Remove mask that we know are a background (not a part of the brain scan)
-    mask_no_background = remove_known_background_from_mask(image, image_mask)
+    #mask_no_background = remove_known_background_from_mask(image, image_mask)
     
     # Rescale mask and segment it
-    mask_mean = mask_logarithmic_scale(mask_no_background)
-    segmented_mask = segment_mask(mask_mean)
+    #mask_mean = mask_logarithmic_scale(mask_no_background)
+    segmented_mask = segment_mask(image,image_mask)
     
     # Extract features with the intensities of the mask with removed background and plot it
-    features = extract_features(segmented_mask, mask_no_background)
-    plot_features_regions(features, mask_no_background)
+    features =  measure.regionprops(segmented_mask, intensity_image=image_mask) #extract_features(segmented_mask, mask_no_background)
+    plot_features_regions(features, segmented_mask)
     
     return features
+
+def column_to_tuple(pd_column):
+    """Convert a pandas column from string to tuple
+    
+    Args:
+        pd_column (Series): A selected column to convert the content to tuple type.
+    Return:
+        output (Series):
+    
+    """
+    
+    return pd_column.apply(ast.literal_eval)
+
+def column_to_np(pd_column, dtype='float64'):
+    """Convert a pandas column from tuple to numpy arrays
+    
+    Args:
+        pd_column (Series): A selected column to convert the content to numpy.
+    Return:
+        output (Series):
+    """
+    
+    return pd_column.apply(lambda x: np.array(x, dtype=dtype))
+
+def center_coordinates(list_of_bbox):
+    z = (list_of_bbox[0] + list_of_bbox[2])/2
+    y = (list_of_bbox[1] + list_of_bbox[3])/2
+    x = (list_of_bbox[4] + list_of_bbox[5])/2
+    
+    return x,y,z
+
+def add_image_bboxes(image,bbox_coords):
+    """
+    Takes coordinates of bounding boxes and plot them.
+    
+    Args:
+        bbox_coords (list[int]): Expect shape of (x0,y0,x1,y1,z0,z1)
+    """
+    for x0,y0,x1,y1,z0,z1 in bbox_coords: #0,y0,x1,y1,z0,z1
+        for z in range(z0,z1):
+            rr, cc = rectangle_perimeter((x0,y0), end=(x1,y1), shape=image.shape)
+            image[z][cc,rr] = 255
+    return image
+
+def plot_center_distribution(bbox_coords):
+    """Plot the distribution"""
+    bbox_listed = list(zip(*bbox_coords))
+
+    fig, axes = plt.subplots(1, 3, figsize=(10,5))
+    fig.suptitle("Distribution of the center of each bounding box for x,y,z")
+    for ax,cord in zip(axes.flatten(),combine_coordinates(np.array(bbox_listed))):
+        sns.histplot(cord, ax=ax,bins=10)
+
+def max_occurance(occurances:list):
+    u,c = np.unique(occurances, return_counts=True)
+    max_val = u[c == c.max()]
+    return max_val
+
+def plot_interesting_bbox(_bboxes, th=0.5):
+    bbox_tensor = torch.Tensor(_bboxes['bbox'].to_list()).float()
+    scores = torch.Tensor(_bboxes['bbox_area'].to_list())
+    idxs  = torch.Tensor(_bboxes['observe_class'].to_list())
+    
+    only_interesting = batched_nms(bbox_tensor.cuda(), scores.cuda(), idxs.cuda(), th).detach().cpu()
+    image = add_image_bboxes(np.zeros((79,95,79)),bbox_tensor[only_interesting].numpy().astype(int))
+    fig = display(image, step=1)
+    return bbox_tensor[only_interesting], fig
 
 class RoiTransform:
     """Apply ROI transform to shange shape of images"""
@@ -193,13 +274,19 @@ class RoiTransform:
         self.batch_size = batch_size
         self.roi = RoIAlign(output_shape,spatial_scale=1.0,sampling_ratio=-1)
         self.num_bbox = len(boundary_boxes)
-        self.boundary_boxes = convert_boxes_to_roi_format([torch.stack([torch.Tensor(x) for x in boundary_boxes])])
-
+        #self.boundary_boxes = convert_boxes_to_roi_format([torch.stack([torch.Tensor(x) for x in boundary_boxes])])
+        if isinstance(boundary_boxes, list):
+            self.boundary_boxes = convert_boxes_to_roi_format([torch.stack([torch.Tensor(x) for x in boundary_boxes])])
+        elif isinstance(boundary_boxes, dict):
+            self.boundary_boxes = {key:convert_boxes_to_roi_format(torch.stack([torch.Tensor(x) for x in value])) for key,value in boundary_boxes}
         
     def __call__(self, x:torch.Tensor, y):
         # Expect shape (B,C,D,H,W)
         # Should be checked if this is correct by concatenate..
-        image_rois = self.roi.forward(x,torch.cat(x.shape[0]*[self.boundary_boxes.to(x.device)]))#.detach()
+        if isinstance(boundary_boxes, list):
+            image_rois = self.roi.forward(x,torch.cat(x.shape[0]*[self.boundary_boxes.to(x.device)]))#.detach()
+        elif isinstance(boundary_boxes, dict):
+            image_rois = self.roi.forward(x,torch.cat(x.shape[0]*[self.boundary_boxes[y].to(x.device)]))#.detach()
         #[display(x[0],step=1) for x in tensor2numpy(image_rois)]
 
         return image_rois, torch.cat(self.num_bbox*[y])#.type(x.type()), y #.to('cpu')
