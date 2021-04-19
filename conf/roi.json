@@ -2,12 +2,6 @@
     "roi":{
         "name":"ROI",
         "checkpoint_path":null,
-        "dataloader": {
-            "name": "RoiDataloader",
-            "args":{
-                "num_workers": 0
-            }
-        },
         "model":{
             "arch": {
                 "name": "resnet50",

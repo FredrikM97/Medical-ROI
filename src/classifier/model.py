@@ -6,7 +6,7 @@ import torch.nn as nn
 import torch
 import torch.nn.functional as F
 import numpy as np
-
+from torch.optim.lr_scheduler import ReduceLROnPlateau
 import os
 from src import BASEDIR
 from src.segmentation.segmentation import RoiTransform
@@ -20,14 +20,15 @@ def create_model(checkpoint_path=None,**cfg_model):
         return models.create_model(**cfg_model['arch'])
 
 class Model(pl.LightningModule): 
-    def __init__(self,class_weights=None,loss_weight_balance=None,hp_metrics:list=None,roi_enabled:bool=False, roi_hparams={"enable":False,'roi_shape':None, 'bounding_boxes':[]},**hparams):
+    def __init__(self,class_weights:torch.Tensor=None,hp_metrics:list=None,loss={}, roi_hparams={"enable":False,'roi_shape':None, 'bounding_boxes':[]},**hparams):
         super().__init__() 
         self.save_hyperparameters()
         self.model = create_model(**self.hparams)
         self.roi_enabled = roi_hparams['enable']
         self.hp_metrics = hp_metrics
-        self.loss_class_weights = class_weights if loss_weight_balance else None
-        
+        self.criteria = nn.__dict__[loss['type']](weight=class_weights)
+        #self.loss_class_weights = class_weights if loss_weight_balance else None
+        #class_weights=None,loss_weight_balance=None, part of input
         if self.roi_enabled:
             self.roi_model = RoiTransform(**roi_hparams)
         
@@ -73,10 +74,14 @@ class Model(pl.LightningModule):
         # Note: dont use list if only one item.. Causes silent crashes
         optim = torch.optim.__dict__[self.hparams.optimizer['type']]
         optimizer = optim(self.model.parameters(), **self.hparams.optimizer['args'])
-        return optimizer
-    
+        
+        #return optimizer
+        return {
+            'optimizer': optimizer,
+        }
+            
     def loss_fn(self,out,target):
-        return nn.CrossEntropyLoss(weight=self.loss_class_weights)(out,target)
-    
+        #return nn.CrossEntropyLoss(weight=self.loss_class_weights)(out,target)
+        return self.criteria(out,target)
     
     

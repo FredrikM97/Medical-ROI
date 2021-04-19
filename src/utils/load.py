@@ -35,6 +35,7 @@ def load_config(filename:str,dirpath:str=None) -> Dict:
         
         if  name == filename and extension == 'json': 
             return load_json(dirpath +'/'+pos_json)
+    raise ValueError(f"Could not find json file: {filename} in {dirpath}!")
 
 def load_xml(path:str):
     """Load XML from dictory and return a generator"""

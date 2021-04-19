@@ -1,0 +1,15 @@
+{
+    "resnext":{
+        "name":"resnext50_32x4d",
+        "checkpoint_path":null,
+        "model":{
+            "arch": {
+                "name": "resnext50_32x4d",
+                "args": {}
+            }
+        }, 
+        "trainer":{
+            "checkpoint_callback":true
+        }
+    }
+}

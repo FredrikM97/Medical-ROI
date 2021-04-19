@@ -1,0 +1,15 @@
+{
+    "vgg16_brew":{
+        "name":"vgg16_brew",
+        "checkpoint_path":null,
+        "model":{
+            "arch": {
+                "name": "vgg16_brew",
+                "args": {}
+            }
+        }, 
+        "trainer":{
+            "checkpoint_callback":true
+        }
+    }
+}

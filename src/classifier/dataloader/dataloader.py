@@ -7,8 +7,8 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 from src.utils import load
 
-from .weights import ClassWeights
-from .kfold import Kfold
+#from .weights import ClassWeights
+#from .kfold import Kfold
 import src
 from src.segmentation.segmentation import RoiTransform
 import torch
@@ -29,7 +29,7 @@ class AdniDataloader(pl.LightningDataModule):
             'num_workers': num_workers
         }
         
-        print(f"Dataset sizes - Training: {len(self.trainset)} Validation: {len(self.valset)}")
+        print(f"Data directory: {data_dir}\nDataset sizes - Training: {len(self.trainset)} Validation: {len(self.valset)}")
         
 
     def train_dataloader(self):

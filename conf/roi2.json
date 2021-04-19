@@ -2,12 +2,6 @@
     "roi2":{
         "name":"ROI",
         "checkpoint_path":null,
-        "dataloader": {
-            "name": "RoiDataloader",
-            "args":{
-                "num_workers": 0
-            }
-        },
         "model":{
             "arch": {
                 "name": "resnet50",
@@ -16,7 +10,9 @@
             "roi_hparams":{
                 "enable":true,
                 "output_shape":[40,40,40],
-                "boundary_boxes":[[17, 18, 79, 94,  2, 76]]
+                "boundary_boxes":{
+                    "AD":[[17, 18, 79, 94,  2, 76]]
+                }
             }
         }, 
         "trainer":{

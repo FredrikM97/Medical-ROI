@@ -42,7 +42,7 @@ class SaliencyMap:
         #print(self.model.grad.data.abs())
         #return activation_map
 
-class CAMS(enum.Enum):
+class CAM_TYPES(enum.Enum):
     CAM = cams.CAM
     ScoreCAM = cams.ScoreCAM
     SSCAM = cams.SSCAM
@@ -61,17 +61,25 @@ class CAM(plot.Plot):
     
     tmp.plot(tmp.class_scores, [0,1,2], class_label="AD")
     """
-    def __init__(self, cam:str, model, input_shape:Tuple[int,int,int,int]=(79,95,79), target_layer:str=None) -> None:
-        """Expects an input image from axial view of shape Tuple[W,H,D]
+    def __init__(self, cam:str, model, input_shape:Tuple[int,int,int,int]=(79,95,79), target_layer:str=None, device:str='cuda') -> None:
+        """ Init object for CAM extraction. 
         
         This code only works in the colormap is grayscale so C=1
         The dataloaded support the axial view and return it as default
+        
+        Args:
+            cam (str): CAM_TYPES reference
+            model (nn.Module): Which model that CAM should be extracted from
+            input_shape (Tuple[D,H,W]): Expected shape of the input image. Color and batch should not be included.
+            target_layer (str), optional: Which layer that should be selected.
+            device (str): cuda or cpu.
         """
         super().__init__()
-        self.cam = cam
+        #self.cam = cam
         self.model = model
         self.extractor = cam(model, input_shape=(1,*input_shape), target_layer=target_layer)
         self.input_shape = input_shape
+        self.device = device
 
     def evaluate(self,input_image:np.ndarray) -> Tuple[Tensor, int]:
         """ "Calculate the class scores and the highest probability of the target class
@@ -81,18 +89,17 @@ class CAM(plot.Plot):
         Return:
             * Tuple containing all the probabilities and the best probability class
         """
-        device = 'cuda'
-
+ 
         # Apply preprocessing
         image = self.preprocess(input_image)
         image = preprocess.batchisize_to_5D(image)
         image_tensor = torch.from_numpy(image).float()
         
-        self.model.to(device)
-        image_tensor = image_tensor.to(device)
+        self.model.to(self.device)
+        image_tensor = image_tensor.to(self.device)
         # Check that image have the correct shape
         assert tuple(image_tensor.shape) == (1, 1, *self.input_shape), f"Got image shape: {image_tensor.shape} expected: {(1, 1, *self.input_shape)}"
-        #assert self.model.device == image.device, f"Model and image are not on same device: Model: {self.model.device} Image: {image.device}"
+        assert self.model.device == image_tensor.device, f"Model and image are not on same device: Model: {self.model.device} Image: {image_tensor.device}"
   
         self.model.eval()
         class_scores = self.model(image_tensor)
@@ -140,7 +147,21 @@ class CAM(plot.Plot):
         return grid_img, grid_mask
         
     def plot(self, class_scores:Tensor, class_idx:Union[List[int],int], input_image:np.ndarray,cmap=parula_map, alpha=0.3, class_label:str=None, predicted_override=None, max_num_slices:int=16):
-        """Create a plot from the given class activation map and input image. CAM is calculated from the models weights and the probability distribution of each class."""
+        """Create a plot from the given class activation map and input image. CAM is calculated from the models weights and the probability distribution of each class.
+        
+        Args:
+            class_scores (Tensor): Tensor of probability for each class 
+            class_idx (Union[List[int],int]): Index of highest class_score probability 
+            input_image (np.ndarray): image to the evaluated
+            cmap (Color object), optional: The cmap to use in plot 
+            alpha (int), optional: Alpha value for opacity 
+            class_label (str), optional: Which class the image belongs to.
+            predicted_override (bool), optional: If class_idx should be overwritten and plot each class instead
+            max_num_slices (int), optional: Number of total slices that should be plotted. Combine multiple slices if image slices are more than number of max_num_slices.
+            
+        Return:
+            output (Figure): Figure reference to plot
+        """
         class_idx = class_idx if isinstance(class_idx, list) else [class_idx]
         
         def default_settings(axis, predicted_label):

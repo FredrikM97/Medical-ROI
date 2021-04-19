@@ -57,22 +57,31 @@
         "dataloader": {
             "name": "AdniDataloader",
             "args":{
-                "data_dir": "data/SPM_categorised/AIH/",
+                "data_dir": "data/SPM_categorised/Amira/",
                 "batch_size": 6,
                 "validation_split": 0.1,
                 "num_workers": 6,
                 "pin_memory": true,
-                "img_shape":[95,79]
+                "img_shape":[95,79],
+                "delimiter":"_"
             }
         },
         "model":{
-            "loss": "CrossEntropyLoss",
+            "weight_distribution":"normal",
+            "loss": {
+                "type":"CrossEntropyLoss",
+                "args":{
+                    "weight":true
+                }
+            
+            },
             "optimizer":{
                 "type": "Adam",
                 "args":{
-                    "lr": 0.0002,
-                    "weight_decay": 1e-5,
-                    "amsgrad": false
+                    "lr": 0.001,
+                    "betas":[0, 0.9],
+                    "weight_decay": 0,
+                    "amsgrad": true
                 }
             },
             "arch": {
@@ -89,11 +98,6 @@
                 "auc/val",
                 "specificity/val",
                 "sensitivity/val"
-            ],
-            "callbacks":[
-                "litprogressbar",
-                "modelcheckpoints",
-                "metriccallback"
             ],
             "kfold":{
                 "enable":false,
@@ -116,7 +120,8 @@
             "checkpoint_callback": false,
             "progress_bar_refresh_rate":0,
             "fast_dev_run":false,
-            "num_sanity_val_steps":2
+            "num_sanity_val_steps":2,
+            "gradient_clip_val":0.5
         }
     }
     

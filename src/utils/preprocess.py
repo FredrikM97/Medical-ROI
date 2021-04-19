@@ -39,7 +39,7 @@ def filename2labels(images:list, classes:dict, delimiter:str) -> np.ndarray:
         * Return a list of labels based on the given classes from the image filenames.
     
     """
-    assert delimiter in images[0], "The defined delimiter could not be found in image input!"
+    if delimiter not in images[0]: raise ValueError(f"The defined delimiter could not be found in image input! Image input: {images[0]}")
     return np.array([classes[img_path.rsplit("/",1)[1].split(delimiter,1)[0]] for img_path in images])
 
 def mask_threshold(image:np.ndarray, threshold:float) -> None:
@@ -63,9 +63,9 @@ def image2axial(image:np.ndarray) -> np.ndarray:
     """Modify image to display axial view. Expects an image of (B,H,W) or (B,C,H,W) """
     if not isinstance(image, np.ndarray): raise TypeError(f"Expected np.ndarray. Got: {type(image)}")
     if len(image.shape) == 3:
-        return image.transpose(2,1,0)
-    elif len(image.shape) == 4:
-        return image.transpose(3,1,2,0)
+        return np.flip(image.transpose(2,1,0),axis=1).copy()
+    #elif len(image.shape) == 4:
+    #    return np.flip(image.transpose(3,1,2,0))
     else:
         raise ValueError(f"Expected length of 3 or 4. Got: {len(image.shape)}")
 

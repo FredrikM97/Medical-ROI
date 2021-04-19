@@ -6,14 +6,6 @@
             "arch": {
                 "name": "resnet50",
                 "args": {}
-            },
-            "optimizer":{
-                "type": "Adam",
-                "args":{
-                    "lr": 0.0002,
-                    "weight_decay": 2e-5,
-                    "amsgrad": false
-                }
             }
         }, 
         "trainer":{
