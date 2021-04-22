@@ -1,14 +1,18 @@
 from src.utils import utils, preprocess
-from src.utils.plots import plot
+
 from torchcam import cams
 import torch
 from torch import Tensor
 import numpy as np
 from typing import Tuple, Union, List
 import enum
-from src.utils.plots.parula import parula_map
+from src.utils.cmap import parula_map
 import torchvision
 import matplotlib.pyplot as plt
+
+
+from src.utils import plot
+
 
 class SaliencyMap:
     def __init__(self, model, target_layer=None,input_shape=(1,79,95,79)):
@@ -52,7 +56,7 @@ class CAM_TYPES(enum.Enum):
     SmoothGradCAMpp = cams.SmoothGradCAMpp
     #Saliency = SaliencyMap
     
-class CAM(plot.Plot):
+class CAM:
     """
     Example usage:
     trainer, dataset, model = load_trainer('resnet50')
@@ -91,7 +95,7 @@ class CAM(plot.Plot):
         """
  
         # Apply preprocessing
-        image = self.preprocess(input_image)
+        image = preprocess.preprocess_image(input_image)
         image = preprocess.batchisize_to_5D(image)
         image_tensor = torch.from_numpy(image).float()
         
@@ -103,11 +107,7 @@ class CAM(plot.Plot):
   
         self.model.eval()
         class_scores = self.model(image_tensor)
-        return class_scores, self._class_idx(class_scores)
-    
-    def _class_idx(self, class_score:Tensor):
-        """Convert score vector with probabilities into the maximum score value"""
-        return class_score.squeeze(0).argmax().item()
+        return class_scores, class_scores.squeeze(0).argmax().item()
     
     def activation_map(self, class_idx:int=None, class_scores:Tensor=None) -> np.ndarray:
         """ Retrieve the map based on the score from the model
@@ -116,37 +116,36 @@ class CAM(plot.Plot):
             * Tensor with activations from image with shape Tensor[D,H,W]
         """
 
-        return preprocess.tensor2numpy(self.extractor(class_idx, class_scores))
+        return preprocess.tensor2numpy(self.extractor(class_idx, class_scores, normalized=False))
        
-    def grid_class(self, class_scores:Tensor, class_idx:Union[List[int],int], input_image:np.ndarray, max_num_slices:int=16,pad_value=0.5) -> Tuple[Tensor, Tensor]:
+    def grid_class(self, class_scores:Tensor, class_idx:Union[List[int],int], input_image:np.ndarray, max_num_slices:int=16,pad_value=0.5, normalized=True) -> Tuple[Tensor, Tensor]:
         """Creates a grid based on a class_idx."""
         
-        image_process = lambda _image: self.preprocess(_image)
-        
+        image_process = lambda _image: preprocess.preprocess_image(_image, normalized=normalized)
         if isinstance(class_idx, list) and len(class_idx) == 1:
             class_idx = class_idx[0]
 
         if isinstance(class_idx, list):
             grid_img = torch.hstack([
-                self.grid(image_process(input_image), max_num_slices=max_num_slices,pad_value=pad_value)
+                preprocess.to_grid(image_process(input_image), max_num_slices=max_num_slices,pad_value=pad_value)
             ]*len(class_idx))
             
             grid_mask = torch.hstack([
-                self.grid(image_process(self.activation_map(idx, class_scores)), max_num_slices=max_num_slices,pad_value=pad_value)
+                preprocess.to_grid(image_process(self.activation_map(idx, class_scores)), max_num_slices=max_num_slices,pad_value=pad_value)
                 for idx in class_idx
             ])
         
             
         elif isinstance(class_idx, int):
-            grid_mask = self.grid(image_process(self.activation_map(class_idx, class_scores)), max_num_slices=max_num_slices,pad_value=pad_value)
-            grid_img = self.grid(image_process(input_image), max_num_slices=max_num_slices,pad_value=pad_value)
+            grid_mask = preprocess.to_grid(image_process(self.activation_map(class_idx, class_scores)), max_num_slices=max_num_slices,pad_value=pad_value)
+            grid_img = preprocess.to_grid(image_process(input_image), max_num_slices=max_num_slices,pad_value=pad_value)
             
         else:
             raise ValueError(f"Expected class_idx of type list or int, Got: {type(class_idx)}")
             
         return grid_img, grid_mask
         
-    def plot(self, class_scores:Tensor, class_idx:Union[List[int],int], input_image:np.ndarray,cmap=parula_map, alpha=0.3, class_label:str=None, predicted_override=None, max_num_slices:int=16):
+    def plot(self, class_scores:Tensor, class_idx:Union[List[int],int], input_image:np.ndarray,cmap=parula_map, alpha=0.7, class_label:str=None, predicted_override=None, max_num_slices:int=16):
         """Create a plot from the given class activation map and input image. CAM is calculated from the models weights and the probability distribution of each class.
         
         Args:
@@ -186,16 +185,17 @@ class CAM(plot.Plot):
         fig, axes = plt.subplots(ncols=len(class_idx),nrows=1,figsize=(len(class_idx)*8,8))
         fig.subplots_adjust(hspace=0)
         
+        
         if len(class_idx) == 1:
             image, mask = self.grid_class(class_scores, class_idx[0],input_image,max_num_slices=max_num_slices)
-            axes.imshow(image,cmap='Greys_r')
-            im = axes.imshow(mask,cmap=cmap, alpha=alpha) 
+            axes.imshow(image,cmap='Greys_r', vmin=image.min(), vmax=image.max())
+            im = axes.imshow(mask,cmap=cmap, alpha=alpha,vmin=mask.min(), vmax=mask.max()) 
             default_settings(axes,class_idx[0])
         else:
             for i, idx in enumerate(class_idx):
                 image, mask = self.grid_class(class_scores, idx,input_image, max_num_slices=max_num_slices)
-                axes[i].imshow(image,cmap='Greys_r')
-                im = axes[i].imshow(mask,cmap=cmap, alpha=alpha) 
+                axes[i].imshow(image,cmap='Greys_r', vmin=image.min(), vmax=image.max())
+                im = axes[i].imshow(mask,cmap=cmap, alpha=alpha,vmin=mask.min(), vmax=mask.max()) 
                 default_settings(axes[i], idx)
                 
             

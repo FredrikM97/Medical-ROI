@@ -1,5 +1,4 @@
 #from neural_network.utils.hooks import ActivationMapHook
-from src.utils.plots import plot
 import pytorch_lightning as pl
 import matplotlib.pyplot as plt
 import numpy as np
@@ -14,8 +13,7 @@ class ActivationMapCallback(pl.callbacks.Callback):
         for name, module in model.named_modules():
             if type(module) == torch.nn.modules.conv.Conv3d:
                 self.hooks.append(utils.hooks.ActivationMapHook(module, name))
-                
-    @plot.figure_decorator  
+                 
     def on_epoch_end(self, trainer, pl_module, fig=None):
         print("Activation map!")
         set_to_train = False

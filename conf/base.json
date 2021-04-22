@@ -62,7 +62,7 @@
                 "validation_split": 0.1,
                 "num_workers": 6,
                 "pin_memory": true,
-                "img_shape":[95,79],
+                "img_shape":[79,95,79],
                 "delimiter":"_"
             }
         },

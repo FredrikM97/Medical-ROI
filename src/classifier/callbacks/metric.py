@@ -1,6 +1,6 @@
 import pytorch_lightning as pl
 from src.utils import utils, preprocess
-from src.utils.plots import roc,plot
+from src.utils.plot import ROC
 from src.classifier.metric import MetricTracker
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -62,7 +62,7 @@ class MetricCallback(pl.callbacks.Callback):
         trainer.logger.experiment.add_figure(f"confmat/{prefix}", fig,trainer.current_epoch)
         
     def roc_plot(self, trainer, roc_classes, prefix=''):
-        (auc, fpr, tpr), roc_fig = roc.ROC(roc_classes)
+        (auc, fpr, tpr), roc_fig = ROC(roc_classes)
         
         trainer.logger.log_metrics(
             {
@@ -71,6 +71,7 @@ class MetricCallback(pl.callbacks.Callback):
                 f"sensitivity/{prefix}":tpr
             },step=trainer.current_epoch
         ) 
+
         trainer.logger.experiment.add_figure(f"ROC/{prefix}", roc_fig, trainer.current_epoch)
 
     def custom_histogram_adder(self, trainer):

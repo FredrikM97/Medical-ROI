@@ -9,7 +9,7 @@ import numpy as np
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 import os
 from src import BASEDIR
-from src.segmentation.segmentation import RoiTransform
+from src.segmentation import RoiTransform
 
 def create_model(checkpoint_path=None,**cfg_model):
     if checkpoint_path:

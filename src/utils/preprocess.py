@@ -1,9 +1,12 @@
 import numpy as np
-from torch import Tensor
-from typing import Union
+from torch import Tensor, from_numpy
+from typing import Union, Tuple
+from skimage.transform import resize
+import torchvision
+
 
 def normalize(x:Union[Tensor,np.ndarray]) -> Union[Tensor,np.ndarray]:
-    """ Min-max normalization (0-1)
+    """ Min-max normalization (0-1):
     
     Args:
         * x - Can be tensor or ndarray to be converted 
@@ -78,7 +81,7 @@ def greedy_split(arr:np.ndarray, n:int, axis=0) -> list:
     block_size = np.ceil(length / float(n))
 
     # the indices at which the splits will occur
-    ix = np.arange(block_size, length, block_size).astype(np.uint8)
+    ix = np.arange(block_size, length, block_size)#.astype(np.uint8)
     return np.split(arr, ix, axis)
 
 
@@ -88,3 +91,44 @@ def tensor2numpy(data):
         return data.detach().cpu().numpy()
     else:
         return data.cpu().numpy()
+
+def uint8(image:np.ndarray):
+    # Change range 0-1 to 0-255 and change type to uint8
+    return (image*255).astype(np.uint8)
+
+def preprocess_image(image:np.ndarray, input_shape:Tuple=(79,95,79), normalized=True) -> Tensor:
+    """Resize, normalize between 0-1 and convert to uint8"""
+
+    #if not isinstance(image, np.ndarray): raise ValueError(f"Expected image to be ndarray. Got: {type(image)}")
+    #print("Unioquew", np.unique(image))
+    image = resize(image,input_shape)
+    if normalized: 
+        image = normalize(image)
+    image = uint8(image)
+    return image
+
+def to_grid(image:np.ndarray, max_num_slices=None,pad_value=0.5, nrow=10) -> Tensor:
+    """ Create grid from image based on maximum number of slices.
+
+    Args:
+        * image: Image with multiple slices of shape Tuple[D,H,W]
+        * max_num_slices: The number of slices the image should be reduced.
+
+    Return:
+        * Return a grid image with reduced number of slices.
+
+    """
+    #            plot.display_3D(image_process(self.activation_map(class_idx, class_scores)))
+    assert len(image.shape) == 3
+    
+   
+    image=normalize(image)
+    
+    if max_num_slices != None:
+        image = np.stack([np.mean(x,axis=0) for x in greedy_split(image,max_num_slices)])
+    
+    plt_image = from_numpy(image).float().unsqueeze(1)
+
+    # Convert to grid 
+    grid_image = torchvision.utils.make_grid(plt_image, nrow=nrow,pad_value=pad_value)[0]
+    return grid_image

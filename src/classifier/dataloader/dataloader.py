@@ -1,26 +1,30 @@
-from .dataset import AdniDataset
+
 import pytorch_lightning as pl 
 from torch.utils.data import DataLoader
-from skimage.transform import resize
+import torch
 import torchvision
+#from skimage.transform import resize
 import numpy as np
 from sklearn.model_selection import train_test_split
-from src.utils import load
 
+from src.utils import load
+from .dataset import AdniDataset
+from src.segmentation import RoiTransform
+from src import BASEDIR
 #from .weights import ClassWeights
 #from .kfold import Kfold
-import src
-from src.segmentation.segmentation import RoiTransform
-import torch
+from src.utils import preprocess
+
+
 
 class AdniDataloader(pl.LightningDataModule): 
-    def __init__(self,data_dir, seed=0, batch_size=6, shuffle=True, validation_split=0.1, num_workers=1, img_shape=(95,79),**hparams:dict):
+    def __init__(self,data_dir, seed=0, batch_size=6, shuffle=True, validation_split=0.1, num_workers=1, img_shape=(79,95,79),**hparams:dict):
         super().__init__()
         self.validation_split = validation_split
         self.shuffle = shuffle
         self.seed = seed
         self.img_shape = img_shape
-        self.dataset = load.load_files(src.BASEDIR + "/"+data_dir)
+        self.dataset = load.load_files(BASEDIR + "/"+data_dir)
         
         self.trainset, self.valset = self._split(self.validation_split)
 
@@ -34,7 +38,8 @@ class AdniDataloader(pl.LightningDataModule):
 
     def train_dataloader(self):
         transform = torchvision.transforms.Compose([
-            torchvision.transforms.Resize(self.img_shape)
+            #torchvision.transforms.Resize(self.img_shape)
+            torchvision.transforms.Lambda(lambda images: preprocess.preprocess_image(images,input_shape=self.img_shape))
         ])
         return DataLoader(AdniDataset(self.trainset,transform=transform),
                                 shuffle=True,
@@ -42,7 +47,8 @@ class AdniDataloader(pl.LightningDataModule):
     
     def val_dataloader(self):
         transform = torchvision.transforms.Compose([
-            torchvision.transforms.Resize(self.img_shape)
+            #torchvision.transforms.Resize(self.img_shape)
+            torchvision.transforms.Lambda(lambda images: preprocess.preprocess_image(images,input_shape=self.img_shape))
         ])
         return DataLoader(AdniDataset(self.valset, transform=transform),
                                 shuffle=False,
@@ -56,14 +62,14 @@ class AdniDataloader(pl.LightningDataModule):
         return train_samples, valid_samples
 
 class RoiDataloader(pl.LightningDataModule): 
-    def __init__(self,data_dir, seed=0, batch_size=6, shuffle=True, validation_split=0.1, num_workers=1, img_shape=(95,79), roi_hparams={'output_shape':None, 'boundary_boxes':[]}, **hparams:dict):
+    def __init__(self,data_dir, seed=0, batch_size=6, shuffle=True, validation_split=0.1, num_workers=1, img_shape=(79,95,79), roi_hparams={'output_shape':None, 'boundary_boxes':[]}, **hparams:dict):
         super().__init__()
         self.validation_split = validation_split
         self.shuffle = shuffle
         self.seed = seed
         self.img_shape = img_shape
         
-        self.dataset = load.load_files(src.BASEDIR + "/"+data_dir)
+        self.dataset = load.load_files(BASEDIR + "/"+data_dir)
         self.trainset, self.valset = self._split(self.validation_split)
        
         self.init_kwargs = {
@@ -76,7 +82,8 @@ class RoiDataloader(pl.LightningDataModule):
 
     def train_dataloader(self):
         transform = torchvision.transforms.Compose([
-            torchvision.transforms.Resize(self.img_shape),
+            #torchvision.transforms.Resize(self.img_shape),
+            torchvision.transforms.Lambda(lambda images: preprocess.preprocess_image(images,input_shape=self.img_shape))
         ])
         return DataLoader(AdniDataset(self.trainset,transform=transform),
                                 shuffle=True,
@@ -84,7 +91,8 @@ class RoiDataloader(pl.LightningDataModule):
     
     def val_dataloader(self):
         transform = torchvision.transforms.Compose([
-            torchvision.transforms.Resize(self.img_shape),
+            #torchvision.transforms.Resize(self.img_shape),
+            torchvision.transforms.Lambda(lambda images: preprocess.preprocess_image(images,input_shape=self.img_shape))
         ])
         return DataLoader(AdniDataset(self.valset, transform=transform),
                                 shuffle=False,

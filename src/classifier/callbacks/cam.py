@@ -1,11 +1,8 @@
 import pytorch_lightning as pl
 import torch
 import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-import torchvision
-import skimage.transform
-from src.segmentation.cam import CAM,CAM_TYPES
+
+from src.cam import CAM,CAM_TYPES
 from src.utils.preprocess import tensor2numpy
 
 class CAMCallback(pl.callbacks.Callback):

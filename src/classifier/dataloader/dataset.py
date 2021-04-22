@@ -1,10 +1,8 @@
-from src.utils import preprocess
-
 import nibabel as nib
 from torch.utils.data import Dataset
 import torch
 from src.utils import preprocess
-from src.segmentation.roi_align.roi_align import RoIAlign
+from src.dependencies.roi_align import RoIAlign
 from skimage.filters import sobel
 from scipy import ndimage as ndi
 import numpy as np
@@ -41,11 +39,12 @@ class AdniDataset(Dataset):
 
         y = self.labels[idx]
         
-        x = torch.from_numpy(x)
-
         if self.transform:
             x = self.transform(x)
-        x = preprocess.normalize(x.unsqueeze(0).float()) # Think normalization was missing
+            
+        x = torch.from_numpy(x)
+        #x = preprocess.normalize(x.unsqueeze(0).float()) # Think normalization was missing
+        x = x.unsqueeze(0).float() # Think normalization was missing
 
         return x, y
 

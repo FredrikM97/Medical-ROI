@@ -36,14 +36,10 @@ class InitWeightDistribution:
             m.bias.data.fill_(0)
         
     def normal(self,model):
-        for m in model.modules():
+        for m in model.model.modules():
             #classname = m.__class__.__name__
             # for every Linear layer in a model..
-            print("Children of normal:", m)
-            torch.nn.init.normal_(m.weight, std=0.01)
-            torch.nn.init.constant_(m.bias, 0)
-
-            """
+            #print("Children of normal:", type(m))
             if isinstance(m, nn.Conv3d):
                 nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
                 if m.bias is not None:
@@ -54,5 +50,4 @@ class InitWeightDistribution:
             elif isinstance(m, nn.Linear):
                 nn.init.normal_(m.weight, 0, 0.01)
                 nn.init.constant_(m.bias, 0)
-                
-            """
+      

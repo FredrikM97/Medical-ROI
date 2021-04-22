@@ -1,88 +1,20 @@
-from skimage import exposure, filters, measure
-from scipy import ndimage
-import matplotlib.patches as mpatches
-import numpy as np
-import matplotlib.pyplot as plt
-import torch
-from src.segmentation.roi_align.roi_align import RoIAlign
-from src.utils.preprocess import tensor2numpy, normalize
-from src.segmentation.nms.nms import batched_nms
-from src.utils import preprocess
-
-import ast
-from collections import defaultdict
-
-from typing import Tuple, Union, List
-from skimage import exposure, io, util
-from skimage import data, img_as_float
-from skimage.morphology import disk
-from skimage.filters import rank
-from skimage.draw import rectangle_perimeter,set_color
-
+from skimage import measure
 from skimage import segmentation as seg
 from skimage.filters import sobel
+
 from scipy import ndimage as ndi
+import numpy as np
+import torch
+
+import ast
+from typing import Tuple, Union, List
 from torchvision.ops._utils import convert_boxes_to_roi_format
-import itertools
 
-def intensity_distribution(image, title=""):
-    """Plot the intensity distribution of an input image"""
-    fig = plt.figure()
-    b, bins, patches = plt.hist(image, 255)
-    # Ignore the first value as it is only zeros
-    _, counts = np.unique(image, return_counts=True)
-    plt.xlim([0,255])
-    plt.ylim([0,counts[1:].max()])
-    plt.title(title)
-    plt.xlabel("Intensity")
-    plt.xlabel("Frequency")
-    plt.show()
-    
+from src.dependencies.roi_align import RoIAlign
+from src.dependencies.nms import batched_nms
+from src.utils.preprocess import tensor2numpy, preprocess_image
+from src.utils import plot
 
-def mask_mean_filter(mask:np.ndarray) -> np.ndarray:
-    """Apply a mean filter of size (7,7,7) on the 3D image"""
-    mean_mask = ndimage.median_filter(mask, size=(7,7,7))
-    
-    return mean_mask
-
-def mask_logarithmic_scale(mask:np.ndarray) -> np.ndarray:
-    """Convert mask to logarithmic scale"""
-    logarithmic_corrected = exposure.adjust_log(mask, 1)
-    
-    return logarithmic_corrected
-
-def mask_clipping(mask:np.ndarray) -> np.ndarray:
-    """Remove intensity outside of procentual boundaries"""
-    vmin, vmax = np.percentile(mask, q=(20, 99.5))
-
-    clipped_data = exposure.rescale_intensity(
-        mask,
-        in_range=(vmin, vmax),
-        out_range=np.float32
-    )
-    return clipped_data
-
-def display(im3d:np.ndarray, cmap:str="jet", step:int=2, plottype:str='imshow'):
-    """Plot 3D image as 2D slices"""
-    
-    ncols = 9
-    nrows = 1 if im3d.shape[0]//(ncols*step) == 0 else im3d.shape[0]//(ncols*step)
-    
-    fig, axes = plt.subplots(nrows=nrows, ncols=9, figsize=(10, 1*nrows))
-
-    vmin = im3d.min()
-    vmax = im3d.max()
-    
-    for ax, image in zip(axes.flatten(), im3d[::step]):
-        if plottype == 'imshow':
-            ax.imshow(image, cmap=cmap, vmin=vmin, vmax=vmax)
-        elif plottype == 'hist':
-            ax.hist(image.ravel(), bins=255, histtype='step', color='black');
-            
-        ax.set_xticks([])
-        ax.set_yticks([])
-    return fig
-        
 def remove_known_background_from_mask(image:np.ndarray, image_mask:np.ndarray) -> np.ndarray:
     """We know that background cant be useful activations. Remove them"""
     im = image_mask.copy() 
@@ -145,32 +77,6 @@ def bounding_boxes(features:list):
     else:
         return get_bbox_coordinates(features)
 
-def plot_features_regions(bboxes:list, image_mask:np.ndarray,step=1, plot_title=""):
-    """Plot the extracted features"""
-    ncols = 9
-    nrows = 1 if len(image_mask) == 0 else int(np.ceil(len(image_mask)/ncols))
-    fig, axes = plt.subplots(nrows=nrows, ncols=ncols, figsize=(10, 1*nrows))
-
-    vmin = image_mask.min()
-    vmax = image_mask.max()
-    fig.suptitle(plot_title)
-    flatten_axis = axes.flatten()
-    for ax, image in zip(flatten_axis, image_mask[::step]):
-        ax.imshow(image, cmap='jet', vmin=vmin, vmax=vmax)
-
-        ax.set_xticks([])
-        ax.set_yticks([])
-
-    # Add boundaries
-    
-    for x0,y0,x1,y1,z0,z1 in bboxes:
-        for z in range(z0,z1):
-            flatten_axis[z].add_patch(mpatches.Rectangle((x0, y0), x1 - x0, y1 - y0,fill=False, edgecolor='red', linewidth=2))
-            
-    plt.show()
-    
-    return fig
-
 def roi_align(image, boxes:list, output_shape=(40,40,40), displayed=False):
     """ Create aligned image rois for the neural network
     Arg:
@@ -186,7 +92,7 @@ def roi_align(image, boxes:list, output_shape=(40,40,40), displayed=False):
 
     # None branched syntax
     if displayed:
-        [display(x[0],step=1) for x in tensor2numpy(image_rois)]
+        [plot.display_3D(x[0],step=1) for x in tensor2numpy(image_rois)]
     return image_rois
 
 def sequential_processing(image:np.ndarray, image_mask:np.ndarray) -> None:
@@ -200,7 +106,7 @@ def sequential_processing(image:np.ndarray, image_mask:np.ndarray) -> None:
     segmented_mask = segment_mask(image,image_mask)
     # Extract features with the intensities of the mask with removed background and plot it
     features =  measure.regionprops(segmented_mask, intensity_image=image_mask) #extract_features(segmented_mask, mask_no_background)
-    plot_features_regions(bounding_boxes(features), image_mask)
+    plot.features_regions(bounding_boxes(features), image_mask)
     
     return features
 
@@ -234,36 +140,12 @@ def center_coordinates(list_of_bbox):
     
     return x,y,z
 
-def add_image_bboxes(image,bbox_coords):
-    """
-    Takes coordinates of bounding boxes and plot them.
-    
-    Args:
-        bbox_coords (list[int]): Expect shape of (x0,y0,x1,y1,z0,z1)
-    """
-
-    for feature in features:
-        x0,y0,x1,y1,z0,z1 = bounding_boxes(feature)
-        for z in range(z0,z1):
-            flatten_axis[z].add_patch(mpatches.Rectangle((x0, y0), x1 - x0, y1 - y0,fill=False, edgecolor='red', linewidth=2))
-            
-    return image
-
-def plot_center_distribution(bbox_coords):
-    """Plot the distribution"""
-    bbox_listed = list(zip(*bbox_coords))
-
-    fig, axes = plt.subplots(1, 3, figsize=(10,5))
-    fig.suptitle("Distribution of the center of each bounding box for x,y,z")
-    for ax,cord in zip(axes.flatten(),combine_coordinates(np.array(bbox_listed))):
-        sns.histplot(cord, ax=ax,bins=10)
-
 def max_occurance(occurances:list):
     u,c = np.unique(occurances, return_counts=True)
     max_val = u[c == c.max()]
     return max_val
 
-def plot_interesting_bbox(_bboxes, th=0.5):
+def interesting_bbox(_bboxes, th=0.5):
     bbox_tensor = torch.Tensor(_bboxes['bbox'].to_list()).float()
     scores = torch.Tensor(_bboxes['bbox_area'].to_list())
     idxs  = torch.Tensor(_bboxes['observe_class'].to_list())
@@ -271,34 +153,41 @@ def plot_interesting_bbox(_bboxes, th=0.5):
     only_interesting = bbox_tensor[batched_nms(bbox_tensor.cuda(), scores.cuda(), idxs.cuda(), th).detach().cpu()]
 
     #image = add_image_bboxes(np.zeros((79,95,79)),only_interesting.numpy().astype(int))
-    fig = plot_features_regions(only_interesting.numpy().astype(int),np.zeros((79,95,79)))
+    fig = plot.features_regions(only_interesting.numpy().astype(int),np.zeros((79,95,79)))
     #fig = display(image, step=1)
     return only_interesting, fig
 
-def feature_extraction(cam_extractor, thread_workers=20, upper_bound=170, lower_bound=30, use_quantile_bounds=True,lambda1=1,lambda2=1):
+def feature_extraction(cam_extractor, upper_bound=0.85,lower_bound=0.7, use_quantile_bounds=True,lambda1=1,lambda2=1, func='features'):
+    def extract(nifti_image:torch.Tensor, observe_class:int):
 
-    def inner(data):
-        i, image_name, nifti_image, patient_class, observe_class = data
-        
-        nifti_image = nifti_image.squeeze(0)
-        np_image = tensor2numpy(nifti_image)*255
-        
-        
+        if len(nifti_image.shape) > 3:
+            nifti_image = nifti_image.squeeze(0)
+
+        np_image = tensor2numpy(nifti_image)
         
         class_scores, class_idx = cam_extractor.evaluate(nifti_image)
-        image_mask = cam_extractor.preprocess(cam_extractor.activation_map(observe_class, class_scores))
+        image_mask = preprocess_image(cam_extractor.activation_map(observe_class, class_scores))
         if use_quantile_bounds:
-            upper_bound = np.quantile(image_mask.ravel(), 0.95)
-            lower_bound = np.quantile(image_mask.ravel(), 0.85)
+            _upper_bound = np.quantile(image_mask.ravel(), upper_bound)
+            _lower_bound = np.quantile(image_mask.ravel(), lower_bound)
             #print("Quantile bounds",upper_bound,lower_bound)
-        
+        else:
+            _upper_bound = upper_bound
+            _lower_bound = lower_bound
         # Remove background from mask
         # Below 10 exists due to some issues where background is not zero
         image_mask[np_image == 0] = 0
         
         #display(np_image)
         #display(image_mask)
-        segmented_mask = segment_mask(np_image, image_mask, upper_bound=upper_bound, lower_bound=lower_bound)
+        segmented_mask = segment_mask(np_image, image_mask, upper_bound=_upper_bound, lower_bound=_lower_bound)
+        
+        return segmented_mask, image_mask,class_idx, (_upper_bound, _lower_bound)
+    
+    def features(data):
+        i, image_name, nifti_image, patient_class, observe_class = data
+        
+        segmented_mask, image_mask, class_idx,(_upper_bound, _lower_bound) = extract(nifti_image, observe_class)
         
         #display(segmented_mask)
         print(f"Image: {image_name}, Patient: {patient_class}, Observe: {observe_class}, Model predict: {class_idx}", end='\r')
@@ -308,23 +197,24 @@ def feature_extraction(cam_extractor, thread_workers=20, upper_bound=170, lower_
             'bbox_area':[feature.bbox_area for feature in features], 
             'mean_intensity':[feature.mean_intensity for feature in features], 
             'bbox':bounding_boxes(features),
-            'upper_bound':upper_bound,
-            'lower_bound':lower_bound,
+            'upper_bound':_upper_bound,
+            'lower_bound':_lower_bound,
             'use_quantile_bounds':use_quantile_bounds,
         }
         new_features.update({
-            #'score':lambda1 * np.mean(new_features['mean_intensity'])/np.mean(image_mask) - lambda2*((np.array(new_features['bbox_area']))/image_mask.size)
+
             'score':lambda1 * np.mean(new_features['mean_intensity'])/np.max(image_mask) - lambda2*((np.array(new_features['bbox_area']))/image_mask.size)
         })
         
         #del class_scores, nifti_image, segmented_mask, image_mask, features
         return {'image':image_name, 'patient_class':patient_class, 'observe_class':observe_class, 'probability_class':class_idx, **new_features}
-
-    #with ThreadPoolExecutor(max_workers=thread_workers) as executor:
-    #    results = executor.map(inner,((i, image, patient_class, observe_class) for (i, (image, patient_class)), observe_class in content))
-    #[inner((i, image, patient_class, observe_class)) for (i, (image, patient_class)), observe_class in content]
-    # [(i, image, patient_class, observe_class) for (i, (image, patient_class)), observe_class in content]
-    return inner
+    
+    function = {
+        'extract':extract,
+        'features':features
+    }
+    
+    return function[func]
 
 class RoiTransform:
     """Apply ROI transform to shange shape of images"""

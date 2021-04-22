@@ -27,13 +27,13 @@ class VGG(nn.Module):
         self.features = features
         self.avgpool = nn.AdaptiveAvgPool3d((7, 7, 7))
         self.classifier = nn.Sequential(
-            nn.Linear(256 * 7*7*7, 1024),
+            nn.Linear(512 * 7*7*7, 128),
             nn.ReLU(True),
-            nn.Dropout(0.2),
-            nn.Linear(1024, 1024),
-            nn.ReLU(True),
-            nn.Dropout(0.2),
-            nn.Linear(1024, num_classes),
+            #nn.Dropout(0),
+            #nn.Linear(1024, 1024),
+            #nn.ReLU(True),
+            #nn.Dropout(0.2),
+            nn.Linear(128, num_classes),
         )
         if init_weights:
             self._initialize_weights()
@@ -67,6 +67,7 @@ def make_layers(cfg, batch_norm=False):
             layers += [nn.MaxPool3d(kernel_size=2, stride=2)]
         elif type(v) == type('S'):
             layers += [nn.Conv3d(in_channels, int(v[1:]), kernel_size=3, padding=1, stride=2), nn.ReLU(inplace=True)]
+            in_channels = int(v[1:])
         else:
             conv3d = nn.Conv3d(in_channels, v, kernel_size=3, padding=1)
             if batch_norm:
@@ -82,7 +83,7 @@ cfgs = {
     'B': [64, 64, 'M', 128, 128, 'M', 256, 256, 'M', 512, 512, 'M', 512, 512, 'M'],
     'D': [64, 64, 'M', 128, 128, 'M', 256, 256, 256, 'M', 512, 512, 512, 'M', 512, 512, 512, 'M'],
     'E': [64, 64, 'M', 128, 128, 'M', 256, 256, 256, 256, 'M', 512, 512, 512, 512, 'M', 512, 512, 512, 512, 'M'],
-    'F': [32, 32, 'S32', 64, 64, 'S64', 128, 128, 'S128', 256, 256, 'S256', 256, 256, 256, 'S256'] # Homebrewed
+    'F': ['S128', 256, 256, 256, 'S256', 512, 512, 512,'S512'] # Homebrewed
     
 }
 
