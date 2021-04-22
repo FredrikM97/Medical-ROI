@@ -24,7 +24,7 @@ class InitWeightDistribution:
         self.model = model
         
     def __call__(self, dist):
-        return self.model.apply(getattr(self, dist))
+        return getattr(self, dist)(self.model)
         
         
     def uniform(self,m):
@@ -35,16 +35,24 @@ class InitWeightDistribution:
             m.weight.data.uniform_(0.0, 1.0)
             m.bias.data.fill_(0)
         
-    def normal(self,m):
-        classname = m.__class__.__name__
-        # for every Linear layer in a model..
-        if isinstance(m, nn.Conv3d):
-            nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
-            if m.bias is not None:
+    def normal(self,model):
+        for m in model.modules():
+            #classname = m.__class__.__name__
+            # for every Linear layer in a model..
+            print("Children of normal:", m)
+            torch.nn.init.normal_(m.weight, std=0.01)
+            torch.nn.init.constant_(m.bias, 0)
+
+            """
+            if isinstance(m, nn.Conv3d):
+                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
+                if m.bias is not None:
+                    nn.init.constant_(m.bias, 0)
+            elif isinstance(m, nn.BatchNorm3d):
+                nn.init.constant_(m.weight, 1)
                 nn.init.constant_(m.bias, 0)
-        elif isinstance(m, nn.BatchNorm3d):
-            nn.init.constant_(m.weight, 1)
-            nn.init.constant_(m.bias, 0)
-        elif isinstance(m, nn.Linear):
-            nn.init.normal_(m.weight, 0, 0.01)
-            nn.init.constant_(m.bias, 0)
+            elif isinstance(m, nn.Linear):
+                nn.init.normal_(m.weight, 0, 0.01)
+                nn.init.constant_(m.bias, 0)
+                
+            """

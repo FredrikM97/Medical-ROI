@@ -241,14 +241,7 @@ def add_image_bboxes(image,bbox_coords):
     Args:
         bbox_coords (list[int]): Expect shape of (x0,y0,x1,y1,z0,z1)
     """
-    for x0,y0,x1,y1,z0,z1 in bbox_coords: #0,y0,x1,y1,z0,z1
-        """
-        rr, cc = rectangle_perimeter((x0,y0), extent=(x1,y1), shape=image.shape) #, clip=True
-        print("perimiter",rr,cc)
-        for z in range(z0,z1):
-            set_color(image[z], (cc,rr),color=255)
-            #image[z][cc,rr] = 255
-        """
+
     for feature in features:
         x0,y0,x1,y1,z0,z1 = bounding_boxes(feature)
         for z in range(z0,z1):
@@ -282,45 +275,32 @@ def plot_interesting_bbox(_bboxes, th=0.5):
     #fig = display(image, step=1)
     return only_interesting, fig
 
-def feature_extraction(cam_extractor, thread_workers=20, upper_bound=170, lower_bound=30, lambda1=1,lambda2=1):
-    min_pixels = 10
+def feature_extraction(cam_extractor, thread_workers=20, upper_bound=170, lower_bound=30, use_quantile_bounds=True,lambda1=1,lambda2=1):
 
-        
     def inner(data):
         i, image_name, nifti_image, patient_class, observe_class = data
         
         nifti_image = nifti_image.squeeze(0)
         np_image = tensor2numpy(nifti_image)*255
         
+        
+        
         class_scores, class_idx = cam_extractor.evaluate(nifti_image)
         image_mask = cam_extractor.preprocess(cam_extractor.activation_map(observe_class, class_scores))
+        if use_quantile_bounds:
+            upper_bound = np.quantile(image_mask.ravel(), 0.95)
+            lower_bound = np.quantile(image_mask.ravel(), 0.85)
+            #print("Quantile bounds",upper_bound,lower_bound)
         
         # Remove background from mask
         # Below 10 exists due to some issues where background is not zero
         image_mask[np_image == 0] = 0
-        #edges = canny(np_image/255.)
-        #background = ndimage.binary_fill_holes(edges)
-        #print(image_mask)
-        #fft =  np.fft.rfftn(np_image)
-        #fft[np.abs(fft) <= 0.1] = 0
-
-        #back_fft = np.fft.irfftn(fft)
-        #back_fft[back_fft<0] = 0
-        #back_fft = preprocess.normalize(back_fft)
-     
-        #image_mask[back_fft == 0] = 0
-        # Remove mask that we know are a background (not a jpart of the brain scan)
-        #mask_no_background = segmentation.remove_known_background_from_mask(image, image_mask)
-
-        #upper_bound = np.quantile(image_mask, 0.85)
-        #lower_bound = np.quantile(image_mask, 0.6)
-        #print(upper_bound, lower_bound)
-
-        display(np_image)
-        display(image_mask)
-        segmented_mask = segment_mask(np_image, image_mask, upper_bound=upper_bound, lower_bound=lower_bound) 
         
-        display(segmented_mask)
+        #display(np_image)
+        #display(image_mask)
+        segmented_mask = segment_mask(np_image, image_mask, upper_bound=upper_bound, lower_bound=lower_bound)
+        
+        #display(segmented_mask)
         print(f"Image: {image_name}, Patient: {patient_class}, Observe: {observe_class}, Model predict: {class_idx}", end='\r')
         # TODO is it bbox_area or area
         features = measure.regionprops(segmented_mask, intensity_image=image_mask)
@@ -328,6 +308,9 @@ def feature_extraction(cam_extractor, thread_workers=20, upper_bound=170, lower_
             'bbox_area':[feature.bbox_area for feature in features], 
             'mean_intensity':[feature.mean_intensity for feature in features], 
             'bbox':bounding_boxes(features),
+            'upper_bound':upper_bound,
+            'lower_bound':lower_bound,
+            'use_quantile_bounds':use_quantile_bounds,
         }
         new_features.update({
             #'score':lambda1 * np.mean(new_features['mean_intensity'])/np.mean(image_mask) - lambda2*((np.array(new_features['bbox_area']))/image_mask.size)
