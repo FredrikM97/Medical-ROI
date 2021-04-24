@@ -12,7 +12,7 @@ from typing import Tuple
 
 from src.classifier.dataloader.class_weight import ClassWeights,InitWeightDistribution
 
-def load_trainer(config_name:str, checkpoint_path:str=None):
+def load_trainer(config_name:str, train_files, val_files, checkpoint_path:str=None):
     """ Load an trainer based on the configuration from config_name. If checkpoint_path is given it will overwride the checkpoint_path in the config file.
     If no checkpoint_path is given then the trainer will create a new model based on the config.
     
@@ -41,7 +41,7 @@ def load_trainer(config_name:str, checkpoint_path:str=None):
     checkpoint_path = checkpoint_path if checkpoint_path else config['checkpoint_path']
     
     # Load dataset
-    dataset = dataloader.create_dataset(**cfg_dataset)
+    dataset = dataloader.create_dataset(train_files, val_files, **cfg_dataset)
     
     # Check if dataset should be weighted
     weights_obj = ClassWeights(cfg_classes, cfg_dataset['args']['delimiter'])

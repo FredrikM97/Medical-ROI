@@ -5,7 +5,7 @@ import torch
 import torchvision
 #from skimage.transform import resize
 import numpy as np
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, KFold
 
 from src.utils import load
 from .dataset import AdniDataset
@@ -17,16 +17,19 @@ from src.utils import preprocess
 
 
 
-class AdniDataloader(pl.LightningDataModule): 
-    def __init__(self,data_dir, seed=0, batch_size=6, shuffle=True, validation_split=0.1, num_workers=1, img_shape=(79,95,79),**hparams:dict):
+class AdniDataloader(pl.LightningDataModule):
+    def __init__(self, trainset, valset, data_dir, seed=0, batch_size=6, shuffle=True, validation_split=0.1, num_workers=1, img_shape=(79,95,79), **hparams:dict):
         super().__init__()
         self.validation_split = validation_split
         self.shuffle = shuffle
         self.seed = seed
         self.img_shape = img_shape
-        self.dataset = load.load_files(BASEDIR + "/"+data_dir)
         
-        self.trainset, self.valset = self._split(self.validation_split)
+        #self.dataset = load.load_files(BASEDIR + "/"+data_dir)
+        #self.trainset, self.valset = self._split(self.validation_split)
+        
+        self.trainset = trainset
+        self.valset = valset
 
         self.init_kwargs = {
             'batch_size': batch_size,
@@ -34,7 +37,6 @@ class AdniDataloader(pl.LightningDataModule):
         }
         
         print(f"Data directory: {data_dir}\nDataset sizes - Training: {len(self.trainset)} Validation: {len(self.valset)}")
-        
 
     def train_dataloader(self):
         transform = torchvision.transforms.Compose([
@@ -62,15 +64,18 @@ class AdniDataloader(pl.LightningDataModule):
         return train_samples, valid_samples
 
 class RoiDataloader(pl.LightningDataModule): 
-    def __init__(self,data_dir, seed=0, batch_size=6, shuffle=True, validation_split=0.1, num_workers=1, img_shape=(79,95,79), roi_hparams={'output_shape':None, 'boundary_boxes':[]}, **hparams:dict):
+    def __init__(self, trainset, valset, data_dir, seed=0, batch_size=6, shuffle=True, validation_split=0.1, num_workers=1, img_shape=(79,95,79), roi_hparams={'output_shape':None, 'boundary_boxes':[]}, **hparams:dict):
         super().__init__()
         self.validation_split = validation_split
         self.shuffle = shuffle
         self.seed = seed
         self.img_shape = img_shape
         
-        self.dataset = load.load_files(BASEDIR + "/"+data_dir)
-        self.trainset, self.valset = self._split(self.validation_split)
+        #self.dataset = load.load_files(BASEDIR + "/"+data_dir)
+        #self.trainset, self.valset = self._split(self.validation_split)
+        
+        self.trainset = trainset
+        self.valset = valset
        
         self.init_kwargs = {
             'batch_size': batch_size,
@@ -104,7 +109,7 @@ class RoiDataloader(pl.LightningDataModule):
         
         train_samples, valid_samples = train_test_split(self.dataset, test_size=split, random_state=self.seed, shuffle=self.shuffle)
         return train_samples, valid_samples
-
+    
 class ToDevice(object):
     def __init__(self, device):
         self.device = device
