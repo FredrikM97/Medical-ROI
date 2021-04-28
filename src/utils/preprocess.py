@@ -1,5 +1,6 @@
 import numpy as np
 from torch import Tensor, from_numpy
+#from torch.nn.functional import pad
 from typing import Union, Tuple
 from skimage.transform import resize
 import torchvision
@@ -94,14 +95,30 @@ def tensor2numpy(data):
 
 def uint8(image:np.ndarray):
     # Change range 0-1 to 0-255 and change type to uint8
-    return (image*255).astype(np.uint8)
-
+    return (image*255).astype(np.uint8) 
+                   
 def preprocess_image(image:np.ndarray, input_shape:Tuple=(79,95,79), normalized=True) -> Tensor:
     """Resize, normalize between 0-1 and convert to uint8"""
 
     #if not isinstance(image, np.ndarray): raise ValueError(f"Expected image to be ndarray. Got: {type(image)}")
     #print("Unioquew", np.unique(image))
+    
+    # Testing to zero-pad instead of resize
+    #print(input_shape, image.shape, input_shape - list(image.shape))
+    ##print([x-y for x,y in zip(input_shape, image.shape)]) #[x-y for x,y in zip(input_shape, image.shape)]
+    #print("Asdasd", input_shape, "Image shape", image.shape)
+    
+    
+    #pad_shape = [(x-y)*2 for x,y in zip(input_shape, image.shape)]
+    #print(pad_shape, input_shape)
+    
+    #print("asdasdasd",image.dtype)
+    #if padded:      
+    #    new_image = pad(image, input_shape)
+    #if resized:
     image = resize(image,input_shape)
+        
+    #print(image.shape)
     if normalized: 
         image = normalize(image)
     image = uint8(image)

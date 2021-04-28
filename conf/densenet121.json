@@ -1,15 +1,11 @@
 {
     "densenet121":{
         "name":"densenet121",
-        "checkpoint_path":null,
         "model":{
             "arch": {
                 "name": "densenet121",
                 "args": {}
             }
-        }, 
-        "trainer":{
-            "checkpoint_callback":true
         }
     }
 }

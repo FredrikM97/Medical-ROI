@@ -1,48 +1,41 @@
-from sklearn.model_selection import KFold
-class Kfold:
-    def __init__(self):
-        self._fold_idx = None
-        self._n_splits = None
-        self._shuffle=None
-        self._data = None
-        self._random_state = None
+from sklearn.model_selection import StratifiedKFold as sk_StratifiedKFold
+import numpy as np
+import torch
 
-    def kfold(self,dataset, n_splits, shuffle=False, random_state=None):
-        self._shuffle = shuffle
-        self._n_splits = n_splits
-        self._random_state = random_state
-        idxs = KFold(n_splits, shuffle=shuffle, random_state=random_state).split(np.arange(len(dataset)))
-        self._folds(((torch.utils.data.Subset(dataset, train_idxs), torch.utils.data.Subset(dataset, val_idxs)) for train_idxs, val_idxs in idxs))
-
-    def folds(self,folds):
-        self._fold_idx = 1
-        self._folds = folds
+class KFold(sk_StratifiedKFold):
+    """Custom KFold based on the sklearn KFold adapted for pytorch dataloader"""
+    __doc__ += sk_StratifiedKFold.__doc__
     
-    @property 
-    def data(self):
-        return self._data
-    
-    @property
-    def random_state(self):
-        return self._random_state
+    def __init__(self, n_splits=5, shuffle=False, random_state=None):
+        super().__init__(n_splits=n_splits, shuffle=shuffle, random_state=random_state)
         
-    @property
-    def shuffle(self):
-        return self._shuffle
-    
-    @property
-    def n_splits(self):
-        return self._n_splits
-    
-    @property
-    def fold_idx(self) -> int:
-        return self._fold_idx
-
-    def has_folds(self) -> bool:
-        assert self.data != None, "No data initiated for kfold!"
-        return self.fold_idx < self.n_splits
+        self._folds = []
+        self.fold_idx = 0
+        self.subset = None
         
-    def next(self) -> None:
-        assert self.has_folds(), "Cant find more folds!"
-        self._fold_idx += 1
-        return next(self._folds)
+    def split(self,X,y=None):
+        """Extended version of the split for a pytorch dataloader's dataset
+        
+        Args:
+        X (List): Dataset to split.
+        
+        Return:
+        output (self): Return a self object to reference the next fold. 
+        """
+
+        self.fold_idx = 0
+        self._folds = list(super(sk_StratifiedKFold, self).split(X,y=y))
+
+        return self
+
+    def next(self):
+        if self.fold_idx < self.n_splits:
+            self.fold_idx += 1
+            return self.data()
+        return False
+        
+    
+    def data(self) -> None:
+        """Access the data fold in dataset"""
+
+        return self._folds[self.fold_idx]

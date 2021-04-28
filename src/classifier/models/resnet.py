@@ -262,7 +262,6 @@ def resnet50(pretrained=False, progress=True, **kwargs):
                    **kwargs)
 
 
-
 def resnet101(pretrained=False, progress=True, **kwargs):
     r"""ResNet-101 model from
     `"Deep Residual Learning for Image Recognition" <https://arxiv.org/pdf/1512.03385.pdf>`_

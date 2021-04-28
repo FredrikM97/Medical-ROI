@@ -1,9 +1,9 @@
 {
-    "vgg16":{
-        "name":"vgg16_bn",
+    "resnet50_brew":{
+        "name":"resnet50_brew",
         "model":{
             "arch": {
-                "name": "vgg16",
+                "name": "resnet50_brew",
                 "args": {}
             }
         }

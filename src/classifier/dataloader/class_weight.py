@@ -9,11 +9,11 @@ class ClassWeights:
         self.delimiter=delimiter
         self.weights = None
         
-    def calculate(self, images):
-        self.labels = preprocess.filename2labels(images, self.classes, self.delimiter)#get_labels(images, self._classes, self._delimiter)
+    def __call__(self, labels):
+        #self.labels = preprocess.filename2labels(images, self.classes, self.delimiter)#get_labels(images, self._classes, self._delimiter)
 
         # Compute weights
-        self.weights = torch.from_numpy(sklearn.utils.class_weight.compute_class_weight('balanced', classes=list(self.classes.values()), y=self.labels)).float().cuda()
+        self.weights = torch.from_numpy(sklearn.utils.class_weight.compute_class_weight('balanced', classes=list(self.classes.values()), y=labels)).float().cuda()
     
     def numpy(self):
         return self.weights.numpy()

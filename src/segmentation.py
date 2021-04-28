@@ -147,7 +147,7 @@ def max_occurance(occurances:list):
 
 def interesting_bbox(_bboxes, th=0.5):
     bbox_tensor = torch.Tensor(_bboxes['bbox'].to_list()).float()
-    scores = torch.Tensor(_bboxes['bbox_area'].to_list())
+    scores = torch.Tensor(_bboxes['score'].to_list()) 
     idxs  = torch.Tensor(_bboxes['observe_class'].to_list())
 
     only_interesting = bbox_tensor[batched_nms(bbox_tensor.cuda(), scores.cuda(), idxs.cuda(), th).detach().cpu()]
@@ -164,7 +164,7 @@ def feature_extraction(cam_extractor, upper_bound=0.85,lower_bound=0.7, use_quan
             nifti_image = nifti_image.squeeze(0)
 
         np_image = tensor2numpy(nifti_image)
-        
+        #print("Range of nifti images",nifti_image.max(), nifti_image.min())
         class_scores, class_idx = cam_extractor.evaluate(nifti_image)
         image_mask = preprocess_image(cam_extractor.activation_map(observe_class, class_scores))
         if use_quantile_bounds:
@@ -249,13 +249,19 @@ class RoiTransform:
             x (Tensor): Input value. Expect shape (B,C,D,H,W)
             y (Tensor): Target value
         """
+        #print(x.shape, y.shape)
         # Should be checked if this is correct by concatenate..
         if isinstance(self.boundary_boxes, list):
             image_rois = self.roi.forward(x,torch.cat(x.shape[0]*[self.boundary_boxes.to(x.device)]))#.detach()
+            y = self.num_bbox*y
         elif isinstance(self.boundary_boxes, dict):
             image_rois = self.roi.forward(x,torch.cat([self.boundary_boxes[one_target].to(x.device) for one_target in tensor2numpy(y)]))#.detach() #x.shape[0]*[self.boundary_boxes[y]
+            #print([len(self.boundary_boxes[one_target])*[one_target] for one_target in tensor2numpy(y)])
+            y = torch.from_numpy(np.concatenate([len(self.boundary_boxes[one_target])*[one_target] for one_target in tensor2numpy(y)])).to(x.device)
+            #print(image_rois.shape)
+            #print("yyy",torch.cat(self.num_bbox*[y]))
         else:
             raise ValueError("boundary_boxes needs to be of type list or dict")
         #[display(x[0],step=1) for x in tensor2numpy(image_rois)]
 
-        return image_rois, torch.cat(self.num_bbox*[y])#.type(x.type()), y #.to('cpu')
+        return image_rois, y#torch.cat(self.num_bbox*[y])#.type(x.type()), y #.to('cpu')

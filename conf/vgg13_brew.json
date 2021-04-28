@@ -1,9 +1,9 @@
 {
-    "vgg16":{
-        "name":"vgg16_bn",
+    "vgg13_brew":{
+        "name":"vgg13_brew",
         "model":{
             "arch": {
-                "name": "vgg16",
+                "name": "vgg13_brew",
                 "args": {}
             }
         }

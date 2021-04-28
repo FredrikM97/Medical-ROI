@@ -1,9 +1,9 @@
 {
-    "resnet18_brew":{
-        "name":"resnet18_brew",
+    "resnet34":{
+        "name":"resnet34",
         "model":{
             "arch": {
-                "name": "resnet18_brew",
+                "name": "resnet34",
                 "args": {}
             }
         }

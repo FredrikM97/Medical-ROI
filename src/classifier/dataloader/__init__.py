@@ -26,6 +26,6 @@ def find_dataset_using_name(datadir, dataset_name):
 
     return dataset
 
-def create_dataset(name:str=None, args:dict={}):
-    return find_dataset_using_name(BASEDIR,name)(**args)
+def create_dataset(name:str=None, args:dict={},**kwargs):
+    return find_dataset_using_name(BASEDIR,name)(**args, **kwargs)
 

@@ -150,10 +150,11 @@ class ResNet(nn.Module):
                                        dilate=replace_stride_with_dilation[0])
         self.layer3 = self._make_layer(block, 256, layers[2], stride=2,
                                        dilate=replace_stride_with_dilation[1])
-        self.layer4 = self._make_layer(block, 512, layers[3], stride=2,
-                                       dilate=replace_stride_with_dilation[2])
-        self.avgpool = nn.AdaptiveAvgPool3d((1, 1,1))
-        self.fc = nn.Linear(512 * block.expansion, num_classes)
+        #self.layer4 = self._make_layer(block, 512, layers[3], stride=2,
+        #                               dilate=replace_stride_with_dilation[2])
+        self.avgpool = nn.AdaptiveAvgPool3d((1, 1, 1))
+        
+        self.fc = nn.Linear(256 * block.expansion, num_classes)
 
         for m in self.modules():
             if isinstance(m, nn.Conv3d):
@@ -206,7 +207,8 @@ class ResNet(nn.Module):
         x = self.layer1(x)
         x = self.layer2(x)
         x = self.layer3(x)
-        x = self.layer4(x)
+        #x = self.layer4(x)
+        #print(x.shape)
 
         x = self.avgpool(x)
         x = torch.flatten(x, 1)
@@ -224,7 +226,7 @@ def _resnet(arch, block, layers, pretrained, progress, **kwargs):
     return model
 
 
-def resnet18(pretrained=False, progress=True, **kwargs):
+def resnet18_brew(pretrained=False, progress=True, **kwargs):
     r"""ResNet-18 model from
     `"Deep Residual Learning for Image Recognition" <https://arxiv.org/pdf/1512.03385.pdf>`_
 
@@ -237,7 +239,7 @@ def resnet18(pretrained=False, progress=True, **kwargs):
 
 
 
-def resnet34(pretrained=False, progress=True, **kwargs):
+def resnet34_brew(pretrained=False, progress=True, **kwargs):
     r"""ResNet-34 model from
     `"Deep Residual Learning for Image Recognition" <https://arxiv.org/pdf/1512.03385.pdf>`_
 
@@ -250,7 +252,7 @@ def resnet34(pretrained=False, progress=True, **kwargs):
 
 
 
-def resnet50(pretrained=False, progress=True, **kwargs):
+def resnet50_brew(pretrained=False, progress=True, **kwargs):
     r"""ResNet-50 model from
     `"Deep Residual Learning for Image Recognition" <https://arxiv.org/pdf/1512.03385.pdf>`_
 
@@ -258,12 +260,11 @@ def resnet50(pretrained=False, progress=True, **kwargs):
         pretrained (bool): If True, returns a model pre-trained on ImageNet
         progress (bool): If True, displays a progress bar of the download to stderr
     """
-    return _resnet('resnet50', Bottleneck, [3, 4, 6, 3], pretrained, progress,
+    return _resnet('resnet50', Bottleneck, [3, 4, 6, 3], pretrained, progress, #2,4,2
                    **kwargs)
 
 
-
-def resnet101(pretrained=False, progress=True, **kwargs):
+def resnet101_brew(pretrained=False, progress=True, **kwargs):
     r"""ResNet-101 model from
     `"Deep Residual Learning for Image Recognition" <https://arxiv.org/pdf/1512.03385.pdf>`_
 
@@ -276,7 +277,7 @@ def resnet101(pretrained=False, progress=True, **kwargs):
 
 
 
-def resnet152(pretrained=False, progress=True, **kwargs):
+def resnet152_brew(pretrained=False, progress=True, **kwargs):
     r"""ResNet-152 model from
     `"Deep Residual Learning for Image Recognition" <https://arxiv.org/pdf/1512.03385.pdf>`_
 
@@ -289,7 +290,7 @@ def resnet152(pretrained=False, progress=True, **kwargs):
 
 
 
-def resnext50_32x4d(pretrained=False, progress=True, **kwargs):
+def resnext50_32x4d_brew(pretrained=False, progress=True, **kwargs):
     r"""ResNeXt-50 32x4d model from
     `"Aggregated Residual Transformation for Deep Neural Networks" <https://arxiv.org/pdf/1611.05431.pdf>`_
 
@@ -304,7 +305,7 @@ def resnext50_32x4d(pretrained=False, progress=True, **kwargs):
 
 
 
-def resnext101_32x8d(pretrained=False, progress=True, **kwargs):
+def resnext101_32x8d_brew(pretrained=False, progress=True, **kwargs):
     r"""ResNeXt-101 32x8d model from
     `"Aggregated Residual Transformation for Deep Neural Networks" <https://arxiv.org/pdf/1611.05431.pdf>`_
 
@@ -319,7 +320,7 @@ def resnext101_32x8d(pretrained=False, progress=True, **kwargs):
 
 
 
-def wide_resnet50_2(pretrained=False, progress=True, **kwargs):
+def wide_resnet50_2_brew(pretrained=False, progress=True, **kwargs):
     r"""Wide ResNet-50-2 model from
     `"Wide Residual Networks" <https://arxiv.org/pdf/1605.07146.pdf>`_
 
@@ -338,7 +339,7 @@ def wide_resnet50_2(pretrained=False, progress=True, **kwargs):
 
 
 
-def wide_resnet101_2(pretrained=False, progress=True, **kwargs):
+def wide_resnet101_2_brew(pretrained=False, progress=True, **kwargs):
     r"""Wide ResNet-101-2 model from
     `"Wide Residual Networks" <https://arxiv.org/pdf/1605.07146.pdf>`_
 

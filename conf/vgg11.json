@@ -1,9 +1,9 @@
 {
-    "vgg16":{
-        "name":"vgg16_bn",
+    "vgg11":{
+        "name":"vgg11",
         "model":{
             "arch": {
-                "name": "vgg16",
+                "name": "vgg11",
                 "args": {}
             }
         }

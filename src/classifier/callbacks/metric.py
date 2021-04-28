@@ -12,7 +12,7 @@ class MetricCallback(pl.callbacks.Callback):
     def __init__(self, num_classes=3):
         super().__init__()
         self.num_classes = 3
-        self.logger_struct = lambda metric_prefix, prefix, metric: (f"{metric_prefix}/{prefix}", metric)
+        self.logger_struct = lambda metric_prefix, prefix, metric: {f"{metric_prefix}/{prefix}": metric}
         self.metricsTracker = MetricTracker().cuda()  
 
     def on_train_start(self, trainer, *args, **kwargs):
@@ -27,7 +27,7 @@ class MetricCallback(pl.callbacks.Callback):
             outputs['probability/val'],
             outputs['loss/val']
         )
-
+        
     def on_train_epoch_end(self,trainer, pl_module, outputs):
         trainer.logger.experiment.add_scalar(*self.logger_struct('loss', 'train', torch.stack([x[0]['minimize'] for x in outputs[0]]).mean()), trainer.current_epoch)
 
@@ -41,16 +41,17 @@ class MetricCallback(pl.callbacks.Callback):
             pl.metrics.functional.confusion_matrix(pred, target, num_classes=self.num_classes), 
             prefix='val'
         )
-        
+        # Need one of each class to work.. Not a very good approach
         self.roc_plot(
             trainer,
             pl.metrics.functional.roc(prob, target, num_classes=self.num_classes), 
             prefix='val'
         )
  
-        trainer.logger.experiment.add_scalar(*self.logger_struct('accuracy', 'val',pl.metrics.functional.accuracy(pred, target)), trainer.current_epoch)
-        trainer.logger.experiment.add_scalar(*self.logger_struct('loss', 'val', loss.mean()), trainer.current_epoch)
-
+        trainer.logger.log_metrics(self.logger_struct('accuracy', 'val',pl.metrics.functional.accuracy(pred, target)), trainer.current_epoch)
+        trainer.logger.log_metrics(self.logger_struct('loss', 'val', loss.mean()), trainer.current_epoch)
+        
+        
         # Reset the states.. we dont want to keep it in memory! As of pytorch-lightning 1.2 this is not done automatically!
         self.metricsTracker.reset()
     

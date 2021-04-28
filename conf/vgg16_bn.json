@@ -6,9 +6,6 @@
                 "name": "vgg16_bn",
                 "args": {}
             }
-        }, 
-        "trainer":{
-            "checkpoint_callback":true
         }
     }
 }

@@ -1,11 +1,12 @@
 {
-    "vgg16":{
-        "name":"vgg16_bn",
+    "resnet18":{
+        "name":"resnet18",
         "model":{
             "arch": {
-                "name": "vgg16",
+                "name": "resnet18",
                 "args": {}
             }
         }
     }
+    
 }

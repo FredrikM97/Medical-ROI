@@ -7,9 +7,6 @@
                 "name": "testModel",
                 "args": {}
             }
-        }, 
-        "trainer":{
-            "checkpoint_callback":true
         }
     }
 }
