@@ -31,14 +31,19 @@ class AdniDataloader(pl.LightningDataModule):
             'batch_size': batch_size,
             'num_workers': num_workers
         }
-    
+        use_augmentation = [
+            torchvision.transforms.RandomApply([torchvision.transforms.Lambda(lambda images: augment(images))], p=0.5)
+        ] if self.augmentation['enable'] else []
+        
         self.train_transform = torchvision.transforms.Compose([
             #torchvision.transforms.Resize(self.img_shape)
+            *use_augmentation,
             torchvision.transforms.Lambda(lambda images: preprocess.preprocess_image(images,input_shape=self.img_shape)),
-            torchvision.transforms.Lambda(lambda images: torch.from_numpy(augment(images,input_shape=self.img_shape))) if self.augmentation,
             torchvision.transforms.Lambda(lambda images: torch.from_numpy(images)),
 
         ])
+        
+                     
         
         self.test_transform = torchvision.transforms.Compose([
             #torchvision.transforms.Resize(self.img_shape)
@@ -60,7 +65,6 @@ class AdniDataloader(pl.LightningDataModule):
         
         
     def setup(self, stage=None):
-        print("SETUUP",stage)
         dataset_full = load.load_files(BASEDIR + "/"+self.data_dir)
         
         # Assign kfold or split depending on the configuration
@@ -75,12 +79,13 @@ class AdniDataloader(pl.LightningDataModule):
             self.adni_train, self.adni_val = [AdniDataset(data, transform=self.test_transform,delimiter=self.delimiter, classes=self.classes) for data in dataset_splitted]
             
         # Info of the dataset
-        print((
+        print(
             f"***Defined dataloader:***\n"
             f"Data directory: {self.data_dir}\n"
             f"Dataset sizes - Training: {len(self.adni_train)} Validation: {len(self.adni_val)}\n"
+            f"Augmentation: {'Enabled' if self.augmentation['enable'] else 'Disabled'}\n"
             f"KFold: {'Enabled - Fold: ' + str(self.kfold_index) + '/' + str(self.split_conf['folds']) if self.split_conf['kfold_enable'] else 'Disabled'}\n"
-        ))
+        )
     
     def next_fold(self):
         if self.split_conf['folds'] <= self.kfold_index: return False

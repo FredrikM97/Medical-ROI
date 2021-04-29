@@ -80,7 +80,7 @@ class Agent:
         cfg_dataset = self._config['dataloader']
     
         dataset = dataloader.create_dataset(classes=self._config['classes'], **cfg_dataset)
-        dataset.setup()
+        dataset.setup(stage='fit')
         self.dataloader = dataset
     
     

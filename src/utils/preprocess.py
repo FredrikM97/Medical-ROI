@@ -121,7 +121,7 @@ def preprocess_image(image:np.ndarray, input_shape:Tuple=(79,95,79), normalized=
     #print(image.shape)
     if normalized: 
         image = normalize(image)
-    image = uint8(image)
+    #image = uint8(image)
     return image
 
 def to_grid(image:np.ndarray, max_num_slices=None,pad_value=0.5, nrow=10) -> Tensor:

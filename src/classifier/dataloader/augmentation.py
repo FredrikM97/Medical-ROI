@@ -1,16 +1,20 @@
 # Based on https://www.kaggle.com/safavieh/image-augmentation-using-skimage
 
-from skimage.transform import warp, AffineTransform, ProjectiveTransform
+from skimage.transform import warp, AffineTransform, ProjectiveTransform#, rotate
 from skimage.exposure import equalize_adapthist, equalize_hist, rescale_intensity, adjust_gamma, adjust_log, adjust_sigmoid
 from skimage.filters import gaussian
 from skimage.util import random_noise
 import random
+
+from scipy.ndimage import rotate
+
 from torchvision import transforms
+import numpy as np
 def randRange(a, b):
     '''
     Generate random float values in desired range
     '''
-    return pl.rand() * (b - a) + a
+    return np.random.rand() * (b - a) + a
 
 
 def randomAffine(im):
@@ -41,8 +45,8 @@ def randomIntensity(im):
     Rescales the intensity of the image to random interval of image intensity distribution
     '''
     return rescale_intensity(im,
-                             in_range=tuple(pl.percentile(im, (randRange(0,10), randRange(90,100)))),
-                             out_range=tuple(pl.percentile(im, (randRange(0,10), randRange(90,100)))))
+                             in_range=tuple(np.percentile(im, (randRange(0,10), randRange(90,100)))),
+                             out_range=tuple(np.percentile(im, (randRange(0,10), randRange(90,100)))))
 
 def randomGamma(im):
     '''
@@ -55,13 +59,19 @@ def randomGaussian(im):
     Gaussian filter for bluring the image with random variance.
     '''
     return gaussian(im, sigma=randRange(0, 5))
-    
+
+def randomRotate(im):
+    '''
+    Gaussian filter for bluring the image with random variance.
+    '''
+    return rotate(im, 180, axes=(2,1), reshape=False)
+
 def randomFilter(im):
     '''
     randomly selects an exposure filter from histogram equalizers, contrast adjustments, and intensity rescaler and applys it on the input image.
     filters include: equalize_adapthist, equalize_hist, rescale_intensity, adjust_gamma, adjust_log, adjust_sigmoid, gaussian
     '''
-    Filters = [equalize_adapthist, equalize_hist, adjust_log, adjust_sigmoid, randomGamma, randomGaussian, randomIntensity]
+    Filters = [randomGamma, randomGaussian, randomIntensity] #equalize_adapthist, equalize_hist, adjust_log, adjust_sigmoid, 
     filt = random.choice(Filters)
     return filt(im)
 
@@ -71,12 +81,17 @@ def randomNoise(im):
     Random gaussian noise with random variance.
     '''
     var = randRange(0.001, 0.01)
-    return random_noise(im, var=var)
+    return im + np.random.normal(0, var, 1)#random_noise(im, var=var)
 
-def augment(im, Steps=[randomAffine, randomFilter, randomNoise, randomCrop]):
+from src.utils.plot import display_3D
+def augment(im, Steps=[randomFilter, randomNoise,randomAffine,randomRotate]): #randomCrop #randomAffine
     '''
     Image augmentation by doing a series of transformations on the image.
     '''
+
     for step in Steps:
+        #if int(randRange(0, len(Steps))):
         im = step(im)
+    
+    #print(im.shape)
     return im

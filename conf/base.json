@@ -84,8 +84,8 @@
             "optimizer":{
                 "type": "Adam",
                 "args":{
-                    "lr": 0.00001,
-                    "weight_decay": 0
+                    "lr": 0.0001,
+                    "weight_decay": 1e-5
                 }
             },
             "arch": {
@@ -116,7 +116,7 @@
         "trainer":{
             "tensorboard": true,
             "args":{
-                "max_epochs": 100,
+                "max_epochs": 200,
                 "profiler":false,
                 "progress_bar_refresh_rate":0,
                 "fast_dev_run":false,
@@ -139,11 +139,11 @@
                 "EarlyStopping":{
                     "enable":true,
                     "args":{
-                        "monitor":"loss/val_step",
-                        "min_delta":0.00,
-                        "patience":20,
+                        "monitor":"accuracy/val",
+                        "min_delta":5e-5,
+                        "patience":10,
                         "verbose":"False",
-                        "mode":"min"
+                        "mode":"max"
                     }
                 }
             }
