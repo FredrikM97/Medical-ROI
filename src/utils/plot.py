@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.patches as mpatches
 from math import ceil
 import pytorch_lightning as pl
+import seaborn as sns
 
 from src.utils import preprocess
 from src.utils.cmap import parula_map
@@ -10,7 +11,7 @@ from src.utils.cmap import parula_map
 def intensity_distribution(image, title=""):
     """Plot the intensity distribution of an input image"""
     fig = plt.figure()
-    b, bins, patches = plt.hist(image) #, image.max()
+    ax = sns.histplot(image) #, image.max()
     # Ignore the first value as it is only zeros
     #_, counts = np.unique(image, return_counts=True)
     plt.xlim([0,image.max()])
