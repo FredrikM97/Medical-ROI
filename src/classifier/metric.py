@@ -11,8 +11,9 @@ class MetricTracker(pl.metrics.Metric):
         self.add_state('predicted',default=[], dist_reduce_fx=None)
         self.add_state('target',default=[], dist_reduce_fx=None)
         self.add_state('probability',default=[], dist_reduce_fx=None)
-        self.add_state('loss',default=torch.tensor(0.), dist_reduce_fx=None)
+        self.add_state('loss',default=torch.tensor(0.), dist_reduce_fx="mean")
         self.add_state('num_batch',default=torch.tensor(0.), dist_reduce_fx=None)
+        
     def update(self, predicted, target, probability, loss):
         self.predicted.append(predicted)
         self.target.append(target)

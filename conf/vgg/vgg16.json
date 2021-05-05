@@ -1,0 +1,29 @@
+{
+    "vgg16":{
+        "name":"vgg16_bn",
+        "model":{
+            "arch": {
+                "name": "vgg16",
+                "args": {}
+            }
+        }
+    },
+    "vgg16_brew":{
+        "name":"vgg16_brew",
+        "model":{
+            "arch": {
+                "name": "vgg16_brew",
+                "args": {}
+            }
+        }
+    },
+    "vgg16_bn":{
+        "checkpoint_path":null,
+        "model":{
+            "arch": {
+                "name": "vgg16_bn",
+                "args": {}
+            }
+        }
+    }
+}

@@ -22,17 +22,17 @@ model_urls = {
 
 class VGG(nn.Module):
 
-    def __init__(self, features, num_classes=3, init_weights=True, **kwargs):
+    def __init__(self, features, last_filter, num_classes=3, init_weights=True, **kwargs):
         super(VGG, self).__init__()
         self.features = features
         self.avgpool = nn.AdaptiveAvgPool3d((7, 7, 7))
         self.classifier = nn.Sequential(
-            nn.Linear(512 * 7*7*7, 512),
+            nn.Linear(last_filter * 7*7*7, 512),
             nn.ReLU(True),
-            #nn.Dropout(0),
+            nn.Dropout(0.5),
             nn.Linear(512, 256),
-            #nn.ReLU(True),
-            #nn.Dropout(0.2),
+            nn.ReLU(True),
+            nn.Dropout(0.5),
             nn.Linear(256, num_classes),
         )
         if init_weights:
@@ -76,7 +76,7 @@ def make_layers(cfg, batch_norm=False):
             else:
                 layers += [conv3d, nn.ReLU(inplace=True)]
             in_channels = v
-    return nn.Sequential(*layers)
+    return nn.Sequential(*layers), in_channels
 
 
 cfgs = {
@@ -87,6 +87,9 @@ cfgs = {
     'F': ['S128', 256, 256, 256, 'S256', 512, 512, 512,'S512'], # Homebrewed
     'G':[128,128,'S128', 256, 256, 256, 'S256', 512, 512, 512,'S512'], # Homebrewed,
     'A1':[64, 'M', 128, 'M', 256, 256, 'M', 512, 512, 'M'],
+    'A2':[32, 32, 'M', 64, 64, 'M', 128, 128, 128, 'M', 256, 256, 256, 'M'],
+    'A3':[32, 32, 'M', 64, 64, 'M', 128, 128, 128,'M'],
+    'A4':[16, 16, 'M', 32, 32, 'M', 64, 64, 64,'M', 128, 128, 128,'M'],
     'B1':[64, 64, 'M', 128, 128, 'M', 256, 256, 'M', 512, 512, 'M'],
     'D1':[64, 64, 'M', 128, 128, 'M', 256, 256, 256, 'M', 512, 512, 512, 'M'],
     
@@ -96,7 +99,7 @@ cfgs = {
 def _vgg(arch, cfg, batch_norm, pretrained, progress, **kwargs):
     if pretrained:
         kwargs['init_weights'] = False
-    model = VGG(make_layers(cfgs[cfg], batch_norm=batch_norm), **kwargs)
+    model = VGG(*make_layers(cfgs[cfg], batch_norm=batch_norm), **kwargs)
     
     return model
 
@@ -111,6 +114,8 @@ def vgg11(pretrained=False, progress=True, **kwargs):
     """
     return _vgg('vgg11', 'A', False, pretrained, progress, **kwargs)
 
+
+
 def vgg11_brew(pretrained=False, progress=True, **kwargs):
     r"""VGG 11-layer model (configuration "A") from
     `"Very Deep Convolutional Networks For Large-Scale Image Recognition" <https://arxiv.org/pdf/1409.1556.pdf>`_
@@ -120,6 +125,36 @@ def vgg11_brew(pretrained=False, progress=True, **kwargs):
         progress (bool): If True, displays a progress bar of the download to stderr
     """
     return _vgg('vgg11', 'A1', False, pretrained, progress, **kwargs)
+
+def vgg11_brew2(pretrained=False, progress=True, **kwargs):
+    r"""VGG 11-layer model (configuration "A") from
+    `"Very Deep Convolutional Networks For Large-Scale Image Recognition" <https://arxiv.org/pdf/1409.1556.pdf>`_
+
+    Args:
+        pretrained (bool): If True, returns a model pre-trained on ImageNet
+        progress (bool): If True, displays a progress bar of the download to stderr
+    """
+    return _vgg('vgg11', 'A2', False, pretrained, progress, **kwargs)
+
+def vgg11_brew3(pretrained=False, progress=True, **kwargs):
+    r"""VGG 11-layer model (configuration "A") from
+    `"Very Deep Convolutional Networks For Large-Scale Image Recognition" <https://arxiv.org/pdf/1409.1556.pdf>`_
+
+    Args:
+        pretrained (bool): If True, returns a model pre-trained on ImageNet
+        progress (bool): If True, displays a progress bar of the download to stderr
+    """
+    return _vgg('vgg11', 'A3', False, pretrained, progress, **kwargs)
+
+def vgg11_brew4(pretrained=False, progress=True, **kwargs):
+    r"""VGG 11-layer model (configuration "A") from
+    `"Very Deep Convolutional Networks For Large-Scale Image Recognition" <https://arxiv.org/pdf/1409.1556.pdf>`_
+
+    Args:
+        pretrained (bool): If True, returns a model pre-trained on ImageNet
+        progress (bool): If True, displays a progress bar of the download to stderr
+    """
+    return _vgg('vgg11', 'A4', False, pretrained, progress, **kwargs)
 
 def vgg11_bn(pretrained=False, progress=True, **kwargs):
     r"""VGG 11-layer model (configuration "A") with batch normalization

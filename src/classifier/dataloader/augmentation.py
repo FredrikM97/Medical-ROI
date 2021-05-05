@@ -26,7 +26,10 @@ def randomAffine(im):
                             shear=randRange(-0.2, 0.2),
                             translation=(randRange(-im.shape[1]//10, im.shape[1]//10), 
                                          randRange(-im.shape[2]//10, im.shape[2]//10)))
-    return warp(im, tform.inverse, mode='reflect')
+    for i in range(im.shape[0]):
+        im[i] = warp(im[i], tform.inverse, mode='reflect')
+        
+    return im
 
 def randomCrop(im):
     '''
@@ -52,19 +55,19 @@ def randomGamma(im):
     '''
     Gamma filter for contrast adjustment with random gamma value.
     '''
-    return adjust_gamma(im, gamma=randRange(0.5, 1.5))
+    return adjust_gamma(im, gamma=randRange(0.5, 1.0))
 
 def randomGaussian(im):
     '''
     Gaussian filter for bluring the image with random variance.
     '''
-    return gaussian(im, sigma=randRange(0, 5))
+    return gaussian(im, sigma=randRange(0, 1))
 
 def randomRotate(im):
     '''
     Gaussian filter for bluring the image with random variance.
     '''
-    return rotate(im, 180, axes=(2,1), reshape=False)
+    return rotate(im, random.choice([0,90,180,270]), axes=(2,1), reshape=False)
 
 def randomFilter(im):
     '''
@@ -81,10 +84,9 @@ def randomNoise(im):
     Random gaussian noise with random variance.
     '''
     var = randRange(0.001, 0.01)
-    return im + np.random.normal(0, var, 1)#random_noise(im, var=var)
+    return random_noise(im, var=var)#im + np.random.normal(0, var, 1)#random_noise(im, var=var)
 
-from src.utils.plot import display_3D
-def augment(im, Steps=[randomFilter, randomNoise,randomAffine,randomRotate]): #randomCrop #randomAffine
+def augment(im, Steps=[randomFilter, randomNoise]): #randomCrop #randomAffine, ,randomAffine,randomRotate
     '''
     Image augmentation by doing a series of transformations on the image.
     '''

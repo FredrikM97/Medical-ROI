@@ -10,11 +10,11 @@ from src.utils.cmap import parula_map
 def intensity_distribution(image, title=""):
     """Plot the intensity distribution of an input image"""
     fig = plt.figure()
-    b, bins, patches = plt.hist(image, image.max())
+    b, bins, patches = plt.hist(image) #, image.max()
     # Ignore the first value as it is only zeros
-    _, counts = np.unique(image, return_counts=True)
+    #_, counts = np.unique(image, return_counts=True)
     plt.xlim([0,image.max()])
-    plt.ylim([0,counts[1:].max()])
+    #plt.ylim([0,counts[1:].max()]) # Existed if we want to ignore zeros but caused a lot of trouble..
     plt.title(title)
     plt.xlabel("Intensity")
     plt.xlabel("Frequency")
@@ -130,8 +130,16 @@ def ROC(roc_classes, prefix='', fig=None):
 
     return metric_list, fig
 
-def imshow(image, cmap=parula_map, figsize=(8,8)):
+def imshow(image, cmap=parula_map, figsize=(8,4),colormap=False,colormap_shrink=1, disable_axis=True):
     fig = plt.figure(figsize=figsize)
-    plt.imshow(image, cmap=cmap)
+    im = plt.imshow(image, cmap=cmap)
+    
+    if colormap:
+        #plt.subplots_adjust(wspace=0.01, hspace=0)
+        cbar = fig.colorbar(im,shrink=colormap_shrink,pad=0.01)
+    if disable_axis:
+        plt.axis('off')
+
+    plt.show()
 
     

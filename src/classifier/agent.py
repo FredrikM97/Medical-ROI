@@ -16,9 +16,10 @@ from datetime import datetime
 
 class Agent:
     
-    def __init__(self, config_name, checkpoint_path:str=None):
+    def __init__(self, config_name, base_config='base',checkpoint_path:str=None):
         self.checkpoint_path=checkpoint_path
         self._config = None
+        self.base_config = base_config
         self.model = None
         self.dataloader = None
         
@@ -33,12 +34,21 @@ class Agent:
     def load_config(self,config_name):
         """Init the config into object"""
         # Load all config settings
-        model_config = load.load_config(config_name, dirpath=BASEDIR + "/conf/")[config_name]
-        base_config = load.load_config('base', dirpath=BASEDIR + "/conf/")
+        model_config = load.load_config(config_name, dirpath=BASEDIR + "/conf/")
+        base_config = load.load_config(self.base_config, dirpath=BASEDIR + "/conf/")
         config = merge_dict(base_config['classifier'],model_config)
 
         config.update({'classes':base_config['classes']})
- 
+         
+        # Fix ROI bounding boxes and if dictionary then label them
+        if config['model']['roi_hparams']['enable']:
+            if isinstance(config['model']['roi_hparams']['boundary_boxes'], dict):
+                config['model']['roi_hparams']['boundary_boxes'] = {config['classes'][key]:value for key,value in config['model']['roi_hparams']['boundary_boxes'].items()}
+            elif isinstance(config['model']['roi_hparams']['boundary_boxes'], list):
+                pass
+            else:
+                raise ValueError("boundary_boxes needs to be of type list or dict")
+                
         self._config = config
 
     def load_model(self):
@@ -53,13 +63,6 @@ class Agent:
         if cfg_model['loss']['args']['weight']:
             self._weights_obj(self.dataloader.train_dataloader().dataset.labels)
         class_weights = self._weights_obj.weights
-
-        # Fix ROI bounding boxes and if dictionary then label them
-        if cfg_model['roi_hparams']['enable']:
-            if isinstance(cfg_model['roi_hparams']['boundary_boxes'], dict):
-                cfg_model['roi_hparams']['boundary_boxes'] = {self._config['classes'][key]:value for key,value in cfg_model['roi_hparams']['boundary_boxes'].items()}
-            else:
-                raise ValueError("boundary_boxes needs to be of type list or dict")
 
         # If checkpoint is enabled or if create a new model
         if checkpoint_path:
@@ -79,7 +82,7 @@ class Agent:
         """Init the dataloader into object. If CV is enabled access the next folds with _dataloader.next_fold()"""
         cfg_dataset = self._config['dataloader']
     
-        dataset = dataloader.create_dataset(classes=self._config['classes'], **cfg_dataset)
+        dataset = dataloader.create_dataset(classes=self._config['classes'], **cfg_dataset, seed=self._config['seed'])
         dataset.setup(stage='fit')
         self.dataloader = dataset
     
@@ -120,6 +123,6 @@ class Agent:
         self.load_model() 
         trainer = self.trainer(self.dataloader.kfold_index)
         print(f"Dataloader fold: {self.dataloader.kfold_index}")
-        close_on_finish_decorator(trainer.fit, trainer.logger.log_dir, self.model, datamodule=self.dataloader)
+        close_on_finish_decorator(trainer.fit, trainer.logger.log_dir, self.model, datamodule=self.dataloader, message=self._config)
         
         return trainer

@@ -1,4 +1,5 @@
 import numpy as np
+import torch
 from torch import Tensor, from_numpy
 #from torch.nn.functional import pad
 from typing import Union, Tuple
@@ -82,7 +83,8 @@ def greedy_split(arr:np.ndarray, n:int, axis=0) -> list:
     block_size = np.ceil(length / float(n))
 
     # the indices at which the splits will occur
-    ix = np.arange(block_size, length, block_size)#.astype(np.uint8)
+    ix = np.arange(block_size, length, block_size).astype(np.uint8)
+
     return np.split(arr, ix, axis)
 
 
@@ -116,12 +118,17 @@ def preprocess_image(image:np.ndarray, input_shape:Tuple=(79,95,79), normalized=
     #if padded:      
     #    new_image = pad(image, input_shape)
     #if resized:
+    #print("image type",type(image))
+    
     image = resize(image,input_shape)
-        
+    
+    
+    #print(image.max(),image.min())
     #print(image.shape)
     if normalized: 
         image = normalize(image)
     #image = uint8(image)
+    #print("image type2",type(image))
     return image
 
 def to_grid(image:np.ndarray, max_num_slices=None,pad_value=0.5, nrow=10) -> Tensor:

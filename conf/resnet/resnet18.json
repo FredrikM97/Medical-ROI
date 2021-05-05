@@ -1,0 +1,65 @@
+{
+    "resnet18":{
+        "name":"resnet18",
+        "model":{
+            "arch": {
+                "name": "resnet18",
+                "args": {}
+            }
+        }
+    },
+     "resnet18_brew":{
+        "name":"resnet18_brew",
+        "model":{
+            "arch": {
+                "name": "resnet18_brew",
+                "args": {}
+            }
+        }
+    },
+    "resnet18_brew2":{
+        "name":"resnet18_brew2",
+        "model":{
+            "arch": {
+                "name": "resnet18_brew2",
+                "args": {}
+            }
+        }
+    },
+    "resnet18_brew3":{
+        "name":"resnet18_brew3",
+        "model":{
+            "arch": {
+                "name": "resnet18_brew3",
+                "args": {}
+            }
+        }
+    },
+    "resnet18_brew4":{
+        "name":"resnet18_brew4",
+        "model":{
+            "arch": {
+                "name": "resnet18_brew4",
+                "args": {}
+            }
+        }
+    },
+    "resnet18_brew5":{
+        "name":"resnet18_brew5",
+        "model":{
+            "arch": {
+                "name": "resnet18_brew5",
+                "args": {}
+            }
+        }
+    },
+    "resnet18_brew6":{
+        "name":"resnet18_brew6",
+        "model":{
+            "arch": {
+                "name": "resnet18_brew6",
+                "args": {}
+            }
+        }
+    }
+}

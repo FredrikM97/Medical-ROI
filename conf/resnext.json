@@ -1,9 +1,8 @@
 {
     "resnext":{
         "name":"resnext50_32x4d",
-        "checkpoint_path":null,
         "dataloader": {
-            "name": "AdniDataloader",
+            "name": "AdniDataloader"
         },
         "model":{
             "arch": {

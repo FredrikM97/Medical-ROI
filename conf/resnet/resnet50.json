@@ -1,0 +1,39 @@
+{
+    "resnet50":{
+        "name":"resnet50",
+        "model":{
+            "arch": {
+                "name": "resnet50",
+                "args": {}
+            }
+        }
+    },
+    "resnet50_brew":{
+        "name":"resnet50_brew",
+        "model":{
+            "arch": {
+                "name": "resnet50_brew",
+                "args": {}
+            }
+        }
+    },
+    "resnet50_brew2":{
+        "name":"resnet50_brew2",
+        "model":{
+            "arch": {
+                "name": "resnet50_brew2",
+                "args": {}
+            }
+        }
+    },
+    "resnet50_brew3":{
+        "name":"resnet50_brew3",
+        "model":{
+            "arch": {
+                "name": "resnet50_brew3",
+                "args": {}
+            }
+        }
+    }
+    
+}

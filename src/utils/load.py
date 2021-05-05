@@ -6,6 +6,7 @@ import importlib
 import numpy as np
 from src.utils.preprocess import image2axial
 import nibabel as nib
+import itertools
 
 def load_json(dirpath:str=None) -> dict:
     """Open a json file and return the key name and config data if the file exists
@@ -30,12 +31,16 @@ def load_config(filename:str,dirpath:str=None) -> Dict:
     """Load file with same name as the input filename and located in dirpath"""
 
     dirpath = os.path.abspath(dirpath if dirpath else '.')
-    for pos_json in os.listdir(dirpath):
-        name, extension = pos_json.rsplit(".",1)
+    files = itertools.chain.from_iterable(itertools.starmap(lambda root,dirs, files: [*map(lambda f: os.path.join(root, f), filter(lambda x: '.json' in x and 'checkpoint' not in x,files))],os.walk('../conf')))
+    content = [*filter(lambda file: filename in load_json(f"{file}"), files)]
+    if len(content) == 1:
+        return load_json(f"{content[0]}")[filename]
+    elif len(content) > 1:
+        raise ValueError(f"More than one config exists with name {filename}, files: {content}")
+    else:
+        raise ValueError(f"Could not find json file: {filename} in {dirpath}!")
+    
         
-        if  name == filename and extension == 'json': 
-            return load_json(dirpath +'/'+pos_json)
-    raise ValueError(f"Could not find json file: {filename} in {dirpath}!")
 
 def load_xml(path:str):
     """Load XML from dictory and return a generator"""

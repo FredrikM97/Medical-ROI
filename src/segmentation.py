@@ -38,22 +38,27 @@ def segment_mask(background_mask:np.ndarray, image_mask:np.ndarray, upper_bound=
     #label_im, nb_labels = ndimage.label(mask, connectivity=1)
     return label_im
     """
-    elevation_map = sobel(image_mask)
+    tmp_image = image_mask.copy()
+    tmp_image[tmp_image < upper_bound] = 0
+    tmp_image[background_mask<=0] = 0
+    tmp_image[tmp_image>0] = 1
+    labeled_masks = measure.label(tmp_image, background=0)#ndi.label(tmp_image)[0]
+    #elevation_map = sobel(image_mask)
     
     # Set to zero so it does not break background!
-    markers = np.zeros_like(image_mask)
+    #markers = np.zeros_like(image_mask)
     
     # Get max value
     # Remove known background or values outside of thesholds
-    markers[image_mask < lower_bound] = 1
+    #markers[image_mask < lower_bound] = 1
     #markers[background_mask == 0] = 1
-    markers[image_mask > upper_bound] = 2
-    segmentation_masks = seg.watershed(elevation_map, markers=markers)
+    #markers[image_mask > upper_bound] = 2
+    #segmentation_masks = seg.watershed(elevation_map, markers=markers)
     
-    segmentation_masks_new = ndi.binary_fill_holes(segmentation_masks - 1)
+    #segmentation_masks_new = ndi.binary_fill_holes(segmentation_masks - 1)
 
     #labeled_masks, _ = ndi.label(segmentation_masks_new)
-    labeled_masks = measure.label(segmentation_masks_new)
+    #labeled_masks = measure.label(segmentation_masks_new)
     #segmentation.display(labeled_coins, step=1)
     return labeled_masks
 
@@ -157,7 +162,7 @@ def interesting_bbox(_bboxes, th=0.5):
     #fig = display(image, step=1)
     return only_interesting, fig
 
-def feature_extraction(cam_extractor, upper_bound=0.85,lower_bound=0.7, use_quantile_bounds=True,lambda1=1,lambda2=1, func='features'):
+def feature_extraction(cam_extractor, upper_bound=0.85,lower_bound=0.7, use_quantile_bounds=True,lambda1=1,lambda2=1, min_area=100,func='features'):
     def extract(nifti_image:torch.Tensor, observe_class:int):
 
         if len(nifti_image.shape) > 3:
@@ -167,6 +172,9 @@ def feature_extraction(cam_extractor, upper_bound=0.85,lower_bound=0.7, use_quan
         #print("Range of nifti images",nifti_image.max(), nifti_image.min())
         class_scores, class_idx = cam_extractor.evaluate(nifti_image)
         image_mask = preprocess_image(cam_extractor.activation_map(observe_class, class_scores))
+        
+        image_mask = (image_mask*255).astype(int)
+        np_image = (np_image*255).astype(int)
         if use_quantile_bounds:
             _upper_bound = np.quantile(image_mask.ravel(), upper_bound)
             _lower_bound = np.quantile(image_mask.ravel(), lower_bound)
@@ -203,7 +211,7 @@ def feature_extraction(cam_extractor, upper_bound=0.85,lower_bound=0.7, use_quan
         }
         new_features.update({
 
-            'score':lambda1 * np.mean(new_features['mean_intensity'])/np.max(image_mask) - lambda2*((np.array(new_features['bbox_area']))/image_mask.size)
+            'score':lambda1 * np.mean(new_features['mean_intensity'])/np.max(image_mask) - lambda2*((np.array(new_features['bbox_area'])+min_area)/image_mask.size)
         })
         
         #del class_scores, nifti_image, segmented_mask, image_mask, features

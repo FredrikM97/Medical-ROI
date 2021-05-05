@@ -4,10 +4,10 @@ from torch.utils.data import Dataset
 
 from skimage.filters import sobel
 from scipy import ndimage as ndi
+from skimage import filters
 import numpy as np
 
 from src.utils import preprocess
-from src.dependencies.roi_align import RoIAlign
 
 class AdniDataset(Dataset):
     def __init__(self, data:list, classes={'CN':0,'MCI':1,'AD':2}, delimiter='_',transform=None):
@@ -25,14 +25,13 @@ class AdniDataset(Dataset):
             * Image and label where image has the shape Tuple[C,W,H,D]
         """
         x = preprocess.image2axial(nib.load(self.data[idx]).get_fdata())
-        mask = x <= 0
-        x[mask]=0
-
+        #mask = x <= 0
+        x[x <= 0]=0
         y = self.labels[idx]
         
         if self.transform:
             x = self.transform(x)
-            
+            #print("Is transform enabled?", x.shape)
         #x = torch.from_numpy(x)
         #x = preprocess.normalize(x.unsqueeze(0).float()) # Think normalization was missing
         x = x.unsqueeze(0).float() # Think normalization was missing

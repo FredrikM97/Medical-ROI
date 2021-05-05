@@ -11,10 +11,11 @@ def figure_decorator(func, figsize=(10,10)):
         return tmp
     return wrapper
 
-def close_on_finish_decorator(func, filepath,*args,**kwargs):
+def close_on_finish_decorator(func, filepath,*args,message='',**kwargs):
     try:
         tmp = func(*args,**kwargs)
-        open(filepath + "/done.sample", 'a').close()
+        with open(filepath + "/done.sample", 'a') as f:
+            f.write(str(message))
         return tmp
     except Exception as e:
         raise Exception("Error occured in function") from e

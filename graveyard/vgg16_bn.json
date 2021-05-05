@@ -1,0 +1,11 @@
+{
+    "vgg16_bn":{
+        "checkpoint_path":null,
+        "model":{
+            "arch": {
+                "name": "vgg16_bn",
+                "args": {}
+            }
+        }
+    }
+}

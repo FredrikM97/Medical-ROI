@@ -14,7 +14,6 @@ from src.utils import preprocess
 from src.utils.plot import ROC
 
 from src import BASEDIR
-from src.segmentation import RoiTransform
 from src.classifier.metric import MetricTracker
 
 def create_model(checkpoint_path=None,**cfg_model):
@@ -36,6 +35,8 @@ class Model(pl.LightningModule):
         #self.loss_class_weights = class_weights if loss_weight_balance else None
         #class_weights=None,loss_weight_balance=None, part of input
         if self.roi_enabled:
+            # Dont import unless we want to use RoiTransform.. (Compability without cuda 11.1)
+            from src.segmentation import RoiTransform
             self.roi_model = RoiTransform(**roi_hparams)
         self.metricsTracker = MetricTracker()
         

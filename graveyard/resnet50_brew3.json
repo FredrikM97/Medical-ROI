@@ -1,0 +1,11 @@
+{
+    "resnet50_brew3":{
+        "name":"resnet50_brew3",
+        "model":{
+            "arch": {
+                "name": "resnet50_brew3",
+                "args": {}
+            }
+        }
+    }
+}

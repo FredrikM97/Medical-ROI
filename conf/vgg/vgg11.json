@@ -1,0 +1,47 @@
+{
+    "vgg11":{
+        "name":"vgg11",
+        "model":{
+            "arch": {
+                "name": "vgg11",
+                "args": {}
+            }
+        }
+    },
+    "vgg11_brew":{
+        "name":"vgg11_brew",
+        "model":{
+            "arch": {
+                "name": "vgg11_brew",
+                "args": {}
+            }
+        }
+    },
+    "vgg11_brew2":{
+        "name":"vgg11_brew2",
+        "model":{
+            "arch": {
+                "name": "vgg11_brew2",
+                "args": {}
+            }
+        }
+    },
+    "vgg11_brew3":{
+        "name":"vgg11_brew3",
+        "model":{
+            "arch": {
+                "name": "vgg11_brew3",
+                "args": {}
+            }
+        }
+    },
+    "vgg11_brew4":{
+        "name":"vgg11_brew4",
+        "model":{
+            "arch": {
+                "name": "vgg11_brew4",
+                "args": {}
+            }
+        }
+    }
+}

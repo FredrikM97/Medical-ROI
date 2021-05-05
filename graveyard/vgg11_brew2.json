@@ -1,0 +1,11 @@
+{
+    "vgg11_brew2":{
+        "name":"vgg11_brew2",
+        "model":{
+            "arch": {
+                "name": "vgg11_brew2",
+                "args": {}
+            }
+        }
+    }
+}
