@@ -252,3 +252,11 @@ How does the region affect the classification result? Is any of the regions dome
 
 * Utexpo:
 	- Encouraged, not required
+
+# Meeting 16 (2021-04-26)
+* AAL:
+	- Some background picked up on CAM, use AAL to set these to zero (or just exclude background anyway)
+	- Bar plot of CAM intensity per AAL region
+	- Perform tests with CV where model is restricted to N top-ranked regions according to the CAM intensity
+	- Also perform tests where model is restricted to higher-level regions (right/left, frontal, etc)
+	- Analyse difference in CAM between correctly and incorrectly classified scans, in an attempt to explain the cause of incorrect classifications
