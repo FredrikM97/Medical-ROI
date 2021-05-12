@@ -266,6 +266,7 @@ How does the region affect the classification result? Is any of the regions dome
 # Meeting 17? (2021-05-12)
 * Suggestions
 	* Make all blue references to acronyms black?
+		* Answer: Blue is fine
 
 * Introduction
 	* Remove concepts from Introduction, clearer workflow without introducing advanced concepts.
@@ -298,3 +299,54 @@ How does the region affect the classification result? Is any of the regions dome
 	* ADNI-1 is a acronym for ADNI.
 	* Secure argumentation
 	* Benefitial to our solution
+
+# Meeting 17 (2021-05-12) (Eriks notes)
+* Explain why other architectures of backbone network performed so poorly
+
+* Add normalized y-axis to barplots
+
+* Tense
+	* Intro: Future
+	* Literature: Past
+	* Data: Present
+	* Method: Present
+	* Results: Past
+	* Discussion: Mix
+	* Conclusion: Mix
+
+* Method
+	* Massive reshuffling
+	* Expand the 'overview' part a lot
+	* Two feature generation sections:
+		* Bbox
+		* AAL
+	* One classification section
+
+* Extract data section before method
+
+* Theory
+	* More theory in method, how does a CNN even work etc
+		* Then introduce specific implementations (ResNet, Vgg) after explanation of CNN
+	* Move CAM mathematics from literature to method
+
+* Literature
+	* Conclusion should explain how we use previous work to limit and define our own work
+
+* Intro
+	* Don't need to include the entire solution, just the idea
+	* Good three first paragraphs, refine last ones
+
+* Naming consistency
+	* Full-volume classifier -> Backbone network
+
+* Result
+	* Confusion matrix for Bbox
+	* Barplots: add last line of captions to free-flowing text aswell
+
+* Conclusion
+	* Copy research questions and answer them one-by-one
+		* Paragraph with research question in **bold** or *italic* above
+	* Sustainability
+
+* Attribution method
+	* Not absolute truth
