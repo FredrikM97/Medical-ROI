@@ -260,3 +260,41 @@ How does the region affect the classification result? Is any of the regions dome
 	- Perform tests with CV where model is restricted to N top-ranked regions according to the CAM intensity
 	- Also perform tests where model is restricted to higher-level regions (right/left, frontal, etc)
 	- Analyse difference in CAM between correctly and incorrectly classified scans, in an attempt to explain the cause of incorrect classifications
+
+# Meeting MIA (unknown)
+
+# Meeting 17? (2021-05-12)
+## Suggestions
+* Make all blue references to acronyms black?
+
+## Introduction
+* Remove concepts from Introduction, clearer workflow without introducing advanced concepts.
+
+## Literature survey
+* Move CAM calculation to methodology
+* Literature survey are good to have a conclusion. Should be used to narrow down to what we try to solve
+## Method
+* Method should only include approach but not results.
+* Introduce CNN then backbone network.
+* Move Table 4 to results (If we did it then move to result)
+* Include which evaluation metrics in Methodology
+* Add section about classification and features?
+* Rewrite overview (it is confusing that we split, into two parts. Make this clear). Features and methods
+* Move data out from methodology!
+* Implementation -> Bounding-boxes?
+
+## Result
+* Add confusion matrix for BBOX. Confusing to relate between works.
+* Results: Logical progression, feature generation
+## Discussion
+* Sustainability/Ethics, data or discussion section?
+## Conclusion
+* Start Conclusion with why we tried to solve this problem
+* Conclusion should answer the AIM. Copy AIM and restate it. Bold or italic is good.
+
+## Other
+* Unclear of sections: Bounding-box, anatomical and full-brain scan classifier
+* Tense's: Method: Introduction: Future, Literature survey: Past/Present, Method: Present, Result:Past, Discussion: Present, Conclusion: Combination
+* ADNI-1 is a acronym for ADNI.
+* Secure argumentation
+* Benefitial to our solution
