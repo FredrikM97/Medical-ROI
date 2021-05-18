@@ -260,3 +260,93 @@ How does the region affect the classification result? Is any of the regions dome
 	- Perform tests with CV where model is restricted to N top-ranked regions according to the CAM intensity
 	- Also perform tests where model is restricted to higher-level regions (right/left, frontal, etc)
 	- Analyse difference in CAM between correctly and incorrectly classified scans, in an attempt to explain the cause of incorrect classifications
+
+# Meeting MIA (unknown)
+
+# Meeting 17? (2021-05-12)
+* Suggestions
+	* Make all blue references to acronyms black?
+		* Answer: Blue is fine
+
+* Introduction
+	* Remove concepts from Introduction, clearer workflow without introducing advanced concepts.
+
+* Literature survey
+	* Move CAM calculation to methodology
+	* Literature survey are good to have a conclusion. Should be used to narrow down to what we try to solve
+* Method
+	* Method should only include approach but not results.
+	* Introduce CNN then backbone network.
+	* Move Table 4 to results (If we did it then move to result)
+	* Include which evaluation metrics in Methodology
+	* Add section about classification and features?
+	* Rewrite overview (it is confusing that we split, into two parts. Make this clear). Features and methods
+	* Move data out from methodology!
+	* Implementation -> Bounding-boxes?
+
+* Result
+	* Add confusion matrix for BBOX. Confusing to relate between works.
+	* Results: Logical progression, feature generation
+*Discussion
+	* Sustainability/Ethics, data or discussion section?
+* Conclusion
+	* Start Conclusion with why we tried to solve this problem
+	* Conclusion should answer the AIM. Copy AIM and restate it. Bold or italic is good.
+
+* Other
+	* Unclear of sections: Bounding-box, anatomical and full-brain scan classifier
+	* Tense's: Method: Introduction: Future, Literature survey: Past/Present, Method: Present, Result:Past, Discussion: Present, Conclusion: Combination
+	* ADNI-1 is a acronym for ADNI.
+	* Secure argumentation
+	* Benefitial to our solution
+
+# Meeting 17 (2021-05-12) (Eriks notes)
+* Explain why other architectures of backbone network performed so poorly
+
+* Add normalized y-axis to barplots
+
+* Tense
+	* Intro: Future
+	* Literature: Past
+	* Data: Present
+	* Method: Present
+	* Results: Past
+	* Discussion: Mix
+	* Conclusion: Mix
+
+* Method
+	* Massive reshuffling
+	* Expand the 'overview' part a lot
+	* Two feature generation sections:
+		* Bbox
+		* AAL
+	* One classification section
+
+* Extract data section before method
+
+* Theory
+	* More theory in method, how does a CNN even work etc
+		* Then introduce specific implementations (ResNet, Vgg) after explanation of CNN
+	* Move CAM mathematics from literature to method
+
+* Literature
+	* Conclusion should explain how we use previous work to limit and define our own work
+
+* Intro
+	* Don't need to include the entire solution, just the idea
+	* Good three first paragraphs, refine last ones
+
+* Naming consistency
+	* Full-volume classifier -> Backbone network
+
+* Result
+	* Confusion matrix for Bbox
+	* Barplots: add last line of captions to free-flowing text aswell
+
+* Conclusion
+	* Copy research questions and answer them one-by-one
+		* Paragraph with research question in **bold** or *italic* above
+	* Sustainability
+
+* Attribution method
+	* Not absolute truth
