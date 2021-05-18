@@ -30,5 +30,21 @@
                 "accelerator":"dp"
             }
         }
+    },
+    "amira_vgg":{
+        "name":"amira_vgg",
+        "model":{
+            "arch": {
+                "name": "amira_vgg",
+                "args": {}
+            }
+        },
+        "trainer":{
+            "tensorboard": true,
+            "args":{
+                "num_sanity_val_steps":8,
+                "accelerator":"dp"
+            }
+        }
     }
 }

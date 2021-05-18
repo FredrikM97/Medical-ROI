@@ -25,9 +25,19 @@ class VGG(nn.Module):
     def __init__(self, features, num_classes=3, init_weights=True, **kwargs):
         super(VGG, self).__init__()
         self.features = features
-        self.avgpool = nn.AdaptiveAvgPool3d((1, 7, 7))
+        self.avgpool = nn.AdaptiveAvgPool3d((7, 7, 7))
         self.classifier = nn.Sequential(
-            nn.Linear(512 * 7 * 7, 4096),
+            nn.Linear(512 * 2*2*2, 4096),
+            nn.ReLU(True),
+            nn.Dropout(),
+            nn.Linear(4096, 1024),
+            nn.ReLU(True),
+            nn.Dropout(),
+            nn.Linear(1024, num_classes),
+        )
+        """
+        self.classifier = nn.Sequential(
+            nn.Linear(512 * 7* 7 * 7, 4096),
             nn.ReLU(True),
             nn.Dropout(),
             nn.Linear(4096, 4096),
@@ -35,13 +45,15 @@ class VGG(nn.Module):
             nn.Dropout(),
             nn.Linear(4096, num_classes),
         )
+        """
         if init_weights:
             self._initialize_weights()
 
     def forward(self, x):
         x = self.features(x)
         #print("VGG",x.shape)
-        x = self.avgpool(x)
+        #x = self.avgpool(x)
+        print(x.shape)
         x = torch.flatten(x, 1)
         x = self.classifier(x)
         return x

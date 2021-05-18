@@ -56,7 +56,7 @@
                 "name": "AdniDataloader",
                 "args":{
                     "data_dir": "data/SPM_categorised/Amira/",
-                    "batch_size": 8,
+                    "batch_size": 6,
                     "num_workers": 6,
                     "pin_memory": true,
                     "img_shape":[79,95,79],

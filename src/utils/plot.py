@@ -163,12 +163,14 @@ def precision_recall_curve(precision, recall):
     return metric_list, fig
 
 def confusion_matrix(cm):
-    fig = plt.figure(figsize=(20,20))
-    ax = sns.heatmap(preprocess.tensor2numpy(cm), annot=True, annot_kws={"size": 45}, vmin=0, vmax=1) #, 
-    ax.set_xlabel("Predicted label")
-    ax.set_ylabel("True label")
+    with sns.plotting_context("talk", font_scale=1.4):
+        #fig = plt.figure(figsize=(20,20))
+        f, axs = plt.subplots(1, 1, figsize=(20,20))
+        sns.heatmap(preprocess.tensor2numpy(cm), annot=True, vmin=0, vmax=1, ax=axs) #, annot_kws={"size": 20}
+        axs.set_xlabel("Predicted label")
+        axs.set_ylabel("True label")
     
-    return fig
+    return f
 
 def imshow(image, cmap=parula_map, figsize=(8,4),colormap=False,colormap_shrink=1, disable_axis=True):
     fig = plt.figure(figsize=figsize)
