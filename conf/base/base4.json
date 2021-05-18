@@ -1,0 +1,155 @@
+{
+    "base4":{
+        "classes":{
+            "CN":0,
+            "MCI":1,
+            "AD":2
+        },
+        "visualise":{
+            "data":{
+                "root":"data/",
+                "images_raw":"adni_raw/",
+                "images_processed":"SPM_preprocessed_normalized/ADNI1/",
+                "images_category":"SPM_categorised/ADNI1/",
+                "images_meta":"meta/",
+                "delimiter":"_"
+            },
+            "meta":{
+                "filename_raw":[
+                    "projectIdentifier", 
+                    "subject.subjectIdentifier",
+                    "subject.study.series.modality",
+                    "subject.study.imagingProtocol.description",
+                    "subject.study.series.dateAcquiredPrecise", 
+                    "image_nbr",
+                    "series",
+                    "subject.study.imagingProtocol.imageUID",
+                    "filename",
+                    "path"
+                ],
+                "filename_category":[
+                    "subject.researchGroup",
+                    "subject.subjectIdentifier",
+                    "subject.study.imagingProtocol.imageUID",
+                    "image_nbr",
+                    "filename",
+                    "path"
+                ],
+                "filename_processed":[
+                    "projectIdentifier", 
+                    "subject.subjectIdentifier",
+                    "subject.study.series.modality",
+                    "subject.study.imagingProtocol.description",
+                    "subject.study.series.dateAcquiredPrecise", 
+                    "image_nbr",
+                    "series",
+                    "subject.study.imagingProtocol.imageUID",
+                    "filename",
+                    "path"
+                ]
+            }
+        },
+        "classifier":{
+            "name": "BaseModel",
+            "seed":420,
+            "dataloader": {
+                "name": "AdniDataloader",
+                "args":{
+                    "data_dir": "data/SPM_categorised/Amira/",
+                    "batch_size": 8,
+                    "num_workers": 6,
+                    "pin_memory": true,
+                    "img_shape":[79,95,79],
+                    "delimiter":"_",
+                    "shuffle":true,
+                    "split":{
+                        "kfold_enable":true,
+                        "folds":10,
+                        "val_size": 0.1
+                    },
+                    "augmentation":{
+                        "enable":true
+                    }
+                }
+            },
+            "model":{
+                "weight_distribution":"normal",
+                "checkpoint_path":null,
+                "loss": {
+                    "type":"CrossEntropyLoss",
+                    "args":{
+                        "weight":true
+                    }
+
+                },
+                "optimizer":{
+                    "type": "Adam",
+                    "args":{
+                        "lr": 1e-4,
+                        "weight_decay": 0,
+                        "amsgrad":true
+                    }
+                },
+                "arch": {
+                    "name": "resnet50",
+                    "args": {
+                        "num_channels":1,
+                        "num_classes":3
+                    }
+                },
+                "hp_metrics":[
+                    "loss/train",
+                    "loss/val",
+                    "accuracy/val",
+                    "auc/val",
+                    "specificity/val",
+                    "sensitivity/val"
+                ],
+                "roi_hparams":{
+                    "enable":false,
+                    "output_shape":[3,3,3],
+                    "boundary_boxes":[]
+                }
+            }, 
+            "logging":{
+                "tensorboard":"/var/metrics/codetests/logs/tb",
+                "visualise":"logs/visualise"
+            },
+            "trainer":{
+                "tensorboard": true,
+                "args":{
+                    "max_epochs": 200,
+                    "profiler":false,
+                    "progress_bar_refresh_rate":0,
+                    "fast_dev_run":false,
+                    "num_sanity_val_steps":0,
+                    "gradient_clip_val":0,
+                    "resume_from_checkpoint":null
+                },
+                "callbacks":{
+                    "ModelCheckpoint": {
+                        "enable":false,
+                        "args":{
+                            "filename":"checkpoint",
+                            "save_weights_only":false
+                        }
+                    },
+                    "StochasticWeightAveraging":{
+                        "enable":false,
+                        "args":{}
+                    },
+                    "EarlyStopping":{
+                        "enable":true,
+                        "args":{
+                            "monitor":"loss/val",
+                            "min_delta":0,
+                            "patience":20,
+                            "verbose":"False",
+                            "mode":"min"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -3,7 +3,7 @@ import torch
 from src import BASEDIR
 from typing import Tuple
 from pytorch_lightning import callbacks as pl_callbacks
-
+from pytorch_lightning import loggers as pl_loggers
 from src.classifier.dataloader.class_weight import ClassWeights,InitWeightDistribution
 from src.utils.decorator import close_on_finish_decorator
 from src.utils.utils import merge_dict
@@ -94,7 +94,7 @@ class Agent:
         cfg_trainer = self._config['trainer']
     
         # Load logger
-        logger = pl.loggers.TensorBoardLogger(
+        logger = pl_loggers.TensorBoardLogger(
             self._config['logging']['tensorboard'], 
             name=f"{self._config['name']}/{self.creation_date}",
             default_hp_metric=False,
@@ -113,7 +113,6 @@ class Agent:
             gpus=1 if torch.cuda.is_available() else None, 
             logger=logger if cfg_trainer['tensorboard'] else None,
             callbacks=callbacks,
-            accelerator='ddp',
             **cfg_trainer["args"]
         )
         return trainer

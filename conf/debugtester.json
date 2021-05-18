@@ -1,0 +1,34 @@
+{
+    "debug":{
+        "name":"debug",
+        "model":{
+            "arch": {
+                "name": "resnet18_brew",
+                "args": {}
+            }
+        },
+        "trainer":{
+            "tensorboard": true,
+            "args":{
+                "num_sanity_val_steps":8,
+                "accelerator":"dp"
+            }
+        }
+    },
+    "basic":{
+        "name":"basic",
+        "model":{
+            "arch": {
+                "name": "basic",
+                "args": {}
+            }
+        },
+        "trainer":{
+            "tensorboard": true,
+            "args":{
+                "num_sanity_val_steps":8,
+                "accelerator":"dp"
+            }
+        }
+    }
+}

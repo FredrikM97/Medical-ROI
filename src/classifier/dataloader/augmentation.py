@@ -90,7 +90,7 @@ def augment(im, Steps=[randomFilter, randomNoise]): #randomCrop #randomAffine, ,
     '''
     Image augmentation by doing a series of transformations on the image.
     '''
-
+    #im = random.choice([randomFilter, randomNoise])(im)
     for step in Steps:
         #if int(randRange(0, len(Steps))):
         im = step(im)

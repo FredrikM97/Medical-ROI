@@ -1,6 +1,6 @@
 {
     "vgg16":{
-        "name":"vgg16_bn",
+        "name":"vgg16",
         "model":{
             "arch": {
                 "name": "vgg16",

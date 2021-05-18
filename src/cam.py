@@ -6,45 +6,12 @@ from torch import Tensor
 import numpy as np
 from typing import Tuple, Union, List
 import enum
-from src.utils.cmap import parula_map
+
 import torchvision
 import matplotlib.pyplot as plt
 
-
 from src.utils import plot
-
-
-class SaliencyMap:
-    def __init__(self, model, target_layer=None,input_shape=(1,79,95,79)):
-        self.model = model
-        self.target_layer = None
-        self.input_shape = input_shape
-        
-    def __call__(self, class_idx,class_scores): 
-        raise NotImplemented
-        # Return an activation map which is not normalized
-        #assert image.shape == input_shape
-        #for param in self.model.parameters():
-        #    param.requires_grad = False
-        
-        #class_idx = class_scores.argmax()
-        #output_max = class_scores[0, class_idx]
-
-        # Do backpropagation to get the derivative of the output based on the image
-        #output_max.backward()
-
-        #preds = model(image)
-        #score, indices = torch.max(preds, 1)
-        #score, indices = torch.max(class_scores, 1)
-        #score.retain_grad()
-        #score.backward()
-
-        # Get max along channel axis
-        #activation_map, _ = torch.max(torch.abs(score.grad[0]), dim=0)
-        #print(activation_map)
-        #activations, _ = torch.max(score.grad.data.abs(), dim=1) 
-        #print(self.model.grad.data.abs())
-        #return activation_map
+from src.utils.cmap import parula_map
 
 class CAM_TYPES(enum.Enum):
     CAM = cams.CAM
@@ -65,7 +32,7 @@ class CAM:
     
     tmp.plot(tmp.class_scores, [0,1,2], class_label="AD")
     """
-    def __init__(self, cam:str, model, input_shape:Tuple[int,int,int,int]=(79,95,79), target_layer:str=None, device:str='cuda') -> None:
+    def __init__(self, cam:str, model, input_shape:Tuple[int,int,int,int]=(79,95,79), target_layer:str=None, device:str='cuda', CAM_kwargs={}) -> None:
         """ Init object for CAM extraction. 
         
         This code only works in the colormap is grayscale so C=1
@@ -81,7 +48,7 @@ class CAM:
         super().__init__()
         #self.cam = cam
         self.model = model
-        self.extractor = cam(model, input_shape=(1,*input_shape), target_layer=target_layer)
+        self.extractor = cam(model, input_shape=(1,*input_shape), target_layer=target_layer, **CAM_kwargs)
         self.input_shape = input_shape
         self.device = device
 
@@ -115,8 +82,8 @@ class CAM:
         Return:
             * Tensor with activations from image with shape Tensor[D,H,W]
         """
-
-        return preprocess.tensor2numpy(self.extractor(class_idx, class_scores, normalized=False))
+        #preprocess.tensor2numpy(
+        return self.extractor(class_idx, class_scores, normalized=False).detach().cpu()
        
     def grid_class(self, class_scores:Tensor, class_idx:Union[List[int],int], input_image:np.ndarray, max_num_slices:int=16,pad_value=0.5, normalized=True, nrow=10,**kwargs) -> Tuple[Tensor, Tensor]:
         """Creates a grid based on a class_idx."""

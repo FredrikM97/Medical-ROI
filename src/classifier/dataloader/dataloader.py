@@ -36,7 +36,7 @@ class AdniDataloader(pl.LightningDataModule):
         use_augmentation = [
             tf.RandomApply([
                 tf.Lambda(lambda images: augment(images))
-            ],p=0.3),
+            ],p=0.4),
             tf.Lambda(lambda images: torch.from_numpy(images)), #.unsqueeze(1)
             tf.RandomApply([
                 #tf.RandomRotation(180),
@@ -124,7 +124,7 @@ class AdniDataloader(pl.LightningDataModule):
                         shuffle=False,
                         **self.init_kwargs
                     )
-
+    
 class ToDevice(object):
     def __init__(self, device):
         self.device = device

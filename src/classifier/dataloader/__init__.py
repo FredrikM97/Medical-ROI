@@ -17,8 +17,7 @@ def find_dataset_using_name(datadir, dataset_name):
     dataset = None
     target_dataset_name = dataset_name.replace('_', '')
     for name, cls in datasetlib.__dict__.items():
-        if name.lower() == target_dataset_name.lower() \
-           and issubclass(cls, LightningDataModule):
+        if name.lower() == target_dataset_name.lower() and issubclass(cls, LightningDataModule):
             dataset = cls
 
     if dataset is None:

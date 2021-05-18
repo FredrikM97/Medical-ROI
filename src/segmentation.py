@@ -150,19 +150,21 @@ def max_occurance(occurances:list):
     max_val = u[c == c.max()]
     return max_val
 
-def interesting_bbox(_bboxes, th=0.5):
+def interesting_bbox(_bboxes, image_mask=None, th=0.5):
     bbox_tensor = torch.Tensor(_bboxes['bbox'].to_list()).float()
     scores = torch.Tensor(_bboxes['score'].to_list()) 
     idxs  = torch.Tensor(_bboxes['observe_class'].to_list())
 
     only_interesting = bbox_tensor[batched_nms(bbox_tensor.cuda(), scores.cuda(), idxs.cuda(), th).detach().cpu()]
-
+    if isinstance(image_mask,type(None)):
+        image_mask = np.zeros((79,95,79))
+        
     #image = add_image_bboxes(np.zeros((79,95,79)),only_interesting.numpy().astype(int))
-    fig = plot.features_regions(only_interesting.numpy().astype(int),np.zeros((79,95,79)))
+    fig = plot.features_regions(only_interesting.numpy().astype(int),image_mask)
     #fig = display(image, step=1)
     return only_interesting, fig
 
-def feature_extraction(cam_extractor, upper_bound=0.85,lower_bound=0.7, use_quantile_bounds=True,lambda1=1,lambda2=1, min_area=100,func='features'):
+def feature_extraction(cam_extractor, upper_bound=0.85,lower_bound=0.7, use_quantile_bounds=True,lambda1=1,lambda2=1, min_area=100,func='features', n_average=2):
     def extract(nifti_image:torch.Tensor, observe_class:int):
 
         if len(nifti_image.shape) > 3:
@@ -170,8 +172,13 @@ def feature_extraction(cam_extractor, upper_bound=0.85,lower_bound=0.7, use_quan
 
         np_image = tensor2numpy(nifti_image)
         #print("Range of nifti images",nifti_image.max(), nifti_image.min())
-        class_scores, class_idx = cam_extractor.evaluate(nifti_image)
-        image_mask = preprocess_image(cam_extractor.activation_map(observe_class, class_scores))
+        masks = []
+        for x in range(n_average):
+            class_scores, class_idx = cam_extractor.evaluate(nifti_image)
+            masks.append(cam_extractor.activation_map(observe_class, class_scores))
+        
+
+        image_mask = preprocess_image(torch.mean(torch.stack(masks), axis=0))
         
         image_mask = (image_mask*255).astype(int)
         np_image = (np_image*255).astype(int)

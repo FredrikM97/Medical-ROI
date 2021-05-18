@@ -141,7 +141,7 @@
                     "EarlyStopping":{
                         "enable":true,
                         "args":{
-                            "monitor":"loss/val_step",
+                            "monitor":"loss/val",
                             "min_delta":0,
                             "patience":20,
                             "verbose":"False",

@@ -64,7 +64,7 @@
                     "shuffle":true,
                     "split":{
                         "kfold_enable":true,
-                        "folds":9,
+                        "folds":10,
                         "val_size": 0.1
                     },
                     "augmentation":{
@@ -100,10 +100,11 @@
                 "hp_metrics":[
                     "loss/train",
                     "loss/val",
-                    "accuracy/val",
-                    "auc/val",
-                    "specificity/val",
-                    "sensitivity/val"
+                    "Accuracy/val",
+                    "AUROC/val",
+                    "Precision/val",
+                    "Recall/val",
+                    "Specificity/val"
                 ],
                 "roi_hparams":{
                     "enable":false,
@@ -118,7 +119,7 @@
             "trainer":{
                 "tensorboard": true,
                 "args":{
-                    "max_epochs": 200,
+                    "max_epochs": 100,
                     "profiler":false,
                     "progress_bar_refresh_rate":0,
                     "fast_dev_run":false,
@@ -139,9 +140,9 @@
                         "args":{}
                     },
                     "EarlyStopping":{
-                        "enable":true,
+                        "enable":false,
                         "args":{
-                            "monitor":"loss/val_step",
+                            "monitor":"loss/val",
                             "min_delta":0,
                             "patience":20,
                             "verbose":"False",

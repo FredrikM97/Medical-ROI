@@ -8,6 +8,8 @@ import seaborn as sns
 from src.utils import preprocess
 from src.utils.cmap import parula_map
 
+#sns.set(font_scale=2.5)
+
 def intensity_distribution(image, title=""):
     """Plot the intensity distribution of an input image"""
     fig = plt.figure()
@@ -50,7 +52,7 @@ def features_regions(bboxes:list, image_mask:np.ndarray,step=1, plot_title=""):
     """Plot the extracted features"""
     ncols = 9
     nrows = 1 if len(image_mask) == 0 else int(np.ceil(len(image_mask)/ncols))
-    fig, axes = plt.subplots(nrows=nrows, ncols=ncols, figsize=(10, 1*nrows))
+    fig, axes = plt.subplots(nrows=nrows, ncols=ncols, figsize=(7, 1*nrows))
 
     vmin = image_mask.min()
     vmax = image_mask.max()
@@ -97,7 +99,7 @@ def apply_image_bboxes(image,bbox_coords):
             
     return image
 
-def ROC(roc_classes, prefix='', fig=None):
+def roc(roc_classes, prefix='', fig=None):
     # Returns (auc, fpr, tpr), roc_fig
     fig = plt.figure(figsize = (10,7))
     lw = 2
@@ -130,6 +132,43 @@ def ROC(roc_classes, prefix='', fig=None):
     metric_list = metric_list/3
 
     return metric_list, fig
+
+def precision_recall_curve(precision, recall):
+    fig = plt.figure(figsize = (10,7))
+    lw=2
+    colors = np.array(['aqua', 'darkorange', 'cornflowerblue'])
+    #for i in range(len(roc_classes)):
+    metric_list = np.zeros(2)
+    for i in range(len(precision)):
+        _pr = preprocess.tensor2numpy(precision[i])
+        _re = preprocess.tensor2numpy(recall[i])
+        
+        metric_list[0]+=_pr.mean()
+        metric_list[1]+=_re.mean()
+        
+        plt.plot(_re,_pr, color=colors[i],lw=lw,
+                 label='Precision recall curve of class {0} (precision={1:0.2f} recall={2:0.2f})'
+                 ''.format(i, _pr.mean(), _re.mean())) #
+    
+    plt.plot([0, 1], [0, 1], 'k--', lw=lw)
+    plt.xlim([0.0, 1.0])
+    plt.ylim([0.0, 1.05])
+    plt.xlabel('Recall')
+    plt.ylabel('Precision')
+    plt.title('Precision-Recall Curve')
+    plt.legend(loc="lower right")
+    
+    metric_list = metric_list/2
+
+    return metric_list, fig
+
+def confusion_matrix(cm):
+    fig = plt.figure(figsize=(20,20))
+    ax = sns.heatmap(preprocess.tensor2numpy(cm), annot=True, annot_kws={"size": 45}, vmin=0, vmax=1) #, 
+    ax.set_xlabel("Predicted label")
+    ax.set_ylabel("True label")
+    
+    return fig
 
 def imshow(image, cmap=parula_map, figsize=(8,4),colormap=False,colormap_shrink=1, disable_axis=True):
     fig = plt.figure(figsize=figsize)
