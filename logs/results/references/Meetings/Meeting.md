@@ -350,3 +350,31 @@ How does the region affect the classification result? Is any of the regions dome
 
 * Attribution method
 	* Not absolute truth
+
+Meeting 18 (2021-05-20)
+* Intro
+	- Remove dataset section
+
+* Data
+	- 'Explaration' unclear word, and maybe merge with preparation
+
+* Method
+	- Clearly define all variables used in equations
+	- ROIAlign mentioned before explained
+	- Introduce the AAL model clearly
+
+* Results
+	- Table with comparison to previous classification performances
+		- What are they classifying? Binary?
+		- What model are they using?
+	- Select most important barplot and keep in results, move rest to appendix
+		- Things that are purely 'systematic' can often be moved to appendix
+
+* Discussion
+	- Combine with results
+		- 5.5 discussion. Discussion that cannot 'wait' can be presented immediately after result, but basically everything we have can 'wait'
+	- Sustainability
+		- Include all this in the introduction to the conclusion
+
+* Conclusion
+	- Introduce by restating the relevance of the project (sustainability)
