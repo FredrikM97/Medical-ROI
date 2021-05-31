@@ -53,7 +53,7 @@ class VGG(nn.Module):
         x = self.features(x)
         #print("VGG",x.shape)
         #x = self.avgpool(x)
-        print(x.shape)
+        #print(x.shape)
         x = torch.flatten(x, 1)
         x = self.classifier(x)
         return x

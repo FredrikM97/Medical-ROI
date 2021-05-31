@@ -10,12 +10,12 @@ import numpy as np
 from src.utils import preprocess
 
 class AdniDataset(Dataset):
-    def __init__(self, data:list, classes={'CN':0,'MCI':1,'AD':2}, delimiter='_',transform=None):
+    def __init__(self, data:list, classes={'CN':0,'MCI':1,'AD':2}, transform=None): #, delimiter='_',
         super().__init__()
         self.transform = transform
-        self.delimiter=delimiter
+        #self.delimiter=delimiter
         self.classes=classes
-        self.labels = preprocess.filename2labels(data, classes, delimiter)
+        self.labels = preprocess.folder2labels(data, classes)#, delimiter)
         self.data = data
         
     def __getitem__(self, idx): 

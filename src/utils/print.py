@@ -238,3 +238,10 @@ def do_lineplot(
     move_legend(ax1,**legend_kws)
     plt.tight_layout()
     return ax1
+
+def write_to_file(filepath:str, message:str, flag='a'):
+    try:
+        with open(filepath, flag) as f:
+            f.write(message)
+    except Exception as e:
+        raise Exception("Could not write message to file!") from e

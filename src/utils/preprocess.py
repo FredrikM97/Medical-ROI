@@ -32,20 +32,22 @@ def batchisize_to_5D(x:Union[Tensor,np.ndarray]) -> Union[Tensor,np.ndarray]:
     else:
         return np.expand_dims(x,[i for i,_ in enumerate(range(5-len(x.shape)))])
     
-def filename2labels(images:list, classes:dict, delimiter:str) -> np.ndarray:
+def folder2labels(images:list, classes:dict) -> np.ndarray: #, delimiter:str
     """ Extract labels from filename based on delimiter. 
+    Expects a label before filename
     
+    Example: /AD/image_file.png
     Args:
         * images: list containing all filenames
         * classes: The allowed classes that can be used for labels
-        * delimiter: The suggested delimiter that should seperate items
+        
         
     Return:
         * Return a list of labels based on the given classes from the image filenames.
     
     """
-    if delimiter not in images[0]: raise ValueError(f"The defined delimiter could not be found in image input! Image input: {images[0]}")
-    return np.array([classes[img_path.rsplit("/",1)[1].split(delimiter,1)[0]] for img_path in images])
+    #if delimiter not in images[0]: raise ValueError(f"The defined delimiter could not be found in image input! Image input: {images[0]}")
+    return np.array([classes[img_path.rsplit("/",2)[1]] for img_path in images])#np.array([classes[img_path.rsplit("/",1)[1].split(delimiter,1)[0]] for img_path in images])
 
 def mask_threshold(image:np.ndarray, threshold:float) -> None:
     """Place a threshold on image and remove all values that are below the threshold.

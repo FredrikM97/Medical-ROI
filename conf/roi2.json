@@ -1,6 +1,13 @@
 {
     "roi2":{
-        "name":"ROI",
+        "name":"ROI2",
+        "dataloader": {
+            "args":{
+                "augmentation":{
+                    "enable":false
+                }
+            }
+        },
         "model":{
             "arch": {
                 "name": "fc",
@@ -38,13 +45,13 @@
                 }
             }
         },
-         "trainer":{
+          "trainer":{
             "callbacks":{
                 "EarlyStopping":{
-                    "enable":false,
+                    "enable":true,
                     "args":{
-                        "monitor":"loss/val_step",
-                        "min_delta":0,
+                        "monitor":"loss/val",
+                        "min_delta":0.0001,
                         "patience":20,
                         "verbose":"False",
                         "mode":"min"
@@ -54,7 +61,14 @@
         }
     },
     "roi3":{
-        "name":"ROI",
+        "name":"ROI3",
+        "dataloader": {
+            "args":{
+                "augmentation":{
+                    "enable":false
+                }
+            }
+        },
         "model":{
             "arch": {
                 "name": "fc",
@@ -100,13 +114,71 @@
                 }
             }
         },
+          "trainer":{
+            "callbacks":{
+                "EarlyStopping":{
+                    "enable":true,
+                    "args":{
+                        "monitor":"loss/val",
+                        "min_delta":0.0001,
+                        "patience":20,
+                        "verbose":"False",
+                        "mode":"min"
+                    }
+                }
+            }
+        }
+    },
+    "roi4":{
+        "name":"ROI4",
+        "dataloader": {
+            "args":{
+                "augmentation":{
+                    "enable":false
+                }
+            }
+        },
+        "model":{
+            "arch": {
+                "name": "fc",
+                "args": {}
+            },
+            "roi_hparams":{
+                "enable":true,
+                "output_shape":[9,9,9],
+                "boundary_boxes":{
+                    "AD":[
+                        [45, 18, 65, 48, 22, 41],
+        [14, 13, 32, 47, 22, 41],
+        [ 7, 28, 30, 50, 50, 74],
+        [21, 70, 55, 92, 23, 46],
+        [19, 66, 61, 84,  0, 17]
+                    ],
+                    "MCI":[
+                        [13, 62, 62, 82,  1, 14],
+        [23, 71, 54, 92, 23, 45],
+        [14, 10, 62, 43, 22, 38],
+        [24, 42, 67, 76, 43, 67],
+        [16, 22, 57, 62, 67, 78]
+                    ],
+                    
+                    "CN":[
+                        [13, 24, 50, 46, 59, 75],
+        [12,  4, 37, 40, 23, 39],
+        [24, 41, 49, 83, 39, 67],
+        [14, 59, 65, 82,  0, 17],
+        [44,  6, 65, 46, 22, 41]
+                    ]
+                }
+            }
+        },
          "trainer":{
             "callbacks":{
                 "EarlyStopping":{
-                    "enable":false,
+                    "enable":true,
                     "args":{
-                        "monitor":"loss/val_step",
-                        "min_delta":0,
+                        "monitor":"loss/val",
+                        "min_delta":0.0001,
                         "patience":20,
                         "verbose":"False",
                         "mode":"min"

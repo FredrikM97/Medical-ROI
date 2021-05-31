@@ -9,32 +9,40 @@ from src.utils.decorator import close_on_finish_decorator
 from src.utils.utils import merge_dict
 from src.utils import load
 from src.classifier.model import Model
+from src.utils.print import write_to_file
 
 from .callbacks import MetricCallback,DebugCallback,LitProgressBar, CAMCallback
 from . import dataloader
 from datetime import datetime
 
+
 class Agent:
     
-    def __init__(self, config_name, base_config='base',checkpoint_path:str=None):
+    def __init__(self, config_name=None, base_config='base',checkpoint_path:str=None):
         self.checkpoint_path=checkpoint_path
         self._config = None
         self.base_config = base_config
         self.model = None
         self.dataloader = None
-        
+        self.trainer = None
         
         self.creation_date = int(datetime.now().strftime('%Y%m%d%H%M%S'))
 
         self.load_config(config_name)
-        self._weights_obj = ClassWeights(self._config['classes'], self._config['dataloader']['args']['delimiter'])
+        self._weights_obj = ClassWeights(self._config['classes'])
         
         self.load_dataloader()
 
     def load_config(self,config_name):
         """Init the config into object"""
         # Load all config settings
-        model_config = load.load_config(config_name, dirpath=BASEDIR + "/conf/")
+        if config_name == None and self.checkpoint_path == None:
+            raise ValueError("Both config_name and checkpoint_path cant be None!")
+        
+        elif config_name == None and self.checkpoint_path != None:
+            model_config = {}
+        else:  
+            model_config = load.load_config(config_name, dirpath=BASEDIR + "/conf/")
         base_config = load.load_config(self.base_config, dirpath=BASEDIR + "/conf/")
         config = merge_dict(base_config['classifier'],model_config)
 
@@ -83,12 +91,12 @@ class Agent:
         cfg_dataset = self._config['dataloader']
     
         dataset = dataloader.create_dataset(classes=self._config['classes'], **cfg_dataset, seed=self._config['seed'])
-        dataset.setup(stage='fit')
+        dataset.setup() #stage='fit'
         self.dataloader = dataset
     
     
     
-    def trainer(self, kfold_index:int=None):
+    def load_trainer(self):
         """Return a trainer object"""
         
         cfg_trainer = self._config['trainer']
@@ -115,13 +123,15 @@ class Agent:
             callbacks=callbacks,
             **cfg_trainer["args"]
         )
-        return trainer
+        self.trainer = trainer
+        #return trainer
     
     
     def run(self):
         self.load_model() 
-        trainer = self.trainer(self.dataloader.kfold_index)
+        self.load_trainer()
         print(f"Dataloader fold: {self.dataloader.kfold_index}")
-        close_on_finish_decorator(trainer.fit, trainer.logger.log_dir, self.model, datamodule=self.dataloader, message=self._config)
         
+        
+        close_on_finish_decorator(self.trainer.fit, self.trainer.logger.log_dir, self.model, datamodule=self.dataloader, message=self._config)        
         return trainer

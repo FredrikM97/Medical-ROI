@@ -35,24 +35,24 @@ class Model(pl.LightningModule):
         self.model = create_model(**self.hparams)
         self.roi_enabled = roi_hparams['enable']
         self.hp_metrics = hp_metrics
+
         self.criteria = nn.__dict__[loss['type']](weight=class_weights)
         if self.roi_enabled:
             # Dont import unless we want to use RoiTransform.. (Compability without cuda 11.1)
-            from src.segmentation import RoiTransform
+            from src.utils.transforms import RoiTransform
             self.roi_model = RoiTransform(**roi_hparams)
 
         model_metrics = pl_metrics.MetricCollection([
-            pl_metrics.Accuracy(),
-            pl_metrics.Precision(num_classes=3, average='macro'),
-            pl_metrics.Recall(num_classes=3, average='macro'),
-            pl_metrics.AUROC(num_classes=3, average='macro'),
-            pl_metrics.ConfusionMatrix(num_classes=3, normalize='true'),
-            pl_metrics.Specificity(num_classes=3, average='macro'),
+            pl_metrics.Accuracy(average='micro', compute_on_step=False),
+            pl_metrics.Precision(num_classes=3, average='micro',compute_on_step=False),
+            pl_metrics.Recall(num_classes=3, average='micro',compute_on_step=False),
+            pl_metrics.AUROC(num_classes=3, average='macro',compute_on_step=False),
+            pl_metrics.ConfusionMatrix(num_classes=3, normalize='true',compute_on_step=False),
+            pl_metrics.Specificity(num_classes=3, average='micro',compute_on_step=False),
         ])
         
-        self.train_metrics = model_metrics.clone()
         self.valid_metrics = model_metrics.clone()
-        self.valid_dummy_metric = pl_metrics.AUROC(num_classes=3, average=None)
+        self.valid_dummy_metric = pl_metrics.AUROC(num_classes=3, average=None,compute_on_step=False)
         #MetricTracker()
         
         print(f"***Defined hyperparameters:***\n{self.hparams}")
@@ -71,7 +71,7 @@ class Model(pl.LightningModule):
             x, target = self.roi_model(x, target)
 
         logits = self.forward(x)
-        loss = self.loss_fn(logits, target) 
+        loss = self.criteria(logits,target)
         
         return loss
     
@@ -84,11 +84,11 @@ class Model(pl.LightningModule):
         
         logits = self.forward(x)
         
-        loss = self.loss_fn(logits, target) 
+        loss = self.criteria(logits,target)
         preds = F.softmax(logits,dim=1)
         
-        self.valid_metrics.update(preds, target)
-        self.valid_dummy_metric.update(preds,target)
+        self.valid_metrics(preds, target)
+        self.valid_dummy_metric(preds,target)
         self.log('loss/val',loss)
   
         return {'loss/val':loss}
@@ -99,15 +99,14 @@ class Model(pl.LightningModule):
     def validation_epoch_end(self,outputs):
         
         metrics = self.valid_metrics.compute()
-        dummy_metric = self.valid_dummy_metric.compute()
 
         self.logger.experiment.add_figure(f"confmat/val", confusion_matrix(metrics.pop('ConfusionMatrix')),self.current_epoch)
-        #self.log_dict({f"Class_AUROC/val":val for val in dummy_metric}, on_step=False, on_epoch=True)
         
-        self.logger.experiment.add_scalars('Class_AUROC/val', {key:val for key,val in zip(['CN','MCI','AD'],dummy_metric)},self.global_step)
+        self.logger.experiment.add_scalars('Class_AUROC/val', {key:val for key,val in zip(['CN','MCI','AD'],self.valid_dummy_metric.compute())},self.global_step)
         self.log_dict({str(key)+'/val': val for key, val in metrics.items()}, on_step=False, on_epoch=True)
         
         self.valid_metrics.reset()
+        self.valid_dummy_metric.reset()
         
     def configure_optimizers(self):
         # Note: dont use list if only one item.. Causes silent crashes
@@ -119,6 +118,6 @@ class Model(pl.LightningModule):
             'optimizer': optimizer,
         }
             
-    def loss_fn(self,out,target):
-        #return nn.CrossEntropyLoss(weight=self.loss_class_weights)(out,target)
-        return self.criteria(out,target)
+    #def loss_fn(self,out,target):
+    #    #return nn.CrossEntropyLoss(weight=self.loss_class_weights)(out,target)
+    #    return self.criteria(out,target)

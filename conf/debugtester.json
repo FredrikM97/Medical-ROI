@@ -8,10 +8,9 @@
             }
         },
         "trainer":{
-            "tensorboard": true,
             "args":{
-                "num_sanity_val_steps":8,
-                "accelerator":"dp"
+                "max_epochs":5
+        
             }
         }
     },
@@ -22,13 +21,6 @@
                 "name": "basic",
                 "args": {}
             }
-        },
-        "trainer":{
-            "tensorboard": true,
-            "args":{
-                "num_sanity_val_steps":8,
-                "accelerator":"dp"
-            }
         }
     },
     "amira_vgg":{
@@ -38,12 +30,27 @@
                 "name": "amira_vgg",
                 "args": {}
             }
-        },
-        "trainer":{
-            "tensorboard": true,
+        }
+    },
+    "customCNN":{
+        "name":"customCNN",
+        "dataloader": {
             "args":{
-                "num_sanity_val_steps":8,
-                "accelerator":"dp"
+                "augmentation":{
+                    "enable":false
+                }
+            }
+        },
+        "model":{
+            "arch": {
+                "name": "customCNN",
+                "args": {}
+            },
+            "optimizer":{
+                "type": "Adam",
+                "args":{
+                    "lr": 1e-3
+                }
             }
         }
     }

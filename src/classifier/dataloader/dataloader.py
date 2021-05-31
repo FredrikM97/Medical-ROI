@@ -17,14 +17,14 @@ import torchvision.transforms as tf
 import random
 
 class AdniDataloader(pl.LightningDataModule): 
-    def __init__(self,data_dir, batch_size=6, shuffle=True, num_workers=1, img_shape=(79,95,79), classes={},delimiter='_',**hparams:dict):
+    def __init__(self,data_dir, batch_size=6, shuffle=True, num_workers=1, img_shape=(79,95,79), classes={},**hparams:dict):
         super().__init__()
         self.shuffle = shuffle
         self.seed = hparams.get('seed',0)
         self.split_conf = hparams.get('split',{})
         self.img_shape = img_shape
         self.data_dir = data_dir
-        self.delimiter = delimiter
+        #self.delimiter = delimiter
         self.classes = classes
         self.augmentation = hparams.get("augmentation", None)
         self.kfold = None
@@ -34,25 +34,22 @@ class AdniDataloader(pl.LightningDataModule):
             'num_workers': num_workers
         }
         use_augmentation = [
-            tf.RandomApply([
-                tf.Lambda(lambda images: augment(images))
-            ],p=0.4),
+            #tf.RandomApply([
+            #    tf.Lambda(lambda images: augment(images))
+            #],p=0.5),
             tf.Lambda(lambda images: torch.from_numpy(images)), #.unsqueeze(1)
-            tf.RandomApply([
+            #tf.RandomChoice([
                 #tf.RandomRotation(180),
-                tf.RandomAffine(
-                    degrees=(0, 180), 
-                    translate=(randRange(0, 0.1), 
-                                     randRange(0, 0.1)),
-                    scale=[randRange(0.75, 1.3)]*2, 
-                    shear=randRange(0, 0.5),
-                 
-                ),
-                tf.RandomHorizontalFlip(p=1),
-                tf.RandomVerticalFlip(p=1),
-                #tf.RandomPerspective(),
+            tf.RandomAffine(
+                degrees=(0, 180), 
+                translate=(0.001, 0.001),
+                #scale=[randRange(0.75, 1.3)]*2, 
+                #shear=None#randRange(0, 0.5),
+            )
+            #tf.Lambda(lambda images: images)
+            #tf.RandomPerspective(),
 
-            ],p=0.8)
+ #           ])#,p=0.6
         ] if self.augmentation['enable'] else []
         
         self.train_transform = torchvision.transforms.Compose([
@@ -61,8 +58,6 @@ class AdniDataloader(pl.LightningDataModule):
             tf.Lambda(lambda images: preprocess.preprocess_image(images,input_shape=self.img_shape)),
             tf.Lambda(lambda images: torch.from_numpy(images))
         ])
-        
-                     
         
         self.test_transform = torchvision.transforms.Compose([
             #torchvision.transforms.Resize(self.img_shape)
@@ -77,7 +72,7 @@ class AdniDataloader(pl.LightningDataModule):
         
             # Load datafiles 
             dataset_full = load.load_files(BASEDIR + "/"+self.data_dir)
-            labels = preprocess.filename2labels(dataset_full, self.classes, self.delimiter)
+            labels = preprocess.folder2labels(dataset_full, self.classes)#, self.delimiter)
         
             self.kfold = kfold.split(dataset_full,labels)
             self.next_fold()
@@ -92,10 +87,13 @@ class AdniDataloader(pl.LightningDataModule):
         else:
             dataset_splitted = _split(dataset_full, test_size=self.split_conf['val_size'], random_state=self.seed, shuffle=self.shuffle)
         
-        if stage =='fit':
-            self.adni_train, self.adni_val = [AdniDataset(data, transform=self.train_transform,delimiter=self.delimiter, classes=self.classes) for data in dataset_splitted]
-        else:
-            self.adni_train, self.adni_val = [AdniDataset(data, transform=self.test_transform,delimiter=self.delimiter, classes=self.classes) for data in dataset_splitted]
+        self.dataset_splitted = dataset_splitted
+        
+        self.adni_train, self.adni_val = [ #,delimiter=self.delimiter
+            AdniDataset(data, transform=transform, classes=self.classes) for transform, data in zip([self.train_transform,self.test_transform], dataset_splitted)
+            ]
+        #else:
+        #    self.adni_train, self.adni_val = [AdniDataset(data, transform=self.test_transform,delimiter=self.delimiter, classes=self.classes) for data in dataset_splitted]
             
         # Info of the dataset
         print(

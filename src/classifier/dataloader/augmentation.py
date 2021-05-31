@@ -55,7 +55,7 @@ def randomGamma(im):
     '''
     Gamma filter for contrast adjustment with random gamma value.
     '''
-    return adjust_gamma(im, gamma=randRange(0.5, 1.0))
+    return adjust_gamma(im, gamma=randRange(0.95, 1.05))
 
 def randomGaussian(im):
     '''
@@ -86,7 +86,7 @@ def randomNoise(im):
     var = randRange(0.001, 0.01)
     return random_noise(im, var=var)#im + np.random.normal(0, var, 1)#random_noise(im, var=var)
 
-def augment(im, Steps=[randomFilter, randomNoise]): #randomCrop #randomAffine, ,randomAffine,randomRotate
+def augment(im, Steps=[randomGamma]): #randomCrop #randomAffine, ,randomAffine,randomRotate
     '''
     Image augmentation by doing a series of transformations on the image.
     '''

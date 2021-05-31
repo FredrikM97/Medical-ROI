@@ -4,13 +4,11 @@ import sklearn
 import torch.nn as nn
 
 class ClassWeights:
-    def __init__(self, classes:dict, delimiter:str):
+    def __init__(self, classes:dict):
         self.classes=classes
-        self.delimiter=delimiter
         self.weights = None
         
     def __call__(self, labels):
-        #self.labels = preprocess.filename2labels(images, self.classes, self.delimiter)#get_labels(images, self._classes, self._delimiter)
 
         # Compute weights
         self.weights = torch.from_numpy(sklearn.utils.class_weight.compute_class_weight('balanced', classes=list(self.classes.values()), y=labels)).float().cuda()

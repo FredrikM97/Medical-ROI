@@ -26,7 +26,7 @@ def check_join_segmentations(mask_one:np.ndarray, mask_two:np.ndarray) -> np.nda
     from skimage.segmentation import join_segmentations
     return join_segmentations(mask_one, mask_two)
 
-def segment_mask(background_mask:np.ndarray, image_mask:np.ndarray, upper_bound=150, lower_bound=50) -> np.ndarray:
+def segment_mask(background_mask:np.ndarray, image_mask:np.ndarray, upper_bound=150) -> np.ndarray:
     """Simple segmentation of the mask input
     Note: This one might need some scientific rework since it is not very good
     """
@@ -150,7 +150,7 @@ def max_occurance(occurances:list):
     max_val = u[c == c.max()]
     return max_val
 
-def interesting_bbox(_bboxes, image_mask=None, th=0.5):
+def nms_reduction(_bboxes, image_mask=None, th=0.5):
     bbox_tensor = torch.Tensor(_bboxes['bbox'].to_list()).float()
     scores = torch.Tensor(_bboxes['score'].to_list()) 
     idxs  = torch.Tensor(_bboxes['observe_class'].to_list())
@@ -160,52 +160,78 @@ def interesting_bbox(_bboxes, image_mask=None, th=0.5):
         image_mask = np.zeros((79,95,79))
         
     #image = add_image_bboxes(np.zeros((79,95,79)),only_interesting.numpy().astype(int))
-    fig = plot.features_regions(only_interesting.numpy().astype(int),image_mask)
+    #fig = plot.features_regions(only_interesting.numpy().astype(int),image_mask)
     #fig = display(image, step=1)
-    return only_interesting, fig
+    return only_interesting#, fig
 
-def feature_extraction(cam_extractor, upper_bound=0.85,lower_bound=0.7, use_quantile_bounds=True,lambda1=1,lambda2=1, min_area=100,func='features', n_average=2):
-    def extract(nifti_image:torch.Tensor, observe_class:int):
+class Feature_extraction():
+    """
+    Extract features from CAM where the segmented image are about a given threshold.
+    
+    Supports two functions: features and extract.
+    """
+    def __init__(self, cam_extractor, upper_bound=0.85, use_quantile_bounds=True,lambda1=1,lambda2=1, min_area=100, n_average=2):
+        self.cam_extractor = cam_extractor
+        self.upper_bound = upper_bound
+        self.use_quantile_bounds = use_quantile_bounds
+        self.lambda1 = lambda1
+        self.lambda2 = lambda2
+        self.min_area = min_area
+        self.n_average = n_average
 
+    def extract(self, nifti_image:torch.Tensor, observe_class:int):
+        """
+        Return the segmented mask, image mask class index and upper_bound
+        """
         if len(nifti_image.shape) > 3:
             nifti_image = nifti_image.squeeze(0)
 
         np_image = tensor2numpy(nifti_image)
         #print("Range of nifti images",nifti_image.max(), nifti_image.min())
         masks = []
-        for x in range(n_average):
-            class_scores, class_idx = cam_extractor.evaluate(nifti_image)
-            masks.append(cam_extractor.activation_map(observe_class, class_scores))
+        for x in range(self.n_average):
+            class_scores, class_idx = self.cam_extractor.evaluate(nifti_image)
+            masks.append(self.cam_extractor.activation_map(observe_class, class_scores))
         
 
         image_mask = preprocess_image(torch.mean(torch.stack(masks), axis=0))
         
         image_mask = (image_mask*255).astype(int)
         np_image = (np_image*255).astype(int)
-        if use_quantile_bounds:
-            _upper_bound = np.quantile(image_mask.ravel(), upper_bound)
-            _lower_bound = np.quantile(image_mask.ravel(), lower_bound)
+        
+        # If quantiles is enable then calculate it and use it instead based on the upper bound
+        if self.use_quantile_bounds:
+            _upper_bound = np.quantile(image_mask.ravel(), self.upper_bound)
+            #_lower_bound = np.quantile(image_mask.ravel(), lower_bound)
             #print("Quantile bounds",upper_bound,lower_bound)
         else:
-            _upper_bound = upper_bound
-            _lower_bound = lower_bound
+            _upper_bound = self.upper_bound
+            #_lower_bound = lower_bound
         # Remove background from mask
         # Below 10 exists due to some issues where background is not zero
         image_mask[np_image == 0] = 0
         
-        #display(np_image)
-        #display(image_mask)
-        segmented_mask = segment_mask(np_image, image_mask, upper_bound=_upper_bound, lower_bound=_lower_bound)
+        segmented_mask = segment_mask(np_image, image_mask, upper_bound=_upper_bound)
         
-        return segmented_mask, image_mask,class_idx, (_upper_bound, _lower_bound)
-    
-    def features(data):
-        i, image_name, nifti_image, patient_class, observe_class = data
+        return segmented_mask, image_mask,class_idx,_upper_bound
+                
+    def features(self, i, image_name, nifti_image, patient_class, observe_class):
+        """
+        Calculate score and return info of the segmented features
+        Args:
+            i: index
+            image_name: Name of image
+            nifti_image: image from nifti
+            patient_class: Patient class
+            observe_class: Which class to observe
+            
+        """
+        #i, image_name, nifti_image, patient_class, observe_class = data
         
-        segmented_mask, image_mask, class_idx,(_upper_bound, _lower_bound) = extract(nifti_image, observe_class)
+        segmented_mask, image_mask, class_idx,_upper_bound = self.extract(nifti_image, observe_class)
         
         #display(segmented_mask)
-        print(f"Image: {image_name}, Patient: {patient_class}, Observe: {observe_class}, Model predict: {class_idx}", end='\r')
+        #print(f"Image: {image_name}, Patient: {patient_class}, Observe: {observe_class}, Model predict: {class_idx}", end='\r')
         # TODO is it bbox_area or area
         features = measure.regionprops(segmented_mask, intensity_image=image_mask)
         new_features = {
@@ -213,70 +239,12 @@ def feature_extraction(cam_extractor, upper_bound=0.85,lower_bound=0.7, use_quan
             'mean_intensity':[feature.mean_intensity for feature in features], 
             'bbox':bounding_boxes(features),
             'upper_bound':_upper_bound,
-            'lower_bound':_lower_bound,
-            'use_quantile_bounds':use_quantile_bounds,
+            'use_quantile_bounds':self.use_quantile_bounds,
         }
         new_features.update({
 
-            'score':lambda1 * np.mean(new_features['mean_intensity'])/np.max(image_mask) - lambda2*((np.array(new_features['bbox_area'])+min_area)/image_mask.size)
+            'score':self.lambda1 * np.mean(new_features['mean_intensity'])/np.max(image_mask) - self.lambda2*((np.array(new_features['bbox_area'])+self.min_area)/image_mask.size)
         })
         
         #del class_scores, nifti_image, segmented_mask, image_mask, features
         return {'image':image_name, 'patient_class':patient_class, 'observe_class':observe_class, 'probability_class':class_idx, **new_features}
-    
-    function = {
-        'extract':extract,
-        'features':features
-    }
-    
-    return function[func]
-
-class RoiTransform:
-    """Apply ROI transform to shange shape of images"""
-    
-    def __init__(self, output_shape:Tuple[int,int,int]=None, boundary_boxes:Union[List[Tuple[int,int,int,int,int,int]]]=None, batch_size=6,**args):
-        """
-        Transform boundary boxes to correct format.
-        
-        Args:
-            output_shape (Tuple): Shape that the image input should be transformed to.
-            boundary_boxes (List): Availbile boundary boxes. Each target class need at least one boundary box!
-            batch_size (int): Input batch size of data
-        """
-        if not boundary_boxes: raise ValueError("bounding_boxes list can not be empty!")
-        
-        self.batch_size = batch_size
-        self.roi = RoIAlign(output_shape,spatial_scale=1.0,sampling_ratio=-1)
-        self.num_bbox = len(boundary_boxes)
-
-        if isinstance(boundary_boxes, list):
-            self.boundary_boxes = convert_boxes_to_roi_format([torch.stack([torch.Tensor(x) for x in boundary_boxes])])
-        elif isinstance(boundary_boxes, dict):
-            self.boundary_boxes = {key:convert_boxes_to_roi_format([torch.stack([torch.Tensor(x) for x in value])]) for key,value in boundary_boxes.items()}
-        else:
-            raise ValueError("boundary_boxes needs to be of type list or dict")
-            
-    def __call__(self, x:torch.Tensor, y):
-        """
-        Expect to take an y of integer type and if boundary_boxes are a dict then the key should be a numeric value.
-        
-        Args:
-            x (Tensor): Input value. Expect shape (B,C,D,H,W)
-            y (Tensor): Target value
-        """
-        #print(x.shape, y.shape)
-        # Should be checked if this is correct by concatenate..
-        if isinstance(self.boundary_boxes, list):
-            image_rois = self.roi.forward(x,torch.cat(x.shape[0]*[self.boundary_boxes.to(x.device)]))#.detach()
-            y = self.num_bbox*y
-        elif isinstance(self.boundary_boxes, dict):
-            image_rois = self.roi.forward(x,torch.cat([self.boundary_boxes[one_target].to(x.device) for one_target in tensor2numpy(y)]))#.detach() #x.shape[0]*[self.boundary_boxes[y]
-            #print([len(self.boundary_boxes[one_target])*[one_target] for one_target in tensor2numpy(y)])
-            y = torch.from_numpy(np.concatenate([len(self.boundary_boxes[one_target])*[one_target] for one_target in tensor2numpy(y)])).to(x.device)
-            #print(image_rois.shape)
-            #print("yyy",torch.cat(self.num_bbox*[y]))
-        else:
-            raise ValueError("boundary_boxes needs to be of type list or dict")
-        #[display(x[0],step=1) for x in tensor2numpy(image_rois)]
-
-        return image_rois, y#torch.cat(self.num_bbox*[y])#.type(x.type()), y #.to('cpu')

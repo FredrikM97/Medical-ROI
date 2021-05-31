@@ -166,7 +166,7 @@ def confusion_matrix(cm):
     with sns.plotting_context("talk", font_scale=1.4):
         #fig = plt.figure(figsize=(20,20))
         f, axs = plt.subplots(1, 1, figsize=(20,20))
-        sns.heatmap(preprocess.tensor2numpy(cm), annot=True, vmin=0, vmax=1, ax=axs) #, annot_kws={"size": 20}
+        sns.heatmap(preprocess.tensor2numpy(cm), annot=True, vmin=0, vmax=1, xticklabels=['CN','MCI','AD'], yticklabels=['CN','MCI','AD'], ax=axs) #, annot_kws={"size": 20}
         axs.set_xlabel("Predicted label")
         axs.set_ylabel("True label")
     
