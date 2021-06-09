@@ -378,3 +378,77 @@ How does the region affect the classification result? Is any of the regions dome
 
 * Conclusion
 	- Introduce by restating the relevance of the project (sustainability)
+
+# Meeting 19 (2021-06-01)
+## Comments from supervisors
+* Introduction: 
+	* Add references of most important papers
+	* Inclear what the difference is compared to state of the art.
+	
+	* Better to mention acronym BBox instead of Bounding-boxes - Fixed
+
+* Contribution:
+	* If not in introduction say here what have done before.
+	
+
+* Overview:
+	* Clear for supervisors but unclear for people unknown wíthin the area
+	* Sentence to say that we want to build a classifier and then apply BBox and AAL
+	* Unlcear that we want to build a classifier
+	
+	* Unclear for listeners
+		* Suggests animation for input and output
+		* Example of each step with input/output.
+		* Nice steps but not all people might understand so an example would be good.
+		
+		
+* WSOL - Methodology:
+	* Say that ResNet50 and VGG16 are more complicated than ResNet50 and VGG16. Unclear since we only show 3 architectures
+	* Unclear why we use CAM. That it is done for explainability. Highlight that 
+	* Why we use CAM over other explainability methods.
+	* Just mention diffent techniques - Skip details - to get more time
+	* Remove equation of CAM
+
+* WSOL - Result: 
+	* What is the reduce factor? Add stride
+	* Unclear of images - Fixed
+	
+* BBOX - Methodology 
+	* Better relate words to algorithm.
+	* Move NMS and ROIAlign to a new slide. 
+	
+	
+* BBOX - Results
+	* Score not very informative
+	* More interested of regions
+	* Add score of BBox
+	* Add arrow to bbox and show score, intensity and area
+	* Idea: Zoom on one or two slices and display score
+	
+* AAL - Methodology:
+	* Missing bar chart of ranked regions
+
+* AAL - Result:
+	* Table unclear and what is PAN and how what is the procedure to rank regions?
+	* Lots of white space - Add bar chart to improve the explainability of regions?
+	* Chart hard to read - Fixed
+	
+* Result
+	* Unclear of improvement
+		* High chance of comments to compare different architectures
+		* Which architecture was used for BBox and AAL? 
+		* How much reduction in term of area for BBox and AAL?
+		* Time difference between Custom CNN and Simplified ResNet?
+		* Measure the difference in performance of accuracy/scores of backbone vs regions-restricted.
+	* How many regions did AAL use?
+
+* Conclusion
+	* Write complete sentences of specific context. Highlight the contribution with sentences
+	* Choice of word;´Selling ourself a bit since we have good results
+		* Needs to be more clear
+	
+	* Dont use questions without comments and better relate them to research questions
+	
+* Future work
+	* Use more words/ a phrase so people connect speak with words.
+	
