@@ -1,8 +1,9 @@
 import pytorch_lightning as pl
 import torch
 import numpy as np
+import torchcam
 
-from src.cam import CAM,CAM_TYPES
+from src.cam import CAM
 from src.utils.preprocess import tensor2numpy
 
 class CAMCallback(pl.callbacks.Callback):
@@ -12,7 +13,7 @@ class CAMCallback(pl.callbacks.Callback):
         
     #    self.cam_model = CAM(self.cam_type, trainer.model)
         
-    def __init__(self, cam_type=CAM_TYPES.SmoothGradCAMpp.value):
+    def __init__(self, cam_type=torchcam.cams.GradCAMpp):
         self.cam_type = cam_type
         print("What is the cam type",self.cam_type)
         

@@ -11,16 +11,24 @@ from src.utils import load
 from src.classifier.model import Model
 from src.utils.print import write_to_file
 
-from .callbacks import MetricCallback,DebugCallback,LitProgressBar, CAMCallback
+from . import callbacks as lc_callbacks
 from . import dataloader
 from datetime import datetime
+from threading import Lock
+from src.utils.decorator import HiddenPrints
+from src.cam import CAM
 
+
+import os
+import contextlib
+import itertools
 
 class Agent:
     
-    def __init__(self, config_name=None, base_config='base',checkpoint_path:str=None):
+    def __init__(self, config_name=None, base_config='base',checkpoint_path:str=None, print_enabled=False):
         self.checkpoint_path=checkpoint_path
         self._config = None
+        self.print_enabled = print_enabled
         self.base_config = base_config
         self.model = None
         self.dataloader = None
@@ -31,7 +39,10 @@ class Agent:
         self.load_config(config_name)
         self._weights_obj = ClassWeights(self._config['classes'])
         
+        # Dummy loading of everything to initiate all variables
         self.load_dataloader()
+        self.load_model() 
+        self.load_trainer()
 
     def load_config(self,config_name):
         """Init the config into object"""
@@ -43,6 +54,10 @@ class Agent:
             model_config = {}
         else:  
             model_config = load.load_config(config_name, dirpath=BASEDIR + "/conf/")
+            
+        # Overwrite if no checkpoint_path is selected outside of the config
+        self.checkpoint_path = self.checkpoint_path if self.checkpoint_path else cfg_model['checkpoint_path']
+        
         base_config = load.load_config(self.base_config, dirpath=BASEDIR + "/conf/")
         config = merge_dict(base_config['classifier'],model_config)
 
@@ -62,28 +77,27 @@ class Agent:
     def load_model(self):
         """Init the model into object"""
         cfg_model = self._config['model']
-    
-        # If we want to load a model directly without changing the config
-        checkpoint_path = self.checkpoint_path if self.checkpoint_path else cfg_model['checkpoint_path']
-
-        # Check if dataset should be weighted
-        
-        if cfg_model['loss']['args']['weight']:
-            self._weights_obj(self.dataloader.train_dataloader().dataset.labels)
-        class_weights = self._weights_obj.weights
 
         # If checkpoint is enabled or if create a new model
-        if checkpoint_path:
-            #checkpoint_path = BASEDIR + checkpoint_path
-            print(f"Loading model from {checkpoint_path} (checkpoint)..")
-            model = Model.load_from_checkpoint(checkpoint_path=checkpoint_path)
+        if self.checkpoint_path:
+
+            if self.print_enabled: print(f"Loading model from {self.checkpoint_path} (checkpoint)..")
+            model = Model.load_from_checkpoint(checkpoint_path=self.checkpoint_path)
         else:
+            # Check if dataset should be weighted
+            if cfg_model['loss']['args']['weight']:
+                self._weights_obj(self.dataloader.train_dataloader().dataset.labels)
+            class_weights = self._weights_obj.weights
+
             model = Model(**cfg_model, class_weights=class_weights)
 
-        # Set the init distribution for the weights
-        if cfg_model['weight_distribution']:
-            InitWeightDistribution(model)(cfg_model['weight_distribution'])
-            
+            # Set the init distribution for the weights
+            if cfg_model['weight_distribution']:
+                #InitWeightDistribution(model)(cfg_model['weight_distribution'])
+                InitWeightDistribution(model,cfg_model['weight_distribution'])
+                
+            if self.print_enabled: print("Architecture [{0}] was created".format(type(model).__name__))
+        
         self.model = model
     
     def load_dataloader(self):
@@ -111,12 +125,12 @@ class Agent:
 
         # Setup callbacks
         callbacks = [
-            LitProgressBar(),
+            lc_callbacks.LitProgressBar(),
             #MetricCallback(),
         ]
         callbacks.extend([getattr(pl_callbacks, key)(**values['args']) for key,values in cfg_trainer['callbacks'].items() if values['enable']])
 
-        print("Enabled callbacks: ", [type(c).__name__ for c in callbacks])
+        if self.print_enabled: print("Enabled callbacks: ", [type(c).__name__ for c in callbacks])
         trainer = pl.Trainer(
             gpus=1 if torch.cuda.is_available() else None, 
             logger=logger if cfg_trainer['tensorboard'] else None,
@@ -130,8 +144,46 @@ class Agent:
     def run(self):
         self.load_model() 
         self.load_trainer()
-        print(f"Dataloader fold: {self.dataloader.kfold_index}")
+        self.print_enabled: print(f"Dataloader fold: {self.dataloader.kfold_index}")
         
         
         close_on_finish_decorator(self.trainer.fit, self.trainer.logger.log_dir, self.model, datamodule=self.dataloader, message=self._config)        
         return trainer
+    
+    def print_info(self):
+         print(
+            f"Loading model from {self.checkpoint_path} (checkpoint)..\n\n"
+            #f"Dataloader fold: {self.dataloader.kfold_index}\n"
+            f"{self.model}\n\n{self.dataloader}"
+             )
+   
+
+        
+    
+
+class ThreadSafeReloadedModel:
+    
+    def __init__(self, checkpoint_path, cam_type, cam_kwargs={}):
+        self.checkpoint_path = checkpoint_path
+        self.cam_type = cam_type
+        self.cam_kwargs = cam_kwargs
+        self.trainer = Agent(checkpoint_path=checkpoint_path)
+        self.lock = Lock()
+        
+    def __call__(self):
+        self.lock.acquire()
+        self.trainer.load_model()
+        model = self.trainer.model
+        self.lock.release()
+        return CAM(model,cam_type=self.cam_type, cam_kwargs=self.cam_kwargs) 
+        
+    
+    def get_dataloader(self):
+        return self.trainer.dataloader
+    
+    def get_validation_images(self, observe_classes=None):
+        fileset = self.get_dataloader().val_dataloader().dataset
+        if observe_classes != None: 
+            return ([idx, image, patient_class, target_class] for (idx, (image, patient_class)), target_class in itertools.product(enumerate(fileset),observe_classes)) #itertools.product(enumerate(fileset),observe_classes)
+        return fileset
+

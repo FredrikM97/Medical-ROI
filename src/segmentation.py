@@ -9,22 +9,15 @@ import torch
 import ast
 from typing import Tuple, Union, List
 from torchvision.ops._utils import convert_boxes_to_roi_format
+import warnings
 
 from src.dependencies.roi_align import RoIAlign
 from src.dependencies.nms import batched_nms
 from src.utils.preprocess import tensor2numpy, preprocess_image
 from src.utils import plot
+from src.utils.decorator import HiddenPrints
 
-def remove_known_background_from_mask(image:np.ndarray, image_mask:np.ndarray) -> np.ndarray:
-    """We know that background cant be useful activations. Remove them"""
-    im = image_mask.copy() 
-    im[image == 0] = 0
-    return im
-
-def check_join_segmentations(mask_one:np.ndarray, mask_two:np.ndarray) -> np.ndarray:
-    """Observe the intersection of two masks"""
-    from skimage.segmentation import join_segmentations
-    return join_segmentations(mask_one, mask_two)
+#with HiddenPrints(), warnings.catch_warnings():
 
 def segment_mask(background_mask:np.ndarray, image_mask:np.ndarray, upper_bound=150) -> np.ndarray:
     """Simple segmentation of the mask input
@@ -43,23 +36,7 @@ def segment_mask(background_mask:np.ndarray, image_mask:np.ndarray, upper_bound=
     tmp_image[background_mask<=0] = 0
     tmp_image[tmp_image>0] = 1
     labeled_masks = measure.label(tmp_image, background=0)#ndi.label(tmp_image)[0]
-    #elevation_map = sobel(image_mask)
-    
-    # Set to zero so it does not break background!
-    #markers = np.zeros_like(image_mask)
-    
-    # Get max value
-    # Remove known background or values outside of thesholds
-    #markers[image_mask < lower_bound] = 1
-    #markers[background_mask == 0] = 1
-    #markers[image_mask > upper_bound] = 2
-    #segmentation_masks = seg.watershed(elevation_map, markers=markers)
-    
-    #segmentation_masks_new = ndi.binary_fill_holes(segmentation_masks - 1)
 
-    #labeled_masks, _ = ndi.label(segmentation_masks_new)
-    #labeled_masks = measure.label(segmentation_masks_new)
-    #segmentation.display(labeled_coins, step=1)
     return labeled_masks
 
 def get_bbox_coordinates(feature):
@@ -100,21 +77,6 @@ def roi_align(image, boxes:list, output_shape=(40,40,40), displayed=False):
         [plot.display_3D(x[0],step=1) for x in tensor2numpy(image_rois)]
     return image_rois
 
-def sequential_processing(image:np.ndarray, image_mask:np.ndarray) -> None:
-    """Run each processing of mask to segmentation"""
-    
-    # Remove mask that we know are a background (not a part of the brain scan)
-    #mask_no_background = remove_known_background_from_mask(image, image_mask)
-    
-    # Rescale mask and segment it
-    #mask_mean = mask_logarithmic_scale(mask_no_background)
-    segmented_mask = segment_mask(image,image_mask)
-    # Extract features with the intensities of the mask with removed background and plot it
-    features =  measure.regionprops(segmented_mask, intensity_image=image_mask) #extract_features(segmented_mask, mask_no_background)
-    plot.features_regions(bounding_boxes(features), image_mask)
-    
-    return features
-
 def column_to_tuple(pd_column):
     """Convert a pandas column from string to tuple
     
@@ -150,19 +112,13 @@ def max_occurance(occurances:list):
     max_val = u[c == c.max()]
     return max_val
 
-def nms_reduction(_bboxes, image_mask=None, th=0.5):
+def nms_reduction(_bboxes, th=0.5):
     bbox_tensor = torch.Tensor(_bboxes['bbox'].to_list()).float()
     scores = torch.Tensor(_bboxes['score'].to_list()) 
     idxs  = torch.Tensor(_bboxes['observe_class'].to_list())
 
     only_interesting = bbox_tensor[batched_nms(bbox_tensor.cuda(), scores.cuda(), idxs.cuda(), th).detach().cpu()]
-    if isinstance(image_mask,type(None)):
-        image_mask = np.zeros((79,95,79))
-        
-    #image = add_image_bboxes(np.zeros((79,95,79)),only_interesting.numpy().astype(int))
-    #fig = plot.features_regions(only_interesting.numpy().astype(int),image_mask)
-    #fig = display(image, step=1)
-    return only_interesting#, fig
+    return only_interesting
 
 class Feature_extraction():
     """
@@ -170,13 +126,13 @@ class Feature_extraction():
     
     Supports two functions: features and extract.
     """
-    def __init__(self, cam_extractor, upper_bound=0.85, use_quantile_bounds=True,lambda1=1,lambda2=1, min_area=100, n_average=2):
+    def __init__(self, cam_extractor, upper_bound=0.85, use_quantile_bounds=True,lambda1=1,lambda2=1, n_average=2):
+
         self.cam_extractor = cam_extractor
         self.upper_bound = upper_bound
         self.use_quantile_bounds = use_quantile_bounds
         self.lambda1 = lambda1
         self.lambda2 = lambda2
-        self.min_area = min_area
         self.n_average = n_average
 
     def extract(self, nifti_image:torch.Tensor, observe_class:int):
@@ -187,12 +143,12 @@ class Feature_extraction():
             nifti_image = nifti_image.squeeze(0)
 
         np_image = tensor2numpy(nifti_image)
-        #print("Range of nifti images",nifti_image.max(), nifti_image.min())
         masks = []
-        for x in range(self.n_average):
-            class_scores, class_idx = self.cam_extractor.evaluate(nifti_image)
-            masks.append(self.cam_extractor.activation_map(observe_class, class_scores))
         
+        for x in range(self.n_average):
+            cam_extractor = self.cam_extractor()
+            class_scores, class_idx = cam_extractor.class_score(nifti_image) #evaluate
+            masks.append(cam_extractor.activations(observe_class, class_scores))
 
         image_mask = preprocess_image(torch.mean(torch.stack(masks), axis=0))
         
@@ -202,13 +158,9 @@ class Feature_extraction():
         # If quantiles is enable then calculate it and use it instead based on the upper bound
         if self.use_quantile_bounds:
             _upper_bound = np.quantile(image_mask.ravel(), self.upper_bound)
-            #_lower_bound = np.quantile(image_mask.ravel(), lower_bound)
-            #print("Quantile bounds",upper_bound,lower_bound)
         else:
             _upper_bound = self.upper_bound
-            #_lower_bound = lower_bound
-        # Remove background from mask
-        # Below 10 exists due to some issues where background is not zero
+            
         image_mask[np_image == 0] = 0
         
         segmented_mask = segment_mask(np_image, image_mask, upper_bound=_upper_bound)
@@ -225,14 +177,8 @@ class Feature_extraction():
             patient_class: Patient class
             observe_class: Which class to observe
             
-        """
-        #i, image_name, nifti_image, patient_class, observe_class = data
-        
+        """    
         segmented_mask, image_mask, class_idx,_upper_bound = self.extract(nifti_image, observe_class)
-        
-        #display(segmented_mask)
-        #print(f"Image: {image_name}, Patient: {patient_class}, Observe: {observe_class}, Model predict: {class_idx}", end='\r')
-        # TODO is it bbox_area or area
         features = measure.regionprops(segmented_mask, intensity_image=image_mask)
         new_features = {
             'bbox_area':[feature.bbox_area for feature in features], 
@@ -243,7 +189,7 @@ class Feature_extraction():
         }
         new_features.update({
 
-            'score':self.lambda1 * np.mean(new_features['mean_intensity'])/np.max(image_mask) - self.lambda2*((np.array(new_features['bbox_area'])+self.min_area)/image_mask.size)
+            'score':self.lambda1 * np.mean(new_features['mean_intensity'])/np.max(image_mask) - self.lambda2*((np.array(new_features['bbox_area']))/image_mask.size)
         })
         
         #del class_scores, nifti_image, segmented_mask, image_mask, features

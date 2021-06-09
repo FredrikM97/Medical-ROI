@@ -1,8 +1,12 @@
 from src.utils import utils, preprocess
+#from src.utils.decorator import HiddenPrints
 
-from torchcam import cams
+import nibabel as nib
+from src.utils.preprocess import image2axial, to_grid
+import warnings
+import torchcam 
 import torch
-from torch import Tensor
+from torch import tensor
 import numpy as np
 from typing import Tuple, Union, List
 import enum
@@ -10,109 +14,79 @@ import enum
 import torchvision
 import matplotlib.pyplot as plt
 
-from src.utils import plot
 from src.utils.cmap import parula_map
+#from src.classifier.agent import Agent
 
-class CAM_TYPES(enum.Enum):
-    CAM = cams.CAM
-    ScoreCAM = cams.ScoreCAM
-    SSCAM = cams.SSCAM
-    ISSCAM = cams.ISCAM
-    GradCAM = cams.GradCAM
-    GradCAMpp = cams.GradCAMpp
-    SmoothGradCAMpp = cams.SmoothGradCAMpp
-    #Saliency = SaliencyMap
-    
 class CAM:
-    """
-    Example usage:
-    trainer, dataset, model = load_trainer('resnet50')
-    tmp_image = nib.load('../data/SPM_categorised/AIH/AD/AD_ADNI_2975.nii').get_fdata()
-    tmp = cam.CAM(CAMS.GradCAM.value, model, tmp_image)
-    
-    tmp.plot(tmp.class_scores, [0,1,2], class_label="AD")
-    """
-    def __init__(self, cam:str, model, input_shape:Tuple[int,int,int,int]=(79,95,79), target_layer:str=None, device:str='cuda', CAM_kwargs={}) -> None:
-        """ Init object for CAM extraction. 
-        
-        This code only works in the colormap is grayscale so C=1
-        The dataloaded support the axial view and return it as default
-        
-        Args:
-            cam (str): CAM_TYPES reference
-            model (nn.Module): Which model that CAM should be extracted from
-            input_shape (Tuple[D,H,W]): Expected shape of the input image. Color and batch should not be included.
-            target_layer (str), optional: Which layer that should be selected.
-            device (str): cuda or cpu.
-        """
-        super().__init__()
-        #self.cam = cam
+    def __init__(self, model, cam_type=torchcam.cams.GradCAMpp,target_layer="model.layer4", cam_kwargs={}):
+        self._CLASSES=[0,1,2]
+        self.CAM_TYPE = cam_type
+        self.TARGET_LAYER = target_layer
         self.model = model
-        self.extractor = cam(model, input_shape=(1,*input_shape), target_layer=target_layer, **CAM_kwargs)
-        self.input_shape = input_shape
-        self.device = device
+        self.extractor = cam_type(model, target_layer=target_layer, **cam_kwargs)
 
-    def evaluate(self,input_image:np.ndarray) -> Tuple[Tensor, int]:
-        """ "Calculate the class scores and the highest probability of the target class
+    def class_score(self, input_image:np.ndarray, device='cuda', input_shape=(79,95,79)) -> Tuple[tensor, int]:
+        """ Calculate the class scores and the highest probability of the target class
             
         Args:
         
         Return:
             * Tuple containing all the probabilities and the best probability class
         """
- 
-        # Apply preprocessing
         image = preprocess.preprocess_image(input_image)
         image = preprocess.batchisize_to_5D(image)
         image_tensor = torch.from_numpy(image).float()
         
-        self.model.to(self.device)
-        image_tensor = image_tensor.to(self.device)
+        self.model.to(device)
+        image_tensor = image_tensor.to(device)
         # Check that image have the correct shape
-        assert tuple(image_tensor.shape) == (1, 1, *self.input_shape), f"Got image shape: {image_tensor.shape} expected: {(1, 1, *self.input_shape)}"
-        assert self.model.device == image_tensor.device, f"Model and image are not on same device: Model: {self.model.device} Image: {image_tensor.device}"
+        assert tuple(image_tensor.shape) == (1, 1, *input_shape), f"Got image shape: {image_tensor.shape} expected: {(1, 1, *input_shape)}"
+        assert self.model.device == image_tensor.device, f"Model and image are not on same device: Model: {model.device} Image: {image_tensor.device}"
   
         self.model.eval()
         class_scores = self.model(image_tensor)
         return class_scores, class_scores.squeeze(0).argmax().item()
-    
-    def activation_map(self, class_idx:int=None, class_scores:Tensor=None) -> np.ndarray:
-        """ Retrieve the map based on the score from the model
-        
-        Return:
-            * Tensor with activations from image with shape Tensor[D,H,W]
-        """
-        #preprocess.tensor2numpy(
-        return self.extractor(class_idx, class_scores, normalized=False).detach().cpu()
-       
-    def grid_class(self, class_scores:Tensor, class_idx:Union[List[int],int], input_image:np.ndarray, max_num_slices:int=16,pad_value=0.5, normalized=True, nrow=10,**kwargs) -> Tuple[Tensor, Tensor]:
+    '''
+    @staticmethod
+    def activations2grid(class_scores:tensor, class_idx:Union[List[int],int], input_image:np.ndarray, normalized=True, grid_kwargs={},**kwargs) -> Tuple[tensor, tensor]:
         """Creates a grid based on a class_idx."""
         
-        image_process = lambda _image: preprocess.preprocess_image(_image, normalized=normalized)
+        
         if isinstance(class_idx, list) and len(class_idx) == 1:
             class_idx = class_idx[0]
 
         if isinstance(class_idx, list):
             grid_img = torch.hstack([
-                preprocess.to_grid(image_process(input_image), max_num_slices=max_num_slices,pad_value=pad_value,nrow=nrow)
+                preprocess.to_grid(preprocess.normalize(input_image), **grid_kwargs.copy())
             ]*len(class_idx))
             
             grid_mask = torch.hstack([
-                preprocess.to_grid(image_process(self.activation_map(idx, class_scores)), max_num_slices=max_num_slices,pad_value=pad_value,nrow=nrow)
+                preprocess.to_grid(preprocess.normalize(self.activations(extractor, idx, class_scores)), **grid_kwargs.copy())
                 for idx in class_idx
             ])
         
             
         elif isinstance(class_idx, int):
-            grid_mask = preprocess.to_grid(image_process(self.activation_map(class_idx, class_scores)), max_num_slices=max_num_slices,pad_value=pad_value,nrow=nrow)
-            grid_img = preprocess.to_grid(image_process(input_image), max_num_slices=max_num_slices,pad_value=pad_value,nrow=nrow)
+            grid_mask = preprocess.to_grid(preprocess.normalize(self.activations(extractor, class_idx, class_scores)), **grid_kwargs.copy())
+            grid_img = preprocess.to_grid(preprocess.normalize(input_image), **grid_kwargs.copy())
             
         else:
             raise ValueError(f"Expected class_idx of type list or int, Got: {type(class_idx)}")
             
         return grid_img, grid_mask
+    '''
+    
+    def activations(self, class_idx:int=None, class_scores:tensor=None) -> np.ndarray:
+        """ Retrieve the map based on the score from the model
         
-    def plot(self, class_scores:Tensor, class_idx:Union[List[int],int], input_image:np.ndarray,cmap=parula_map, alpha=0.7, class_label:str=None, predicted_override=None, max_num_slices:int=16,nrow=10):
+        Return:
+            * Tensor with activations from image with shape Tensor[D,H,W]
+        """
+
+        return self.extractor(class_idx, class_scores, normalized=False).detach().cpu()
+    
+    @staticmethod
+    def plot(images=[], masks=[], labels=[],cmap=parula_map, alpha=0.7, class_label:str=None, predicted_override=None, architecture=None):
         """Create a plot from the given class activation map and input image. CAM is calculated from the models weights and the probability distribution of each class.
         
         Args:
@@ -128,50 +102,108 @@ class CAM:
         Return:
             output (Figure): Figure reference to plot
         """
-        class_idx = class_idx if isinstance(class_idx, list) else [class_idx]
+        #class_idx = class_idx if isinstance(class_idx, list) else [class_idx]
+        if (max_length :=len(masks)) > len(images):
+            pass
+        else:
+            max_length = len(images)
         
-        def default_settings(axis, predicted_label):
-            classes = {
-                0:'CN',
-                1:'MCI',
-                2:'AD'
-            }
+        if max_length == 0:
+            raise ValueError("Number of images/masks cant be zero!")
+        
+        fig, axes = plt.subplots(ncols=max_length,nrows=1,figsize=(max_length*8,8))
+        
+        if max_length > 1:
+            # Add images
+            for i, image in enumerate(images):
+                im = axes[i].imshow(image,cmap='Greys_r', vmin=image.min(), vmax=image.max())
+
+
+            # Add masks
+            for i, mask in enumerate(masks):
+                im = axes[i].imshow(mask,cmap=cmap, alpha=alpha,vmin=mask.min(), vmax=mask.max()) 
+        
+        else:
+            for i, image in enumerate(images):
+                im = axes.imshow(image,cmap='Greys_r', vmin=image.min(), vmax=image.max())
+
+
+            # Add masks
+            for i, mask in enumerate(masks):
+                im = axes.imshow(mask,cmap=cmap, alpha=alpha,vmin=mask.min(), vmax=mask.max()) 
+                
+        # Add labels
+        classes = {
+            0:'CN',
+            1:'MCI',
+            2:'AD'
+        }
+        
+        for i, label in enumerate(labels):
             title_list = [out for out, con in [
-                (f'{type(self.model.model).__name__}',True),
-                (f'{type(self.extractor).__name__}',True),
+                (f'{architecture}',architecture),
+                #(f'{type(self.extractor).__name__}',True),
                 (f'Patient: {class_label}',class_label),
-                (f'Predicted: {classes[predicted_label]}',predicted_label),
+                (f'Predicted: {classes[label]}',label),
                 (f'Overrided',predicted_override)] if con != None
             ]
-            axis.set_title(', '.join(title_list))
-            
-            axis.set_axis_off()
-            axis.set_xticklabels([])
-            axis.set_yticklabels([])
-                
-        fig, axes = plt.subplots(ncols=len(class_idx),nrows=1,figsize=(len(class_idx)*8,8))
-        fig.subplots_adjust(hspace=0)
+            if max_length > 1:
+                axes[i].set_title(', '.join(title_list))
+
+            else:
+                axes.set_title(', '.join(title_list))
         
-        
-        if len(class_idx) == 1:
-            image, mask = self.grid_class(class_scores, class_idx[0],input_image,max_num_slices=max_num_slices,nrow=nrow)
-            axes.imshow(image,cmap='Greys_r', vmin=image.min(), vmax=image.max())
-            im = axes.imshow(mask,cmap=cmap, alpha=alpha,vmin=mask.min(), vmax=mask.max()) 
-            default_settings(axes,class_idx[0])
+        if max_length > 1:
+            for a in axes.flatten():
+                a.set_axis_off()
+                a.set_xticklabels([])
+                a.set_yticklabels([])
         else:
-            for i, idx in enumerate(class_idx):
-                image, mask = self.grid_class(class_scores, idx,input_image, max_num_slices=max_num_slices,nrow=nrow)
-                axes[i].imshow(image,cmap='Greys_r', vmin=image.min(), vmax=image.max())
-                im = axes[i].imshow(mask,cmap=cmap, alpha=alpha,vmin=mask.min(), vmax=mask.max()) 
-                default_settings(axes[i], idx)
-                
+            axes.set_axis_off()
+            axes.set_xticklabels([])
+            axes.set_yticklabels([])
             
-        
         # Remove axis data to show colorbar more clean
-        ax = axes.ravel().tolist() if len(class_idx) > 1 else axes
+        ax = axes.ravel().tolist() if max_length > 1 else axes
         plt.subplots_adjust(wspace=0.01, hspace=0)
         cbar = fig.colorbar(im, ax=ax, shrink=1)
-
-        
+ 
         return fig
+
+    @staticmethod
+    def get_cam(model, cam_type, input_shape=(79,95,79),target_layer=None,CAM_kwargs={}):
+        #with HiddenPrints(), warnings.catch_warnings():
+        #    warnings.simplefilter("ignore")
+        extractor = cam_type(model, input_shape=(1,*input_shape), target_layer=target_layer, **CAM_kwargs)
+        return extractor
     
+    @staticmethod
+    def average_image(images):
+        return torch.mean(torch.stack(images), axis=0)
+    
+    @staticmethod
+    def repeat_stack(image, repeat=1, grid_kwargs={}):
+        return torch.stack([to_grid(image, **grid_kwargs)]*repeat)
+    
+    @staticmethod
+    def preprocess(filename):
+        class_label = utils.split_custom_filename(filename,'/')[4]
+        image = image2axial(nib.load(filename).get_fdata())
+        image[image <= 0]=0
+        image = preprocess.preprocess_image(image)
+        return image
+
+
+def new_seed():
+    return torch.manual_seed(torch.seed())
+
+"""
+def get_agent(checkpoint_path):
+    model = None
+    with HiddenPrints() as f:#, warnings.catch_warnings():
+        trainer = Agent(checkpoint_path=checkpoint_path)
+        trainer.load_model()
+        model = trainer.model
+    return model
+    
+"""

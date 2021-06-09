@@ -33,19 +33,16 @@ class RoiTransform:
             x (Tensor): Input value. Expect shape (B,C,D,H,W)
             y (Tensor): Target value
         """
-        #print(x.shape, y.shape)
-        # Should be checked if this is correct by concatenate..
+
         if isinstance(self.boundary_boxes, list):
             image_rois = self.roi.forward(x,torch.cat(x.shape[0]*[self.boundary_boxes.to(x.device)]))#.detach()
             y = self.num_bbox*y
         elif isinstance(self.boundary_boxes, dict):
             image_rois = self.roi.forward(x,torch.cat([self.boundary_boxes[one_target].to(x.device) for one_target in tensor2numpy(y)]))#.detach() #x.shape[0]*[self.boundary_boxes[y]
-            #print([len(self.boundary_boxes[one_target])*[one_target] for one_target in tensor2numpy(y)])
+
             y = torch.from_numpy(np.concatenate([len(self.boundary_boxes[one_target])*[one_target] for one_target in tensor2numpy(y)])).to(x.device)
-            #print(image_rois.shape)
-            #print("yyy",torch.cat(self.num_bbox*[y]))
+
         else:
             raise ValueError("boundary_boxes needs to be of type list or dict")
-        #[display(x[0],step=1) for x in tensor2numpy(image_rois)]
 
-        return image_rois, y#torch.cat(self.num_bbox*[y])#.type(x.type()), y #.to('cpu')
+        return image_rois, y

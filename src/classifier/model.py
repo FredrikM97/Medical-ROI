@@ -12,6 +12,7 @@ import torchmetrics as pl_metrics
 import os
 import matplotlib.pyplot as plt
 import seaborn as sns
+import warnings
 
 
 from src.utils import preprocess
@@ -20,19 +21,19 @@ from src.utils.plot import confusion_matrix
 from src import BASEDIR
 from src.classifier.metric import MetricTracker
 
-def create_model(checkpoint_path=None,**cfg_model):
+"""def create_model(checkpoint_path=None,**cfg_model):
     if checkpoint_path:
         assert os.path.isfile(checkpoint_path), "The provided checkpoint_path is not valid! Does it exist?"
-        print(f"Loading model from {checkpoint_path} (checkpoint)..")
+        #print(f"Loading model from {checkpoint_path} (checkpoint)..")
         return trainer.load_from_checkpoint(checkpoint_path=checkpoint_path)
     else:
         return models.create_model(**cfg_model['arch'])
-
+"""
 class Model(pl.LightningModule): 
     def __init__(self,class_weights:torch.Tensor=None,hp_metrics:list=None,loss={}, roi_hparams={"enable":False,'roi_shape':None, 'bounding_boxes':[]},**hparams):
         super().__init__() 
         self.save_hyperparameters()
-        self.model = create_model(**self.hparams)
+        self.model = models.create_model(**self.hparams['arch'])
         self.roi_enabled = roi_hparams['enable']
         self.hp_metrics = hp_metrics
 
@@ -41,21 +42,22 @@ class Model(pl.LightningModule):
             # Dont import unless we want to use RoiTransform.. (Compability without cuda 11.1)
             from src.utils.transforms import RoiTransform
             self.roi_model = RoiTransform(**roi_hparams)
+        
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore")
+            model_metrics = pl_metrics.MetricCollection([
+                pl_metrics.Accuracy(average='micro', compute_on_step=False),
+                pl_metrics.Precision(num_classes=3, average='micro',compute_on_step=False),
+                pl_metrics.Recall(num_classes=3, average='micro',compute_on_step=False),
+                pl_metrics.AUROC(num_classes=3, average='macro',compute_on_step=False),
+                pl_metrics.ConfusionMatrix(num_classes=3, normalize='true',compute_on_step=False),
+                pl_metrics.Specificity(num_classes=3, average='micro',compute_on_step=False),
+            ])
 
-        model_metrics = pl_metrics.MetricCollection([
-            pl_metrics.Accuracy(average='micro', compute_on_step=False),
-            pl_metrics.Precision(num_classes=3, average='micro',compute_on_step=False),
-            pl_metrics.Recall(num_classes=3, average='micro',compute_on_step=False),
-            pl_metrics.AUROC(num_classes=3, average='macro',compute_on_step=False),
-            pl_metrics.ConfusionMatrix(num_classes=3, normalize='true',compute_on_step=False),
-            pl_metrics.Specificity(num_classes=3, average='micro',compute_on_step=False),
-        ])
-        
-        self.valid_metrics = model_metrics.clone()
-        self.valid_dummy_metric = pl_metrics.AUROC(num_classes=3, average=None,compute_on_step=False)
+            self.valid_metrics = model_metrics.clone()
+            self.valid_dummy_metric = pl_metrics.AUROC(num_classes=3, average=None,compute_on_step=False)
         #MetricTracker()
-        
-        print(f"***Defined hyperparameters:***\n{self.hparams}")
+        #print(f"***Defined hyperparameters:***\n{self.hparams}")
         
     def on_train_start(self):
         if self.logger:
@@ -117,6 +119,10 @@ class Model(pl.LightningModule):
         return {
             'optimizer': optimizer,
         }
+
+    def __str__(self):
+        return (f"""{"Architecture: [{0}]".format(type(self.model).__name__)}\n"""
+                f"""***Defined hyperparameters:***\n{self.hparams}""")
             
     #def loss_fn(self,out,target):
     #    #return nn.CrossEntropyLoss(weight=self.loss_class_weights)(out,target)

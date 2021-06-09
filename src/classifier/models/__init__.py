@@ -21,6 +21,7 @@ def find_model_using_name(model_name):
             if attribute_name == model_name and (isclass(attribute) or isinstance(attribute, types.FunctionType)):
                 return attribute
     raise ImportError(f"Model could not be found. Does it exist? Name: {model_name}")
+    
 def create_model(name:str=None, args:dict={}):
     """Create a model given the configuration.
     This is the main interface between this package and train.py/validate.py
@@ -28,5 +29,4 @@ def create_model(name:str=None, args:dict={}):
     
     model = find_model_using_name(name)
     instance = model(**args)
-    print("Architecture [{0}] was created".format(type(instance).__name__))
     return instance

@@ -18,13 +18,13 @@ class ClassWeights:
     
 class InitWeightDistribution:
     
-    def __init__(self, model):
-        self.model = model
+    #def __init__(self, model):
+    #    self.model = model
+    @classmethod
+    def __new__(cls, model, dist):
+        return getattr(cls, dist)(model)
         
-    def __call__(self, dist):
-        return getattr(self, dist)(self.model)
-        
-        
+    
     def uniform(self,m):
         classname = m.__class__.__name__
         # for every Linear layer in a model..

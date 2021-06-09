@@ -96,14 +96,24 @@ class AdniDataloader(pl.LightningDataModule):
         #    self.adni_train, self.adni_val = [AdniDataset(data, transform=self.test_transform,delimiter=self.delimiter, classes=self.classes) for data in dataset_splitted]
             
         # Info of the dataset
-        print(
+        """print(
             f"***Defined dataloader:***\n"
             f"Data directory: {self.data_dir}\n"
             f"Dataset sizes - Training: {len(self.adni_train)} Validation: {len(self.adni_val)}\n"
             f"Seed: {self.seed}\n"
             f"Augmentation: {'Enabled' if self.augmentation['enable'] else 'Disabled'}\n"
             f"KFold: {'Enabled - Fold: ' + str(self.kfold_index) + '/' + str(self.split_conf['folds']) if self.split_conf['kfold_enable'] else 'Disabled'}\n"
-        )
+        )"""
+        
+    def __str__(self):
+        return (
+            f"***Defined dataloader:***\n"
+            f"Data directory: {self.data_dir}\n"
+            f"Dataset sizes - Training: {len(self.adni_train)} Validation: {len(self.adni_val)}\n"
+            f"Seed: {self.seed}\n"
+            f"Augmentation: {'Enabled' if self.augmentation['enable'] else 'Disabled'}\n"
+            f"KFold: {'Enabled - Fold: ' + str(self.kfold_index) + '/' + str(self.split_conf['folds']) if self.split_conf['kfold_enable'] else 'Disabled'}\n")
+        
     
     def next_fold(self):
         if self.split_conf['folds'] <= self.kfold_index: return False
