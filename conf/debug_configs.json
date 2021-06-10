@@ -1,0 +1,39 @@
+{
+    "debug":{
+        "name":"debug",
+        "model":{
+            "arch": {
+                "name": "resnet18_brew",
+                "args": {}
+            }
+        },
+        "trainer":{
+            "args":{
+                "max_epochs":5
+        
+            }
+        }
+    },
+    "customCNN":{
+        "name":"customCNN",
+        "dataloader": {
+            "args":{
+                "augmentation":{
+                    "enable":false
+                }
+            }
+        },
+        "model":{
+            "arch": {
+                "name": "customCNN",
+                "args": {}
+            },
+            "optimizer":{
+                "type": "Adam",
+                "args":{
+                    "lr": 1e-3
+                }
+            }
+        }
+    }
+}
