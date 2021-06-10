@@ -93,7 +93,8 @@
                     "name": "resnet50",
                     "args": {
                         "num_channels":1,
-                        "num_classes":3
+                        "num_classes":3,
+                        "input_shape":[79,95,79]
                     }
                 },
                 "hp_metrics":[

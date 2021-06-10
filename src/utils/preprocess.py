@@ -76,6 +76,7 @@ def image2axial(image:np.ndarray) -> np.ndarray:
     else:
         raise ValueError(f"Expected length of 3 or 4. Got: {len(image.shape)}")
 
+'''
 def greedy_split(arr:np.ndarray, n:int, axis=0) -> list:
     """Split an image of slices into smaller slices. Example: 1x79 slices with an n of 16 -> 5x16 slices where 1 slice contains 5 of the 79 slices."""
     assert isinstance(arr, np.ndarray), f"Expected np.ndarray, got: {type(arr)}"
@@ -88,7 +89,7 @@ def greedy_split(arr:np.ndarray, n:int, axis=0) -> list:
     ix = np.arange(block_size, length, block_size).astype(np.uint8)
 
     return np.split(arr, ix, axis)
-
+'''
 
 def tensor2numpy(data):
     """Send to CPU. If computational graph is connected then detach it as well."""
@@ -130,10 +131,11 @@ def to_grid(image:np.ndarray, max_num_slices=None,pad_value=0.5, nrow=10, paddin
     image=normalize(image)
     
     if max_num_slices != None:
-        image = np.stack([np.mean(x,axis=0) for x in greedy_split(image,max_num_slices)])
+        image = np.stack([np.mean(x,axis=0) for x in np.array_split(image, max_num_slices)]) #greedy_split(image,max_num_slices)
     
     plt_image = from_numpy(image).float().unsqueeze(1)
 
     # Convert to grid 
     grid_image = torchvision.utils.make_grid(plt_image, nrow=nrow,pad_value=pad_value,padding=2)[0]
+    
     return grid_image

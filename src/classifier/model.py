@@ -30,7 +30,7 @@ from src.classifier.metric import MetricTracker
         return models.create_model(**cfg_model['arch'])
 """
 class Model(pl.LightningModule): 
-    def __init__(self,class_weights:torch.Tensor=None,hp_metrics:list=None,loss={}, roi_hparams={"enable":False,'roi_shape':None, 'bounding_boxes':[]},**hparams):
+    def __init__(self,class_weights:torch.Tensor=None,hp_metrics:list=None,loss={}, roi_hparams={"enable":False,'input_shape':None, 'bounding_boxes':[]},**hparams):
         super().__init__() 
         self.save_hyperparameters()
         self.model = models.create_model(**self.hparams['arch'])

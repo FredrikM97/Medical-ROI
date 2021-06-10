@@ -199,11 +199,13 @@
         "model":{
             "arch": {
                 "name": "fc",
-                "args": {}
+                "args": {
+                     "input_shape":[23,17,20]
+                }
             },
             "roi_hparams":{
                 "enable":true,
-                "output_shape":[16,14,11],
+                "output_shape":[23,17,20],
                 "boundary_boxes":{
                     "AD":[
                         [32, 73, 38, 77, 18, 21],
