@@ -3,7 +3,7 @@ import torch.nn as nn
 
 
 class fc(nn.Module):
-    def __init__(self,num_channels:int=1,num_classes:int=3, input_shape=(9,9,9),**kwargs):
+    def __init__(self,num_channels:int=1,num_classes:int=3, input_shape=(16,14,11),**kwargs):
         # Model for input (batch, channel, slices, with, height) -> (batch,1,79, 96, 79)
         super().__init__()
         self.input_shape = input_shape

@@ -40,9 +40,28 @@ def segment_mask(background_mask:np.ndarray, image_mask:np.ndarray, upper_bound=
     return labeled_masks
 
 def get_bbox_coordinates(feature):
-    """Convert skimage format to x,y,x,y,z0,z1"""
-    z0, y0, x0, z1, y1, x1 = feature.bbox
-    return x0,y0,x1,y1,z0,z1
+    """
+    Convert skimage format to x,y,x,y,z0,z1
+    
+    Expects feature.bbox to be in format: 
+        min_depth, min_row, min_col, max_depth, max_row, max_col
+    Returns:
+        min_col, min_row, max_col, max_row, min_depth, max_depth
+    
+    Example:
+    
+    tmp_image = np.zeros((3,100,100)).astype(int)#np.resize(tmp_image,(3,100,100))
+    tmp_image[1][30:40,20:50] = 1
+    
+    feature = measure.regionprops(tmp_image)[0]
+    feature.bbox -> (1, 30, 20, 2, 40, 50)
+    
+    Return:
+    (20, 30, 50, 40, 1, 2)
+    """
+    
+    min_depth, min_row, min_col, max_depth, max_row, max_col = feature.bbox
+    return min_col, min_row, max_col, max_row, min_depth, max_depth
 
 def bounding_boxes(features:list):
     """Expects features from 2D images
@@ -150,7 +169,9 @@ class Feature_extraction():
             class_scores, class_idx = cam_extractor.class_score(nifti_image) #evaluate
             masks.append(cam_extractor.activations(observe_class, class_scores))
 
-        image_mask = preprocess_image(torch.mean(torch.stack(masks), axis=0))
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", category=RuntimeWarning)
+            image_mask = preprocess_image(torch.mean(torch.stack(masks), axis=0))
         
         image_mask = (image_mask*255).astype(int)
         np_image = (np_image*255).astype(int)

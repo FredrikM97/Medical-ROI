@@ -54,15 +54,15 @@ class Agent:
             model_config = {}
         else:  
             model_config = load.load_config(config_name, dirpath=BASEDIR + "/conf/")
-            
-        # Overwrite if no checkpoint_path is selected outside of the config
-        self.checkpoint_path = self.checkpoint_path if self.checkpoint_path else cfg_model['checkpoint_path']
         
         base_config = load.load_config(self.base_config, dirpath=BASEDIR + "/conf/")
         config = merge_dict(base_config['classifier'],model_config)
 
         config.update({'classes':base_config['classes']})
          
+        # Overwrite if no checkpoint_path is selected outside of the config
+        self.checkpoint_path = self.checkpoint_path if self.checkpoint_path else config["model"]['checkpoint_path']
+        
         # Fix ROI bounding boxes and if dictionary then label them
         if config['model']['roi_hparams']['enable']:
             if isinstance(config['model']['roi_hparams']['boundary_boxes'], dict):

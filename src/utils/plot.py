@@ -4,6 +4,8 @@ import matplotlib.patches as mpatches
 from math import ceil
 import pytorch_lightning as pl
 import seaborn as sns
+import cv2
+from matplotlib import colors
 
 from src.utils import preprocess
 from src.utils.cmap import parula_map
@@ -48,8 +50,9 @@ def display_3D(im3d:np.ndarray, cmap:str="jet", step:int=2, plottype:str='imshow
         
     return fig
 
-def features_regions(bboxes:list, image_mask:np.ndarray,step=1, plot_title=""):
+def features_regions(bboxes:list, image_mask:np.ndarray,step=1):
     """Plot the extracted features"""
+    '''
     ncols = 9
     nrows = 1 if len(image_mask) == 0 else int(np.ceil(len(image_mask)/ncols))
     fig, axes = plt.subplots(nrows=nrows, ncols=ncols, figsize=(7, 1*nrows))
@@ -74,6 +77,27 @@ def features_regions(bboxes:list, image_mask:np.ndarray,step=1, plot_title=""):
         ax.set_visible(False)
         
     return fig
+    '''
+    vmin = image_mask.min()
+    vmax = image_mask.max()
+    
+    empty_array = np.zeros(image_mask.shape)
+    
+    for tmp_bbox in bboxes:
+        start = (tmp_bbox[0],tmp_bbox[1])
+        end = (tmp_bbox[2],tmp_bbox[3])
+        for slice_idx,x in enumerate(empty_array[tmp_bbox[4]:tmp_bbox[5]], start=tmp_bbox[4]):
+            x = cv2.rectangle(x, start, end,(255,0,0),2) 
+    tmp_gridded =preprocess.to_grid(empty_array,pad_value=0) 
+
+    masked = np.ma.masked_where(tmp_gridded == 0, tmp_gridded)
+    
+    #fig = plt.figure(figsize=(8,8))
+    plt.imshow(preprocess.to_grid(image_mask), 'gray', interpolation='none', vmin=vmin, vmax=vmax)
+    plt.imshow(masked,cmap=colors.ListedColormap(['red']), interpolation='none', alpha=1, vmin=vmin, vmax=vmax)
+    #plt.tight_layout()
+    
+    plt.axis('off')
 
 def center_distribution(bbox_coords):
     """Plot the distribution"""

@@ -107,7 +107,7 @@
                 ],
                 "roi_hparams":{
                     "enable":false,
-                    "output_shape":[3,3,3],
+                    "output_shape":[16,14,11],
                     "boundary_boxes":[]
                 }
             }, 

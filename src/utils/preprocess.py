@@ -112,7 +112,7 @@ def preprocess_image(image:np.ndarray, input_shape:Tuple=(79,95,79), normalized=
 
     return image
 
-def to_grid(image:np.ndarray, max_num_slices=None,pad_value=0.5, nrow=10) -> Tensor:
+def to_grid(image:np.ndarray, max_num_slices=None,pad_value=0.5, nrow=10, padding=2) -> Tensor:
     """ Create grid from image based on maximum number of slices.
 
     Args:
@@ -135,5 +135,5 @@ def to_grid(image:np.ndarray, max_num_slices=None,pad_value=0.5, nrow=10) -> Ten
     plt_image = from_numpy(image).float().unsqueeze(1)
 
     # Convert to grid 
-    grid_image = torchvision.utils.make_grid(plt_image, nrow=nrow,pad_value=pad_value)[0]
+    grid_image = torchvision.utils.make_grid(plt_image, nrow=nrow,pad_value=pad_value,padding=2)[0]
     return grid_image

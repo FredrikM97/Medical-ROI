@@ -20,9 +20,8 @@ class InitWeightDistribution:
     
     #def __init__(self, model):
     #    self.model = model
-    @classmethod
-    def __new__(cls, model, dist):
-        return getattr(cls, dist)(model)
+    def __new__(self, model, dist):
+        getattr(self, dist)(self,model)
         
     
     def uniform(self,m):
