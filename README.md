@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Master-thesis
 Prioritization of Informative Regions in PET Scans for Classification of Alzheimer’s Disease
 
@@ -22,3 +23,7 @@ The name will be overwritten for the classifier and arch name too.
 
 ## Data
 In order to run the project, image data is required with the format .nii. The structure requires to be included in the data folder (but can be overwritten in the config), and the files need the structure class/filename.nii where the class is the target class of an image.
+=======
+# Prioritization of Informative Regions in PET Scansfor Classification of Alzheimer’s Disease
+Master thesis
+>>>>>>> 1392d47bc26b7b5cbe6383dc7b87d6e4f195304d
