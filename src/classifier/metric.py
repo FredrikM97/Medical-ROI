@@ -1,3 +1,7 @@
+"""
+Metrics for classification
+"""
+
 import pytorch_lightning as pl
 import matplotlib.pyplot as plt
 import numpy as np

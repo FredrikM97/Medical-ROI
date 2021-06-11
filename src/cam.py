@@ -1,21 +1,23 @@
+"""
+This module contain various types of functions/classes to access and generate CAM.
+
+"""
 from src.utils import utils, preprocess
-#from src.utils.decorator import HiddenPrints
 
 import nibabel as nib
 from src.utils.preprocess import image2axial, to_grid
 import warnings
 import torchcam 
 import torch
-from torch import tensor
+#from torch import tensor
 import numpy as np
 from typing import Tuple, Union, List
-import enum
 
 import torchvision
 import matplotlib.pyplot as plt
 
 from src.utils.cmap import parula_map
-#from src.classifier.agent import Agent
+
 
 class CAM:
     def __init__(self, model, cam_type=torchcam.cams.GradCAMpp,target_layer="model.layer4", cam_kwargs={}):
@@ -25,7 +27,7 @@ class CAM:
         self.model = model
         self.extractor = cam_type(model, target_layer=target_layer, **cam_kwargs)
 
-    def class_score(self, input_image:np.ndarray, device='cuda', input_shape=(79,95,79)) -> Tuple[tensor, int]:
+    def class_score(self, input_image:np.ndarray, device='cuda', input_shape=(79,95,79)) -> Tuple[torch.tensor, int]:
         """ Calculate the class scores and the highest probability of the target class
             
         Args:
@@ -37,50 +39,20 @@ class CAM:
         image = preprocess.batchisize_to_5D(image)
         image_tensor = torch.from_numpy(image).float()
         
-        self.model.to(device)
+        model = self.model.to(device).eval()
         image_tensor = image_tensor.to(device)
         # Check that image have the correct shape
         assert tuple(image_tensor.shape) == (1, 1, *input_shape), f"Got image shape: {image_tensor.shape} expected: {(1, 1, *input_shape)}"
-        assert self.model.device == image_tensor.device, f"Model and image are not on same device: Model: {model.device} Image: {image_tensor.device}"
+        assert model.device == image_tensor.device, f"Model and image are not on same device: Model: {model.device} Image: {image_tensor.device}"
   
-        self.model.eval()
-        class_scores = self.model(image_tensor)
+        class_scores = model(image_tensor)
         return class_scores, class_scores.squeeze(0).argmax().item()
-    '''
-    @staticmethod
-    def activations2grid(class_scores:tensor, class_idx:Union[List[int],int], input_image:np.ndarray, normalized=True, grid_kwargs={},**kwargs) -> Tuple[tensor, tensor]:
-        """Creates a grid based on a class_idx."""
-        
-        
-        if isinstance(class_idx, list) and len(class_idx) == 1:
-            class_idx = class_idx[0]
-
-        if isinstance(class_idx, list):
-            grid_img = torch.hstack([
-                preprocess.to_grid(preprocess.normalize(input_image), **grid_kwargs.copy())
-            ]*len(class_idx))
-            
-            grid_mask = torch.hstack([
-                preprocess.to_grid(preprocess.normalize(self.activations(extractor, idx, class_scores)), **grid_kwargs.copy())
-                for idx in class_idx
-            ])
-        
-            
-        elif isinstance(class_idx, int):
-            grid_mask = preprocess.to_grid(preprocess.normalize(self.activations(extractor, class_idx, class_scores)), **grid_kwargs.copy())
-            grid_img = preprocess.to_grid(preprocess.normalize(input_image), **grid_kwargs.copy())
-            
-        else:
-            raise ValueError(f"Expected class_idx of type list or int, Got: {type(class_idx)}")
-            
-        return grid_img, grid_mask
-    '''
     
-    def activations(self, class_idx:int=None, class_scores:tensor=None) -> np.ndarray:
+    def activations(self, class_idx:int=None, class_scores:torch.tensor=None) -> np.ndarray:
         """ Retrieve the map based on the score from the model
         
         Return:
-            * Tensor with activations from image with shape Tensor[D,H,W]
+            * tensor with activations from image with shape tensor[D,H,W]
         """
 
         return self.extractor(class_idx, class_scores, normalized=False).detach().cpu()
@@ -90,7 +62,7 @@ class CAM:
         """Create a plot from the given class activation map and input image. CAM is calculated from the models weights and the probability distribution of each class.
         
         Args:
-            class_scores (Tensor): Tensor of probability for each class 
+            class_scores (tensor): tensor of probability for each class 
             class_idx (Union[List[int],int]): Index of highest class_score probability 
             input_image (np.ndarray): image to the evaluated
             cmap (Color object), optional: The cmap to use in plot 
@@ -172,38 +144,25 @@ class CAM:
 
     @staticmethod
     def get_cam(model, cam_type, input_shape=(79,95,79),target_layer=None,CAM_kwargs={}):
-        #with HiddenPrints(), warnings.catch_warnings():
-        #    warnings.simplefilter("ignore")
+        """Generate CAM object"""
         extractor = cam_type(model, input_shape=(1,*input_shape), target_layer=target_layer, **CAM_kwargs)
         return extractor
     
     @staticmethod
-    def average_image(images):
+    def average_image(images:list):
+        """Calculate average over multiple images"""
         return torch.mean(torch.stack(images), axis=0)
     
     @staticmethod
-    def repeat_stack(image, repeat=1, grid_kwargs={}):
+    def repeat_stack(image:torch.tensor, repeat:int=1, grid_kwargs:dict={}):
+        """Repeat am image in a grid N number of times."""
         return torch.stack([to_grid(image, **grid_kwargs)]*repeat)
     
     @staticmethod
-    def preprocess(filename):
+    def preprocess(filename:str):
+        """Preprocess image to a valid format"""
         class_label = utils.split_custom_filename(filename,'/')[4]
         image = image2axial(nib.load(filename).get_fdata())
         image[image <= 0]=0
         image = preprocess.preprocess_image(image)
         return image
-
-
-def new_seed():
-    return torch.manual_seed(torch.seed())
-
-"""
-def get_agent(checkpoint_path):
-    model = None
-    with HiddenPrints() as f:#, warnings.catch_warnings():
-        trainer = Agent(checkpoint_path=checkpoint_path)
-        trainer.load_model()
-        model = trainer.model
-    return model
-    
-"""

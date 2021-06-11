@@ -1,3 +1,7 @@
+"""
+Folder containing all architectures for the agent.
+"""
+
 import importlib
 import types
 from .resnet import *

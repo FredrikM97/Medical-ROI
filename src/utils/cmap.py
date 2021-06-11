@@ -1,3 +1,7 @@
+"""
+Predefined cmap for matplotlib
+"""
+
 from matplotlib.colors import LinearSegmentedColormap
 
 __all__ = ['parula_map']

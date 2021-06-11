@@ -1,3 +1,7 @@
+"""
+Model class for the agent and training of different architectures.
+"""
+
 #from ..architectures import create_architecture #testModel
 from . import models
 
@@ -21,14 +25,7 @@ from src.utils.plot import confusion_matrix
 from src import BASEDIR
 from src.classifier.metric import MetricTracker
 
-"""def create_model(checkpoint_path=None,**cfg_model):
-    if checkpoint_path:
-        assert os.path.isfile(checkpoint_path), "The provided checkpoint_path is not valid! Does it exist?"
-        #print(f"Loading model from {checkpoint_path} (checkpoint)..")
-        return trainer.load_from_checkpoint(checkpoint_path=checkpoint_path)
-    else:
-        return models.create_model(**cfg_model['arch'])
-"""
+
 class Model(pl.LightningModule): 
     def __init__(self,class_weights:torch.Tensor=None,hp_metrics:list=None,loss={}, roi_hparams={"enable":False,'input_shape':None, 'bounding_boxes':[]},**hparams):
         super().__init__() 

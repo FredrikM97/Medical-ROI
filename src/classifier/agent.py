@@ -1,3 +1,7 @@
+"""
+Agent class to load configs, model, dataloader and train the model.
+"""
+
 import pytorch_lightning as pl
 import torch
 from src import BASEDIR

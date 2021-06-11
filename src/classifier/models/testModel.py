@@ -16,7 +16,7 @@ class testModel(nn.Module):
         self.drop=nn.Dropout(p=0.15)        
         
     def _conv_layer_set(self, in_c, out_c):
-        conv_layer = nn.Sequential(OrderedDict([
+        conv_layer = nn.Sequential(nn.ModuleDict([
             ('conv',nn.Conv3d(in_c, out_c, kernel_size=(3, 3, 3), padding=0)),
             ('leakyrelu',nn.LeakyReLU()),
             ('maxpool',nn.MaxPool3d((2, 2, 2))),

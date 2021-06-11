@@ -3,7 +3,7 @@ import os
 import pandas as pd
 from . import utils, load
 import numpy as np
-from .plots.display import display_dict_to_yaml
+from .print import display_dict_to_yaml
 import enum
 from dataclasses import dataclass
 import nibabel as nib

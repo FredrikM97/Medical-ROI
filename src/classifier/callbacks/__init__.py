@@ -1,3 +1,6 @@
+"""
+Module containing all callback functions.
+"""
 
 from .activation_map import ActivationMapCallback
 from .cam import CAMCallback

@@ -1,4 +1,6 @@
-# Based on https://www.kaggle.com/safavieh/image-augmentation-using-skimage
+"""
+Agmentation for the dataloader
+"""
 
 from skimage.transform import warp, AffineTransform, ProjectiveTransform#, rotate
 from skimage.exposure import equalize_adapthist, equalize_hist, rescale_intensity, adjust_gamma, adjust_log, adjust_sigmoid

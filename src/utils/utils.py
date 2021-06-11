@@ -1,3 +1,8 @@
+"""
+Utility function that are commonly used in different modules.
+"""
+
+
 import numpy as np
 import pandas as pd
 import os

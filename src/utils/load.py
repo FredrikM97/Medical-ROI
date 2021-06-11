@@ -1,3 +1,8 @@
+"""
+Predefined loading of different formats to python.
+"""
+
+
 import os
 import xml.etree.ElementTree as ET
 from typing import Dict

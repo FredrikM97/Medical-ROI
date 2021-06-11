@@ -1,9 +1,15 @@
+"""
+Transformation of ROI with the help of RoiAlign.
+"""
+
+
+
 import torch
 from typing import Tuple, List, Union
 from torchvision.ops._utils import convert_boxes_to_roi_format
 import numpy as np
 
-from src.dependencies.roi_align import RoIAlign
+from roi_align import RoIAlign
 from src.utils.preprocess import tensor2numpy
 
 class RoiTransform:

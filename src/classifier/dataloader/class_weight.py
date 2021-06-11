@@ -1,3 +1,7 @@
+"""
+Classes related to the evaluation of weights for data and distribution of the model.
+"""
+
 from src.utils import preprocess
 import torch
 import sklearn

@@ -1,3 +1,8 @@
+"""
+This module contain various types of functions/classes to access and generate segmentation and bboxes from WSOL.
+"""
+
+
 from skimage import measure
 from skimage import segmentation as seg
 from skimage.filters import sobel
@@ -11,8 +16,8 @@ from typing import Tuple, Union, List
 from torchvision.ops._utils import convert_boxes_to_roi_format
 import warnings
 
-from src.dependencies.roi_align import RoIAlign
-from src.dependencies.nms import batched_nms
+from roi_align import RoIAlign
+from nms import batched_nms
 from src.utils.preprocess import tensor2numpy, preprocess_image
 from src.utils import plot
 from src.utils.decorator import HiddenPrints
@@ -127,11 +132,13 @@ def center_coordinates(list_of_bbox):
     return x,y,z
 
 def max_occurance(occurances:list):
+    "Calculate the number of occurances of a type"
     u,c = np.unique(occurances, return_counts=True)
     max_val = u[c == c.max()]
     return max_val
 
 def nms_reduction(_bboxes, th=0.5):
+    "Reduce pandas dataframe data containing 'bbox', 'score' and 'observe_class'. "
     bbox_tensor = torch.Tensor(_bboxes['bbox'].to_list()).float()
     scores = torch.Tensor(_bboxes['score'].to_list()) 
     idxs  = torch.Tensor(_bboxes['observe_class'].to_list())

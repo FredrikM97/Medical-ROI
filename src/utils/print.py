@@ -1,3 +1,9 @@
+"""
+Common print functions used in different modules.
+"""
+
+
+
 import pandas as pd
 import sys
 from ruamel.yaml import YAML
@@ -7,15 +13,18 @@ from math import ceil,floor
 import seaborn as sns
 
 def display_all_pd_cols(input_df):
+    "Print all pandas columns"
     with pd.option_context('display.max_columns', None):
         display(input_df.head())
 
 def display_dict_to_yaml(input_dict:dict):
+    "Convert dict to yaml"
     yaml = YAML()
     yaml.indent(mapping=4, sequence=6, offset=3)
     yaml.dump(input_dict, sys.stdout)
     
 def display_advanced_plot(slices):
+    "Advanced plotting function"
     import matplotlib.gridspec as gridspec
     
     w = 20
@@ -47,6 +56,7 @@ def display_advanced_plot(slices):
     plt.show()  # finally, render the plot
 
 def plot_meta_settings(rows=1, cols=2, figsize=(16,16)):
+    "Plot settings of meta data"
     plt.rcParams.update({'font.size': 15})
     fig, axes = plt.subplots(nrows=rows, ncols=cols, figsize=figsize)
     fig.set_tight_layout(True)
