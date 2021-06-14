@@ -30,7 +30,7 @@ import itertools
 class Agent:
     
     def __init__(self, config_name=None, base_config='base',checkpoint_path:str=None, print_enabled=False):
-        self.checkpoint_path=checkpoint_path
+        #self.checkpoint_path=checkpoint_path
         self._config = None
         self.print_enabled = print_enabled
         self.base_config = base_config
@@ -40,7 +40,7 @@ class Agent:
         
         self.creation_date = int(datetime.now().strftime('%Y%m%d%H%M%S'))
 
-        self.load_config(config_name)
+        self.load_config(config_name, checkpoint_path=checkpoint_path)
         self._weights_obj = ClassWeights(self._config['classes'])
         
         # Dummy loading of everything to initiate all variables
@@ -48,13 +48,13 @@ class Agent:
         self.load_model() 
         self.load_trainer()
 
-    def load_config(self,config_name):
+    def load_config(self,config_name, checkpoint_path=None):
         """Init the config into object"""
         # Load all config settings
-        if config_name == None and self.checkpoint_path == None:
+        if config_name == None and checkpoint_path == None:
             raise ValueError("Both config_name and checkpoint_path cant be None!")
         
-        elif config_name == None and self.checkpoint_path != None:
+        elif config_name == None and checkpoint_path != None:
             model_config = {}
         else:  
             model_config = load.load_config(config_name, dirpath=BASEDIR + "/conf/")
@@ -65,7 +65,7 @@ class Agent:
         config.update({'classes':base_config['classes']})
          
         # Overwrite if no checkpoint_path is selected outside of the config
-        self.checkpoint_path = self.checkpoint_path if self.checkpoint_path else config["model"]['checkpoint_path']
+        config['checkpoint_path'] = checkpoint_path if checkpoint_path else config['checkpoint_path']
         
         # Fix ROI bounding boxes and if dictionary then label them
         if config['model']['roi_hparams']['enable']:
@@ -83,21 +83,18 @@ class Agent:
         cfg_model = self._config['model']
 
         # If checkpoint is enabled or if create a new model
-        if self.checkpoint_path:
-
-            if self.print_enabled: print(f"Loading model from {self.checkpoint_path} (checkpoint)..")
-            model = Model.load_from_checkpoint(checkpoint_path=self.checkpoint_path)
+        if self._config['checkpoint_path']:
+            model = Model.load_from_checkpoint(checkpoint_path=self._config['checkpoint_path'])
         else:
             # Check if dataset should be weighted
             if cfg_model['loss']['args']['weight']:
                 self._weights_obj(self.dataloader.train_dataloader().dataset.labels)
             class_weights = self._weights_obj.weights
-
+            
             model = Model(**cfg_model, class_weights=class_weights)
 
             # Set the init distribution for the weights
             if cfg_model['weight_distribution']:
-                #InitWeightDistribution(model)(cfg_model['weight_distribution'])
                 InitWeightDistribution(model,cfg_model['weight_distribution'])
                 
             if self.print_enabled: print("Architecture [{0}] was created".format(type(model).__name__))
@@ -129,8 +126,7 @@ class Agent:
 
         # Setup callbacks
         callbacks = [
-            lc_callbacks.LitProgressBar(),
-            #MetricCallback(),
+            lc_callbacks.LitProgressBar()
         ]
         callbacks.extend([getattr(pl_callbacks, key)(**values['args']) for key,values in cfg_trainer['callbacks'].items() if values['enable']])
 
@@ -142,7 +138,6 @@ class Agent:
             **cfg_trainer["args"]
         )
         self.trainer = trainer
-        #return trainer
     
     
     def run(self):
@@ -156,10 +151,10 @@ class Agent:
     
     def print_info(self):
          print(
-            f"Loading model from {self.checkpoint_path} (checkpoint)..\n\n"
-            #f"Dataloader fold: {self.dataloader.kfold_index}\n"
-            f"{self.model}\n\n{self.dataloader}"
-             )
+                f"Checkpoint: {self._config['checkpoint_path']}\n"
+                f"{self.model}\n\n{self.dataloader}"
+                f"{self.model.roi_model if self.model.roi_model != None else ''}" 
+            )
    
 
         

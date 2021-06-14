@@ -28,12 +28,15 @@ class RoiTransform:
         
         self.batch_size = batch_size
         self.roi = RoIAlign(output_shape,spatial_scale=1.0,sampling_ratio=-1)
-        self.num_bbox = len(boundary_boxes)
+        
 
         if isinstance(boundary_boxes, list):
             self.boundary_boxes = convert_boxes_to_roi_format([torch.stack([torch.Tensor(x) for x in boundary_boxes])])
+            self.num_bbox = len(boundary_boxes)
         elif isinstance(boundary_boxes, dict):
             self.boundary_boxes = {key:convert_boxes_to_roi_format([torch.stack([torch.Tensor(x) for x in value])]) for key,value in boundary_boxes.items()}
+            
+            self.num_bbox = sum(map(len, self.boundary_boxes.values()))
         else:
             raise ValueError("boundary_boxes needs to be of type list or dict")
             
@@ -50,7 +53,7 @@ class RoiTransform:
             image_rois = self.roi.forward(x,torch.cat(x.shape[0]*[self.boundary_boxes.to(x.device)]))#.detach()
             y = self.num_bbox*y
         elif isinstance(self.boundary_boxes, dict):
-            image_rois = self.roi.forward(x,torch.cat([self.boundary_boxes[one_target].to(x.device) for one_target in tensor2numpy(y)]))#.detach() #x.shape[0]*[self.boundary_boxes[y]
+            image_rois = self.roi.forward(x,torch.cat([self.boundary_boxes[one_target].to(x.device) for one_target in tensor2numpy(y)]))
 
             y = torch.from_numpy(np.concatenate([len(self.boundary_boxes[one_target])*[one_target] for one_target in tensor2numpy(y)])).to(x.device)
 
@@ -58,3 +61,10 @@ class RoiTransform:
             raise ValueError("boundary_boxes needs to be of type list or dict")
 
         return image_rois, y
+    
+    def __str__(self):
+        return (
+            f"\n\n***Defined ROI-Transformer:***\n"
+            f"Number of BBoxes: {self.num_bbox}\n"
+            f"BBox Count: {len(self.boundary_boxes) if isinstance(self.boundary_boxes, list) else ', '.join([f'{x}:{y}' for x,y in zip(self.boundary_boxes.keys(),map(len, self.boundary_boxes.values()))])}"
+        )

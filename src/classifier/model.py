@@ -33,8 +33,10 @@ class Model(pl.LightningModule):
         self.model = models.create_model(**self.hparams['arch'])
         self.roi_enabled = roi_hparams['enable']
         self.hp_metrics = hp_metrics
-
+        self.roi_model = None
         self.criteria = nn.__dict__[loss['type']](weight=class_weights)
+        
+        
         if self.roi_enabled:
             # Dont import unless we want to use RoiTransform.. (Compability without cuda 11.1)
             from src.utils.transforms import RoiTransform
@@ -53,9 +55,7 @@ class Model(pl.LightningModule):
 
             self.valid_metrics = model_metrics.clone()
             self.valid_dummy_metric = pl_metrics.AUROC(num_classes=3, average=None,compute_on_step=False)
-        #MetricTracker()
-        #print(f"***Defined hyperparameters:***\n{self.hparams}")
-        
+       
     def on_train_start(self):
         if self.logger:
             self.logger.log_hyperparams(self.hparams, {metric:0 for metric in self.hp_metrics})

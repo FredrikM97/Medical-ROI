@@ -52,6 +52,7 @@
         "classifier":{
             "name": "BaseModel",
             "seed":0,
+            "checkpoint_path":null,
             "dataloader": {
                 "name": "AdniDataloader",
                 "args":{
@@ -73,11 +74,10 @@
             },
             "model":{
                 "weight_distribution":"normal",
-                "checkpoint_path":null,
                 "loss": {
                     "type":"CrossEntropyLoss",
                     "args":{
-                        "weight":false
+                        "weight":true
                     }
 
                 },

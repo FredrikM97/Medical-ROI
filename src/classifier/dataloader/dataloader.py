@@ -24,7 +24,6 @@ class AdniDataloader(pl.LightningDataModule):
         self.split_conf = hparams.get('split',{})
         self.img_shape = img_shape
         self.data_dir = data_dir
-        #self.delimiter = delimiter
         self.classes = classes
         self.augmentation = hparams.get("augmentation", None)
         self.kfold = None
@@ -34,33 +33,22 @@ class AdniDataloader(pl.LightningDataModule):
             'num_workers': num_workers
         }
         use_augmentation = [
-            #tf.RandomApply([
-            #    tf.Lambda(lambda images: augment(images))
-            #],p=0.5),
-            tf.Lambda(lambda images: torch.from_numpy(images)), #.unsqueeze(1)
-            #tf.RandomChoice([
-                #tf.RandomRotation(180),
+            tf.Lambda(lambda images: torch.from_numpy(images)),
             tf.RandomAffine(
                 degrees=(0, 180), 
                 translate=(0.001, 0.001),
-                #scale=[randRange(0.75, 1.3)]*2, 
-                #shear=None#randRange(0, 0.5),
+           
             )
-            #tf.Lambda(lambda images: images)
-            #tf.RandomPerspective(),
-
- #           ])#,p=0.6
+        
         ] if self.augmentation['enable'] else []
         
         self.train_transform = torchvision.transforms.Compose([
-            #torchvision.transforms.Resize(self.img_shape)
             *use_augmentation,
             tf.Lambda(lambda images: preprocess.preprocess_image(images,input_shape=self.img_shape)),
             tf.Lambda(lambda images: torch.from_numpy(images))
         ])
         
         self.test_transform = torchvision.transforms.Compose([
-            #torchvision.transforms.Resize(self.img_shape)
             torchvision.transforms.Lambda(lambda images: torch.from_numpy(preprocess.preprocess_image(images,input_shape=self.img_shape)))
             
         ])
@@ -92,18 +80,6 @@ class AdniDataloader(pl.LightningDataModule):
         self.adni_train, self.adni_val = [ #,delimiter=self.delimiter
             AdniDataset(data, transform=transform, classes=self.classes) for transform, data in zip([self.train_transform,self.test_transform], dataset_splitted)
             ]
-        #else:
-        #    self.adni_train, self.adni_val = [AdniDataset(data, transform=self.test_transform,delimiter=self.delimiter, classes=self.classes) for data in dataset_splitted]
-            
-        # Info of the dataset
-        """print(
-            f"***Defined dataloader:***\n"
-            f"Data directory: {self.data_dir}\n"
-            f"Dataset sizes - Training: {len(self.adni_train)} Validation: {len(self.adni_val)}\n"
-            f"Seed: {self.seed}\n"
-            f"Augmentation: {'Enabled' if self.augmentation['enable'] else 'Disabled'}\n"
-            f"KFold: {'Enabled - Fold: ' + str(self.kfold_index) + '/' + str(self.split_conf['folds']) if self.split_conf['kfold_enable'] else 'Disabled'}\n"
-        )"""
         
     def __str__(self):
         return (
