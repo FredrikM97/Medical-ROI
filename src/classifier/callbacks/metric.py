@@ -9,18 +9,69 @@ import torch
 __all__ = ['MetricCallback']
 
 class MetricCallback(pl.callbacks.Callback):
+    """ """
     def __init__(self, num_classes=3):
+        """
+
+        Parameters
+        ----------
+        num_classes :
+            (Default value = 3)
+
+        Returns
+        -------
+
+        
+        """
         super().__init__()
         self.num_classes = 3
         self.logger_struct = lambda metric_prefix, prefix, metric: {f"{metric_prefix}/{prefix}": metric}
         self.metricsTracker = MetricTracker().cuda()  
 
     def on_train_start(self, trainer, *args, **kwargs):
+        """
+
+        Parameters
+        ----------
+        trainer :
+            
+        *args :
+            
+        **kwargs :
+            
+
+        Returns
+        -------
+
+        
+        """
         if not trainer.logger:
             raise Exception('Cannot use callback with Trainer that has no logger.')
         
         
     def on_validation_batch_end(self,trainer, pl_module, outputs, batch, batch_idx, dataloader_idx):
+        """
+
+        Parameters
+        ----------
+        trainer :
+            
+        pl_module :
+            
+        outputs :
+            
+        batch :
+            
+        batch_idx :
+            
+        dataloader_idx :
+            
+
+        Returns
+        -------
+
+        
+        """
         self.metricsTracker(
             outputs['predicted/val'],
             outputs['target/val'],
@@ -29,9 +80,39 @@ class MetricCallback(pl.callbacks.Callback):
         )
         
     def on_train_epoch_end(self,trainer, pl_module, outputs):
+        """
+
+        Parameters
+        ----------
+        trainer :
+            
+        pl_module :
+            
+        outputs :
+            
+
+        Returns
+        -------
+
+        
+        """
         trainer.logger.experiment.add_scalar(*self.logger_struct('loss', 'train', torch.stack([x[0]['minimize'] for x in outputs[0]]).mean()), trainer.current_epoch)
 
     def on_validation_epoch_end(self,trainer, pl_module):
+        """
+
+        Parameters
+        ----------
+        trainer :
+            
+        pl_module :
+            
+
+        Returns
+        -------
+
+        
+        """
         pred, target, prob, loss = self.metricsTracker.compute()
         
         # Log data from validation
@@ -56,6 +137,22 @@ class MetricCallback(pl.callbacks.Callback):
         self.metricsTracker.reset()
     
     def cm_plot(self, trainer, cm, prefix=''):
+        """
+
+        Parameters
+        ----------
+        trainer :
+            
+        cm :
+            
+        prefix :
+            (Default value = '')
+
+        Returns
+        -------
+
+        
+        """
         fig = plt.figure(figsize=(20,20))
         ax = sns.heatmap(preprocess.tensor2numpy(cm), annot=True, annot_kws={"size": 12})
         ax.set_xlabel("Predicted label")
@@ -63,6 +160,22 @@ class MetricCallback(pl.callbacks.Callback):
         trainer.logger.experiment.add_figure(f"confmat/{prefix}", fig,trainer.current_epoch)
         
     def roc_plot(self, trainer, roc_classes, prefix=''):
+        """
+
+        Parameters
+        ----------
+        trainer :
+            
+        roc_classes :
+            
+        prefix :
+            (Default value = '')
+
+        Returns
+        -------
+
+        
+        """
         (auc, fpr, tpr), roc_fig = ROC(roc_classes)
         
         trainer.logger.log_metrics(
@@ -76,6 +189,18 @@ class MetricCallback(pl.callbacks.Callback):
         trainer.logger.experiment.add_figure(f"ROC/{prefix}", roc_fig, trainer.current_epoch)
 
     def custom_histogram_adder(self, trainer):
+        """
+
+        Parameters
+        ----------
+        trainer :
+            
+
+        Returns
+        -------
+
+        
+        """
         # iterating through all parameters
         for name,params in trainer.model.named_parameters():
             trainer.logger.experiment.add_histogram(name,params,trainer.current_epoch)

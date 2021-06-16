@@ -15,15 +15,23 @@ import itertools
 
 def load_json(dirpath:str=None) -> dict:
     """Open a json file and return the key name and config data if the file exists
-    
-    Args:
-        * dirpath: path to json file.
-        
-    Return:
+
+    Parameters
+    ----------
+    dirpath : str
+        path to json file (Default value = None)
+
+    Returns
+    -------
+    dict
         * Dictionary with {name:config}
-        
-    Exception:
-        * ValueError: If file could not be loaded
+
+    Raises
+    ------
+    ValueError
+        If file could not be loaded
+
+    
     """
     with open(dirpath) as json_file:
         name = ''
@@ -33,7 +41,20 @@ def load_json(dirpath:str=None) -> dict:
             raise ValueError(f" Error when loading file: {dirpath}") from e
 
 def load_config(filename:str,dirpath:str=None) -> Dict:
-    """Load file with same name as the input filename and located in dirpath"""
+    """Load file with same name as the input filename and located in dirpath
+
+    Parameters
+    ----------
+    filename : str
+        
+    dirpath : str
+        (Default value = None)
+
+    Returns
+    -------
+
+    
+    """
 
     dirpath = os.path.abspath(dirpath if dirpath else '.')
     files = itertools.chain.from_iterable(itertools.starmap(lambda root,dirs, files: [*map(lambda f: os.path.join(root, f), filter(lambda x: '.json' in x and 'checkpoint' not in x,files))],os.walk('../conf')))
@@ -48,7 +69,18 @@ def load_config(filename:str,dirpath:str=None) -> Dict:
         
 
 def load_xml(path:str):
-    """Load XML from dictory and return a generator"""
+    """Load XML from dictory and return a generator
+
+    Parameters
+    ----------
+    path : str
+        
+
+    Returns
+    -------
+
+    
+    """
     assert path, "No path defined"
     for filename in os.listdir(path):
         if not filename.endswith('.xml'): continue
@@ -57,13 +89,18 @@ def load_xml(path:str):
         
 def load_nifti(srcdir:str) -> list:
     """Load nifti image from srcdir where all files ending with .nii is selected.
-    
-    Args:
-        * srcdir: path to .nii files
-    
-    Return:
+
+    Parameters
+    ----------
+    srcdir : str
+        path to
+
+    Returns
+    -------
+    list
         * List of dictionaries containing columns, filename and path to file
-        
+
+    
     """
     columns = ['filename','dirs','path']
     return [
@@ -75,7 +112,18 @@ def load_nifti(srcdir:str) -> list:
         ] 
 
 def load_files(srcdir:str):
-    """Load a file from srcdir if the file ends with .nii"""
+    """Load a file from srcdir if the file ends with .nii
+
+    Parameters
+    ----------
+    srcdir : str
+        
+
+    Returns
+    -------
+
+    
+    """
     tmp = np.array([
             path + '/' + filename
             for path, _, files in os.walk(srcdir) 
@@ -87,12 +135,18 @@ def load_files(srcdir:str):
 
 def load_nifti_axial(path:str) -> np.ndarray:
     """Load an nifti image from the axial view
-    
-    Args:
-        * path: path to the given file
-        
-    Return:
+
+    Parameters
+    ----------
+    path : str
+        path to the given file
+
+    Returns
+    -------
+    np.ndarray
         * Nifti image from axial view
+
+    
     """
     # Load nifti image and convert to axial view
     return image2axial(nib.load(path).get_fdata())

@@ -106,8 +106,27 @@
 
 
 <span class="k">class</span> <span class="nc">VGG</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">init_weights</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        features :</span>
+<span class="sd">            </span>
+<span class="sd">        num_classes :</span>
+<span class="sd">            (Default value = 3)</span>
+<span class="sd">        init_weights :</span>
+<span class="sd">            (Default value = True)</span>
+<span class="sd">        **kwargs :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">VGG</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">features</span> <span class="o">=</span> <span class="n">features</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">avgpool</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">AdaptiveAvgPool3d</span><span class="p">((</span><span class="mi">7</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">7</span><span class="p">))</span>
@@ -135,6 +154,18 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_initialize_weights</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="c1">#print(&quot;VGG&quot;,x.shape)</span>
         <span class="c1">#x = self.avgpool(x)</span>
@@ -144,6 +175,7 @@
         <span class="k">return</span> <span class="n">x</span>
 
     <span class="k">def</span> <span class="nf">_initialize_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">modules</span><span class="p">():</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv3d</span><span class="p">):</span>
                 <span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">kaiming_normal_</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">weight</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;fan_out&#39;</span><span class="p">,</span> <span class="n">nonlinearity</span><span class="o">=</span><span class="s1">&#39;relu&#39;</span><span class="p">)</span>
@@ -158,6 +190,20 @@
 
 
 <span class="k">def</span> <span class="nf">make_layers</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">batch_norm</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cfg :</span>
+<span class="sd">        </span>
+<span class="sd">    batch_norm :</span>
+<span class="sd">        (Default value = False)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">layers</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">in_channels</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">cfg</span><span class="p">:</span>
@@ -182,6 +228,28 @@
 
 
 <span class="k">def</span> <span class="nf">_vgg</span><span class="p">(</span><span class="n">arch</span><span class="p">,</span> <span class="n">cfg</span><span class="p">,</span> <span class="n">batch_norm</span><span class="p">,</span> <span class="n">pretrained</span><span class="p">,</span> <span class="n">progress</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    arch :</span>
+<span class="sd">        </span>
+<span class="sd">    cfg :</span>
+<span class="sd">        </span>
+<span class="sd">    batch_norm :</span>
+<span class="sd">        </span>
+<span class="sd">    pretrained :</span>
+<span class="sd">        </span>
+<span class="sd">    progress :</span>
+<span class="sd">        </span>
+<span class="sd">    **kwargs :</span>
+<span class="sd">        </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">pretrained</span><span class="p">:</span>
         <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;init_weights&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">model</span> <span class="o">=</span> <span class="n">VGG</span><span class="p">(</span><span class="n">make_layers</span><span class="p">(</span><span class="n">cfgs</span><span class="p">[</span><span class="n">cfg</span><span class="p">],</span> <span class="n">batch_norm</span><span class="o">=</span><span class="n">batch_norm</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -193,9 +261,19 @@
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;VGG 11-layer model (configuration &quot;A&quot;) from</span>
 <span class="sd">    `&quot;Very Deep Convolutional Networks For Large-Scale Image Recognition&quot; &lt;https://arxiv.org/pdf/1409.1556.pdf&gt;`_</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        pretrained (bool): If True, returns a model pre-trained on ImageNet</span>
-<span class="sd">        progress (bool): If True, displays a progress bar of the download to stderr</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pretrained : bool</span>
+<span class="sd">        If True, returns a model pre-trained on ImageNet (Default value = False)</span>
+<span class="sd">    progress : bool</span>
+<span class="sd">        If True, displays a progress bar of the download to stderr (Default value = True)</span>
+<span class="sd">    **kwargs :</span>
+<span class="sd">        </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">_vgg</span><span class="p">(</span><span class="s1">&#39;vgg11&#39;</span><span class="p">,</span> <span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="n">pretrained</span><span class="p">,</span> <span class="n">progress</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
@@ -205,9 +283,19 @@
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;VGG 11-layer model (configuration &quot;A&quot;) with batch normalization</span>
 <span class="sd">    `&quot;Very Deep Convolutional Networks For Large-Scale Image Recognition&quot; &lt;https://arxiv.org/pdf/1409.1556.pdf&gt;`_</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        pretrained (bool): If True, returns a model pre-trained on ImageNet</span>
-<span class="sd">        progress (bool): If True, displays a progress bar of the download to stderr</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pretrained : bool</span>
+<span class="sd">        If True, returns a model pre-trained on ImageNet (Default value = False)</span>
+<span class="sd">    progress : bool</span>
+<span class="sd">        If True, displays a progress bar of the download to stderr (Default value = True)</span>
+<span class="sd">    **kwargs :</span>
+<span class="sd">        </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">_vgg</span><span class="p">(</span><span class="s1">&#39;vgg11_bn&#39;</span><span class="p">,</span> <span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="n">pretrained</span><span class="p">,</span> <span class="n">progress</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
@@ -217,9 +305,19 @@
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;VGG 13-layer model (configuration &quot;B&quot;)</span>
 <span class="sd">    `&quot;Very Deep Convolutional Networks For Large-Scale Image Recognition&quot; &lt;https://arxiv.org/pdf/1409.1556.pdf&gt;`_</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        pretrained (bool): If True, returns a model pre-trained on ImageNet</span>
-<span class="sd">        progress (bool): If True, displays a progress bar of the download to stderr</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pretrained : bool</span>
+<span class="sd">        If True, returns a model pre-trained on ImageNet (Default value = False)</span>
+<span class="sd">    progress : bool</span>
+<span class="sd">        If True, displays a progress bar of the download to stderr (Default value = True)</span>
+<span class="sd">    **kwargs :</span>
+<span class="sd">        </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">_vgg</span><span class="p">(</span><span class="s1">&#39;vgg13&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="n">pretrained</span><span class="p">,</span> <span class="n">progress</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
@@ -229,9 +327,19 @@
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;VGG 13-layer model (configuration &quot;B&quot;) with batch normalization</span>
 <span class="sd">    `&quot;Very Deep Convolutional Networks For Large-Scale Image Recognition&quot; &lt;https://arxiv.org/pdf/1409.1556.pdf&gt;`_</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        pretrained (bool): If True, returns a model pre-trained on ImageNet</span>
-<span class="sd">        progress (bool): If True, displays a progress bar of the download to stderr</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pretrained : bool</span>
+<span class="sd">        If True, returns a model pre-trained on ImageNet (Default value = False)</span>
+<span class="sd">    progress : bool</span>
+<span class="sd">        If True, displays a progress bar of the download to stderr (Default value = True)</span>
+<span class="sd">    **kwargs :</span>
+<span class="sd">        </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">_vgg</span><span class="p">(</span><span class="s1">&#39;vgg13_bn&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="n">pretrained</span><span class="p">,</span> <span class="n">progress</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
@@ -241,9 +349,19 @@
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;VGG 16-layer model (configuration &quot;D&quot;)</span>
 <span class="sd">    `&quot;Very Deep Convolutional Networks For Large-Scale Image Recognition&quot; &lt;https://arxiv.org/pdf/1409.1556.pdf&gt;`_</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        pretrained (bool): If True, returns a model pre-trained on ImageNet</span>
-<span class="sd">        progress (bool): If True, displays a progress bar of the download to stderr</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pretrained : bool</span>
+<span class="sd">        If True, returns a model pre-trained on ImageNet (Default value = False)</span>
+<span class="sd">    progress : bool</span>
+<span class="sd">        If True, displays a progress bar of the download to stderr (Default value = True)</span>
+<span class="sd">    **kwargs :</span>
+<span class="sd">        </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">_vgg</span><span class="p">(</span><span class="s1">&#39;vgg16&#39;</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="n">pretrained</span><span class="p">,</span> <span class="n">progress</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
@@ -253,9 +371,19 @@
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;VGG 16-layer model (configuration &quot;D&quot;) with batch normalization</span>
 <span class="sd">    `&quot;Very Deep Convolutional Networks For Large-Scale Image Recognition&quot; &lt;https://arxiv.org/pdf/1409.1556.pdf&gt;`_</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        pretrained (bool): If True, returns a model pre-trained on ImageNet</span>
-<span class="sd">        progress (bool): If True, displays a progress bar of the download to stderr</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pretrained : bool</span>
+<span class="sd">        If True, returns a model pre-trained on ImageNet (Default value = False)</span>
+<span class="sd">    progress : bool</span>
+<span class="sd">        If True, displays a progress bar of the download to stderr (Default value = True)</span>
+<span class="sd">    **kwargs :</span>
+<span class="sd">        </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">_vgg</span><span class="p">(</span><span class="s1">&#39;vgg16_bn&#39;</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="n">pretrained</span><span class="p">,</span> <span class="n">progress</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
@@ -265,9 +393,19 @@
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;VGG 19-layer model (configuration &quot;E&quot;)</span>
 <span class="sd">    `&quot;Very Deep Convolutional Networks For Large-Scale Image Recognition&quot; &lt;https://arxiv.org/pdf/1409.1556.pdf&gt;`_</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        pretrained (bool): If True, returns a model pre-trained on ImageNet</span>
-<span class="sd">        progress (bool): If True, displays a progress bar of the download to stderr</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pretrained : bool</span>
+<span class="sd">        If True, returns a model pre-trained on ImageNet (Default value = False)</span>
+<span class="sd">    progress : bool</span>
+<span class="sd">        If True, displays a progress bar of the download to stderr (Default value = True)</span>
+<span class="sd">    **kwargs :</span>
+<span class="sd">        </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">_vgg</span><span class="p">(</span><span class="s1">&#39;vgg19&#39;</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="n">pretrained</span><span class="p">,</span> <span class="n">progress</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
@@ -277,9 +415,19 @@
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;VGG 19-layer model (configuration &#39;E&#39;) with batch normalization</span>
 <span class="sd">    `&quot;Very Deep Convolutional Networks For Large-Scale Image Recognition&quot; &lt;https://arxiv.org/pdf/1409.1556.pdf&gt;`_</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        pretrained (bool): If True, returns a model pre-trained on ImageNet</span>
-<span class="sd">        progress (bool): If True, displays a progress bar of the download to stderr</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pretrained : bool</span>
+<span class="sd">        If True, returns a model pre-trained on ImageNet (Default value = False)</span>
+<span class="sd">    progress : bool</span>
+<span class="sd">        If True, displays a progress bar of the download to stderr (Default value = True)</span>
+<span class="sd">    **kwargs :</span>
+<span class="sd">        </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">_vgg</span><span class="p">(</span><span class="s1">&#39;vgg19_bn&#39;</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="n">pretrained</span><span class="p">,</span> <span class="n">progress</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
@@ -299,8 +447,27 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">VGG</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">init_weights</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        features :</span>
+<span class="sd">            </span>
+<span class="sd">        num_classes :</span>
+<span class="sd">            (Default value = 3)</span>
+<span class="sd">        init_weights :</span>
+<span class="sd">            (Default value = True)</span>
+<span class="sd">        **kwargs :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">VGG</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">features</span> <span class="o">=</span> <span class="n">features</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">avgpool</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">AdaptiveAvgPool3d</span><span class="p">((</span><span class="mi">7</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">7</span><span class="p">))</span>
@@ -328,6 +495,18 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_initialize_weights</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="c1">#print(&quot;VGG&quot;,x.shape)</span>
         <span class="c1">#x = self.avgpool(x)</span>
@@ -337,6 +516,7 @@
         <span class="k">return</span> <span class="n">x</span>
 
     <span class="k">def</span> <span class="nf">_initialize_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">modules</span><span class="p">():</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv3d</span><span class="p">):</span>
                 <span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">kaiming_normal_</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">weight</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;fan_out&#39;</span><span class="p">,</span> <span class="n">nonlinearity</span><span class="o">=</span><span class="s1">&#39;relu&#39;</span><span class="p">)</span>
@@ -352,35 +532,7 @@
 
         </details>
 
-            <div class="docstring"><p>Base class for all neural network modules.</p>
-
-<p>Your models should also subclass this class.</p>
-
-<p>Modules can also contain other Modules, allowing to nest them in
-a tree structure. You can assign the submodules as regular attributes::</p>
-
-<pre><code>import torch.nn as nn
-import torch.nn.functional as F
-
-class Model(nn.Module):
-    def __init__(self):
-        super(Model, self).__init__()
-        self.conv1 = nn.Conv2d(1, 20, 5)
-        self.conv2 = nn.Conv2d(20, 20, 5)
-
-    def forward(self, x):
-        x = F.relu(self.conv1(x))
-        return F.relu(self.conv2(x))
-</code></pre>
-
-<p>Submodules assigned in this way will be registered, and will have their
-parameters converted too when you call :meth:<code><a href="#VGG.to">to</a></code>, etc.</p>
-
-<p>:ivar training: Boolean represents whether this module is in training or
-                evaluation mode.
-:vartype training: bool</p>
-</div>
-
+    
 
                             <div id="VGG.__init__" class="classattr">
                                         <div class="attr function"><a class="headerlink" href="#VGG.__init__">#&nbsp;&nbsp</a>
@@ -392,6 +544,24 @@ parameters converted too when you call :meth:<code><a href="#VGG.to">to</a></cod
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">init_weights</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        features :</span>
+<span class="sd">            </span>
+<span class="sd">        num_classes :</span>
+<span class="sd">            (Default value = 3)</span>
+<span class="sd">        init_weights :</span>
+<span class="sd">            (Default value = True)</span>
+<span class="sd">        **kwargs :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">VGG</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">features</span> <span class="o">=</span> <span class="n">features</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">avgpool</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">AdaptiveAvgPool3d</span><span class="p">((</span><span class="mi">7</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">7</span><span class="p">))</span>
@@ -421,7 +591,17 @@ parameters converted too when you call :meth:<code><a href="#VGG.to">to</a></cod
 
         </details>
 
-            <div class="docstring"><p>Initializes internal Module state, shared by both nn.Module and ScriptModule.</p>
+            <div class="docstring"><h2 id="parameters">Parameters</h2>
+
+<p>features :</p>
+
+<p>num_classes :
+    (Default value = 3)
+init_weights :
+    (Default value = True)
+**kwargs :</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -456,6 +636,18 @@ parameters converted too when you call :meth:<code><a href="#VGG.to">to</a></cod
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="c1">#print(&quot;VGG&quot;,x.shape)</span>
         <span class="c1">#x = self.avgpool(x)</span>
@@ -467,15 +659,11 @@ parameters converted too when you call :meth:<code><a href="#VGG.to">to</a></cod
 
         </details>
 
-            <div class="docstring"><p>Defines the computation performed at every call.</p>
+            <div class="docstring"><h2 id="parameters">Parameters</h2>
 
-<p>Should be overridden by all subclasses.</p>
+<p>x :</p>
 
-<p>.. note::
-    Although the recipe for forward pass needs to be defined within
-    this function, one should call the :class:<code>Module</code> instance afterwards
-    instead of this since the former takes care of running the
-    registered hooks while the latter silently ignores them.</p>
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -536,6 +724,20 @@ parameters converted too when you call :meth:<code><a href="#VGG.to">to</a></cod
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">make_layers</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">batch_norm</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cfg :</span>
+<span class="sd">        </span>
+<span class="sd">    batch_norm :</span>
+<span class="sd">        (Default value = False)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">layers</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">in_channels</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">cfg</span><span class="p">:</span>
@@ -553,7 +755,16 @@ parameters converted too when you call :meth:<code><a href="#VGG.to">to</a></cod
 
         </details>
 
-    
+            <div class="docstring"><h2 id="parameters">Parameters</h2>
+
+<p>cfg :</p>
+
+<p>batch_norm :
+    (Default value = False)</p>
+
+<h2 id="returns">Returns</h2>
+</div>
+
 
                 </section>
                 <section id="vgg11">
@@ -570,9 +781,19 @@ parameters converted too when you call :meth:<code><a href="#VGG.to">to</a></cod
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;VGG 11-layer model (configuration &quot;A&quot;) from</span>
 <span class="sd">    `&quot;Very Deep Convolutional Networks For Large-Scale Image Recognition&quot; &lt;https://arxiv.org/pdf/1409.1556.pdf&gt;`_</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        pretrained (bool): If True, returns a model pre-trained on ImageNet</span>
-<span class="sd">        progress (bool): If True, displays a progress bar of the download to stderr</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pretrained : bool</span>
+<span class="sd">        If True, returns a model pre-trained on ImageNet (Default value = False)</span>
+<span class="sd">    progress : bool</span>
+<span class="sd">        If True, displays a progress bar of the download to stderr (Default value = True)</span>
+<span class="sd">    **kwargs :</span>
+<span class="sd">        </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">_vgg</span><span class="p">(</span><span class="s1">&#39;vgg11&#39;</span><span class="p">,</span> <span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="n">pretrained</span><span class="p">,</span> <span class="n">progress</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
@@ -582,9 +803,15 @@ parameters converted too when you call :meth:<code><a href="#VGG.to">to</a></cod
             <div class="docstring"><p>VGG 11-layer model (configuration "A") from
 <code>"Very Deep Convolutional Networks For Large-Scale Image Recognition" &lt;https://arxiv.org/pdf/1409.1556.pdf&gt;</code>_</p>
 
-<p>Args:
-    pretrained (bool): If True, returns a model pre-trained on ImageNet
-    progress (bool): If True, displays a progress bar of the download to stderr</p>
+<h2 id="parameters">Parameters</h2>
+
+<p>pretrained : bool
+    If True, returns a model pre-trained on ImageNet (Default value = False)
+progress : bool
+    If True, displays a progress bar of the download to stderr (Default value = True)
+**kwargs :</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -603,9 +830,19 @@ parameters converted too when you call :meth:<code><a href="#VGG.to">to</a></cod
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;VGG 11-layer model (configuration &quot;A&quot;) with batch normalization</span>
 <span class="sd">    `&quot;Very Deep Convolutional Networks For Large-Scale Image Recognition&quot; &lt;https://arxiv.org/pdf/1409.1556.pdf&gt;`_</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        pretrained (bool): If True, returns a model pre-trained on ImageNet</span>
-<span class="sd">        progress (bool): If True, displays a progress bar of the download to stderr</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pretrained : bool</span>
+<span class="sd">        If True, returns a model pre-trained on ImageNet (Default value = False)</span>
+<span class="sd">    progress : bool</span>
+<span class="sd">        If True, displays a progress bar of the download to stderr (Default value = True)</span>
+<span class="sd">    **kwargs :</span>
+<span class="sd">        </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">_vgg</span><span class="p">(</span><span class="s1">&#39;vgg11_bn&#39;</span><span class="p">,</span> <span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="n">pretrained</span><span class="p">,</span> <span class="n">progress</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
@@ -615,9 +852,15 @@ parameters converted too when you call :meth:<code><a href="#VGG.to">to</a></cod
             <div class="docstring"><p>VGG 11-layer model (configuration "A") with batch normalization
 <code>"Very Deep Convolutional Networks For Large-Scale Image Recognition" &lt;https://arxiv.org/pdf/1409.1556.pdf&gt;</code>_</p>
 
-<p>Args:
-    pretrained (bool): If True, returns a model pre-trained on ImageNet
-    progress (bool): If True, displays a progress bar of the download to stderr</p>
+<h2 id="parameters">Parameters</h2>
+
+<p>pretrained : bool
+    If True, returns a model pre-trained on ImageNet (Default value = False)
+progress : bool
+    If True, displays a progress bar of the download to stderr (Default value = True)
+**kwargs :</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -636,9 +879,19 @@ parameters converted too when you call :meth:<code><a href="#VGG.to">to</a></cod
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;VGG 13-layer model (configuration &quot;B&quot;)</span>
 <span class="sd">    `&quot;Very Deep Convolutional Networks For Large-Scale Image Recognition&quot; &lt;https://arxiv.org/pdf/1409.1556.pdf&gt;`_</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        pretrained (bool): If True, returns a model pre-trained on ImageNet</span>
-<span class="sd">        progress (bool): If True, displays a progress bar of the download to stderr</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pretrained : bool</span>
+<span class="sd">        If True, returns a model pre-trained on ImageNet (Default value = False)</span>
+<span class="sd">    progress : bool</span>
+<span class="sd">        If True, displays a progress bar of the download to stderr (Default value = True)</span>
+<span class="sd">    **kwargs :</span>
+<span class="sd">        </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">_vgg</span><span class="p">(</span><span class="s1">&#39;vgg13&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="n">pretrained</span><span class="p">,</span> <span class="n">progress</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
@@ -648,9 +901,15 @@ parameters converted too when you call :meth:<code><a href="#VGG.to">to</a></cod
             <div class="docstring"><p>VGG 13-layer model (configuration "B")
 <code>"Very Deep Convolutional Networks For Large-Scale Image Recognition" &lt;https://arxiv.org/pdf/1409.1556.pdf&gt;</code>_</p>
 
-<p>Args:
-    pretrained (bool): If True, returns a model pre-trained on ImageNet
-    progress (bool): If True, displays a progress bar of the download to stderr</p>
+<h2 id="parameters">Parameters</h2>
+
+<p>pretrained : bool
+    If True, returns a model pre-trained on ImageNet (Default value = False)
+progress : bool
+    If True, displays a progress bar of the download to stderr (Default value = True)
+**kwargs :</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -669,9 +928,19 @@ parameters converted too when you call :meth:<code><a href="#VGG.to">to</a></cod
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;VGG 13-layer model (configuration &quot;B&quot;) with batch normalization</span>
 <span class="sd">    `&quot;Very Deep Convolutional Networks For Large-Scale Image Recognition&quot; &lt;https://arxiv.org/pdf/1409.1556.pdf&gt;`_</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        pretrained (bool): If True, returns a model pre-trained on ImageNet</span>
-<span class="sd">        progress (bool): If True, displays a progress bar of the download to stderr</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pretrained : bool</span>
+<span class="sd">        If True, returns a model pre-trained on ImageNet (Default value = False)</span>
+<span class="sd">    progress : bool</span>
+<span class="sd">        If True, displays a progress bar of the download to stderr (Default value = True)</span>
+<span class="sd">    **kwargs :</span>
+<span class="sd">        </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">_vgg</span><span class="p">(</span><span class="s1">&#39;vgg13_bn&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="n">pretrained</span><span class="p">,</span> <span class="n">progress</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
@@ -681,9 +950,15 @@ parameters converted too when you call :meth:<code><a href="#VGG.to">to</a></cod
             <div class="docstring"><p>VGG 13-layer model (configuration "B") with batch normalization
 <code>"Very Deep Convolutional Networks For Large-Scale Image Recognition" &lt;https://arxiv.org/pdf/1409.1556.pdf&gt;</code>_</p>
 
-<p>Args:
-    pretrained (bool): If True, returns a model pre-trained on ImageNet
-    progress (bool): If True, displays a progress bar of the download to stderr</p>
+<h2 id="parameters">Parameters</h2>
+
+<p>pretrained : bool
+    If True, returns a model pre-trained on ImageNet (Default value = False)
+progress : bool
+    If True, displays a progress bar of the download to stderr (Default value = True)
+**kwargs :</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -702,9 +977,19 @@ parameters converted too when you call :meth:<code><a href="#VGG.to">to</a></cod
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;VGG 16-layer model (configuration &quot;D&quot;)</span>
 <span class="sd">    `&quot;Very Deep Convolutional Networks For Large-Scale Image Recognition&quot; &lt;https://arxiv.org/pdf/1409.1556.pdf&gt;`_</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        pretrained (bool): If True, returns a model pre-trained on ImageNet</span>
-<span class="sd">        progress (bool): If True, displays a progress bar of the download to stderr</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pretrained : bool</span>
+<span class="sd">        If True, returns a model pre-trained on ImageNet (Default value = False)</span>
+<span class="sd">    progress : bool</span>
+<span class="sd">        If True, displays a progress bar of the download to stderr (Default value = True)</span>
+<span class="sd">    **kwargs :</span>
+<span class="sd">        </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">_vgg</span><span class="p">(</span><span class="s1">&#39;vgg16&#39;</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="n">pretrained</span><span class="p">,</span> <span class="n">progress</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
@@ -714,9 +999,15 @@ parameters converted too when you call :meth:<code><a href="#VGG.to">to</a></cod
             <div class="docstring"><p>VGG 16-layer model (configuration "D")
 <code>"Very Deep Convolutional Networks For Large-Scale Image Recognition" &lt;https://arxiv.org/pdf/1409.1556.pdf&gt;</code>_</p>
 
-<p>Args:
-    pretrained (bool): If True, returns a model pre-trained on ImageNet
-    progress (bool): If True, displays a progress bar of the download to stderr</p>
+<h2 id="parameters">Parameters</h2>
+
+<p>pretrained : bool
+    If True, returns a model pre-trained on ImageNet (Default value = False)
+progress : bool
+    If True, displays a progress bar of the download to stderr (Default value = True)
+**kwargs :</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -735,9 +1026,19 @@ parameters converted too when you call :meth:<code><a href="#VGG.to">to</a></cod
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;VGG 16-layer model (configuration &quot;D&quot;) with batch normalization</span>
 <span class="sd">    `&quot;Very Deep Convolutional Networks For Large-Scale Image Recognition&quot; &lt;https://arxiv.org/pdf/1409.1556.pdf&gt;`_</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        pretrained (bool): If True, returns a model pre-trained on ImageNet</span>
-<span class="sd">        progress (bool): If True, displays a progress bar of the download to stderr</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pretrained : bool</span>
+<span class="sd">        If True, returns a model pre-trained on ImageNet (Default value = False)</span>
+<span class="sd">    progress : bool</span>
+<span class="sd">        If True, displays a progress bar of the download to stderr (Default value = True)</span>
+<span class="sd">    **kwargs :</span>
+<span class="sd">        </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">_vgg</span><span class="p">(</span><span class="s1">&#39;vgg16_bn&#39;</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="n">pretrained</span><span class="p">,</span> <span class="n">progress</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
@@ -747,9 +1048,15 @@ parameters converted too when you call :meth:<code><a href="#VGG.to">to</a></cod
             <div class="docstring"><p>VGG 16-layer model (configuration "D") with batch normalization
 <code>"Very Deep Convolutional Networks For Large-Scale Image Recognition" &lt;https://arxiv.org/pdf/1409.1556.pdf&gt;</code>_</p>
 
-<p>Args:
-    pretrained (bool): If True, returns a model pre-trained on ImageNet
-    progress (bool): If True, displays a progress bar of the download to stderr</p>
+<h2 id="parameters">Parameters</h2>
+
+<p>pretrained : bool
+    If True, returns a model pre-trained on ImageNet (Default value = False)
+progress : bool
+    If True, displays a progress bar of the download to stderr (Default value = True)
+**kwargs :</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -768,9 +1075,19 @@ parameters converted too when you call :meth:<code><a href="#VGG.to">to</a></cod
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;VGG 19-layer model (configuration &quot;E&quot;)</span>
 <span class="sd">    `&quot;Very Deep Convolutional Networks For Large-Scale Image Recognition&quot; &lt;https://arxiv.org/pdf/1409.1556.pdf&gt;`_</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        pretrained (bool): If True, returns a model pre-trained on ImageNet</span>
-<span class="sd">        progress (bool): If True, displays a progress bar of the download to stderr</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pretrained : bool</span>
+<span class="sd">        If True, returns a model pre-trained on ImageNet (Default value = False)</span>
+<span class="sd">    progress : bool</span>
+<span class="sd">        If True, displays a progress bar of the download to stderr (Default value = True)</span>
+<span class="sd">    **kwargs :</span>
+<span class="sd">        </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">_vgg</span><span class="p">(</span><span class="s1">&#39;vgg19&#39;</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="n">pretrained</span><span class="p">,</span> <span class="n">progress</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
@@ -780,9 +1097,15 @@ parameters converted too when you call :meth:<code><a href="#VGG.to">to</a></cod
             <div class="docstring"><p>VGG 19-layer model (configuration "E")
 <code>"Very Deep Convolutional Networks For Large-Scale Image Recognition" &lt;https://arxiv.org/pdf/1409.1556.pdf&gt;</code>_</p>
 
-<p>Args:
-    pretrained (bool): If True, returns a model pre-trained on ImageNet
-    progress (bool): If True, displays a progress bar of the download to stderr</p>
+<h2 id="parameters">Parameters</h2>
+
+<p>pretrained : bool
+    If True, returns a model pre-trained on ImageNet (Default value = False)
+progress : bool
+    If True, displays a progress bar of the download to stderr (Default value = True)
+**kwargs :</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -801,9 +1124,19 @@ parameters converted too when you call :meth:<code><a href="#VGG.to">to</a></cod
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;VGG 19-layer model (configuration &#39;E&#39;) with batch normalization</span>
 <span class="sd">    `&quot;Very Deep Convolutional Networks For Large-Scale Image Recognition&quot; &lt;https://arxiv.org/pdf/1409.1556.pdf&gt;`_</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        pretrained (bool): If True, returns a model pre-trained on ImageNet</span>
-<span class="sd">        progress (bool): If True, displays a progress bar of the download to stderr</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pretrained : bool</span>
+<span class="sd">        If True, returns a model pre-trained on ImageNet (Default value = False)</span>
+<span class="sd">    progress : bool</span>
+<span class="sd">        If True, displays a progress bar of the download to stderr (Default value = True)</span>
+<span class="sd">    **kwargs :</span>
+<span class="sd">        </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">_vgg</span><span class="p">(</span><span class="s1">&#39;vgg19_bn&#39;</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="n">pretrained</span><span class="p">,</span> <span class="n">progress</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
@@ -813,9 +1146,15 @@ parameters converted too when you call :meth:<code><a href="#VGG.to">to</a></cod
             <div class="docstring"><p>VGG 19-layer model (configuration 'E') with batch normalization
 <code>"Very Deep Convolutional Networks For Large-Scale Image Recognition" &lt;https://arxiv.org/pdf/1409.1556.pdf&gt;</code>_</p>
 
-<p>Args:
-    pretrained (bool): If True, returns a model pre-trained on ImageNet
-    progress (bool): If True, displays a progress bar of the download to stderr</p>
+<h2 id="parameters">Parameters</h2>
+
+<p>pretrained : bool
+    If True, returns a model pre-trained on ImageNet (Default value = False)
+progress : bool
+    If True, displays a progress bar of the download to stderr (Default value = True)
+**kwargs :</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 

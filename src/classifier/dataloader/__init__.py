@@ -10,6 +10,20 @@ import sys
 BASEDIR = '.'.join([str(__name__),'dataloader'])
 
 def find_dataset_using_name(datadir, dataset_name):
+    """
+
+    Parameters
+    ----------
+    datadir :
+        
+    dataset_name :
+        
+
+    Returns
+    -------
+
+    
+    """
     # datadir should be full path to file and dataset_name is the class within the file!
     dataset_filename = datadir
     datasetlib = importlib.import_module(dataset_filename)
@@ -26,5 +40,21 @@ def find_dataset_using_name(datadir, dataset_name):
     return dataset
 
 def create_dataset(name:str=None, args:dict={},**kwargs):
+    """
+
+    Parameters
+    ----------
+    name : str
+        (Default value = None)
+    args : dict
+        (Default value = {})
+    **kwargs :
+        
+
+    Returns
+    -------
+
+    
+    """
     return find_dataset_using_name(BASEDIR,name)(**args, **kwargs)
 

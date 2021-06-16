@@ -2,6 +2,18 @@ from math import ceil, floor
 import matplotlib.pyplot as plt
 
 def display_advanced_plot(slices):
+    """
+
+    Parameters
+    ----------
+    slices :
+        
+
+    Returns
+    -------
+
+    
+    """
     my_dpi=10
     import matplotlib.gridspec as gridspec
     w = 100

@@ -122,9 +122,27 @@
 <span class="kn">import</span> <span class="nn">itertools</span>
 
 <span class="k">class</span> <span class="nc">Agent</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
     
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">base_config</span><span class="o">=</span><span class="s1">&#39;base&#39;</span><span class="p">,</span><span class="n">checkpoint_path</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">print_enabled</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_path</span><span class="o">=</span><span class="n">checkpoint_path</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_name</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">base_config</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="s1">&#39;base&#39;</span><span class="p">,</span><span class="n">checkpoint_path</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">print_enabled</span><span class="p">:</span><span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Init function for Agent</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        config_name : str</span>
+<span class="sd">            (Default value = None)</span>
+<span class="sd">        base_config : str</span>
+<span class="sd">            (Default value = &#39;base&#39;)</span>
+<span class="sd">        checkpoint_path : str</span>
+<span class="sd">            (Default value = None)</span>
+<span class="sd">        print_enabled : bool</span>
+<span class="sd">            (Default value = False)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_config</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">print_enabled</span> <span class="o">=</span> <span class="n">print_enabled</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">base_config</span> <span class="o">=</span> <span class="n">base_config</span>
@@ -134,7 +152,7 @@
         
         <span class="bp">self</span><span class="o">.</span><span class="n">creation_date</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">%H%M%S&#39;</span><span class="p">))</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">load_config</span><span class="p">(</span><span class="n">config_name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">load_config</span><span class="p">(</span><span class="n">config_name</span><span class="p">,</span> <span class="n">checkpoint_path</span><span class="o">=</span><span class="n">checkpoint_path</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_weights_obj</span> <span class="o">=</span> <span class="n">ClassWeights</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">[</span><span class="s1">&#39;classes&#39;</span><span class="p">])</span>
         
         <span class="c1"># Dummy loading of everything to initiate all variables</span>
@@ -142,13 +160,26 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">load_model</span><span class="p">()</span> 
         <span class="bp">self</span><span class="o">.</span><span class="n">load_trainer</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">load_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">config_name</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Init the config into object&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">load_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">config_name</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">checkpoint_path</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Init the config into object</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        config_name : str</span>
+<span class="sd">            </span>
+<span class="sd">        checkpoint_path : str</span>
+<span class="sd">            (Default value = None)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Load all config settings</span>
-        <span class="k">if</span> <span class="n">config_name</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_path</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">config_name</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">checkpoint_path</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Both config_name and checkpoint_path cant be None!&quot;</span><span class="p">)</span>
         
-        <span class="k">elif</span> <span class="n">config_name</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_path</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">config_name</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">checkpoint_path</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">model_config</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">else</span><span class="p">:</span>  
             <span class="n">model_config</span> <span class="o">=</span> <span class="n">load</span><span class="o">.</span><span class="n">load_config</span><span class="p">(</span><span class="n">config_name</span><span class="p">,</span> <span class="n">dirpath</span><span class="o">=</span><span class="n">BASEDIR</span> <span class="o">+</span> <span class="s2">&quot;/conf/&quot;</span><span class="p">)</span>
@@ -159,7 +190,7 @@
         <span class="n">config</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;classes&#39;</span><span class="p">:</span><span class="n">base_config</span><span class="p">[</span><span class="s1">&#39;classes&#39;</span><span class="p">]})</span>
          
         <span class="c1"># Overwrite if no checkpoint_path is selected outside of the config</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_path</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_path</span> <span class="k">else</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">][</span><span class="s1">&#39;checkpoint_path&#39;</span><span class="p">]</span>
+        <span class="n">config</span><span class="p">[</span><span class="s1">&#39;checkpoint_path&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">checkpoint_path</span> <span class="k">if</span> <span class="n">checkpoint_path</span> <span class="k">else</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;checkpoint_path&#39;</span><span class="p">]</span>
         
         <span class="c1"># Fix ROI bounding boxes and if dictionary then label them</span>
         <span class="k">if</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;model&#39;</span><span class="p">][</span><span class="s1">&#39;roi_hparams&#39;</span><span class="p">][</span><span class="s1">&#39;enable&#39;</span><span class="p">]:</span>
@@ -177,21 +208,18 @@
         <span class="n">cfg_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">[</span><span class="s1">&#39;model&#39;</span><span class="p">]</span>
 
         <span class="c1"># If checkpoint is enabled or if create a new model</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_path</span><span class="p">:</span>
-
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">print_enabled</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loading model from </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_path</span><span class="si">}</span><span class="s2"> (checkpoint)..&quot;</span><span class="p">)</span>
-            <span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="o">.</span><span class="n">load_from_checkpoint</span><span class="p">(</span><span class="n">checkpoint_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">[</span><span class="s1">&#39;checkpoint_path&#39;</span><span class="p">]:</span>
+            <span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="o">.</span><span class="n">load_from_checkpoint</span><span class="p">(</span><span class="n">checkpoint_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">[</span><span class="s1">&#39;checkpoint_path&#39;</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Check if dataset should be weighted</span>
             <span class="k">if</span> <span class="n">cfg_model</span><span class="p">[</span><span class="s1">&#39;loss&#39;</span><span class="p">][</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="s1">&#39;weight&#39;</span><span class="p">]:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_weights_obj</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataloader</span><span class="o">.</span><span class="n">train_dataloader</span><span class="p">()</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">labels</span><span class="p">)</span>
             <span class="n">class_weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weights_obj</span><span class="o">.</span><span class="n">weights</span>
-
+            
             <span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="o">**</span><span class="n">cfg_model</span><span class="p">,</span> <span class="n">class_weights</span><span class="o">=</span><span class="n">class_weights</span><span class="p">)</span>
 
             <span class="c1"># Set the init distribution for the weights</span>
             <span class="k">if</span> <span class="n">cfg_model</span><span class="p">[</span><span class="s1">&#39;weight_distribution&#39;</span><span class="p">]:</span>
-                <span class="c1">#InitWeightDistribution(model)(cfg_model[&#39;weight_distribution&#39;])</span>
                 <span class="n">InitWeightDistribution</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="n">cfg_model</span><span class="p">[</span><span class="s1">&#39;weight_distribution&#39;</span><span class="p">])</span>
                 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">print_enabled</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Architecture [</span><span class="si">{0}</span><span class="s2">] was created&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">model</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
@@ -209,7 +237,7 @@
     
     
     <span class="k">def</span> <span class="nf">load_trainer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return a trainer object&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Load a trainer to class&quot;&quot;&quot;</span>
         
         <span class="n">cfg_trainer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">[</span><span class="s1">&#39;trainer&#39;</span><span class="p">]</span>
     
@@ -223,8 +251,7 @@
 
         <span class="c1"># Setup callbacks</span>
         <span class="n">callbacks</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">lc_callbacks</span><span class="o">.</span><span class="n">LitProgressBar</span><span class="p">(),</span>
-            <span class="c1">#MetricCallback(),</span>
+            <span class="n">lc_callbacks</span><span class="o">.</span><span class="n">LitProgressBar</span><span class="p">()</span>
         <span class="p">]</span>
         <span class="n">callbacks</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="nb">getattr</span><span class="p">(</span><span class="n">pl_callbacks</span><span class="p">,</span> <span class="n">key</span><span class="p">)(</span><span class="o">**</span><span class="n">values</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">])</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span><span class="n">values</span> <span class="ow">in</span> <span class="n">cfg_trainer</span><span class="p">[</span><span class="s1">&#39;callbacks&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">values</span><span class="p">[</span><span class="s1">&#39;enable&#39;</span><span class="p">]])</span>
 
@@ -236,10 +263,10 @@
             <span class="o">**</span><span class="n">cfg_trainer</span><span class="p">[</span><span class="s2">&quot;args&quot;</span><span class="p">]</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">trainer</span> <span class="o">=</span> <span class="n">trainer</span>
-        <span class="c1">#return trainer</span>
     
     
     <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Load the model and trainer, and run the agent&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">load_model</span><span class="p">()</span> 
         <span class="bp">self</span><span class="o">.</span><span class="n">load_trainer</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">print_enabled</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Dataloader fold: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dataloader</span><span class="o">.</span><span class="n">kfold_index</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -249,19 +276,37 @@
         <span class="k">return</span> <span class="n">trainer</span>
     
     <span class="k">def</span> <span class="nf">print_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-         <span class="nb">print</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Loading model from </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_path</span><span class="si">}</span><span class="s2"> (checkpoint)..</span><span class="se">\n\n</span><span class="s2">&quot;</span>
-            <span class="c1">#f&quot;Dataloader fold: {self.dataloader.kfold_index}\n&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="se">\n\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dataloader</span><span class="si">}</span><span class="s2">&quot;</span>
-             <span class="p">)</span>
+        <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Checkpoint: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">[</span><span class="s1">&#39;checkpoint_path&#39;</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="se">\n\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dataloader</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">roi_model</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">roi_model</span> <span class="o">!=</span> <span class="kc">None</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="si">}</span><span class="s2">&quot;</span> 
+        <span class="p">)</span>
    
 
         
     
 
 <span class="k">class</span> <span class="nc">ThreadSafeReloadedModel</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
     
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">checkpoint_path</span><span class="p">,</span> <span class="n">cam_type</span><span class="p">,</span> <span class="n">cam_kwargs</span><span class="o">=</span><span class="p">{}):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        checkpoint_path :</span>
+<span class="sd">            </span>
+<span class="sd">        cam_type :</span>
+<span class="sd">            </span>
+<span class="sd">        cam_kwargs :</span>
+<span class="sd">            (Default value = {})</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_path</span> <span class="o">=</span> <span class="n">checkpoint_path</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cam_type</span> <span class="o">=</span> <span class="n">cam_type</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cam_kwargs</span> <span class="o">=</span> <span class="n">cam_kwargs</span>
@@ -269,6 +314,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">lock</span> <span class="o">=</span> <span class="n">Lock</span><span class="p">()</span>
         
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">trainer</span><span class="o">.</span><span class="n">load_model</span><span class="p">()</span>
         <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trainer</span><span class="o">.</span><span class="n">model</span>
@@ -277,12 +323,25 @@
         
     
     <span class="k">def</span> <span class="nf">get_dataloader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Access the dataloder object&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">trainer</span><span class="o">.</span><span class="n">dataloader</span>
     
-    <span class="k">def</span> <span class="nf">get_validation_images</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observe_classes</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_validation_images</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observe_classes</span><span class="p">:</span><span class="nb">list</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        observe_classes : list</span>
+<span class="sd">            (Default value = None)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">fileset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dataloader</span><span class="p">()</span><span class="o">.</span><span class="n">val_dataloader</span><span class="p">()</span><span class="o">.</span><span class="n">dataset</span>
         <span class="k">if</span> <span class="n">observe_classes</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span> 
-            <span class="k">return</span> <span class="p">([</span><span class="n">idx</span><span class="p">,</span> <span class="n">image</span><span class="p">,</span> <span class="n">patient_class</span><span class="p">,</span> <span class="n">target_class</span><span class="p">]</span> <span class="k">for</span> <span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">patient_class</span><span class="p">)),</span> <span class="n">target_class</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">fileset</span><span class="p">),</span><span class="n">observe_classes</span><span class="p">))</span> <span class="c1">#itertools.product(enumerate(fileset),observe_classes)</span>
+            <span class="k">return</span> <span class="p">([</span><span class="n">idx</span><span class="p">,</span> <span class="n">image</span><span class="p">,</span> <span class="n">patient_class</span><span class="p">,</span> <span class="n">target_class</span><span class="p">]</span> <span class="k">for</span> <span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">patient_class</span><span class="p">)),</span> <span class="n">target_class</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">fileset</span><span class="p">),</span><span class="n">observe_classes</span><span class="p">))</span> 
         <span class="k">return</span> <span class="n">fileset</span>
 </pre></div>
 
@@ -301,9 +360,27 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">Agent</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
     
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">base_config</span><span class="o">=</span><span class="s1">&#39;base&#39;</span><span class="p">,</span><span class="n">checkpoint_path</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">print_enabled</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_path</span><span class="o">=</span><span class="n">checkpoint_path</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_name</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">base_config</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="s1">&#39;base&#39;</span><span class="p">,</span><span class="n">checkpoint_path</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">print_enabled</span><span class="p">:</span><span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Init function for Agent</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        config_name : str</span>
+<span class="sd">            (Default value = None)</span>
+<span class="sd">        base_config : str</span>
+<span class="sd">            (Default value = &#39;base&#39;)</span>
+<span class="sd">        checkpoint_path : str</span>
+<span class="sd">            (Default value = None)</span>
+<span class="sd">        print_enabled : bool</span>
+<span class="sd">            (Default value = False)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_config</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">print_enabled</span> <span class="o">=</span> <span class="n">print_enabled</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">base_config</span> <span class="o">=</span> <span class="n">base_config</span>
@@ -313,7 +390,7 @@
         
         <span class="bp">self</span><span class="o">.</span><span class="n">creation_date</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">%H%M%S&#39;</span><span class="p">))</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">load_config</span><span class="p">(</span><span class="n">config_name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">load_config</span><span class="p">(</span><span class="n">config_name</span><span class="p">,</span> <span class="n">checkpoint_path</span><span class="o">=</span><span class="n">checkpoint_path</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_weights_obj</span> <span class="o">=</span> <span class="n">ClassWeights</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">[</span><span class="s1">&#39;classes&#39;</span><span class="p">])</span>
         
         <span class="c1"># Dummy loading of everything to initiate all variables</span>
@@ -321,13 +398,26 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">load_model</span><span class="p">()</span> 
         <span class="bp">self</span><span class="o">.</span><span class="n">load_trainer</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">load_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">config_name</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Init the config into object&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">load_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">config_name</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">checkpoint_path</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Init the config into object</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        config_name : str</span>
+<span class="sd">            </span>
+<span class="sd">        checkpoint_path : str</span>
+<span class="sd">            (Default value = None)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Load all config settings</span>
-        <span class="k">if</span> <span class="n">config_name</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_path</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">config_name</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">checkpoint_path</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Both config_name and checkpoint_path cant be None!&quot;</span><span class="p">)</span>
         
-        <span class="k">elif</span> <span class="n">config_name</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_path</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">config_name</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">checkpoint_path</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">model_config</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">else</span><span class="p">:</span>  
             <span class="n">model_config</span> <span class="o">=</span> <span class="n">load</span><span class="o">.</span><span class="n">load_config</span><span class="p">(</span><span class="n">config_name</span><span class="p">,</span> <span class="n">dirpath</span><span class="o">=</span><span class="n">BASEDIR</span> <span class="o">+</span> <span class="s2">&quot;/conf/&quot;</span><span class="p">)</span>
@@ -338,7 +428,7 @@
         <span class="n">config</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;classes&#39;</span><span class="p">:</span><span class="n">base_config</span><span class="p">[</span><span class="s1">&#39;classes&#39;</span><span class="p">]})</span>
          
         <span class="c1"># Overwrite if no checkpoint_path is selected outside of the config</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_path</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_path</span> <span class="k">else</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">][</span><span class="s1">&#39;checkpoint_path&#39;</span><span class="p">]</span>
+        <span class="n">config</span><span class="p">[</span><span class="s1">&#39;checkpoint_path&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">checkpoint_path</span> <span class="k">if</span> <span class="n">checkpoint_path</span> <span class="k">else</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;checkpoint_path&#39;</span><span class="p">]</span>
         
         <span class="c1"># Fix ROI bounding boxes and if dictionary then label them</span>
         <span class="k">if</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;model&#39;</span><span class="p">][</span><span class="s1">&#39;roi_hparams&#39;</span><span class="p">][</span><span class="s1">&#39;enable&#39;</span><span class="p">]:</span>
@@ -356,21 +446,18 @@
         <span class="n">cfg_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">[</span><span class="s1">&#39;model&#39;</span><span class="p">]</span>
 
         <span class="c1"># If checkpoint is enabled or if create a new model</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_path</span><span class="p">:</span>
-
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">print_enabled</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loading model from </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_path</span><span class="si">}</span><span class="s2"> (checkpoint)..&quot;</span><span class="p">)</span>
-            <span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="o">.</span><span class="n">load_from_checkpoint</span><span class="p">(</span><span class="n">checkpoint_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">[</span><span class="s1">&#39;checkpoint_path&#39;</span><span class="p">]:</span>
+            <span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="o">.</span><span class="n">load_from_checkpoint</span><span class="p">(</span><span class="n">checkpoint_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">[</span><span class="s1">&#39;checkpoint_path&#39;</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Check if dataset should be weighted</span>
             <span class="k">if</span> <span class="n">cfg_model</span><span class="p">[</span><span class="s1">&#39;loss&#39;</span><span class="p">][</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="s1">&#39;weight&#39;</span><span class="p">]:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_weights_obj</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataloader</span><span class="o">.</span><span class="n">train_dataloader</span><span class="p">()</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">labels</span><span class="p">)</span>
             <span class="n">class_weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weights_obj</span><span class="o">.</span><span class="n">weights</span>
-
+            
             <span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="o">**</span><span class="n">cfg_model</span><span class="p">,</span> <span class="n">class_weights</span><span class="o">=</span><span class="n">class_weights</span><span class="p">)</span>
 
             <span class="c1"># Set the init distribution for the weights</span>
             <span class="k">if</span> <span class="n">cfg_model</span><span class="p">[</span><span class="s1">&#39;weight_distribution&#39;</span><span class="p">]:</span>
-                <span class="c1">#InitWeightDistribution(model)(cfg_model[&#39;weight_distribution&#39;])</span>
                 <span class="n">InitWeightDistribution</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="n">cfg_model</span><span class="p">[</span><span class="s1">&#39;weight_distribution&#39;</span><span class="p">])</span>
                 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">print_enabled</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Architecture [</span><span class="si">{0}</span><span class="s2">] was created&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">model</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
@@ -388,7 +475,7 @@
     
     
     <span class="k">def</span> <span class="nf">load_trainer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return a trainer object&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Load a trainer to class&quot;&quot;&quot;</span>
         
         <span class="n">cfg_trainer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">[</span><span class="s1">&#39;trainer&#39;</span><span class="p">]</span>
     
@@ -402,8 +489,7 @@
 
         <span class="c1"># Setup callbacks</span>
         <span class="n">callbacks</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">lc_callbacks</span><span class="o">.</span><span class="n">LitProgressBar</span><span class="p">(),</span>
-            <span class="c1">#MetricCallback(),</span>
+            <span class="n">lc_callbacks</span><span class="o">.</span><span class="n">LitProgressBar</span><span class="p">()</span>
         <span class="p">]</span>
         <span class="n">callbacks</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="nb">getattr</span><span class="p">(</span><span class="n">pl_callbacks</span><span class="p">,</span> <span class="n">key</span><span class="p">)(</span><span class="o">**</span><span class="n">values</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">])</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span><span class="n">values</span> <span class="ow">in</span> <span class="n">cfg_trainer</span><span class="p">[</span><span class="s1">&#39;callbacks&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">values</span><span class="p">[</span><span class="s1">&#39;enable&#39;</span><span class="p">]])</span>
 
@@ -415,10 +501,10 @@
             <span class="o">**</span><span class="n">cfg_trainer</span><span class="p">[</span><span class="s2">&quot;args&quot;</span><span class="p">]</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">trainer</span> <span class="o">=</span> <span class="n">trainer</span>
-        <span class="c1">#return trainer</span>
     
     
     <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Load the model and trainer, and run the agent&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">load_model</span><span class="p">()</span> 
         <span class="bp">self</span><span class="o">.</span><span class="n">load_trainer</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">print_enabled</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Dataloader fold: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dataloader</span><span class="o">.</span><span class="n">kfold_index</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -428,11 +514,12 @@
         <span class="k">return</span> <span class="n">trainer</span>
     
     <span class="k">def</span> <span class="nf">print_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-         <span class="nb">print</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Loading model from </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_path</span><span class="si">}</span><span class="s2"> (checkpoint)..</span><span class="se">\n\n</span><span class="s2">&quot;</span>
-            <span class="c1">#f&quot;Dataloader fold: {self.dataloader.kfold_index}\n&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="se">\n\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dataloader</span><span class="si">}</span><span class="s2">&quot;</span>
-             <span class="p">)</span>
+        <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Checkpoint: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">[</span><span class="s1">&#39;checkpoint_path&#39;</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="se">\n\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dataloader</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">roi_model</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">roi_model</span> <span class="o">!=</span> <span class="kc">None</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="si">}</span><span class="s2">&quot;</span> 
+        <span class="p">)</span>
 </pre></div>
 
         </details>
@@ -444,17 +531,34 @@
 
         
             <span class="name">Agent</span><span class="signature">(
-    config_name=None,
-    base_config=&#39;base&#39;,
+    config_name: str = None,
+    base_config: str = &#39;base&#39;,
     checkpoint_path: str = None,
-    print_enabled=False
+    print_enabled: bool = False
 )</span>
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">base_config</span><span class="o">=</span><span class="s1">&#39;base&#39;</span><span class="p">,</span><span class="n">checkpoint_path</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">print_enabled</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_path</span><span class="o">=</span><span class="n">checkpoint_path</span>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_name</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">base_config</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="s1">&#39;base&#39;</span><span class="p">,</span><span class="n">checkpoint_path</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">print_enabled</span><span class="p">:</span><span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Init function for Agent</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        config_name : str</span>
+<span class="sd">            (Default value = None)</span>
+<span class="sd">        base_config : str</span>
+<span class="sd">            (Default value = &#39;base&#39;)</span>
+<span class="sd">        checkpoint_path : str</span>
+<span class="sd">            (Default value = None)</span>
+<span class="sd">        print_enabled : bool</span>
+<span class="sd">            (Default value = False)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_config</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">print_enabled</span> <span class="o">=</span> <span class="n">print_enabled</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">base_config</span> <span class="o">=</span> <span class="n">base_config</span>
@@ -464,7 +568,7 @@
         
         <span class="bp">self</span><span class="o">.</span><span class="n">creation_date</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">%H%M%S&#39;</span><span class="p">))</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">load_config</span><span class="p">(</span><span class="n">config_name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">load_config</span><span class="p">(</span><span class="n">config_name</span><span class="p">,</span> <span class="n">checkpoint_path</span><span class="o">=</span><span class="n">checkpoint_path</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_weights_obj</span> <span class="o">=</span> <span class="n">ClassWeights</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">[</span><span class="s1">&#39;classes&#39;</span><span class="p">])</span>
         
         <span class="c1"># Dummy loading of everything to initiate all variables</span>
@@ -475,7 +579,22 @@
 
         </details>
 
-    
+            <div class="docstring"><p>Init function for Agent</p>
+
+<h2 id="parameters">Parameters</h2>
+
+<p>config_name : str
+    (Default value = None)
+base_config : str
+    (Default value = 'base')
+checkpoint_path : str
+    (Default value = None)
+print_enabled : bool
+    (Default value = False)</p>
+
+<h2 id="returns">Returns</h2>
+</div>
+
 
                             </div>
                             <div id="Agent.load_config" class="classattr">
@@ -483,18 +602,31 @@
 
         
             <span class="def">def</span>
-            <span class="name">load_config</span><span class="signature">(self, config_name)</span>:
+            <span class="name">load_config</span><span class="signature">(self, config_name: str, checkpoint_path: str = None)</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">load_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">config_name</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Init the config into object&quot;&quot;&quot;</span>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">load_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">config_name</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">checkpoint_path</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Init the config into object</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        config_name : str</span>
+<span class="sd">            </span>
+<span class="sd">        checkpoint_path : str</span>
+<span class="sd">            (Default value = None)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Load all config settings</span>
-        <span class="k">if</span> <span class="n">config_name</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_path</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">config_name</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">checkpoint_path</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Both config_name and checkpoint_path cant be None!&quot;</span><span class="p">)</span>
         
-        <span class="k">elif</span> <span class="n">config_name</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_path</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">config_name</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">checkpoint_path</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">model_config</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">else</span><span class="p">:</span>  
             <span class="n">model_config</span> <span class="o">=</span> <span class="n">load</span><span class="o">.</span><span class="n">load_config</span><span class="p">(</span><span class="n">config_name</span><span class="p">,</span> <span class="n">dirpath</span><span class="o">=</span><span class="n">BASEDIR</span> <span class="o">+</span> <span class="s2">&quot;/conf/&quot;</span><span class="p">)</span>
@@ -505,7 +637,7 @@
         <span class="n">config</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;classes&#39;</span><span class="p">:</span><span class="n">base_config</span><span class="p">[</span><span class="s1">&#39;classes&#39;</span><span class="p">]})</span>
          
         <span class="c1"># Overwrite if no checkpoint_path is selected outside of the config</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_path</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_path</span> <span class="k">else</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">][</span><span class="s1">&#39;checkpoint_path&#39;</span><span class="p">]</span>
+        <span class="n">config</span><span class="p">[</span><span class="s1">&#39;checkpoint_path&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">checkpoint_path</span> <span class="k">if</span> <span class="n">checkpoint_path</span> <span class="k">else</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;checkpoint_path&#39;</span><span class="p">]</span>
         
         <span class="c1"># Fix ROI bounding boxes and if dictionary then label them</span>
         <span class="k">if</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;model&#39;</span><span class="p">][</span><span class="s1">&#39;roi_hparams&#39;</span><span class="p">][</span><span class="s1">&#39;enable&#39;</span><span class="p">]:</span>
@@ -522,6 +654,15 @@
         </details>
 
             <div class="docstring"><p>Init the config into object</p>
+
+<h2 id="parameters">Parameters</h2>
+
+<p>config_name : str</p>
+
+<p>checkpoint_path : str
+    (Default value = None)</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -541,21 +682,18 @@
         <span class="n">cfg_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">[</span><span class="s1">&#39;model&#39;</span><span class="p">]</span>
 
         <span class="c1"># If checkpoint is enabled or if create a new model</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_path</span><span class="p">:</span>
-
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">print_enabled</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loading model from </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_path</span><span class="si">}</span><span class="s2"> (checkpoint)..&quot;</span><span class="p">)</span>
-            <span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="o">.</span><span class="n">load_from_checkpoint</span><span class="p">(</span><span class="n">checkpoint_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">[</span><span class="s1">&#39;checkpoint_path&#39;</span><span class="p">]:</span>
+            <span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="o">.</span><span class="n">load_from_checkpoint</span><span class="p">(</span><span class="n">checkpoint_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">[</span><span class="s1">&#39;checkpoint_path&#39;</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Check if dataset should be weighted</span>
             <span class="k">if</span> <span class="n">cfg_model</span><span class="p">[</span><span class="s1">&#39;loss&#39;</span><span class="p">][</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="s1">&#39;weight&#39;</span><span class="p">]:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_weights_obj</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataloader</span><span class="o">.</span><span class="n">train_dataloader</span><span class="p">()</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">labels</span><span class="p">)</span>
             <span class="n">class_weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weights_obj</span><span class="o">.</span><span class="n">weights</span>
-
+            
             <span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="o">**</span><span class="n">cfg_model</span><span class="p">,</span> <span class="n">class_weights</span><span class="o">=</span><span class="n">class_weights</span><span class="p">)</span>
 
             <span class="c1"># Set the init distribution for the weights</span>
             <span class="k">if</span> <span class="n">cfg_model</span><span class="p">[</span><span class="s1">&#39;weight_distribution&#39;</span><span class="p">]:</span>
-                <span class="c1">#InitWeightDistribution(model)(cfg_model[&#39;weight_distribution&#39;])</span>
                 <span class="n">InitWeightDistribution</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="n">cfg_model</span><span class="p">[</span><span class="s1">&#39;weight_distribution&#39;</span><span class="p">])</span>
                 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">print_enabled</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Architecture [</span><span class="si">{0}</span><span class="s2">] was created&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">model</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
@@ -607,7 +745,7 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">load_trainer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return a trainer object&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Load a trainer to class&quot;&quot;&quot;</span>
         
         <span class="n">cfg_trainer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">[</span><span class="s1">&#39;trainer&#39;</span><span class="p">]</span>
     
@@ -621,8 +759,7 @@
 
         <span class="c1"># Setup callbacks</span>
         <span class="n">callbacks</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">lc_callbacks</span><span class="o">.</span><span class="n">LitProgressBar</span><span class="p">(),</span>
-            <span class="c1">#MetricCallback(),</span>
+            <span class="n">lc_callbacks</span><span class="o">.</span><span class="n">LitProgressBar</span><span class="p">()</span>
         <span class="p">]</span>
         <span class="n">callbacks</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="nb">getattr</span><span class="p">(</span><span class="n">pl_callbacks</span><span class="p">,</span> <span class="n">key</span><span class="p">)(</span><span class="o">**</span><span class="n">values</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">])</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span><span class="n">values</span> <span class="ow">in</span> <span class="n">cfg_trainer</span><span class="p">[</span><span class="s1">&#39;callbacks&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">values</span><span class="p">[</span><span class="s1">&#39;enable&#39;</span><span class="p">]])</span>
 
@@ -634,12 +771,11 @@
             <span class="o">**</span><span class="n">cfg_trainer</span><span class="p">[</span><span class="s2">&quot;args&quot;</span><span class="p">]</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">trainer</span> <span class="o">=</span> <span class="n">trainer</span>
-        <span class="c1">#return trainer</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Return a trainer object</p>
+            <div class="docstring"><p>Load a trainer to class</p>
 </div>
 
 
@@ -655,6 +791,7 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Load the model and trainer, and run the agent&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">load_model</span><span class="p">()</span> 
         <span class="bp">self</span><span class="o">.</span><span class="n">load_trainer</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">print_enabled</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Dataloader fold: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dataloader</span><span class="o">.</span><span class="n">kfold_index</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -666,7 +803,9 @@
 
         </details>
 
-    
+            <div class="docstring"><p>Load the model and trainer, and run the agent</p>
+</div>
+
 
                             </div>
                             <div id="Agent.print_info" class="classattr">
@@ -680,11 +819,12 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">print_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-         <span class="nb">print</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Loading model from </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_path</span><span class="si">}</span><span class="s2"> (checkpoint)..</span><span class="se">\n\n</span><span class="s2">&quot;</span>
-            <span class="c1">#f&quot;Dataloader fold: {self.dataloader.kfold_index}\n&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="se">\n\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dataloader</span><span class="si">}</span><span class="s2">&quot;</span>
-             <span class="p">)</span>
+        <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Checkpoint: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">[</span><span class="s1">&#39;checkpoint_path&#39;</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="se">\n\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dataloader</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">roi_model</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">roi_model</span> <span class="o">!=</span> <span class="kc">None</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="si">}</span><span class="s2">&quot;</span> 
+        <span class="p">)</span>
 </pre></div>
 
         </details>
@@ -705,8 +845,25 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">ThreadSafeReloadedModel</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
     
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">checkpoint_path</span><span class="p">,</span> <span class="n">cam_type</span><span class="p">,</span> <span class="n">cam_kwargs</span><span class="o">=</span><span class="p">{}):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        checkpoint_path :</span>
+<span class="sd">            </span>
+<span class="sd">        cam_type :</span>
+<span class="sd">            </span>
+<span class="sd">        cam_kwargs :</span>
+<span class="sd">            (Default value = {})</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_path</span> <span class="o">=</span> <span class="n">checkpoint_path</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cam_type</span> <span class="o">=</span> <span class="n">cam_type</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cam_kwargs</span> <span class="o">=</span> <span class="n">cam_kwargs</span>
@@ -714,6 +871,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">lock</span> <span class="o">=</span> <span class="n">Lock</span><span class="p">()</span>
         
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">trainer</span><span class="o">.</span><span class="n">load_model</span><span class="p">()</span>
         <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trainer</span><span class="o">.</span><span class="n">model</span>
@@ -722,12 +880,25 @@
         
     
     <span class="k">def</span> <span class="nf">get_dataloader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Access the dataloder object&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">trainer</span><span class="o">.</span><span class="n">dataloader</span>
     
-    <span class="k">def</span> <span class="nf">get_validation_images</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observe_classes</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_validation_images</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observe_classes</span><span class="p">:</span><span class="nb">list</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        observe_classes : list</span>
+<span class="sd">            (Default value = None)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">fileset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dataloader</span><span class="p">()</span><span class="o">.</span><span class="n">val_dataloader</span><span class="p">()</span><span class="o">.</span><span class="n">dataset</span>
         <span class="k">if</span> <span class="n">observe_classes</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span> 
-            <span class="k">return</span> <span class="p">([</span><span class="n">idx</span><span class="p">,</span> <span class="n">image</span><span class="p">,</span> <span class="n">patient_class</span><span class="p">,</span> <span class="n">target_class</span><span class="p">]</span> <span class="k">for</span> <span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">patient_class</span><span class="p">)),</span> <span class="n">target_class</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">fileset</span><span class="p">),</span><span class="n">observe_classes</span><span class="p">))</span> <span class="c1">#itertools.product(enumerate(fileset),observe_classes)</span>
+            <span class="k">return</span> <span class="p">([</span><span class="n">idx</span><span class="p">,</span> <span class="n">image</span><span class="p">,</span> <span class="n">patient_class</span><span class="p">,</span> <span class="n">target_class</span><span class="p">]</span> <span class="k">for</span> <span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">patient_class</span><span class="p">)),</span> <span class="n">target_class</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">fileset</span><span class="p">),</span><span class="n">observe_classes</span><span class="p">))</span> 
         <span class="k">return</span> <span class="n">fileset</span>
 </pre></div>
 
@@ -745,6 +916,22 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">checkpoint_path</span><span class="p">,</span> <span class="n">cam_type</span><span class="p">,</span> <span class="n">cam_kwargs</span><span class="o">=</span><span class="p">{}):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        checkpoint_path :</span>
+<span class="sd">            </span>
+<span class="sd">        cam_type :</span>
+<span class="sd">            </span>
+<span class="sd">        cam_kwargs :</span>
+<span class="sd">            (Default value = {})</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_path</span> <span class="o">=</span> <span class="n">checkpoint_path</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cam_type</span> <span class="o">=</span> <span class="n">cam_type</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cam_kwargs</span> <span class="o">=</span> <span class="n">cam_kwargs</span>
@@ -754,7 +941,18 @@
 
         </details>
 
-    
+            <div class="docstring"><h2 id="parameters">Parameters</h2>
+
+<p>checkpoint_path :</p>
+
+<p>cam_type :</p>
+
+<p>cam_kwargs :
+    (Default value = {})</p>
+
+<h2 id="returns">Returns</h2>
+</div>
+
 
                             </div>
                             <div id="ThreadSafeReloadedModel.get_dataloader" class="classattr">
@@ -768,12 +966,15 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">get_dataloader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Access the dataloder object&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">trainer</span><span class="o">.</span><span class="n">dataloader</span>
 </pre></div>
 
         </details>
 
-    
+            <div class="docstring"><p>Access the dataloder object</p>
+</div>
+
 
                             </div>
                             <div id="ThreadSafeReloadedModel.get_validation_images" class="classattr">
@@ -781,21 +982,40 @@
 
         
             <span class="def">def</span>
-            <span class="name">get_validation_images</span><span class="signature">(self, observe_classes=None)</span>:
+            <span class="name">get_validation_images</span><span class="signature">(self, observe_classes: list = None)</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">get_validation_images</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observe_classes</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">get_validation_images</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observe_classes</span><span class="p">:</span><span class="nb">list</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        observe_classes : list</span>
+<span class="sd">            (Default value = None)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">fileset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dataloader</span><span class="p">()</span><span class="o">.</span><span class="n">val_dataloader</span><span class="p">()</span><span class="o">.</span><span class="n">dataset</span>
         <span class="k">if</span> <span class="n">observe_classes</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span> 
-            <span class="k">return</span> <span class="p">([</span><span class="n">idx</span><span class="p">,</span> <span class="n">image</span><span class="p">,</span> <span class="n">patient_class</span><span class="p">,</span> <span class="n">target_class</span><span class="p">]</span> <span class="k">for</span> <span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">patient_class</span><span class="p">)),</span> <span class="n">target_class</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">fileset</span><span class="p">),</span><span class="n">observe_classes</span><span class="p">))</span> <span class="c1">#itertools.product(enumerate(fileset),observe_classes)</span>
+            <span class="k">return</span> <span class="p">([</span><span class="n">idx</span><span class="p">,</span> <span class="n">image</span><span class="p">,</span> <span class="n">patient_class</span><span class="p">,</span> <span class="n">target_class</span><span class="p">]</span> <span class="k">for</span> <span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">patient_class</span><span class="p">)),</span> <span class="n">target_class</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">fileset</span><span class="p">),</span><span class="n">observe_classes</span><span class="p">))</span> 
         <span class="k">return</span> <span class="n">fileset</span>
 </pre></div>
 
         </details>
 
-    
+            <div class="docstring"><h2 id="parameters">Parameters</h2>
+
+<p>observe_classes : list
+    (Default value = None)</p>
+
+<h2 id="returns">Returns</h2>
+</div>
+
 
                             </div>
                 </section>

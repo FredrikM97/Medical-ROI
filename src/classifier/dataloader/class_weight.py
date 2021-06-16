@@ -8,27 +8,80 @@ import sklearn
 import torch.nn as nn
 
 class ClassWeights:
+    """ """
     def __init__(self, classes:dict):
+        """
+
+        Parameters
+        ----------
+        classes : dict
+            
+
+        Returns
+        -------
+
+        
+        """
         self.classes=classes
         self.weights = None
         
     def __call__(self, labels):
+        """
+
+        Parameters
+        ----------
+        labels :
+            
+
+        Returns
+        -------
+
+        
+        """
 
         # Compute weights
         self.weights = torch.from_numpy(sklearn.utils.class_weight.compute_class_weight('balanced', classes=list(self.classes.values()), y=labels)).float().cuda()
     
     def numpy(self):
+        """ """
         return self.weights.numpy()
     
 class InitWeightDistribution:
+    """ """
     
     #def __init__(self, model):
     #    self.model = model
     def __new__(self, model, dist):
+        """
+
+        Parameters
+        ----------
+        model :
+            
+        dist :
+            
+
+        Returns
+        -------
+
+        
+        """
         getattr(self, dist)(self,model)
         
     
     def uniform(self,m):
+        """
+
+        Parameters
+        ----------
+        m :
+            
+
+        Returns
+        -------
+
+        
+        """
         classname = m.__class__.__name__
         # for every Linear layer in a model..
         if classname.find('Linear') != -1:
@@ -37,6 +90,18 @@ class InitWeightDistribution:
             m.bias.data.fill_(0)
         
     def normal(self,model):
+        """
+
+        Parameters
+        ----------
+        model :
+            
+
+        Returns
+        -------
+
+        
+        """
         for m in model.model.modules():
             #classname = m.__class__.__name__
             # for every Linear layer in a model..

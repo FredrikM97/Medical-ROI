@@ -3,7 +3,24 @@ import torch.nn as nn
 from collections import OrderedDict
 
 class testModel(nn.Module):
+    """ """
     def __init__(self,num_channels:int=1,num_classes:int=3, **kwargs):
+        """
+
+        Parameters
+        ----------
+        num_channels : int
+            (Default value = 1)
+        num_classes : int
+            (Default value = 3)
+        **kwargs :
+            
+
+        Returns
+        -------
+
+        
+        """
         # Model for input (batch, channel, slices, with, height) -> (batch,1,79, 96, 79)
         super().__init__()
         print(num_channels)
@@ -16,6 +33,20 @@ class testModel(nn.Module):
         self.drop=nn.Dropout(p=0.15)        
         
     def _conv_layer_set(self, in_c, out_c):
+        """
+
+        Parameters
+        ----------
+        in_c :
+            
+        out_c :
+            
+
+        Returns
+        -------
+
+        
+        """
         conv_layer = nn.Sequential(nn.ModuleDict([
             ('conv',nn.Conv3d(in_c, out_c, kernel_size=(3, 3, 3), padding=0)),
             ('leakyrelu',nn.LeakyReLU()),
@@ -25,6 +56,18 @@ class testModel(nn.Module):
     
 
     def forward(self, x):
+        """
+
+        Parameters
+        ----------
+        x :
+            
+
+        Returns
+        -------
+
+        
+        """
         # Set 1
         out = self.conv_layer1(x)
         out = self.conv_layer2(out)
@@ -38,6 +81,18 @@ class testModel(nn.Module):
         return out
 
     def num_flat_features(self, x):
+        """
+
+        Parameters
+        ----------
+        x :
+            
+
+        Returns
+        -------
+
+        
+        """
         size = x.size()[1:]  # all dimensions except the batch dimension
         num_features = 1
         for s in size:

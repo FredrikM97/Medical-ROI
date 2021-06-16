@@ -28,9 +28,27 @@ import contextlib
 import itertools
 
 class Agent:
+    """ """
     
-    def __init__(self, config_name=None, base_config='base',checkpoint_path:str=None, print_enabled=False):
-        #self.checkpoint_path=checkpoint_path
+    def __init__(self, config_name:str=None, base_config:str='base',checkpoint_path:str=None, print_enabled:bool=False):
+        """Init function for Agent
+
+        Parameters
+        ----------
+        config_name : str
+            (Default value = None)
+        base_config : str
+            (Default value = 'base')
+        checkpoint_path : str
+            (Default value = None)
+        print_enabled : bool
+            (Default value = False)
+
+        Returns
+        -------
+
+        
+        """
         self._config = None
         self.print_enabled = print_enabled
         self.base_config = base_config
@@ -48,8 +66,21 @@ class Agent:
         self.load_model() 
         self.load_trainer()
 
-    def load_config(self,config_name, checkpoint_path=None):
-        """Init the config into object"""
+    def load_config(self,config_name:str, checkpoint_path:str=None):
+        """Init the config into object
+
+        Parameters
+        ----------
+        config_name : str
+            
+        checkpoint_path : str
+            (Default value = None)
+
+        Returns
+        -------
+
+        
+        """
         # Load all config settings
         if config_name == None and checkpoint_path == None:
             raise ValueError("Both config_name and checkpoint_path cant be None!")
@@ -112,7 +143,7 @@ class Agent:
     
     
     def load_trainer(self):
-        """Return a trainer object"""
+        """Load a trainer to class"""
         
         cfg_trainer = self._config['trainer']
     
@@ -141,6 +172,7 @@ class Agent:
     
     
     def run(self):
+        """Load the model and trainer, and run the agent"""
         self.load_model() 
         self.load_trainer()
         self.print_enabled: print(f"Dataloader fold: {self.dataloader.kfold_index}")
@@ -150,19 +182,37 @@ class Agent:
         return trainer
     
     def print_info(self):
-         print(
+        """ """
+        print(
                 f"Checkpoint: {self._config['checkpoint_path']}\n"
                 f"{self.model}\n\n{self.dataloader}"
                 f"{self.model.roi_model if self.model.roi_model != None else ''}" 
-            )
+        )
    
 
         
     
 
 class ThreadSafeReloadedModel:
+    """ """
     
     def __init__(self, checkpoint_path, cam_type, cam_kwargs={}):
+        """
+
+        Parameters
+        ----------
+        checkpoint_path :
+            
+        cam_type :
+            
+        cam_kwargs :
+            (Default value = {})
+
+        Returns
+        -------
+
+        
+        """
         self.checkpoint_path = checkpoint_path
         self.cam_type = cam_type
         self.cam_kwargs = cam_kwargs
@@ -170,6 +220,7 @@ class ThreadSafeReloadedModel:
         self.lock = Lock()
         
     def __call__(self):
+        """ """
         self.lock.acquire()
         self.trainer.load_model()
         model = self.trainer.model
@@ -178,11 +229,24 @@ class ThreadSafeReloadedModel:
         
     
     def get_dataloader(self):
+        """Access the dataloder object"""
         return self.trainer.dataloader
     
-    def get_validation_images(self, observe_classes=None):
+    def get_validation_images(self, observe_classes:list=None):
+        """
+
+        Parameters
+        ----------
+        observe_classes : list
+            (Default value = None)
+
+        Returns
+        -------
+
+        
+        """
         fileset = self.get_dataloader().val_dataloader().dataset
         if observe_classes != None: 
-            return ([idx, image, patient_class, target_class] for (idx, (image, patient_class)), target_class in itertools.product(enumerate(fileset),observe_classes)) #itertools.product(enumerate(fileset),observe_classes)
+            return ([idx, image, patient_class, target_class] for (idx, (image, patient_class)), target_class in itertools.product(enumerate(fileset),observe_classes)) 
         return fileset
 

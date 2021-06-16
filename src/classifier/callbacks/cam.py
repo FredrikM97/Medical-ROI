@@ -7,6 +7,7 @@ from src.cam import CAM
 from src.utils.preprocess import tensor2numpy
 
 class CAMCallback(pl.callbacks.Callback):
+    """ """
     #https://stackoverflow.com/questions/62494963/how-to-do-class-activation-mapping-in-pytorch-vgg16-model
     
     #def on_fit_start(self, trainer, pl_module) -> None:
@@ -14,10 +15,36 @@ class CAMCallback(pl.callbacks.Callback):
     #    self.cam_model = CAM(self.cam_type, trainer.model)
         
     def __init__(self, cam_type=torchcam.cams.GradCAMpp):
+        """
+
+        Parameters
+        ----------
+        cam_type :
+            (Default value = torchcam.cams.GradCAMpp)
+
+        Returns
+        -------
+
+        
+        """
         self.cam_type = cam_type
         print("What is the cam type",self.cam_type)
         
     def on_epoch_end(self, trainer, pl_module):
+        """
+
+        Parameters
+        ----------
+        trainer :
+            
+        pl_module :
+            
+
+        Returns
+        -------
+
+        
+        """
         #trainer.model.eval()
         self.cam_model = CAM(self.cam_type, trainer.model)
         
@@ -34,6 +61,18 @@ class CAMCallback(pl.callbacks.Callback):
     
         
     def get_one_sample(self, pl_module):
+        """
+
+        Parameters
+        ----------
+        pl_module :
+            
+
+        Returns
+        -------
+
+        
+        """
         for i, sample in enumerate(pl_module.val_dataloader()):   # Stepping through dataloader might mess up validation elsewhere ?
             # Dont call cuda directly (this is not optimized :( ))
             x,y = sample

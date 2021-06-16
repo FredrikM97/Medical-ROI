@@ -128,120 +128,424 @@
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;DebugCallback&#39;</span><span class="p">]</span>
 
 <span class="k">class</span> <span class="nc">DebugCallback</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">callbacks</span><span class="o">.</span><span class="n">Callback</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">on_fit_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when fit begins&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when fit begins</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Fit begins&quot;</span><span class="p">)</span>
 
 
     <span class="k">def</span> <span class="nf">on_fit_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when fit ends&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when fit ends</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Fit ends&quot;</span><span class="p">)</span>
 
 
     <span class="k">def</span> <span class="nf">on_sanity_check_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the validation sanity check starts.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the validation sanity check starts.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Validation sanity check starts&quot;</span><span class="p">)</span>
 
 
     <span class="k">def</span> <span class="nf">on_sanity_check_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the validation sanity check ends.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the validation sanity check ends.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Validation sanity check ends&quot;</span><span class="p">)</span>
 
 
     <span class="k">def</span> <span class="nf">on_train_batch_start</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">,</span> <span class="n">dataloader_idx</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the train batch begins.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the train batch begins.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+<span class="sd">        batch :</span>
+<span class="sd">            </span>
+<span class="sd">        batch_idx :</span>
+<span class="sd">            </span>
+<span class="sd">        dataloader_idx :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;train batch begins&quot;</span><span class="p">)</span>
 
 
     <span class="k">def</span> <span class="nf">on_train_batch_end</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">,</span> <span class="n">outputs</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">,</span> <span class="n">dataloader_idx</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the train batch ends.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the train batch ends.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+<span class="sd">        outputs :</span>
+<span class="sd">            </span>
+<span class="sd">        batch :</span>
+<span class="sd">            </span>
+<span class="sd">        batch_idx :</span>
+<span class="sd">            </span>
+<span class="sd">        dataloader_idx :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;train batch ends&quot;</span><span class="p">)</span>
 
 
     <span class="k">def</span> <span class="nf">on_train_epoch_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the train epoch begins.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the train epoch begins.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;train epoch begins&quot;</span><span class="p">)</span>
 
 
     <span class="k">def</span> <span class="nf">on_train_epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">,</span> <span class="n">outputs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the train epoch ends.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the train epoch ends.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+<span class="sd">        outputs :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;train epoch ends&quot;</span><span class="p">)</span>
 
 
     <span class="k">def</span> <span class="nf">on_validation_epoch_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the val epoch begins.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the val epoch begins.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;val epoch begins&quot;</span><span class="p">)</span>
 
 
     <span class="k">def</span> <span class="nf">on_validation_epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the val epoch ends.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the val epoch ends.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;val epoch ends&quot;</span><span class="p">)</span>
 
 
     <span class="k">def</span> <span class="nf">on_test_epoch_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the test epoch begins.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the test epoch begins.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;test epoch begins&quot;</span><span class="p">)</span>
 
 
     <span class="k">def</span> <span class="nf">on_test_epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the test epoch ends.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the test epoch ends.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;test epoch ends&quot;</span><span class="p">)</span>
 
 
     <span class="k">def</span> <span class="nf">on_epoch_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the epoch begins.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the epoch begins.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;epoch begins&quot;</span><span class="p">)</span>
 
 
     <span class="k">def</span> <span class="nf">on_epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the epoch ends.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the epoch ends.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;epoch ends&quot;</span><span class="p">)</span>
 
 
     <span class="k">def</span> <span class="nf">on_batch_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the training batch begins.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the training batch begins.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;training batch begins&quot;</span><span class="p">)</span>
 
 
     <span class="k">def</span> <span class="nf">on_batch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the training batch ends.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the training batch ends.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;training batch ends&quot;</span><span class="p">)</span>
 
 
     <span class="k">def</span> <span class="nf">on_train_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the train begins.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the train begins.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;train begins&quot;</span><span class="p">)</span>
 
 
     <span class="k">def</span> <span class="nf">on_train_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the train ends.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the train ends.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;train ends&quot;</span><span class="p">)</span>
     
 
     <span class="k">def</span> <span class="nf">on_validation_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the validation loop begins.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the validation loop begins.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;validation loop begins&quot;</span><span class="p">)</span>
 
 
     <span class="k">def</span> <span class="nf">on_validation_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the validation loop ends.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the validation loop ends.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;validation loop ends&quot;</span><span class="p">)</span>
 
 
     <span class="k">def</span> <span class="nf">on_test_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the test begins.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the test begins.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;test begins&quot;</span><span class="p">)</span>
 
 
     <span class="k">def</span> <span class="nf">on_test_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the test ends.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the test ends.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;test ends&quot;</span><span class="p">)</span>
 </pre></div>
 
@@ -260,130 +564,430 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">DebugCallback</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">callbacks</span><span class="o">.</span><span class="n">Callback</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">on_fit_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when fit begins&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when fit begins</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Fit begins&quot;</span><span class="p">)</span>
 
 
     <span class="k">def</span> <span class="nf">on_fit_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when fit ends&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when fit ends</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Fit ends&quot;</span><span class="p">)</span>
 
 
     <span class="k">def</span> <span class="nf">on_sanity_check_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the validation sanity check starts.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the validation sanity check starts.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Validation sanity check starts&quot;</span><span class="p">)</span>
 
 
     <span class="k">def</span> <span class="nf">on_sanity_check_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the validation sanity check ends.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the validation sanity check ends.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Validation sanity check ends&quot;</span><span class="p">)</span>
 
 
     <span class="k">def</span> <span class="nf">on_train_batch_start</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">,</span> <span class="n">dataloader_idx</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the train batch begins.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the train batch begins.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+<span class="sd">        batch :</span>
+<span class="sd">            </span>
+<span class="sd">        batch_idx :</span>
+<span class="sd">            </span>
+<span class="sd">        dataloader_idx :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;train batch begins&quot;</span><span class="p">)</span>
 
 
     <span class="k">def</span> <span class="nf">on_train_batch_end</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">,</span> <span class="n">outputs</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">,</span> <span class="n">dataloader_idx</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the train batch ends.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the train batch ends.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+<span class="sd">        outputs :</span>
+<span class="sd">            </span>
+<span class="sd">        batch :</span>
+<span class="sd">            </span>
+<span class="sd">        batch_idx :</span>
+<span class="sd">            </span>
+<span class="sd">        dataloader_idx :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;train batch ends&quot;</span><span class="p">)</span>
 
 
     <span class="k">def</span> <span class="nf">on_train_epoch_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the train epoch begins.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the train epoch begins.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;train epoch begins&quot;</span><span class="p">)</span>
 
 
     <span class="k">def</span> <span class="nf">on_train_epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">,</span> <span class="n">outputs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the train epoch ends.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the train epoch ends.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+<span class="sd">        outputs :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;train epoch ends&quot;</span><span class="p">)</span>
 
 
     <span class="k">def</span> <span class="nf">on_validation_epoch_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the val epoch begins.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the val epoch begins.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;val epoch begins&quot;</span><span class="p">)</span>
 
 
     <span class="k">def</span> <span class="nf">on_validation_epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the val epoch ends.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the val epoch ends.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;val epoch ends&quot;</span><span class="p">)</span>
 
 
     <span class="k">def</span> <span class="nf">on_test_epoch_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the test epoch begins.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the test epoch begins.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;test epoch begins&quot;</span><span class="p">)</span>
 
 
     <span class="k">def</span> <span class="nf">on_test_epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the test epoch ends.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the test epoch ends.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;test epoch ends&quot;</span><span class="p">)</span>
 
 
     <span class="k">def</span> <span class="nf">on_epoch_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the epoch begins.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the epoch begins.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;epoch begins&quot;</span><span class="p">)</span>
 
 
     <span class="k">def</span> <span class="nf">on_epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the epoch ends.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the epoch ends.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;epoch ends&quot;</span><span class="p">)</span>
 
 
     <span class="k">def</span> <span class="nf">on_batch_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the training batch begins.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the training batch begins.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;training batch begins&quot;</span><span class="p">)</span>
 
 
     <span class="k">def</span> <span class="nf">on_batch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the training batch ends.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the training batch ends.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;training batch ends&quot;</span><span class="p">)</span>
 
 
     <span class="k">def</span> <span class="nf">on_train_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the train begins.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the train begins.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;train begins&quot;</span><span class="p">)</span>
 
 
     <span class="k">def</span> <span class="nf">on_train_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the train ends.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the train ends.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;train ends&quot;</span><span class="p">)</span>
     
 
     <span class="k">def</span> <span class="nf">on_validation_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the validation loop begins.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the validation loop begins.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;validation loop begins&quot;</span><span class="p">)</span>
 
 
     <span class="k">def</span> <span class="nf">on_validation_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the validation loop ends.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the validation loop ends.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;validation loop ends&quot;</span><span class="p">)</span>
 
 
     <span class="k">def</span> <span class="nf">on_test_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the test begins.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the test begins.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;test begins&quot;</span><span class="p">)</span>
 
 
     <span class="k">def</span> <span class="nf">on_test_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the test ends.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the test ends.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;test ends&quot;</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Abstract base class used to build new callbacks.</p>
-
-<p>Subclass this class and override any of the relevant hooks</p>
-</div>
-
+    
 
                             <div id="DebugCallback.__init__" class="classattr">
                                         <div class="attr function"><a class="headerlink" href="#DebugCallback.__init__">#&nbsp;&nbsp</a>
@@ -395,6 +999,7 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 </pre></div>
 
@@ -414,13 +1019,34 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">on_fit_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when fit begins&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when fit begins</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Fit begins&quot;</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
             <div class="docstring"><p>Called when fit begins</p>
+
+<h2 id="parameters">Parameters</h2>
+
+<p>trainer :</p>
+
+<p>pl_module :</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -436,13 +1062,34 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">on_fit_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when fit ends&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when fit ends</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Fit ends&quot;</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
             <div class="docstring"><p>Called when fit ends</p>
+
+<h2 id="parameters">Parameters</h2>
+
+<p>trainer :</p>
+
+<p>pl_module :</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -458,13 +1105,34 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">on_sanity_check_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the validation sanity check starts.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the validation sanity check starts.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Validation sanity check starts&quot;</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
             <div class="docstring"><p>Called when the validation sanity check starts.</p>
+
+<h2 id="parameters">Parameters</h2>
+
+<p>trainer :</p>
+
+<p>pl_module :</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -480,13 +1148,34 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">on_sanity_check_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the validation sanity check ends.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the validation sanity check ends.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Validation sanity check ends&quot;</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
             <div class="docstring"><p>Called when the validation sanity check ends.</p>
+
+<h2 id="parameters">Parameters</h2>
+
+<p>trainer :</p>
+
+<p>pl_module :</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -504,13 +1193,46 @@
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">on_train_batch_start</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">,</span> <span class="n">dataloader_idx</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the train batch begins.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the train batch begins.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+<span class="sd">        batch :</span>
+<span class="sd">            </span>
+<span class="sd">        batch_idx :</span>
+<span class="sd">            </span>
+<span class="sd">        dataloader_idx :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;train batch begins&quot;</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
             <div class="docstring"><p>Called when the train batch begins.</p>
+
+<h2 id="parameters">Parameters</h2>
+
+<p>trainer :</p>
+
+<p>pl_module :</p>
+
+<p>batch :</p>
+
+<p>batch_idx :</p>
+
+<p>dataloader_idx :</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -536,13 +1258,50 @@
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">on_train_batch_end</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">,</span> <span class="n">outputs</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">,</span> <span class="n">dataloader_idx</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the train batch ends.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the train batch ends.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+<span class="sd">        outputs :</span>
+<span class="sd">            </span>
+<span class="sd">        batch :</span>
+<span class="sd">            </span>
+<span class="sd">        batch_idx :</span>
+<span class="sd">            </span>
+<span class="sd">        dataloader_idx :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;train batch ends&quot;</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
             <div class="docstring"><p>Called when the train batch ends.</p>
+
+<h2 id="parameters">Parameters</h2>
+
+<p>trainer :</p>
+
+<p>pl_module :</p>
+
+<p>outputs :</p>
+
+<p>batch :</p>
+
+<p>batch_idx :</p>
+
+<p>dataloader_idx :</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -558,13 +1317,34 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">on_train_epoch_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the train epoch begins.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the train epoch begins.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;train epoch begins&quot;</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
             <div class="docstring"><p>Called when the train epoch begins.</p>
+
+<h2 id="parameters">Parameters</h2>
+
+<p>trainer :</p>
+
+<p>pl_module :</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -580,13 +1360,38 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">on_train_epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">,</span> <span class="n">outputs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the train epoch ends.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the train epoch ends.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+<span class="sd">        outputs :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;train epoch ends&quot;</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
             <div class="docstring"><p>Called when the train epoch ends.</p>
+
+<h2 id="parameters">Parameters</h2>
+
+<p>trainer :</p>
+
+<p>pl_module :</p>
+
+<p>outputs :</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -602,13 +1407,34 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">on_validation_epoch_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the val epoch begins.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the val epoch begins.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;val epoch begins&quot;</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
             <div class="docstring"><p>Called when the val epoch begins.</p>
+
+<h2 id="parameters">Parameters</h2>
+
+<p>trainer :</p>
+
+<p>pl_module :</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -624,13 +1450,34 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">on_validation_epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the val epoch ends.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the val epoch ends.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;val epoch ends&quot;</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
             <div class="docstring"><p>Called when the val epoch ends.</p>
+
+<h2 id="parameters">Parameters</h2>
+
+<p>trainer :</p>
+
+<p>pl_module :</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -646,13 +1493,34 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">on_test_epoch_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the test epoch begins.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the test epoch begins.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;test epoch begins&quot;</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
             <div class="docstring"><p>Called when the test epoch begins.</p>
+
+<h2 id="parameters">Parameters</h2>
+
+<p>trainer :</p>
+
+<p>pl_module :</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -668,13 +1536,34 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">on_test_epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the test epoch ends.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the test epoch ends.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;test epoch ends&quot;</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
             <div class="docstring"><p>Called when the test epoch ends.</p>
+
+<h2 id="parameters">Parameters</h2>
+
+<p>trainer :</p>
+
+<p>pl_module :</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -690,13 +1579,34 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">on_epoch_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the epoch begins.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the epoch begins.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;epoch begins&quot;</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
             <div class="docstring"><p>Called when the epoch begins.</p>
+
+<h2 id="parameters">Parameters</h2>
+
+<p>trainer :</p>
+
+<p>pl_module :</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -712,13 +1622,34 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">on_epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the epoch ends.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the epoch ends.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;epoch ends&quot;</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
             <div class="docstring"><p>Called when the epoch ends.</p>
+
+<h2 id="parameters">Parameters</h2>
+
+<p>trainer :</p>
+
+<p>pl_module :</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -734,13 +1665,34 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">on_batch_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the training batch begins.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the training batch begins.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;training batch begins&quot;</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
             <div class="docstring"><p>Called when the training batch begins.</p>
+
+<h2 id="parameters">Parameters</h2>
+
+<p>trainer :</p>
+
+<p>pl_module :</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -756,13 +1708,34 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">on_batch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the training batch ends.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the training batch ends.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;training batch ends&quot;</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
             <div class="docstring"><p>Called when the training batch ends.</p>
+
+<h2 id="parameters">Parameters</h2>
+
+<p>trainer :</p>
+
+<p>pl_module :</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -778,13 +1751,34 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">on_train_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the train begins.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the train begins.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;train begins&quot;</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
             <div class="docstring"><p>Called when the train begins.</p>
+
+<h2 id="parameters">Parameters</h2>
+
+<p>trainer :</p>
+
+<p>pl_module :</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -800,13 +1794,34 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">on_train_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the train ends.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the train ends.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;train ends&quot;</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
             <div class="docstring"><p>Called when the train ends.</p>
+
+<h2 id="parameters">Parameters</h2>
+
+<p>trainer :</p>
+
+<p>pl_module :</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -822,13 +1837,34 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">on_validation_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the validation loop begins.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the validation loop begins.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;validation loop begins&quot;</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
             <div class="docstring"><p>Called when the validation loop begins.</p>
+
+<h2 id="parameters">Parameters</h2>
+
+<p>trainer :</p>
+
+<p>pl_module :</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -844,13 +1880,34 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">on_validation_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the validation loop ends.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the validation loop ends.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;validation loop ends&quot;</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
             <div class="docstring"><p>Called when the validation loop ends.</p>
+
+<h2 id="parameters">Parameters</h2>
+
+<p>trainer :</p>
+
+<p>pl_module :</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -866,13 +1923,34 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">on_test_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the test begins.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the test begins.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;test begins&quot;</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
             <div class="docstring"><p>Called when the test begins.</p>
+
+<h2 id="parameters">Parameters</h2>
+
+<p>trainer :</p>
+
+<p>pl_module :</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -888,13 +1966,34 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">on_test_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the test ends.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called when the test ends.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;test ends&quot;</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
             <div class="docstring"><p>Called when the test ends.</p>
+
+<h2 id="parameters">Parameters</h2>
+
+<p>trainer :</p>
+
+<p>pl_module :</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 

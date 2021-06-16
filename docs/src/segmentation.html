@@ -120,16 +120,22 @@
 
 <span class="k">def</span> <span class="nf">segment_mask</span><span class="p">(</span><span class="n">background_mask</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">image_mask</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">150</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Simple segmentation of the mask input</span>
-<span class="sd">    Note: This one might need some scientific rework since it is not very good</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    background_mask : np.ndarray</span>
+<span class="sd">        </span>
+<span class="sd">    image_mask : np.ndarray</span>
+<span class="sd">        </span>
+<span class="sd">    upper_bound :</span>
+<span class="sd">        (Default value = 150)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    n=1</span>
-<span class="sd">    im = filters.gaussian(image_mask, sigma=1/(4.*n), mode=&#39;nearest&#39;)</span>
-<span class="sd">    mask = im &gt; im.max()*0.62</span>
-<span class="sd">    label_im = measure.label(mask, connectivity=None) # Use all three dimensions to decide labels</span>
-<span class="sd">    #label_im, nb_labels = ndimage.label(mask, connectivity=1)</span>
-<span class="sd">    return label_im</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">tmp_image</span> <span class="o">=</span> <span class="n">image_mask</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="n">tmp_image</span><span class="p">[</span><span class="n">tmp_image</span> <span class="o">&lt;</span> <span class="n">upper_bound</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">tmp_image</span><span class="p">[</span><span class="n">background_mask</span><span class="o">&lt;=</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
@@ -138,11 +144,10 @@
 
     <span class="k">return</span> <span class="n">labeled_masks</span>
 
-<span class="k">def</span> <span class="nf">get_bbox_coordinates</span><span class="p">(</span><span class="n">feature</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Convert skimage format to x,y,x,y,z0,z1</span>
+<span class="k">def</span> <span class="nf">get_bbox_coordinates</span><span class="p">(</span><span class="n">feature</span><span class="p">:</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Convert skimage format to x,y,x,y,z0,z1</span>
 <span class="sd">    </span>
-<span class="sd">    Expects feature.bbox to be in format: </span>
+<span class="sd">    Expects feature.bbox to be in format:</span>
 <span class="sd">        min_depth, min_row, min_col, max_depth, max_row, max_col</span>
 <span class="sd">    Returns:</span>
 <span class="sd">        min_col, min_row, max_col, max_row, min_depth, max_depth</span>
@@ -154,9 +159,18 @@
 <span class="sd">    </span>
 <span class="sd">    feature = measure.regionprops(tmp_image)[0]</span>
 <span class="sd">    feature.bbox -&gt; (1, 30, 20, 2, 40, 50)</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    feature : object</span>
+<span class="sd">        </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    type</span>
+<span class="sd">        (20, 30, 50, 40, 1, 2)</span>
+
 <span class="sd">    </span>
-<span class="sd">    Return:</span>
-<span class="sd">    (20, 30, 50, 40, 1, 2)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
     <span class="n">min_depth</span><span class="p">,</span> <span class="n">min_row</span><span class="p">,</span> <span class="n">min_col</span><span class="p">,</span> <span class="n">max_depth</span><span class="p">,</span> <span class="n">max_row</span><span class="p">,</span> <span class="n">max_col</span> <span class="o">=</span> <span class="n">feature</span><span class="o">.</span><span class="n">bbox</span>
@@ -164,11 +178,18 @@
 
 <span class="k">def</span> <span class="nf">bounding_boxes</span><span class="p">(</span><span class="n">features</span><span class="p">:</span><span class="nb">list</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Expects features from 2D images</span>
-<span class="sd">    </span>
-<span class="sd">    Args:</span>
-<span class="sd">        features (List[RegionProperties])</span>
-<span class="sd">    Return:</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    features : list</span>
+<span class="sd">        List</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    type</span>
 <span class="sd">        output List[K, 6] with the box coordinates in  (x0, y0, x1, y1, z0, z1) and k is batch size.</span>
+
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
@@ -177,11 +198,27 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">get_bbox_coordinates</span><span class="p">(</span><span class="n">features</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">roi_align</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">boxes</span><span class="p">:</span><span class="nb">list</span><span class="p">,</span> <span class="n">output_shape</span><span class="o">=</span><span class="p">(</span><span class="mi">40</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">40</span><span class="p">),</span> <span class="n">displayed</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Create aligned image rois for the neural network</span>
+<span class="k">def</span> <span class="nf">roi_align</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">boxes</span><span class="p">:</span><span class="nb">list</span><span class="p">,</span> <span class="n">output_shape</span><span class="p">:</span><span class="n">Tuple</span><span class="o">=</span><span class="p">(</span><span class="mi">40</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">40</span><span class="p">),</span> <span class="n">displayed</span><span class="p">:</span><span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Create aligned image rois for the neural network</span>
 <span class="sd">    Arg:</span>
 <span class="sd">        image: Image of shape Tuple[D,H,W]</span>
 <span class="sd">        features (List[Tuple[int,int,int,int,int]]): List of features (z0,y0,z1,y1,x0,x1). Shape is expected based on the input of ROIAlign</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    image :</span>
+<span class="sd">        </span>
+<span class="sd">    boxes : list</span>
+<span class="sd">        </span>
+<span class="sd">    output_shape : Tuple</span>
+<span class="sd">        (Default value = (40,40,40))</span>
+<span class="sd">    displayed : bool</span>
+<span class="sd">        (Default value = False)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">image_tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">image</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span>
@@ -197,28 +234,55 @@
 
 <span class="k">def</span> <span class="nf">column_to_tuple</span><span class="p">(</span><span class="n">pd_column</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Convert a pandas column from string to tuple</span>
-<span class="sd">    </span>
-<span class="sd">    Args:</span>
-<span class="sd">        pd_column (Series): A selected column to convert the content to tuple type.</span>
-<span class="sd">    Return:</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pd_column :</span>
+<span class="sd">        Series</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    type</span>
 <span class="sd">        output (Series):</span>
+
 <span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
     <span class="k">return</span> <span class="n">pd_column</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">ast</span><span class="o">.</span><span class="n">literal_eval</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">column_to_np</span><span class="p">(</span><span class="n">pd_column</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float64&#39;</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">column_to_np</span><span class="p">(</span><span class="n">pd_column</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="s1">&#39;float64&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Convert a pandas column from tuple to numpy arrays</span>
-<span class="sd">    </span>
-<span class="sd">    Args:</span>
-<span class="sd">        pd_column (Series): A selected column to convert the content to numpy.</span>
-<span class="sd">    Return:</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pd_column :</span>
+<span class="sd">        Series</span>
+<span class="sd">    dtype : str</span>
+<span class="sd">        (Default value = &#39;float64&#39;)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    type</span>
 <span class="sd">        output (Series):</span>
+
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
     <span class="k">return</span> <span class="n">pd_column</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">))</span>
 
-<span class="k">def</span> <span class="nf">center_coordinates</span><span class="p">(</span><span class="n">list_of_bbox</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">center_coordinates</span><span class="p">(</span><span class="n">list_of_bbox</span><span class="p">:</span><span class="nb">list</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    list_of_bbox : list</span>
+<span class="sd">        </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">z</span> <span class="o">=</span> <span class="p">(</span><span class="n">list_of_bbox</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">list_of_bbox</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span>
     <span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">list_of_bbox</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">list_of_bbox</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span>
     <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">list_of_bbox</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">+</span> <span class="n">list_of_bbox</span><span class="p">[</span><span class="mi">5</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span>
@@ -226,13 +290,38 @@
     <span class="k">return</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span>
 
 <span class="k">def</span> <span class="nf">max_occurance</span><span class="p">(</span><span class="n">occurances</span><span class="p">:</span><span class="nb">list</span><span class="p">):</span>
-    <span class="s2">&quot;Calculate the number of occurances of a type&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Calculate the number of occurances of a type</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    occurances : list</span>
+<span class="sd">        </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">u</span><span class="p">,</span><span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">occurances</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">max_val</span> <span class="o">=</span> <span class="n">u</span><span class="p">[</span><span class="n">c</span> <span class="o">==</span> <span class="n">c</span><span class="o">.</span><span class="n">max</span><span class="p">()]</span>
     <span class="k">return</span> <span class="n">max_val</span>
 
 <span class="k">def</span> <span class="nf">nms_reduction</span><span class="p">(</span><span class="n">_bboxes</span><span class="p">,</span> <span class="n">th</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
-    <span class="s2">&quot;Reduce pandas dataframe data containing &#39;bbox&#39;, &#39;score&#39; and &#39;observe_class&#39;. &quot;</span>
+    <span class="sd">&quot;&quot;&quot;Reduce pandas dataframe data containing &#39;bbox&#39;, &#39;score&#39; and &#39;observe_class&#39;.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    _bboxes :</span>
+<span class="sd">        </span>
+<span class="sd">    th :</span>
+<span class="sd">        (Default value = 0.5)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">bbox_tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">_bboxes</span><span class="p">[</span><span class="s1">&#39;bbox&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">())</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
     <span class="n">scores</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">_bboxes</span><span class="p">[</span><span class="s1">&#39;score&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">())</span> 
     <span class="n">idxs</span>  <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">_bboxes</span><span class="p">[</span><span class="s1">&#39;observe_class&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">())</span>
@@ -241,12 +330,41 @@
     <span class="k">return</span> <span class="n">only_interesting</span>
 
 <span class="k">class</span> <span class="nc">Feature_extraction</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Extract features from CAM where the segmented image are about a given threshold.</span>
+    <span class="sd">&quot;&quot;&quot;Extract features from CAM where the segmented image are about a given threshold.</span>
 <span class="sd">    </span>
 <span class="sd">    Supports two functions: features and extract.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cam_extractor</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mf">0.85</span><span class="p">,</span> <span class="n">use_quantile_bounds</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">lambda1</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">lambda2</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_average</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cam_extractor</span><span class="p">,</span> <span class="n">upper_bound</span><span class="p">:</span><span class="nb">float</span><span class="o">=</span><span class="mf">0.85</span><span class="p">,</span> <span class="n">use_quantile_bounds</span><span class="p">:</span><span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">lambda1</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">lambda2</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_average</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        cam_extractor :</span>
+<span class="sd">            </span>
+<span class="sd">        upper_bound : float</span>
+<span class="sd">            (Default value = 0.85)</span>
+<span class="sd">        use_quantile_bounds : bool</span>
+<span class="sd">            (Default value = True)</span>
+<span class="sd">        lambda1 : int</span>
+<span class="sd">            (Default value = 1)</span>
+<span class="sd">        lambda2 : int</span>
+<span class="sd">            (Default value = 1)</span>
+<span class="sd">        n_average : int</span>
+<span class="sd">            (Default value = 2)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">cam_extractor</span> <span class="o">=</span> <span class="n">cam_extractor</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">upper_bound</span> <span class="o">=</span> <span class="n">upper_bound</span>
@@ -257,7 +375,20 @@
 
     <span class="k">def</span> <span class="nf">extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nifti_image</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">observe_class</span><span class="p">:</span><span class="nb">int</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return the segmented mask, image mask class index and upper_bound</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        nifti_image : torch.Tensor</span>
+<span class="sd">            </span>
+<span class="sd">        observe_class : int</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        type</span>
+<span class="sd">            </span>
+
+<span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">nifti_image</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">:</span>
             <span class="n">nifti_image</span> <span class="o">=</span> <span class="n">nifti_image</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
@@ -289,17 +420,29 @@
         
         <span class="k">return</span> <span class="n">segmented_mask</span><span class="p">,</span> <span class="n">image_mask</span><span class="p">,</span><span class="n">class_idx</span><span class="p">,</span><span class="n">_upper_bound</span>
                 
-    <span class="k">def</span> <span class="nf">features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">image_name</span><span class="p">,</span> <span class="n">nifti_image</span><span class="p">,</span> <span class="n">patient_class</span><span class="p">,</span> <span class="n">observe_class</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Calculate score and return info of the segmented features</span>
-<span class="sd">        Args:</span>
-<span class="sd">            i: index</span>
-<span class="sd">            image_name: Name of image</span>
-<span class="sd">            nifti_image: image from nifti</span>
-<span class="sd">            patient_class: Patient class</span>
-<span class="sd">            observe_class: Which class to observe</span>
-<span class="sd">            </span>
-<span class="sd">        &quot;&quot;&quot;</span>    
+    <span class="k">def</span> <span class="nf">features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">image_name</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">nifti_image</span><span class="p">,</span> <span class="n">patient_class</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">observe_class</span><span class="p">:</span><span class="nb">int</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculate score and return info of the segmented features</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        i : int</span>
+<span class="sd">            index</span>
+<span class="sd">        image_name : str</span>
+<span class="sd">            Name of image</span>
+<span class="sd">        nifti_image :</span>
+<span class="sd">            image from nifti</span>
+<span class="sd">        patient_class : int</span>
+<span class="sd">            Patient class</span>
+<span class="sd">        observe_class : int</span>
+<span class="sd">            Which class to observe</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict : </span>
+<span class="sd">            Features for; image, patient_class, observe_class, probability_class and score</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">segmented_mask</span><span class="p">,</span> <span class="n">image_mask</span><span class="p">,</span> <span class="n">class_idx</span><span class="p">,</span><span class="n">_upper_bound</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">nifti_image</span><span class="p">,</span> <span class="n">observe_class</span><span class="p">)</span>
         <span class="n">features</span> <span class="o">=</span> <span class="n">measure</span><span class="o">.</span><span class="n">regionprops</span><span class="p">(</span><span class="n">segmented_mask</span><span class="p">,</span> <span class="n">intensity_image</span><span class="o">=</span><span class="n">image_mask</span><span class="p">)</span>
         <span class="n">new_features</span> <span class="o">=</span> <span class="p">{</span>
@@ -314,7 +457,7 @@
             <span class="s1">&#39;score&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">lambda1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">new_features</span><span class="p">[</span><span class="s1">&#39;mean_intensity&#39;</span><span class="p">])</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">image_mask</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">lambda2</span><span class="o">*</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">new_features</span><span class="p">[</span><span class="s1">&#39;bbox_area&#39;</span><span class="p">]))</span><span class="o">/</span><span class="n">image_mask</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
         <span class="p">})</span>
         
-        <span class="c1">#del class_scores, nifti_image, segmented_mask, image_mask, features</span>
+
         <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;image&#39;</span><span class="p">:</span><span class="n">image_name</span><span class="p">,</span> <span class="s1">&#39;patient_class&#39;</span><span class="p">:</span><span class="n">patient_class</span><span class="p">,</span> <span class="s1">&#39;observe_class&#39;</span><span class="p">:</span><span class="n">observe_class</span><span class="p">,</span> <span class="s1">&#39;probability_class&#39;</span><span class="p">:</span><span class="n">class_idx</span><span class="p">,</span> <span class="o">**</span><span class="n">new_features</span><span class="p">}</span>
 </pre></div>
 
@@ -337,16 +480,22 @@
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">segment_mask</span><span class="p">(</span><span class="n">background_mask</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">image_mask</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">150</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Simple segmentation of the mask input</span>
-<span class="sd">    Note: This one might need some scientific rework since it is not very good</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    background_mask : np.ndarray</span>
+<span class="sd">        </span>
+<span class="sd">    image_mask : np.ndarray</span>
+<span class="sd">        </span>
+<span class="sd">    upper_bound :</span>
+<span class="sd">        (Default value = 150)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    n=1</span>
-<span class="sd">    im = filters.gaussian(image_mask, sigma=1/(4.*n), mode=&#39;nearest&#39;)</span>
-<span class="sd">    mask = im &gt; im.max()*0.62</span>
-<span class="sd">    label_im = measure.label(mask, connectivity=None) # Use all three dimensions to decide labels</span>
-<span class="sd">    #label_im, nb_labels = ndimage.label(mask, connectivity=1)</span>
-<span class="sd">    return label_im</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">tmp_image</span> <span class="o">=</span> <span class="n">image_mask</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="n">tmp_image</span><span class="p">[</span><span class="n">tmp_image</span> <span class="o">&lt;</span> <span class="n">upper_bound</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">tmp_image</span><span class="p">[</span><span class="n">background_mask</span><span class="o">&lt;=</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
@@ -358,8 +507,18 @@
 
         </details>
 
-            <div class="docstring"><p>Simple segmentation of the mask input
-Note: This one might need some scientific rework since it is not very good</p>
+            <div class="docstring"><p>Simple segmentation of the mask input</p>
+
+<h2 id="parameters">Parameters</h2>
+
+<p>background_mask : np.ndarray</p>
+
+<p>image_mask : np.ndarray</p>
+
+<p>upper_bound :
+    (Default value = 150)</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -369,16 +528,15 @@ Note: This one might need some scientific rework since it is not very good</p>
 
         
             <span class="def">def</span>
-            <span class="name">get_bbox_coordinates</span><span class="signature">(feature)</span>:
+            <span class="name">get_bbox_coordinates</span><span class="signature">(feature: object)</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_bbox_coordinates</span><span class="p">(</span><span class="n">feature</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Convert skimage format to x,y,x,y,z0,z1</span>
+            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_bbox_coordinates</span><span class="p">(</span><span class="n">feature</span><span class="p">:</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Convert skimage format to x,y,x,y,z0,z1</span>
 <span class="sd">    </span>
-<span class="sd">    Expects feature.bbox to be in format: </span>
+<span class="sd">    Expects feature.bbox to be in format:</span>
 <span class="sd">        min_depth, min_row, min_col, max_depth, max_row, max_col</span>
 <span class="sd">    Returns:</span>
 <span class="sd">        min_col, min_row, max_col, max_row, min_depth, max_depth</span>
@@ -390,9 +548,18 @@ Note: This one might need some scientific rework since it is not very good</p>
 <span class="sd">    </span>
 <span class="sd">    feature = measure.regionprops(tmp_image)[0]</span>
 <span class="sd">    feature.bbox -&gt; (1, 30, 20, 2, 40, 50)</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    feature : object</span>
+<span class="sd">        </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    type</span>
+<span class="sd">        (20, 30, 50, 40, 1, 2)</span>
+
 <span class="sd">    </span>
-<span class="sd">    Return:</span>
-<span class="sd">    (20, 30, 50, 40, 1, 2)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
     <span class="n">min_depth</span><span class="p">,</span> <span class="n">min_row</span><span class="p">,</span> <span class="n">min_col</span><span class="p">,</span> <span class="n">max_depth</span><span class="p">,</span> <span class="n">max_row</span><span class="p">,</span> <span class="n">max_col</span> <span class="o">=</span> <span class="n">feature</span><span class="o">.</span><span class="n">bbox</span>
@@ -403,7 +570,7 @@ Note: This one might need some scientific rework since it is not very good</p>
 
             <div class="docstring"><p>Convert skimage format to x,y,x,y,z0,z1</p>
 
-<p>Expects feature.bbox to be in format: 
+<p>Expects feature.bbox to be in format:
     min_depth, min_row, min_col, max_depth, max_row, max_col
 Returns:
     min_col, min_row, max_col, max_row, min_depth, max_depth</p>
@@ -416,8 +583,14 @@ tmp_image[1][30:40,20:50] = 1</p>
 <p>feature = measure.regionprops(tmp_image)[0]
 feature.bbox -> (1, 30, 20, 2, 40, 50)</p>
 
-<p>Return:
-(20, 30, 50, 40, 1, 2)</p>
+<h2 id="parameters">Parameters</h2>
+
+<p>feature : object</p>
+
+<h2 id="returns">Returns</h2>
+
+<p>type
+    (20, 30, 50, 40, 1, 2)</p>
 </div>
 
 
@@ -434,11 +607,18 @@ feature.bbox -> (1, 30, 20, 2, 40, 50)</p>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">bounding_boxes</span><span class="p">(</span><span class="n">features</span><span class="p">:</span><span class="nb">list</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Expects features from 2D images</span>
-<span class="sd">    </span>
-<span class="sd">    Args:</span>
-<span class="sd">        features (List[RegionProperties])</span>
-<span class="sd">    Return:</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    features : list</span>
+<span class="sd">        List</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    type</span>
 <span class="sd">        output List[K, 6] with the box coordinates in  (x0, y0, x1, y1, z0, z1) and k is batch size.</span>
+
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
@@ -452,9 +632,14 @@ feature.bbox -> (1, 30, 20, 2, 40, 50)</p>
 
             <div class="docstring"><p>Expects features from 2D images</p>
 
-<p>Args:
-    features (List[RegionProperties])
-Return:
+<h2 id="parameters">Parameters</h2>
+
+<p>features : list
+    List</p>
+
+<h2 id="returns">Returns</h2>
+
+<p>type
     output List[K, 6] with the box coordinates in  (x0, y0, x1, y1, z0, z1) and k is batch size.</p>
 </div>
 
@@ -465,16 +650,37 @@ Return:
 
         
             <span class="def">def</span>
-            <span class="name">roi_align</span><span class="signature">(image, boxes: list, output_shape=(40, 40, 40), displayed=False)</span>:
+            <span class="name">roi_align</span><span class="signature">(
+    image,
+    boxes: list,
+    output_shape: Tuple = (40, 40, 40),
+    displayed: bool = False
+)</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">roi_align</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">boxes</span><span class="p">:</span><span class="nb">list</span><span class="p">,</span> <span class="n">output_shape</span><span class="o">=</span><span class="p">(</span><span class="mi">40</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">40</span><span class="p">),</span> <span class="n">displayed</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Create aligned image rois for the neural network</span>
+            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">roi_align</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">boxes</span><span class="p">:</span><span class="nb">list</span><span class="p">,</span> <span class="n">output_shape</span><span class="p">:</span><span class="n">Tuple</span><span class="o">=</span><span class="p">(</span><span class="mi">40</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">40</span><span class="p">),</span> <span class="n">displayed</span><span class="p">:</span><span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Create aligned image rois for the neural network</span>
 <span class="sd">    Arg:</span>
 <span class="sd">        image: Image of shape Tuple[D,H,W]</span>
 <span class="sd">        features (List[Tuple[int,int,int,int,int]]): List of features (z0,y0,z1,y1,x0,x1). Shape is expected based on the input of ROIAlign</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    image :</span>
+<span class="sd">        </span>
+<span class="sd">    boxes : list</span>
+<span class="sd">        </span>
+<span class="sd">    output_shape : Tuple</span>
+<span class="sd">        (Default value = (40,40,40))</span>
+<span class="sd">    displayed : bool</span>
+<span class="sd">        (Default value = False)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">image_tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">image</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span>
@@ -495,6 +701,19 @@ Return:
 Arg:
     image: Image of shape Tuple[D,H,W]
     features (List[Tuple[int,int,int,int,int]]): List of features (z0,y0,z1,y1,x0,x1). Shape is expected based on the input of ROIAlign</p>
+
+<h2 id="parameters">Parameters</h2>
+
+<p>image :</p>
+
+<p>boxes : list</p>
+
+<p>output_shape : Tuple
+    (Default value = (40,40,40))
+displayed : bool
+    (Default value = False)</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -511,11 +730,17 @@ Arg:
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">column_to_tuple</span><span class="p">(</span><span class="n">pd_column</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Convert a pandas column from string to tuple</span>
-<span class="sd">    </span>
-<span class="sd">    Args:</span>
-<span class="sd">        pd_column (Series): A selected column to convert the content to tuple type.</span>
-<span class="sd">    Return:</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pd_column :</span>
+<span class="sd">        Series</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    type</span>
 <span class="sd">        output (Series):</span>
+
 <span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
@@ -526,9 +751,14 @@ Arg:
 
             <div class="docstring"><p>Convert a pandas column from string to tuple</p>
 
-<p>Args:
-    pd_column (Series): A selected column to convert the content to tuple type.
-Return:
+<h2 id="parameters">Parameters</h2>
+
+<p>pd_column :
+    Series</p>
+
+<h2 id="returns">Returns</h2>
+
+<p>type
     output (Series):</p>
 </div>
 
@@ -539,18 +769,27 @@ Return:
 
         
             <span class="def">def</span>
-            <span class="name">column_to_np</span><span class="signature">(pd_column, dtype=&#39;float64&#39;)</span>:
+            <span class="name">column_to_np</span><span class="signature">(pd_column, dtype: str = &#39;float64&#39;)</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">column_to_np</span><span class="p">(</span><span class="n">pd_column</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float64&#39;</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">column_to_np</span><span class="p">(</span><span class="n">pd_column</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="s1">&#39;float64&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Convert a pandas column from tuple to numpy arrays</span>
-<span class="sd">    </span>
-<span class="sd">    Args:</span>
-<span class="sd">        pd_column (Series): A selected column to convert the content to numpy.</span>
-<span class="sd">    Return:</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pd_column :</span>
+<span class="sd">        Series</span>
+<span class="sd">    dtype : str</span>
+<span class="sd">        (Default value = &#39;float64&#39;)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    type</span>
 <span class="sd">        output (Series):</span>
+
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
     <span class="k">return</span> <span class="n">pd_column</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">))</span>
@@ -560,9 +799,16 @@ Return:
 
             <div class="docstring"><p>Convert a pandas column from tuple to numpy arrays</p>
 
-<p>Args:
-    pd_column (Series): A selected column to convert the content to numpy.
-Return:
+<h2 id="parameters">Parameters</h2>
+
+<p>pd_column :
+    Series
+dtype : str
+    (Default value = 'float64')</p>
+
+<h2 id="returns">Returns</h2>
+
+<p>type
     output (Series):</p>
 </div>
 
@@ -573,12 +819,24 @@ Return:
 
         
             <span class="def">def</span>
-            <span class="name">center_coordinates</span><span class="signature">(list_of_bbox)</span>:
+            <span class="name">center_coordinates</span><span class="signature">(list_of_bbox: list)</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">center_coordinates</span><span class="p">(</span><span class="n">list_of_bbox</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">center_coordinates</span><span class="p">(</span><span class="n">list_of_bbox</span><span class="p">:</span><span class="nb">list</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    list_of_bbox : list</span>
+<span class="sd">        </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">z</span> <span class="o">=</span> <span class="p">(</span><span class="n">list_of_bbox</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">list_of_bbox</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span>
     <span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">list_of_bbox</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">list_of_bbox</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span>
     <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">list_of_bbox</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">+</span> <span class="n">list_of_bbox</span><span class="p">[</span><span class="mi">5</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span>
@@ -588,7 +846,13 @@ Return:
 
         </details>
 
-    
+            <div class="docstring"><h2 id="parameters">Parameters</h2>
+
+<p>list_of_bbox : list</p>
+
+<h2 id="returns">Returns</h2>
+</div>
+
 
                 </section>
                 <section id="max_occurance">
@@ -602,7 +866,18 @@ Return:
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">max_occurance</span><span class="p">(</span><span class="n">occurances</span><span class="p">:</span><span class="nb">list</span><span class="p">):</span>
-    <span class="s2">&quot;Calculate the number of occurances of a type&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Calculate the number of occurances of a type</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    occurances : list</span>
+<span class="sd">        </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">u</span><span class="p">,</span><span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">occurances</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">max_val</span> <span class="o">=</span> <span class="n">u</span><span class="p">[</span><span class="n">c</span> <span class="o">==</span> <span class="n">c</span><span class="o">.</span><span class="n">max</span><span class="p">()]</span>
     <span class="k">return</span> <span class="n">max_val</span>
@@ -611,6 +886,12 @@ Return:
         </details>
 
             <div class="docstring"><p>Calculate the number of occurances of a type</p>
+
+<h2 id="parameters">Parameters</h2>
+
+<p>occurances : list</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -626,7 +907,21 @@ Return:
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">nms_reduction</span><span class="p">(</span><span class="n">_bboxes</span><span class="p">,</span> <span class="n">th</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
-    <span class="s2">&quot;Reduce pandas dataframe data containing &#39;bbox&#39;, &#39;score&#39; and &#39;observe_class&#39;. &quot;</span>
+    <span class="sd">&quot;&quot;&quot;Reduce pandas dataframe data containing &#39;bbox&#39;, &#39;score&#39; and &#39;observe_class&#39;.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    _bboxes :</span>
+<span class="sd">        </span>
+<span class="sd">    th :</span>
+<span class="sd">        (Default value = 0.5)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">bbox_tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">_bboxes</span><span class="p">[</span><span class="s1">&#39;bbox&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">())</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
     <span class="n">scores</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">_bboxes</span><span class="p">[</span><span class="s1">&#39;score&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">())</span> 
     <span class="n">idxs</span>  <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">_bboxes</span><span class="p">[</span><span class="s1">&#39;observe_class&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">())</span>
@@ -638,6 +933,15 @@ Return:
         </details>
 
             <div class="docstring"><p>Reduce pandas dataframe data containing 'bbox', 'score' and 'observe_class'.</p>
+
+<h2 id="parameters">Parameters</h2>
+
+<p>_bboxes :</p>
+
+<p>th :
+    (Default value = 0.5)</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -654,12 +958,41 @@ Return:
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">Feature_extraction</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Extract features from CAM where the segmented image are about a given threshold.</span>
+    <span class="sd">&quot;&quot;&quot;Extract features from CAM where the segmented image are about a given threshold.</span>
 <span class="sd">    </span>
 <span class="sd">    Supports two functions: features and extract.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cam_extractor</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mf">0.85</span><span class="p">,</span> <span class="n">use_quantile_bounds</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">lambda1</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">lambda2</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_average</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cam_extractor</span><span class="p">,</span> <span class="n">upper_bound</span><span class="p">:</span><span class="nb">float</span><span class="o">=</span><span class="mf">0.85</span><span class="p">,</span> <span class="n">use_quantile_bounds</span><span class="p">:</span><span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">lambda1</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">lambda2</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_average</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        cam_extractor :</span>
+<span class="sd">            </span>
+<span class="sd">        upper_bound : float</span>
+<span class="sd">            (Default value = 0.85)</span>
+<span class="sd">        use_quantile_bounds : bool</span>
+<span class="sd">            (Default value = True)</span>
+<span class="sd">        lambda1 : int</span>
+<span class="sd">            (Default value = 1)</span>
+<span class="sd">        lambda2 : int</span>
+<span class="sd">            (Default value = 1)</span>
+<span class="sd">        n_average : int</span>
+<span class="sd">            (Default value = 2)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">cam_extractor</span> <span class="o">=</span> <span class="n">cam_extractor</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">upper_bound</span> <span class="o">=</span> <span class="n">upper_bound</span>
@@ -670,7 +1003,20 @@ Return:
 
     <span class="k">def</span> <span class="nf">extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nifti_image</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">observe_class</span><span class="p">:</span><span class="nb">int</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return the segmented mask, image mask class index and upper_bound</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        nifti_image : torch.Tensor</span>
+<span class="sd">            </span>
+<span class="sd">        observe_class : int</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        type</span>
+<span class="sd">            </span>
+
+<span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">nifti_image</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">:</span>
             <span class="n">nifti_image</span> <span class="o">=</span> <span class="n">nifti_image</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
@@ -702,17 +1048,29 @@ Return:
         
         <span class="k">return</span> <span class="n">segmented_mask</span><span class="p">,</span> <span class="n">image_mask</span><span class="p">,</span><span class="n">class_idx</span><span class="p">,</span><span class="n">_upper_bound</span>
                 
-    <span class="k">def</span> <span class="nf">features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">image_name</span><span class="p">,</span> <span class="n">nifti_image</span><span class="p">,</span> <span class="n">patient_class</span><span class="p">,</span> <span class="n">observe_class</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Calculate score and return info of the segmented features</span>
-<span class="sd">        Args:</span>
-<span class="sd">            i: index</span>
-<span class="sd">            image_name: Name of image</span>
-<span class="sd">            nifti_image: image from nifti</span>
-<span class="sd">            patient_class: Patient class</span>
-<span class="sd">            observe_class: Which class to observe</span>
-<span class="sd">            </span>
-<span class="sd">        &quot;&quot;&quot;</span>    
+    <span class="k">def</span> <span class="nf">features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">image_name</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">nifti_image</span><span class="p">,</span> <span class="n">patient_class</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">observe_class</span><span class="p">:</span><span class="nb">int</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculate score and return info of the segmented features</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        i : int</span>
+<span class="sd">            index</span>
+<span class="sd">        image_name : str</span>
+<span class="sd">            Name of image</span>
+<span class="sd">        nifti_image :</span>
+<span class="sd">            image from nifti</span>
+<span class="sd">        patient_class : int</span>
+<span class="sd">            Patient class</span>
+<span class="sd">        observe_class : int</span>
+<span class="sd">            Which class to observe</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict : </span>
+<span class="sd">            Features for; image, patient_class, observe_class, probability_class and score</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">segmented_mask</span><span class="p">,</span> <span class="n">image_mask</span><span class="p">,</span> <span class="n">class_idx</span><span class="p">,</span><span class="n">_upper_bound</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">nifti_image</span><span class="p">,</span> <span class="n">observe_class</span><span class="p">)</span>
         <span class="n">features</span> <span class="o">=</span> <span class="n">measure</span><span class="o">.</span><span class="n">regionprops</span><span class="p">(</span><span class="n">segmented_mask</span><span class="p">,</span> <span class="n">intensity_image</span><span class="o">=</span><span class="n">image_mask</span><span class="p">)</span>
         <span class="n">new_features</span> <span class="o">=</span> <span class="p">{</span>
@@ -727,7 +1085,7 @@ Return:
             <span class="s1">&#39;score&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">lambda1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">new_features</span><span class="p">[</span><span class="s1">&#39;mean_intensity&#39;</span><span class="p">])</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">image_mask</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">lambda2</span><span class="o">*</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">new_features</span><span class="p">[</span><span class="s1">&#39;bbox_area&#39;</span><span class="p">]))</span><span class="o">/</span><span class="n">image_mask</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
         <span class="p">})</span>
         
-        <span class="c1">#del class_scores, nifti_image, segmented_mask, image_mask, features</span>
+
         <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;image&#39;</span><span class="p">:</span><span class="n">image_name</span><span class="p">,</span> <span class="s1">&#39;patient_class&#39;</span><span class="p">:</span><span class="n">patient_class</span><span class="p">,</span> <span class="s1">&#39;observe_class&#39;</span><span class="p">:</span><span class="n">observe_class</span><span class="p">,</span> <span class="s1">&#39;probability_class&#39;</span><span class="p">:</span><span class="n">class_idx</span><span class="p">,</span> <span class="o">**</span><span class="n">new_features</span><span class="p">}</span>
 </pre></div>
 
@@ -736,6 +1094,10 @@ Return:
             <div class="docstring"><p>Extract features from CAM where the segmented image are about a given threshold.</p>
 
 <p>Supports two functions: features and extract.</p>
+
+<h2 id="parameters">Parameters</h2>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -745,17 +1107,39 @@ Return:
         
             <span class="name">Feature_extraction</span><span class="signature">(
     cam_extractor,
-    upper_bound=0.85,
-    use_quantile_bounds=True,
-    lambda1=1,
-    lambda2=1,
-    n_average=2
+    upper_bound: float = 0.85,
+    use_quantile_bounds: bool = True,
+    lambda1: int = 1,
+    lambda2: int = 1,
+    n_average: int = 2
 )</span>
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cam_extractor</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mf">0.85</span><span class="p">,</span> <span class="n">use_quantile_bounds</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">lambda1</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">lambda2</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_average</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cam_extractor</span><span class="p">,</span> <span class="n">upper_bound</span><span class="p">:</span><span class="nb">float</span><span class="o">=</span><span class="mf">0.85</span><span class="p">,</span> <span class="n">use_quantile_bounds</span><span class="p">:</span><span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">lambda1</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">lambda2</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_average</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        cam_extractor :</span>
+<span class="sd">            </span>
+<span class="sd">        upper_bound : float</span>
+<span class="sd">            (Default value = 0.85)</span>
+<span class="sd">        use_quantile_bounds : bool</span>
+<span class="sd">            (Default value = True)</span>
+<span class="sd">        lambda1 : int</span>
+<span class="sd">            (Default value = 1)</span>
+<span class="sd">        lambda2 : int</span>
+<span class="sd">            (Default value = 1)</span>
+<span class="sd">        n_average : int</span>
+<span class="sd">            (Default value = 2)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">cam_extractor</span> <span class="o">=</span> <span class="n">cam_extractor</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">upper_bound</span> <span class="o">=</span> <span class="n">upper_bound</span>
@@ -767,7 +1151,24 @@ Return:
 
         </details>
 
-    
+            <div class="docstring"><h2 id="parameters">Parameters</h2>
+
+<p>cam_extractor :</p>
+
+<p>upper_bound : float
+    (Default value = 0.85)
+use_quantile_bounds : bool
+    (Default value = True)
+lambda1 : int
+    (Default value = 1)
+lambda2 : int
+    (Default value = 1)
+n_average : int
+    (Default value = 2)</p>
+
+<h2 id="returns">Returns</h2>
+</div>
+
 
                             </div>
                             <div id="Feature_extraction.extract" class="classattr">
@@ -782,7 +1183,20 @@ Return:
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nifti_image</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">observe_class</span><span class="p">:</span><span class="nb">int</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return the segmented mask, image mask class index and upper_bound</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        nifti_image : torch.Tensor</span>
+<span class="sd">            </span>
+<span class="sd">        observe_class : int</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        type</span>
+<span class="sd">            </span>
+
+<span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">nifti_image</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">:</span>
             <span class="n">nifti_image</span> <span class="o">=</span> <span class="n">nifti_image</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
@@ -817,7 +1231,15 @@ Return:
 
         </details>
 
-            <div class="docstring"><p>Return the segmented mask, image mask class index and upper_bound</p>
+            <div class="docstring"><h2 id="parameters">Parameters</h2>
+
+<p>nifti_image : torch.Tensor</p>
+
+<p>observe_class : int</p>
+
+<h2 id="returns">Returns</h2>
+
+<p>type</p>
 </div>
 
 
@@ -827,22 +1249,41 @@ Return:
 
         
             <span class="def">def</span>
-            <span class="name">features</span><span class="signature">(self, i, image_name, nifti_image, patient_class, observe_class)</span>:
+            <span class="name">features</span><span class="signature">(
+    self,
+    i: int,
+    image_name: str,
+    nifti_image,
+    patient_class: int,
+    observe_class: int
+)</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">image_name</span><span class="p">,</span> <span class="n">nifti_image</span><span class="p">,</span> <span class="n">patient_class</span><span class="p">,</span> <span class="n">observe_class</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Calculate score and return info of the segmented features</span>
-<span class="sd">        Args:</span>
-<span class="sd">            i: index</span>
-<span class="sd">            image_name: Name of image</span>
-<span class="sd">            nifti_image: image from nifti</span>
-<span class="sd">            patient_class: Patient class</span>
-<span class="sd">            observe_class: Which class to observe</span>
-<span class="sd">            </span>
-<span class="sd">        &quot;&quot;&quot;</span>    
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">image_name</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">nifti_image</span><span class="p">,</span> <span class="n">patient_class</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">observe_class</span><span class="p">:</span><span class="nb">int</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculate score and return info of the segmented features</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        i : int</span>
+<span class="sd">            index</span>
+<span class="sd">        image_name : str</span>
+<span class="sd">            Name of image</span>
+<span class="sd">        nifti_image :</span>
+<span class="sd">            image from nifti</span>
+<span class="sd">        patient_class : int</span>
+<span class="sd">            Patient class</span>
+<span class="sd">        observe_class : int</span>
+<span class="sd">            Which class to observe</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict : </span>
+<span class="sd">            Features for; image, patient_class, observe_class, probability_class and score</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">segmented_mask</span><span class="p">,</span> <span class="n">image_mask</span><span class="p">,</span> <span class="n">class_idx</span><span class="p">,</span><span class="n">_upper_bound</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">nifti_image</span><span class="p">,</span> <span class="n">observe_class</span><span class="p">)</span>
         <span class="n">features</span> <span class="o">=</span> <span class="n">measure</span><span class="o">.</span><span class="n">regionprops</span><span class="p">(</span><span class="n">segmented_mask</span><span class="p">,</span> <span class="n">intensity_image</span><span class="o">=</span><span class="n">image_mask</span><span class="p">)</span>
         <span class="n">new_features</span> <span class="o">=</span> <span class="p">{</span>
@@ -857,19 +1298,31 @@ Return:
             <span class="s1">&#39;score&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">lambda1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">new_features</span><span class="p">[</span><span class="s1">&#39;mean_intensity&#39;</span><span class="p">])</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">image_mask</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">lambda2</span><span class="o">*</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">new_features</span><span class="p">[</span><span class="s1">&#39;bbox_area&#39;</span><span class="p">]))</span><span class="o">/</span><span class="n">image_mask</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
         <span class="p">})</span>
         
-        <span class="c1">#del class_scores, nifti_image, segmented_mask, image_mask, features</span>
+
         <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;image&#39;</span><span class="p">:</span><span class="n">image_name</span><span class="p">,</span> <span class="s1">&#39;patient_class&#39;</span><span class="p">:</span><span class="n">patient_class</span><span class="p">,</span> <span class="s1">&#39;observe_class&#39;</span><span class="p">:</span><span class="n">observe_class</span><span class="p">,</span> <span class="s1">&#39;probability_class&#39;</span><span class="p">:</span><span class="n">class_idx</span><span class="p">,</span> <span class="o">**</span><span class="n">new_features</span><span class="p">}</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Calculate score and return info of the segmented features
-Args:
-    i: index
-    image_name: Name of image
-    nifti_image: image from nifti
-    patient_class: Patient class
-    observe_class: Which class to observe</p>
+            <div class="docstring"><p>Calculate score and return info of the segmented features</p>
+
+<h2 id="parameters">Parameters</h2>
+
+<p>i : int
+    index
+image_name : str
+    Name of image
+nifti_image :
+    image from nifti
+patient_class : int
+    Patient class
+observe_class : int
+    Which class to observe</p>
+
+<h2 id="returns">Returns</h2>
+
+<p>dict : 
+    Features for; image, patient_class, observe_class, probability_class and score</p>
 </div>
 
 

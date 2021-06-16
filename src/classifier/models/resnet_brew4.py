@@ -15,21 +15,82 @@ model_urls = {
 
 
 def conv3x3(in_planes, out_planes, stride=1, groups=1, dilation=1):
-    """3x3 convolution with padding"""
+    """3x3 convolution with padding
+
+    Parameters
+    ----------
+    in_planes :
+        
+    out_planes :
+        
+    stride :
+        (Default value = 1)
+    groups :
+        (Default value = 1)
+    dilation :
+        (Default value = 1)
+
+    Returns
+    -------
+
+    
+    """
     return nn.Conv3d(in_planes, out_planes, kernel_size=3, stride=stride,
                      padding=dilation, groups=groups, bias=False, dilation=dilation)
 
 
 def conv1x1(in_planes, out_planes, stride=1):
-    """1x1 convolution"""
+    """1x1 convolution
+
+    Parameters
+    ----------
+    in_planes :
+        
+    out_planes :
+        
+    stride :
+        (Default value = 1)
+
+    Returns
+    -------
+
+    
+    """
     return nn.Conv3d(in_planes, out_planes, kernel_size=1, stride=stride, bias=False)
 
 
 class BasicBlock(nn.Module):
+    """ """
     expansion = 1
 
     def __init__(self, inplanes, planes, stride=1, downsample=None, groups=1,
                  base_width=64, dilation=1, norm_layer=None):
+        """
+
+        Parameters
+        ----------
+        inplanes :
+            
+        planes :
+            
+        stride :
+            (Default value = 1)
+        downsample :
+            (Default value = None)
+        groups :
+            (Default value = 1)
+        base_width :
+            (Default value = 64)
+        dilation :
+            (Default value = 1)
+        norm_layer :
+            (Default value = None)
+
+        Returns
+        -------
+
+        
+        """
         super(BasicBlock, self).__init__()
         if norm_layer is None:
             norm_layer = nn.BatchNorm3d
@@ -47,6 +108,18 @@ class BasicBlock(nn.Module):
         self.stride = stride
 
     def forward(self, x):
+        """
+
+        Parameters
+        ----------
+        x :
+            
+
+        Returns
+        -------
+
+        
+        """
         identity = x
 
         out = self.conv1(x)
@@ -66,6 +139,7 @@ class BasicBlock(nn.Module):
 
 
 class Bottleneck(nn.Module):
+    """ """
     # Bottleneck in torchvision places the stride for downsampling at 3x3 convolution(self.conv2)
     # while original implementation places the stride at the first 1x1 convolution(self.conv1)
     # according to "Deep residual learning for image recognition"https://arxiv.org/abs/1512.03385.
@@ -76,6 +150,32 @@ class Bottleneck(nn.Module):
 
     def __init__(self, inplanes, planes, stride=1, downsample=None, groups=1,
                  base_width=64, dilation=1, norm_layer=None):
+        """
+
+        Parameters
+        ----------
+        inplanes :
+            
+        planes :
+            
+        stride :
+            (Default value = 1)
+        downsample :
+            (Default value = None)
+        groups :
+            (Default value = 1)
+        base_width :
+            (Default value = 64)
+        dilation :
+            (Default value = 1)
+        norm_layer :
+            (Default value = None)
+
+        Returns
+        -------
+
+        
+        """
         super(Bottleneck, self).__init__()
         if norm_layer is None:
             norm_layer = nn.BatchNorm3d
@@ -92,6 +192,18 @@ class Bottleneck(nn.Module):
         self.stride = stride
 
     def forward(self, x):
+        """
+
+        Parameters
+        ----------
+        x :
+            
+
+        Returns
+        -------
+
+        
+        """
         identity = x
 
         out = self.conv1(x)
@@ -115,12 +227,14 @@ class Bottleneck(nn.Module):
 
 
 class ResNet(nn.Module):
+    """ """
 
     def __init__(self, block, layers, num_channels=1,num_classes=3, zero_init_residual=False,
                  groups=1, width_per_group=64, replace_stride_with_dilation=None,
                  norm_layer=None, **kwargs): #, **kwargs is just a dummy to take whatever we want!
         super(ResNet, self).__init__()
         if norm_layer is None:
+        
             norm_layer = nn.BatchNorm3d
         self._norm_layer = norm_layer
 
@@ -168,6 +282,26 @@ class ResNet(nn.Module):
                     nn.init.constant_(m.bn2.weight, 0)
 
     def _make_layer(self, block, planes, blocks, stride=1, dilate=False):
+        """
+
+        Parameters
+        ----------
+        block :
+            
+        planes :
+            
+        blocks :
+            
+        stride :
+            (Default value = 1)
+        dilate :
+            (Default value = False)
+
+        Returns
+        -------
+
+        
+        """
         norm_layer = self._norm_layer
         downsample = None
         previous_dilation = self.dilation
@@ -192,6 +326,18 @@ class ResNet(nn.Module):
         return nn.Sequential(*layers)
 
     def _forward_impl(self, x):
+        """
+
+        Parameters
+        ----------
+        x :
+            
+
+        Returns
+        -------
+
+        
+        """
         # See note [TorchScript super()]
         x = self.conv1(x)
         x = self.bn1(x)
@@ -211,10 +357,44 @@ class ResNet(nn.Module):
         return x
 
     def forward(self, x):
+        """
+
+        Parameters
+        ----------
+        x :
+            
+
+        Returns
+        -------
+
+        
+        """
         return self._forward_impl(x)
 
 
 def _resnet(arch, block, layers, pretrained, progress, **kwargs):
+    """
+
+    Parameters
+    ----------
+    arch :
+        
+    block :
+        
+    layers :
+        
+    pretrained :
+        
+    progress :
+        
+    **kwargs :
+        
+
+    Returns
+    -------
+
+    
+    """
     model = ResNet(block, layers, **kwargs)
 
     return model
@@ -224,9 +404,19 @@ def resnet18_brew4(pretrained=False, progress=True, **kwargs):
     r"""ResNet-18 model from
     `"Deep Residual Learning for Image Recognition" <https://arxiv.org/pdf/1512.03385.pdf>`_
 
-    Args:
-        pretrained (bool): If True, returns a model pre-trained on ImageNet
-        progress (bool): If True, displays a progress bar of the download to stderr
+    Parameters
+    ----------
+    pretrained : bool
+        If True, returns a model pre-trained on ImageNet (Default value = False)
+    progress : bool
+        If True, displays a progress bar of the download to stderr (Default value = True)
+    **kwargs :
+        
+
+    Returns
+    -------
+
+    
     """
     return _resnet('resnet18', BasicBlock, [2, 2, 2, 2], pretrained, progress,
                    **kwargs)
@@ -237,9 +427,19 @@ def resnet34_brew4(pretrained=False, progress=True, **kwargs):
     r"""ResNet-34 model from
     `"Deep Residual Learning for Image Recognition" <https://arxiv.org/pdf/1512.03385.pdf>`_
 
-    Args:
-        pretrained (bool): If True, returns a model pre-trained on ImageNet
-        progress (bool): If True, displays a progress bar of the download to stderr
+    Parameters
+    ----------
+    pretrained : bool
+        If True, returns a model pre-trained on ImageNet (Default value = False)
+    progress : bool
+        If True, displays a progress bar of the download to stderr (Default value = True)
+    **kwargs :
+        
+
+    Returns
+    -------
+
+    
     """
     return _resnet('resnet34', BasicBlock, [3, 4, 6, 3], pretrained, progress,
                    **kwargs)
@@ -250,9 +450,19 @@ def resnet50_brew4(pretrained=False, progress=True, **kwargs):
     r"""ResNet-50 model from
     `"Deep Residual Learning for Image Recognition" <https://arxiv.org/pdf/1512.03385.pdf>`_
 
-    Args:
-        pretrained (bool): If True, returns a model pre-trained on ImageNet
-        progress (bool): If True, displays a progress bar of the download to stderr
+    Parameters
+    ----------
+    pretrained : bool
+        If True, returns a model pre-trained on ImageNet (Default value = False)
+    progress : bool
+        If True, displays a progress bar of the download to stderr (Default value = True)
+    **kwargs :
+        
+
+    Returns
+    -------
+
+    
     """
     return _resnet('resnet50', Bottleneck, [3, 4, 6, 3], pretrained, progress, #2,4,2
                    **kwargs)

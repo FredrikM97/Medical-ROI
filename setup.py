@@ -4,7 +4,7 @@ setup(
     name="Prioritization of Informative Regions in PET Scansfor Classification of Alzheimer’s Disease", 
     version='1.0',
     url='None',
-    author='Fredrik',
+    author='Fredrik Mårtensson',
     author_email='fredrik9779@gmail.com',
     description='Master thesis for Prioritization of Informative Regions in PET Scansfor Classification of Alzheimer’s Disease in collaboration with Halmstad University.',
     packages=find_packages(),

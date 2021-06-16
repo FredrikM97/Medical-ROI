@@ -3,7 +3,6 @@ Transformation of ROI with the help of RoiAlign.
 """
 
 
-
 import torch
 from typing import Tuple, List, Union
 from torchvision.ops._utils import convert_boxes_to_roi_format
@@ -13,17 +12,27 @@ from roi_align import RoIAlign
 from src.utils.preprocess import tensor2numpy
 
 class RoiTransform:
-    """Apply ROI transform to shange shape of images"""
+    """Apply ROI transform to shange shape of images and Transform boundary boxes to correct format."""
     
     def __init__(self, output_shape:Tuple[int,int,int]=None, boundary_boxes:Union[List[Tuple[int,int,int,int,int,int]]]=None, batch_size=6,**args):
-        """
-        Transform boundary boxes to correct format.
+        """ Init RoiTransform object.
         
-        Args:
-            output_shape (Tuple): Shape that the image input should be transformed to.
-            boundary_boxes (List): Availbile boundary boxes. Each target class need at least one boundary box!
-            batch_size (int): Input batch size of data
+        Parameters
+        ----------
+        output_shape : Tuple[int,int,int]
+             (Default value = None)
+        boundary_boxes : Union[List[Tuple[int,int,int,int,int,int]]]
+             (Default value = None)
+        batch_size :
+             (Default value = 6)
+        **args :
+
+
+        Returns
+        -------
+
         """
+        
         if not boundary_boxes: raise ValueError("bounding_boxes list can not be empty!")
         
         self.batch_size = batch_size
@@ -41,12 +50,19 @@ class RoiTransform:
             raise ValueError("boundary_boxes needs to be of type list or dict")
             
     def __call__(self, x:torch.Tensor, y):
-        """
-        Expect to take an y of integer type and if boundary_boxes are a dict then the key should be a numeric value.
+        """Expect to take an y of integer type and if boundary_boxes are a dict then the key should be a numeric value.
+
+        Parameters
+        ----------
+        x : torch.Tensor
+            Input value. Expect shape (B,C,D,H,W)
+        y : Tensor
+            Target value
+
+        Returns
+        -------
+
         
-        Args:
-            x (Tensor): Input value. Expect shape (B,C,D,H,W)
-            y (Tensor): Target value
         """
 
         if isinstance(self.boundary_boxes, list):
@@ -63,6 +79,7 @@ class RoiTransform:
         return image_rois, y
     
     def __str__(self):
+        """ """
         return (
             f"\n\n***Defined ROI-Transformer:***\n"
             f"Number of BBoxes: {self.num_bbox}\n"

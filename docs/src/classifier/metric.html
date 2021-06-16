@@ -106,7 +106,22 @@
 <span class="kn">from</span> <span class="nn">src.utils</span> <span class="kn">import</span> <span class="n">utils</span>
 
 <span class="k">class</span> <span class="nc">MetricTracker</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">Metric</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">compute_on_step</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dist_sync_on_step</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">compute_on_step</span><span class="p">:</span><span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dist_sync_on_step</span><span class="p">:</span><span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        compute_on_step : bool</span>
+<span class="sd">            (Default value = False)</span>
+<span class="sd">        dist_sync_on_step : bool</span>
+<span class="sd">            (Default value = False)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">compute_on_step</span><span class="o">=</span><span class="n">compute_on_step</span><span class="p">,</span> <span class="n">dist_sync_on_step</span><span class="o">=</span><span class="n">dist_sync_on_step</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">add_state</span><span class="p">(</span><span class="s1">&#39;predicted&#39;</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="p">[],</span> <span class="n">dist_reduce_fx</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
@@ -116,6 +131,24 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">add_state</span><span class="p">(</span><span class="s1">&#39;num_batch&#39;</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">0.</span><span class="p">),</span> <span class="n">dist_reduce_fx</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         
     <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">predicted</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">probability</span><span class="p">,</span> <span class="n">loss</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        predicted :</span>
+<span class="sd">            </span>
+<span class="sd">        target :</span>
+<span class="sd">            </span>
+<span class="sd">        probability :</span>
+<span class="sd">            </span>
+<span class="sd">        loss :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">predicted</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">predicted</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">probability</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">probability</span><span class="p">)</span>
@@ -124,6 +157,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">num_batch</span> <span class="o">+=</span><span class="mi">1</span>
         
     <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
         <span class="c1"># Returns: predicted, target, loss, probability, epoch</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">predicted</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
@@ -133,20 +167,61 @@
         <span class="p">)</span>
 
 <span class="k">class</span> <span class="nc">Mean</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">Metric</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">compute_on_step</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">compute_on_step</span><span class="p">:</span><span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        compute_on_step : bool</span>
+<span class="sd">            (Default value = False)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">compute_on_step</span><span class="o">=</span><span class="n">compute_on_step</span><span class="p">,</span> <span class="n">dist_sync_on_step</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_state</span><span class="p">(</span><span class="s1">&#39;val&#39;</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">0.</span><span class="p">),</span> <span class="n">dist_reduce_fx</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_state</span><span class="p">(</span><span class="s1">&#39;num&#39;</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">0.</span><span class="p">),</span> <span class="n">dist_reduce_fx</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">)</span>
         
     <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loss</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        loss :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">val</span><span class="o">+=</span><span class="n">loss</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num</span> <span class="o">+=</span><span class="mi">1</span>
         
     <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">val</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">num</span>
 
 <span class="k">class</span> <span class="nc">CVTracker</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">Metric</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">compute_on_step</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dist_sync_on_step</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">compute_on_step</span><span class="p">:</span><span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dist_sync_on_step</span><span class="p">:</span><span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        compute_on_step : bool</span>
+<span class="sd">            (Default value = False)</span>
+<span class="sd">        dist_sync_on_step : bool</span>
+<span class="sd">            (Default value = False)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">compute_on_step</span><span class="o">=</span><span class="n">compute_on_step</span><span class="p">,</span> <span class="n">dist_sync_on_step</span><span class="o">=</span><span class="n">dist_sync_on_step</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">add_state</span><span class="p">(</span><span class="s1">&#39;auc&#39;</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="p">[],</span> <span class="n">dist_reduce_fx</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
@@ -155,6 +230,24 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">add_state</span><span class="p">(</span><span class="s1">&#39;loss&#39;</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">0.</span><span class="p">),</span> <span class="n">dist_reduce_fx</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_state</span><span class="p">(</span><span class="s1">&#39;num_batch&#39;</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">0.</span><span class="p">),</span> <span class="n">dist_reduce_fx</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">predicted</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">probability</span><span class="p">,</span> <span class="n">loss</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        predicted :</span>
+<span class="sd">            </span>
+<span class="sd">        target :</span>
+<span class="sd">            </span>
+<span class="sd">        probability :</span>
+<span class="sd">            </span>
+<span class="sd">        loss :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">predicted</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">predicted</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">probability</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">probability</span><span class="p">)</span>
@@ -163,6 +256,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">num_batch</span> <span class="o">+=</span><span class="mi">1</span>
         
     <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
         <span class="c1"># Returns: predicted, target, loss, probability, epoch</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">predicted</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
@@ -187,7 +281,22 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">MetricTracker</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">Metric</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">compute_on_step</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dist_sync_on_step</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">compute_on_step</span><span class="p">:</span><span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dist_sync_on_step</span><span class="p">:</span><span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        compute_on_step : bool</span>
+<span class="sd">            (Default value = False)</span>
+<span class="sd">        dist_sync_on_step : bool</span>
+<span class="sd">            (Default value = False)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">compute_on_step</span><span class="o">=</span><span class="n">compute_on_step</span><span class="p">,</span> <span class="n">dist_sync_on_step</span><span class="o">=</span><span class="n">dist_sync_on_step</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">add_state</span><span class="p">(</span><span class="s1">&#39;predicted&#39;</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="p">[],</span> <span class="n">dist_reduce_fx</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
@@ -197,6 +306,24 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">add_state</span><span class="p">(</span><span class="s1">&#39;num_batch&#39;</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">0.</span><span class="p">),</span> <span class="n">dist_reduce_fx</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         
     <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">predicted</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">probability</span><span class="p">,</span> <span class="n">loss</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        predicted :</span>
+<span class="sd">            </span>
+<span class="sd">        target :</span>
+<span class="sd">            </span>
+<span class="sd">        probability :</span>
+<span class="sd">            </span>
+<span class="sd">        loss :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">predicted</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">predicted</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">probability</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">probability</span><span class="p">)</span>
@@ -205,6 +332,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">num_batch</span> <span class="o">+=</span><span class="mi">1</span>
         
     <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
         <span class="c1"># Returns: predicted, target, loss, probability, epoch</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">predicted</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
@@ -216,48 +344,32 @@
 
         </details>
 
-            <div class="docstring"><p>Base class for all metrics present in the Metrics API.</p>
-
-<p>Implements <code><a href="#MetricTracker.add_state">add_state()</a></code>, <code><a href="#MetricTracker.forward">forward()</a></code>, <code><a href="#MetricTracker.reset">reset()</a></code> and a few other things to
-handle distributed synchronization and per-step metric computation.</p>
-
-<p>Override <code><a href="#MetricTracker.update">update()</a></code> and <code><a href="#MetricTracker.compute">compute()</a></code> functions to implement your own metric. Use
-<code><a href="#MetricTracker.add_state">add_state()</a></code> to register metric state variables which keep track of state on each
-call of <code><a href="#MetricTracker.update">update()</a></code> and are synchronized across processes when <code><a href="#MetricTracker.compute">compute()</a></code> is called.</p>
-
-<p>Note:
-    Metric state variables can either be <code>torch.Tensors</code> or an empty list which can we used
-    to store `torch.Tensors``.</p>
-
-<p>Note:
-    Different metrics only override <code><a href="#MetricTracker.update">update()</a></code> and not <code><a href="#MetricTracker.forward">forward()</a></code>. A call to <code><a href="#MetricTracker.update">update()</a></code>
-    is valid, but it won't return the metric value at the current step. A call to <code><a href="#MetricTracker.forward">forward()</a></code>
-    automatically calls <code><a href="#MetricTracker.update">update()</a></code> and also returns the metric value at the current step.</p>
-
-<p>Args:
-    compute_on_step:
-        Forward only calls <code><a href="#MetricTracker.update">update()</a></code> and returns None if this is set to False. default: True
-    dist_sync_on_step:
-        Synchronize metric state across processes at each <code><a href="#MetricTracker.forward">forward()</a></code>
-        before returning the value at the step.
-    process_group:
-        Specify the process group on which synchronization is called. default: None (which selects the entire world)
-    dist_sync_fn:
-        Callback that performs the allgather operation on the metric state. When <code>None</code>, DDP
-        will be used to perform the allgather.</p>
-</div>
-
+    
 
                             <div id="MetricTracker.__init__" class="classattr">
                                         <div class="attr function"><a class="headerlink" href="#MetricTracker.__init__">#&nbsp;&nbsp</a>
 
         
-            <span class="name">MetricTracker</span><span class="signature">(compute_on_step=False, dist_sync_on_step=False)</span>
+            <span class="name">MetricTracker</span><span class="signature">(compute_on_step: bool = False, dist_sync_on_step: bool = False)</span>
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">compute_on_step</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dist_sync_on_step</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">compute_on_step</span><span class="p">:</span><span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dist_sync_on_step</span><span class="p">:</span><span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        compute_on_step : bool</span>
+<span class="sd">            (Default value = False)</span>
+<span class="sd">        dist_sync_on_step : bool</span>
+<span class="sd">            (Default value = False)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">compute_on_step</span><span class="o">=</span><span class="n">compute_on_step</span><span class="p">,</span> <span class="n">dist_sync_on_step</span><span class="o">=</span><span class="n">dist_sync_on_step</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">add_state</span><span class="p">(</span><span class="s1">&#39;predicted&#39;</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="p">[],</span> <span class="n">dist_reduce_fx</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
@@ -269,8 +381,14 @@ call of <code><a href="#MetricTracker.update">update()</a></code> and are synchr
 
         </details>
 
-            <div class="docstring"><p>.. deprecated::
-    Use :class:<code>torchmetrics.Metric</code>. Will be removed in v1.5.0.</p>
+            <div class="docstring"><h2 id="parameters">Parameters</h2>
+
+<p>compute_on_step : bool
+    (Default value = False)
+dist_sync_on_step : bool
+    (Default value = False)</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -286,6 +404,24 @@ call of <code><a href="#MetricTracker.update">update()</a></code> and are synchr
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">predicted</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">probability</span><span class="p">,</span> <span class="n">loss</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        predicted :</span>
+<span class="sd">            </span>
+<span class="sd">        target :</span>
+<span class="sd">            </span>
+<span class="sd">        probability :</span>
+<span class="sd">            </span>
+<span class="sd">        loss :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">predicted</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">predicted</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">probability</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">probability</span><span class="p">)</span>
@@ -296,7 +432,17 @@ call of <code><a href="#MetricTracker.update">update()</a></code> and are synchr
 
         </details>
 
-            <div class="docstring"><p>Override this method to update the state variables of your metric class.</p>
+            <div class="docstring"><h2 id="parameters">Parameters</h2>
+
+<p>predicted :</p>
+
+<p>target :</p>
+
+<p>probability :</p>
+
+<p>loss :</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -312,6 +458,7 @@ call of <code><a href="#MetricTracker.update">update()</a></code> and are synchr
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
         <span class="c1"># Returns: predicted, target, loss, probability, epoch</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">predicted</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
@@ -323,10 +470,7 @@ call of <code><a href="#MetricTracker.update">update()</a></code> and are synchr
 
         </details>
 
-            <div class="docstring"><p>Override this method to compute the final metric value from state variables
-synchronized across the distributed backend.</p>
-</div>
-
+    
 
                             </div>
                             <div class="inherited">
@@ -395,63 +539,71 @@ synchronized across the distributed backend.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">Mean</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">Metric</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">compute_on_step</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">compute_on_step</span><span class="p">:</span><span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        compute_on_step : bool</span>
+<span class="sd">            (Default value = False)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">compute_on_step</span><span class="o">=</span><span class="n">compute_on_step</span><span class="p">,</span> <span class="n">dist_sync_on_step</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_state</span><span class="p">(</span><span class="s1">&#39;val&#39;</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">0.</span><span class="p">),</span> <span class="n">dist_reduce_fx</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_state</span><span class="p">(</span><span class="s1">&#39;num&#39;</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">0.</span><span class="p">),</span> <span class="n">dist_reduce_fx</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">)</span>
         
     <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loss</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        loss :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">val</span><span class="o">+=</span><span class="n">loss</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num</span> <span class="o">+=</span><span class="mi">1</span>
         
     <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">val</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">num</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Base class for all metrics present in the Metrics API.</p>
-
-<p>Implements <code><a href="#Mean.add_state">add_state()</a></code>, <code><a href="#Mean.forward">forward()</a></code>, <code><a href="#Mean.reset">reset()</a></code> and a few other things to
-handle distributed synchronization and per-step metric computation.</p>
-
-<p>Override <code><a href="#Mean.update">update()</a></code> and <code><a href="#Mean.compute">compute()</a></code> functions to implement your own metric. Use
-<code><a href="#Mean.add_state">add_state()</a></code> to register metric state variables which keep track of state on each
-call of <code><a href="#Mean.update">update()</a></code> and are synchronized across processes when <code><a href="#Mean.compute">compute()</a></code> is called.</p>
-
-<p>Note:
-    Metric state variables can either be <code>torch.Tensors</code> or an empty list which can we used
-    to store `torch.Tensors``.</p>
-
-<p>Note:
-    Different metrics only override <code><a href="#Mean.update">update()</a></code> and not <code><a href="#Mean.forward">forward()</a></code>. A call to <code><a href="#Mean.update">update()</a></code>
-    is valid, but it won't return the metric value at the current step. A call to <code><a href="#Mean.forward">forward()</a></code>
-    automatically calls <code><a href="#Mean.update">update()</a></code> and also returns the metric value at the current step.</p>
-
-<p>Args:
-    compute_on_step:
-        Forward only calls <code><a href="#Mean.update">update()</a></code> and returns None if this is set to False. default: True
-    dist_sync_on_step:
-        Synchronize metric state across processes at each <code><a href="#Mean.forward">forward()</a></code>
-        before returning the value at the step.
-    process_group:
-        Specify the process group on which synchronization is called. default: None (which selects the entire world)
-    dist_sync_fn:
-        Callback that performs the allgather operation on the metric state. When <code>None</code>, DDP
-        will be used to perform the allgather.</p>
-</div>
-
+    
 
                             <div id="Mean.__init__" class="classattr">
                                         <div class="attr function"><a class="headerlink" href="#Mean.__init__">#&nbsp;&nbsp</a>
 
         
-            <span class="name">Mean</span><span class="signature">(compute_on_step=False)</span>
+            <span class="name">Mean</span><span class="signature">(compute_on_step: bool = False)</span>
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">compute_on_step</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">compute_on_step</span><span class="p">:</span><span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        compute_on_step : bool</span>
+<span class="sd">            (Default value = False)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">compute_on_step</span><span class="o">=</span><span class="n">compute_on_step</span><span class="p">,</span> <span class="n">dist_sync_on_step</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_state</span><span class="p">(</span><span class="s1">&#39;val&#39;</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">0.</span><span class="p">),</span> <span class="n">dist_reduce_fx</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_state</span><span class="p">(</span><span class="s1">&#39;num&#39;</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">0.</span><span class="p">),</span> <span class="n">dist_reduce_fx</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">)</span>
@@ -459,8 +611,12 @@ call of <code><a href="#Mean.update">update()</a></code> and are synchronized ac
 
         </details>
 
-            <div class="docstring"><p>.. deprecated::
-    Use :class:<code>torchmetrics.Metric</code>. Will be removed in v1.5.0.</p>
+            <div class="docstring"><h2 id="parameters">Parameters</h2>
+
+<p>compute_on_step : bool
+    (Default value = False)</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -476,13 +632,29 @@ call of <code><a href="#Mean.update">update()</a></code> and are synchronized ac
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loss</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        loss :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">val</span><span class="o">+=</span><span class="n">loss</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num</span> <span class="o">+=</span><span class="mi">1</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Override this method to update the state variables of your metric class.</p>
+            <div class="docstring"><h2 id="parameters">Parameters</h2>
+
+<p>loss :</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -498,15 +670,13 @@ call of <code><a href="#Mean.update">update()</a></code> and are synchronized ac
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">val</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">num</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Override this method to compute the final metric value from state variables
-synchronized across the distributed backend.</p>
-</div>
-
+    
 
                             </div>
                             <div class="inherited">
@@ -575,7 +745,22 @@ synchronized across the distributed backend.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">CVTracker</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">Metric</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">compute_on_step</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dist_sync_on_step</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">compute_on_step</span><span class="p">:</span><span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dist_sync_on_step</span><span class="p">:</span><span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        compute_on_step : bool</span>
+<span class="sd">            (Default value = False)</span>
+<span class="sd">        dist_sync_on_step : bool</span>
+<span class="sd">            (Default value = False)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">compute_on_step</span><span class="o">=</span><span class="n">compute_on_step</span><span class="p">,</span> <span class="n">dist_sync_on_step</span><span class="o">=</span><span class="n">dist_sync_on_step</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">add_state</span><span class="p">(</span><span class="s1">&#39;auc&#39;</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="p">[],</span> <span class="n">dist_reduce_fx</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
@@ -584,6 +769,24 @@ synchronized across the distributed backend.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_state</span><span class="p">(</span><span class="s1">&#39;loss&#39;</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">0.</span><span class="p">),</span> <span class="n">dist_reduce_fx</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_state</span><span class="p">(</span><span class="s1">&#39;num_batch&#39;</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">0.</span><span class="p">),</span> <span class="n">dist_reduce_fx</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">predicted</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">probability</span><span class="p">,</span> <span class="n">loss</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        predicted :</span>
+<span class="sd">            </span>
+<span class="sd">        target :</span>
+<span class="sd">            </span>
+<span class="sd">        probability :</span>
+<span class="sd">            </span>
+<span class="sd">        loss :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">predicted</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">predicted</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">probability</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">probability</span><span class="p">)</span>
@@ -592,6 +795,7 @@ synchronized across the distributed backend.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_batch</span> <span class="o">+=</span><span class="mi">1</span>
         
     <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
         <span class="c1"># Returns: predicted, target, loss, probability, epoch</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">predicted</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
@@ -603,48 +807,32 @@ synchronized across the distributed backend.</p>
 
         </details>
 
-            <div class="docstring"><p>Base class for all metrics present in the Metrics API.</p>
-
-<p>Implements <code><a href="#CVTracker.add_state">add_state()</a></code>, <code><a href="#CVTracker.forward">forward()</a></code>, <code><a href="#CVTracker.reset">reset()</a></code> and a few other things to
-handle distributed synchronization and per-step metric computation.</p>
-
-<p>Override <code><a href="#CVTracker.update">update()</a></code> and <code><a href="#CVTracker.compute">compute()</a></code> functions to implement your own metric. Use
-<code><a href="#CVTracker.add_state">add_state()</a></code> to register metric state variables which keep track of state on each
-call of <code><a href="#CVTracker.update">update()</a></code> and are synchronized across processes when <code><a href="#CVTracker.compute">compute()</a></code> is called.</p>
-
-<p>Note:
-    Metric state variables can either be <code>torch.Tensors</code> or an empty list which can we used
-    to store `torch.Tensors``.</p>
-
-<p>Note:
-    Different metrics only override <code><a href="#CVTracker.update">update()</a></code> and not <code><a href="#CVTracker.forward">forward()</a></code>. A call to <code><a href="#CVTracker.update">update()</a></code>
-    is valid, but it won't return the metric value at the current step. A call to <code><a href="#CVTracker.forward">forward()</a></code>
-    automatically calls <code><a href="#CVTracker.update">update()</a></code> and also returns the metric value at the current step.</p>
-
-<p>Args:
-    compute_on_step:
-        Forward only calls <code><a href="#CVTracker.update">update()</a></code> and returns None if this is set to False. default: True
-    dist_sync_on_step:
-        Synchronize metric state across processes at each <code><a href="#CVTracker.forward">forward()</a></code>
-        before returning the value at the step.
-    process_group:
-        Specify the process group on which synchronization is called. default: None (which selects the entire world)
-    dist_sync_fn:
-        Callback that performs the allgather operation on the metric state. When <code>None</code>, DDP
-        will be used to perform the allgather.</p>
-</div>
-
+    
 
                             <div id="CVTracker.__init__" class="classattr">
                                         <div class="attr function"><a class="headerlink" href="#CVTracker.__init__">#&nbsp;&nbsp</a>
 
         
-            <span class="name">CVTracker</span><span class="signature">(compute_on_step=False, dist_sync_on_step=False)</span>
+            <span class="name">CVTracker</span><span class="signature">(compute_on_step: bool = False, dist_sync_on_step: bool = False)</span>
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">compute_on_step</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dist_sync_on_step</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">compute_on_step</span><span class="p">:</span><span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dist_sync_on_step</span><span class="p">:</span><span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        compute_on_step : bool</span>
+<span class="sd">            (Default value = False)</span>
+<span class="sd">        dist_sync_on_step : bool</span>
+<span class="sd">            (Default value = False)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">compute_on_step</span><span class="o">=</span><span class="n">compute_on_step</span><span class="p">,</span> <span class="n">dist_sync_on_step</span><span class="o">=</span><span class="n">dist_sync_on_step</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">add_state</span><span class="p">(</span><span class="s1">&#39;auc&#39;</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="p">[],</span> <span class="n">dist_reduce_fx</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
@@ -656,8 +844,14 @@ call of <code><a href="#CVTracker.update">update()</a></code> and are synchroniz
 
         </details>
 
-            <div class="docstring"><p>.. deprecated::
-    Use :class:<code>torchmetrics.Metric</code>. Will be removed in v1.5.0.</p>
+            <div class="docstring"><h2 id="parameters">Parameters</h2>
+
+<p>compute_on_step : bool
+    (Default value = False)
+dist_sync_on_step : bool
+    (Default value = False)</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -673,6 +867,24 @@ call of <code><a href="#CVTracker.update">update()</a></code> and are synchroniz
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">predicted</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">probability</span><span class="p">,</span> <span class="n">loss</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        predicted :</span>
+<span class="sd">            </span>
+<span class="sd">        target :</span>
+<span class="sd">            </span>
+<span class="sd">        probability :</span>
+<span class="sd">            </span>
+<span class="sd">        loss :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">predicted</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">predicted</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">probability</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">probability</span><span class="p">)</span>
@@ -683,7 +895,17 @@ call of <code><a href="#CVTracker.update">update()</a></code> and are synchroniz
 
         </details>
 
-            <div class="docstring"><p>Override this method to update the state variables of your metric class.</p>
+            <div class="docstring"><h2 id="parameters">Parameters</h2>
+
+<p>predicted :</p>
+
+<p>target :</p>
+
+<p>probability :</p>
+
+<p>loss :</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -699,6 +921,7 @@ call of <code><a href="#CVTracker.update">update()</a></code> and are synchroniz
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
         <span class="c1"># Returns: predicted, target, loss, probability, epoch</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">predicted</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
@@ -710,10 +933,7 @@ call of <code><a href="#CVTracker.update">update()</a></code> and are synchroniz
 
         </details>
 
-            <div class="docstring"><p>Override this method to compute the final metric value from state variables
-synchronized across the distributed backend.</p>
-</div>
-
+    
 
                             </div>
                             <div class="inherited">

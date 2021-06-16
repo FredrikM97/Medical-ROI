@@ -85,15 +85,23 @@
 
 <span class="k">def</span> <span class="nf">load_json</span><span class="p">(</span><span class="n">dirpath</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Open a json file and return the key name and config data if the file exists</span>
-<span class="sd">    </span>
-<span class="sd">    Args:</span>
-<span class="sd">        * dirpath: path to json file.</span>
-<span class="sd">        </span>
-<span class="sd">    Return:</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dirpath : str</span>
+<span class="sd">        path to json file (Default value = None)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
 <span class="sd">        * Dictionary with {name:config}</span>
-<span class="sd">        </span>
-<span class="sd">    Exception:</span>
-<span class="sd">        * ValueError: If file could not be loaded</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If file could not be loaded</span>
+
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">dirpath</span><span class="p">)</span> <span class="k">as</span> <span class="n">json_file</span><span class="p">:</span>
         <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
@@ -103,7 +111,20 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; Error when loading file: </span><span class="si">{</span><span class="n">dirpath</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
 
 <span class="k">def</span> <span class="nf">load_config</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span><span class="n">dirpath</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Load file with same name as the input filename and located in dirpath&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Load file with same name as the input filename and located in dirpath</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    filename : str</span>
+<span class="sd">        </span>
+<span class="sd">    dirpath : str</span>
+<span class="sd">        (Default value = None)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">dirpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">dirpath</span> <span class="k">if</span> <span class="n">dirpath</span> <span class="k">else</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span>
     <span class="n">files</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">starmap</span><span class="p">(</span><span class="k">lambda</span> <span class="n">root</span><span class="p">,</span><span class="n">dirs</span><span class="p">,</span> <span class="n">files</span><span class="p">:</span> <span class="p">[</span><span class="o">*</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">f</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">f</span><span class="p">),</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s1">&#39;.json&#39;</span> <span class="ow">in</span> <span class="n">x</span> <span class="ow">and</span> <span class="s1">&#39;checkpoint&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">x</span><span class="p">,</span><span class="n">files</span><span class="p">))],</span><span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="s1">&#39;../conf&#39;</span><span class="p">)))</span>
@@ -118,7 +139,18 @@
         
 
 <span class="k">def</span> <span class="nf">load_xml</span><span class="p">(</span><span class="n">path</span><span class="p">:</span><span class="nb">str</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Load XML from dictory and return a generator&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Load XML from dictory and return a generator</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path : str</span>
+<span class="sd">        </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">assert</span> <span class="n">path</span><span class="p">,</span> <span class="s2">&quot;No path defined&quot;</span>
     <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.xml&#39;</span><span class="p">):</span> <span class="k">continue</span>
@@ -127,13 +159,18 @@
         
 <span class="k">def</span> <span class="nf">load_nifti</span><span class="p">(</span><span class="n">srcdir</span><span class="p">:</span><span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Load nifti image from srcdir where all files ending with .nii is selected.</span>
-<span class="sd">    </span>
-<span class="sd">    Args:</span>
-<span class="sd">        * srcdir: path to .nii files</span>
-<span class="sd">    </span>
-<span class="sd">    Return:</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    srcdir : str</span>
+<span class="sd">        path to</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list</span>
 <span class="sd">        * List of dictionaries containing columns, filename and path to file</span>
-<span class="sd">        </span>
+
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">,</span><span class="s1">&#39;dirs&#39;</span><span class="p">,</span><span class="s1">&#39;path&#39;</span><span class="p">]</span>
     <span class="k">return</span> <span class="p">[</span>
@@ -145,7 +182,18 @@
         <span class="p">]</span> 
 
 <span class="k">def</span> <span class="nf">load_files</span><span class="p">(</span><span class="n">srcdir</span><span class="p">:</span><span class="nb">str</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Load a file from srcdir if the file ends with .nii&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Load a file from srcdir if the file ends with .nii</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    srcdir : str</span>
+<span class="sd">        </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">tmp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
             <span class="n">path</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">filename</span>
             <span class="k">for</span> <span class="n">path</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">srcdir</span><span class="p">)</span> 
@@ -157,12 +205,18 @@
 
 <span class="k">def</span> <span class="nf">load_nifti_axial</span><span class="p">(</span><span class="n">path</span><span class="p">:</span><span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Load an nifti image from the axial view</span>
-<span class="sd">    </span>
-<span class="sd">    Args:</span>
-<span class="sd">        * path: path to the given file</span>
-<span class="sd">        </span>
-<span class="sd">    Return:</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path : str</span>
+<span class="sd">        path to the given file</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    np.ndarray</span>
 <span class="sd">        * Nifti image from axial view</span>
+
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Load nifti image and convert to axial view</span>
     <span class="k">return</span> <span class="n">image2axial</span><span class="p">(</span><span class="n">nib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">get_fdata</span><span class="p">())</span>
@@ -183,15 +237,23 @@
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">load_json</span><span class="p">(</span><span class="n">dirpath</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Open a json file and return the key name and config data if the file exists</span>
-<span class="sd">    </span>
-<span class="sd">    Args:</span>
-<span class="sd">        * dirpath: path to json file.</span>
-<span class="sd">        </span>
-<span class="sd">    Return:</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dirpath : str</span>
+<span class="sd">        path to json file (Default value = None)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
 <span class="sd">        * Dictionary with {name:config}</span>
-<span class="sd">        </span>
-<span class="sd">    Exception:</span>
-<span class="sd">        * ValueError: If file could not be loaded</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If file could not be loaded</span>
+
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">dirpath</span><span class="p">)</span> <span class="k">as</span> <span class="n">json_file</span><span class="p">:</span>
         <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
@@ -205,14 +267,20 @@
 
             <div class="docstring"><p>Open a json file and return the key name and config data if the file exists</p>
 
-<p>Args:
-    * dirpath: path to json file.</p>
+<h2 id="parameters">Parameters</h2>
 
-<p>Return:
+<p>dirpath : str
+    path to json file (Default value = None)</p>
+
+<h2 id="returns">Returns</h2>
+
+<p>dict
     * Dictionary with {name:config}</p>
 
-<p>Exception:
-    * ValueError: If file could not be loaded</p>
+<h2 id="raises">Raises</h2>
+
+<p>ValueError
+    If file could not be loaded</p>
 </div>
 
 
@@ -228,7 +296,20 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">load_config</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span><span class="n">dirpath</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Load file with same name as the input filename and located in dirpath&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Load file with same name as the input filename and located in dirpath</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    filename : str</span>
+<span class="sd">        </span>
+<span class="sd">    dirpath : str</span>
+<span class="sd">        (Default value = None)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">dirpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">dirpath</span> <span class="k">if</span> <span class="n">dirpath</span> <span class="k">else</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span>
     <span class="n">files</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">starmap</span><span class="p">(</span><span class="k">lambda</span> <span class="n">root</span><span class="p">,</span><span class="n">dirs</span><span class="p">,</span> <span class="n">files</span><span class="p">:</span> <span class="p">[</span><span class="o">*</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">f</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">f</span><span class="p">),</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s1">&#39;.json&#39;</span> <span class="ow">in</span> <span class="n">x</span> <span class="ow">and</span> <span class="s1">&#39;checkpoint&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">x</span><span class="p">,</span><span class="n">files</span><span class="p">))],</span><span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="s1">&#39;../conf&#39;</span><span class="p">)))</span>
@@ -244,6 +325,15 @@
         </details>
 
             <div class="docstring"><p>Load file with same name as the input filename and located in dirpath</p>
+
+<h2 id="parameters">Parameters</h2>
+
+<p>filename : str</p>
+
+<p>dirpath : str
+    (Default value = None)</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -259,7 +349,18 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">load_xml</span><span class="p">(</span><span class="n">path</span><span class="p">:</span><span class="nb">str</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Load XML from dictory and return a generator&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Load XML from dictory and return a generator</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path : str</span>
+<span class="sd">        </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">assert</span> <span class="n">path</span><span class="p">,</span> <span class="s2">&quot;No path defined&quot;</span>
     <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.xml&#39;</span><span class="p">):</span> <span class="k">continue</span>
@@ -270,6 +371,12 @@
         </details>
 
             <div class="docstring"><p>Load XML from dictory and return a generator</p>
+
+<h2 id="parameters">Parameters</h2>
+
+<p>path : str</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -286,13 +393,18 @@
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">load_nifti</span><span class="p">(</span><span class="n">srcdir</span><span class="p">:</span><span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Load nifti image from srcdir where all files ending with .nii is selected.</span>
-<span class="sd">    </span>
-<span class="sd">    Args:</span>
-<span class="sd">        * srcdir: path to .nii files</span>
-<span class="sd">    </span>
-<span class="sd">    Return:</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    srcdir : str</span>
+<span class="sd">        path to</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list</span>
 <span class="sd">        * List of dictionaries containing columns, filename and path to file</span>
-<span class="sd">        </span>
+
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">,</span><span class="s1">&#39;dirs&#39;</span><span class="p">,</span><span class="s1">&#39;path&#39;</span><span class="p">]</span>
     <span class="k">return</span> <span class="p">[</span>
@@ -308,10 +420,14 @@
 
             <div class="docstring"><p>Load nifti image from srcdir where all files ending with .nii is selected.</p>
 
-<p>Args:
-    * srcdir: path to .nii files</p>
+<h2 id="parameters">Parameters</h2>
 
-<p>Return:
+<p>srcdir : str
+    path to</p>
+
+<h2 id="returns">Returns</h2>
+
+<p>list
     * List of dictionaries containing columns, filename and path to file</p>
 </div>
 
@@ -328,7 +444,18 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">load_files</span><span class="p">(</span><span class="n">srcdir</span><span class="p">:</span><span class="nb">str</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Load a file from srcdir if the file ends with .nii&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Load a file from srcdir if the file ends with .nii</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    srcdir : str</span>
+<span class="sd">        </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">tmp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
             <span class="n">path</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">filename</span>
             <span class="k">for</span> <span class="n">path</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">srcdir</span><span class="p">)</span> 
@@ -342,6 +469,12 @@
         </details>
 
             <div class="docstring"><p>Load a file from srcdir if the file ends with .nii</p>
+
+<h2 id="parameters">Parameters</h2>
+
+<p>srcdir : str</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -358,12 +491,18 @@
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">load_nifti_axial</span><span class="p">(</span><span class="n">path</span><span class="p">:</span><span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Load an nifti image from the axial view</span>
-<span class="sd">    </span>
-<span class="sd">    Args:</span>
-<span class="sd">        * path: path to the given file</span>
-<span class="sd">        </span>
-<span class="sd">    Return:</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path : str</span>
+<span class="sd">        path to the given file</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    np.ndarray</span>
 <span class="sd">        * Nifti image from axial view</span>
+
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Load nifti image and convert to axial view</span>
     <span class="k">return</span> <span class="n">image2axial</span><span class="p">(</span><span class="n">nib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">get_fdata</span><span class="p">())</span>
@@ -373,10 +512,14 @@
 
             <div class="docstring"><p>Load an nifti image from the axial view</p>
 
-<p>Args:
-    * path: path to the given file</p>
+<h2 id="parameters">Parameters</h2>
 
-<p>Return:
+<p>path : str
+    path to the given file</p>
+
+<h2 id="returns">Returns</h2>
+
+<p>np.ndarray
     * Nifti image from axial view</p>
 </div>
 

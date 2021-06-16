@@ -76,6 +76,20 @@
 <span class="n">BASEDIR</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="vm">__name__</span><span class="p">),</span><span class="s1">&#39;dataloader&#39;</span><span class="p">])</span>
 
 <span class="k">def</span> <span class="nf">find_dataset_using_name</span><span class="p">(</span><span class="n">datadir</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    datadir :</span>
+<span class="sd">        </span>
+<span class="sd">    dataset_name :</span>
+<span class="sd">        </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># datadir should be full path to file and dataset_name is the class within the file!</span>
     <span class="n">dataset_filename</span> <span class="o">=</span> <span class="n">datadir</span>
     <span class="n">datasetlib</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">dataset_filename</span><span class="p">)</span>
@@ -92,6 +106,22 @@
     <span class="k">return</span> <span class="n">dataset</span>
 
 <span class="k">def</span> <span class="nf">create_dataset</span><span class="p">(</span><span class="n">name</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span><span class="nb">dict</span><span class="o">=</span><span class="p">{},</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name : str</span>
+<span class="sd">        (Default value = None)</span>
+<span class="sd">    args : dict</span>
+<span class="sd">        (Default value = {})</span>
+<span class="sd">    **kwargs :</span>
+<span class="sd">        </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">find_dataset_using_name</span><span class="p">(</span><span class="n">BASEDIR</span><span class="p">,</span><span class="n">name</span><span class="p">)(</span><span class="o">**</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
@@ -109,6 +139,20 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">find_dataset_using_name</span><span class="p">(</span><span class="n">datadir</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    datadir :</span>
+<span class="sd">        </span>
+<span class="sd">    dataset_name :</span>
+<span class="sd">        </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># datadir should be full path to file and dataset_name is the class within the file!</span>
     <span class="n">dataset_filename</span> <span class="o">=</span> <span class="n">datadir</span>
     <span class="n">datasetlib</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">dataset_filename</span><span class="p">)</span>
@@ -127,7 +171,15 @@
 
         </details>
 
-    
+            <div class="docstring"><h2 id="parameters">Parameters</h2>
+
+<p>datadir :</p>
+
+<p>dataset_name :</p>
+
+<h2 id="returns">Returns</h2>
+</div>
+
 
                 </section>
                 <section id="create_dataset">
@@ -141,12 +193,38 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">create_dataset</span><span class="p">(</span><span class="n">name</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span><span class="nb">dict</span><span class="o">=</span><span class="p">{},</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name : str</span>
+<span class="sd">        (Default value = None)</span>
+<span class="sd">    args : dict</span>
+<span class="sd">        (Default value = {})</span>
+<span class="sd">    **kwargs :</span>
+<span class="sd">        </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">find_dataset_using_name</span><span class="p">(</span><span class="n">BASEDIR</span><span class="p">,</span><span class="n">name</span><span class="p">)(</span><span class="o">**</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
-    
+            <div class="docstring"><h2 id="parameters">Parameters</h2>
+
+<p>name : str
+    (Default value = None)
+args : dict
+    (Default value = {})
+**kwargs :</p>
+
+<h2 id="returns">Returns</h2>
+</div>
+
 
                 </section>
     </main>

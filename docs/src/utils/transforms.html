@@ -64,7 +64,6 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 
-
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">from</span> <span class="nn">torchvision.ops._utils</span> <span class="kn">import</span> <span class="n">convert_boxes_to_roi_format</span>
@@ -74,44 +73,64 @@
 <span class="kn">from</span> <span class="nn">src.utils.preprocess</span> <span class="kn">import</span> <span class="n">tensor2numpy</span>
 
 <span class="k">class</span> <span class="nc">RoiTransform</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Apply ROI transform to shange shape of images&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Apply ROI transform to shange shape of images and Transform boundary boxes to correct format.&quot;&quot;&quot;</span>
     
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_shape</span><span class="p">:</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span><span class="nb">int</span><span class="p">,</span><span class="nb">int</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">boundary_boxes</span><span class="p">:</span><span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span><span class="nb">int</span><span class="p">,</span><span class="nb">int</span><span class="p">,</span><span class="nb">int</span><span class="p">,</span><span class="nb">int</span><span class="p">,</span><span class="nb">int</span><span class="p">]]]</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span><span class="o">**</span><span class="n">args</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Transform boundary boxes to correct format.</span>
+        <span class="sd">&quot;&quot;&quot; Init RoiTransform object.</span>
 <span class="sd">        </span>
-<span class="sd">        Args:</span>
-<span class="sd">            output_shape (Tuple): Shape that the image input should be transformed to.</span>
-<span class="sd">            boundary_boxes (List): Availbile boundary boxes. Each target class need at least one boundary box!</span>
-<span class="sd">            batch_size (int): Input batch size of data</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        output_shape : Tuple[int,int,int]</span>
+<span class="sd">             (Default value = None)</span>
+<span class="sd">        boundary_boxes : Union[List[Tuple[int,int,int,int,int,int]]]</span>
+<span class="sd">             (Default value = None)</span>
+<span class="sd">        batch_size :</span>
+<span class="sd">             (Default value = 6)</span>
+<span class="sd">        **args :</span>
+
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
+        
         <span class="k">if</span> <span class="ow">not</span> <span class="n">boundary_boxes</span><span class="p">:</span> <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;bounding_boxes list can not be empty!&quot;</span><span class="p">)</span>
         
         <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="n">batch_size</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">roi</span> <span class="o">=</span> <span class="n">RoIAlign</span><span class="p">(</span><span class="n">output_shape</span><span class="p">,</span><span class="n">spatial_scale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span><span class="n">sampling_ratio</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">num_bbox</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">boundary_boxes</span><span class="p">)</span>
+        
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">boundary_boxes</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">boundary_boxes</span> <span class="o">=</span> <span class="n">convert_boxes_to_roi_format</span><span class="p">([</span><span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">boundary_boxes</span><span class="p">])])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_bbox</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">boundary_boxes</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">boundary_boxes</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">boundary_boxes</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span><span class="n">convert_boxes_to_roi_format</span><span class="p">([</span><span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">value</span><span class="p">])])</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span><span class="n">value</span> <span class="ow">in</span> <span class="n">boundary_boxes</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+            
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_bbox</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">len</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">boundary_boxes</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;boundary_boxes needs to be of type list or dict&quot;</span><span class="p">)</span>
             
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Expect to take an y of integer type and if boundary_boxes are a dict then the key should be a numeric value.</span>
+        <span class="sd">&quot;&quot;&quot;Expect to take an y of integer type and if boundary_boxes are a dict then the key should be a numeric value.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : torch.Tensor</span>
+<span class="sd">            Input value. Expect shape (B,C,D,H,W)</span>
+<span class="sd">        y : Tensor</span>
+<span class="sd">            Target value</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
 <span class="sd">        </span>
-<span class="sd">        Args:</span>
-<span class="sd">            x (Tensor): Input value. Expect shape (B,C,D,H,W)</span>
-<span class="sd">            y (Tensor): Target value</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">boundary_boxes</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="n">image_rois</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">roi</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">boundary_boxes</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">device</span><span class="p">)]))</span><span class="c1">#.detach()</span>
             <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_bbox</span><span class="o">*</span><span class="n">y</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">boundary_boxes</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-            <span class="n">image_rois</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">roi</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">boundary_boxes</span><span class="p">[</span><span class="n">one_target</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">device</span><span class="p">)</span> <span class="k">for</span> <span class="n">one_target</span> <span class="ow">in</span> <span class="n">tensor2numpy</span><span class="p">(</span><span class="n">y</span><span class="p">)]))</span><span class="c1">#.detach() #x.shape[0]*[self.boundary_boxes[y]</span>
+            <span class="n">image_rois</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">roi</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">boundary_boxes</span><span class="p">[</span><span class="n">one_target</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">device</span><span class="p">)</span> <span class="k">for</span> <span class="n">one_target</span> <span class="ow">in</span> <span class="n">tensor2numpy</span><span class="p">(</span><span class="n">y</span><span class="p">)]))</span>
 
             <span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">boundary_boxes</span><span class="p">[</span><span class="n">one_target</span><span class="p">])</span><span class="o">*</span><span class="p">[</span><span class="n">one_target</span><span class="p">]</span> <span class="k">for</span> <span class="n">one_target</span> <span class="ow">in</span> <span class="n">tensor2numpy</span><span class="p">(</span><span class="n">y</span><span class="p">)]))</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
 
@@ -119,6 +138,14 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;boundary_boxes needs to be of type list or dict&quot;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">image_rois</span><span class="p">,</span> <span class="n">y</span>
+    
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">***Defined ROI-Transformer:***</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Number of BBoxes: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_bbox</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;BBox Count: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">boundary_boxes</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">boundary_boxes</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="k">else</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s1">:</span><span class="si">{</span><span class="n">y</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">boundary_boxes</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span><span class="nb">map</span><span class="p">(</span><span class="nb">len</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">boundary_boxes</span><span class="o">.</span><span class="n">values</span><span class="p">()))])</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
 </pre></div>
 
         </details>
@@ -136,44 +163,64 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">RoiTransform</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Apply ROI transform to shange shape of images&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Apply ROI transform to shange shape of images and Transform boundary boxes to correct format.&quot;&quot;&quot;</span>
     
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_shape</span><span class="p">:</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span><span class="nb">int</span><span class="p">,</span><span class="nb">int</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">boundary_boxes</span><span class="p">:</span><span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span><span class="nb">int</span><span class="p">,</span><span class="nb">int</span><span class="p">,</span><span class="nb">int</span><span class="p">,</span><span class="nb">int</span><span class="p">,</span><span class="nb">int</span><span class="p">]]]</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span><span class="o">**</span><span class="n">args</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Transform boundary boxes to correct format.</span>
+        <span class="sd">&quot;&quot;&quot; Init RoiTransform object.</span>
 <span class="sd">        </span>
-<span class="sd">        Args:</span>
-<span class="sd">            output_shape (Tuple): Shape that the image input should be transformed to.</span>
-<span class="sd">            boundary_boxes (List): Availbile boundary boxes. Each target class need at least one boundary box!</span>
-<span class="sd">            batch_size (int): Input batch size of data</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        output_shape : Tuple[int,int,int]</span>
+<span class="sd">             (Default value = None)</span>
+<span class="sd">        boundary_boxes : Union[List[Tuple[int,int,int,int,int,int]]]</span>
+<span class="sd">             (Default value = None)</span>
+<span class="sd">        batch_size :</span>
+<span class="sd">             (Default value = 6)</span>
+<span class="sd">        **args :</span>
+
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
+        
         <span class="k">if</span> <span class="ow">not</span> <span class="n">boundary_boxes</span><span class="p">:</span> <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;bounding_boxes list can not be empty!&quot;</span><span class="p">)</span>
         
         <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="n">batch_size</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">roi</span> <span class="o">=</span> <span class="n">RoIAlign</span><span class="p">(</span><span class="n">output_shape</span><span class="p">,</span><span class="n">spatial_scale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span><span class="n">sampling_ratio</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">num_bbox</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">boundary_boxes</span><span class="p">)</span>
+        
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">boundary_boxes</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">boundary_boxes</span> <span class="o">=</span> <span class="n">convert_boxes_to_roi_format</span><span class="p">([</span><span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">boundary_boxes</span><span class="p">])])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_bbox</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">boundary_boxes</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">boundary_boxes</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">boundary_boxes</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span><span class="n">convert_boxes_to_roi_format</span><span class="p">([</span><span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">value</span><span class="p">])])</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span><span class="n">value</span> <span class="ow">in</span> <span class="n">boundary_boxes</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+            
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_bbox</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">len</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">boundary_boxes</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;boundary_boxes needs to be of type list or dict&quot;</span><span class="p">)</span>
             
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Expect to take an y of integer type and if boundary_boxes are a dict then the key should be a numeric value.</span>
+        <span class="sd">&quot;&quot;&quot;Expect to take an y of integer type and if boundary_boxes are a dict then the key should be a numeric value.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : torch.Tensor</span>
+<span class="sd">            Input value. Expect shape (B,C,D,H,W)</span>
+<span class="sd">        y : Tensor</span>
+<span class="sd">            Target value</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
 <span class="sd">        </span>
-<span class="sd">        Args:</span>
-<span class="sd">            x (Tensor): Input value. Expect shape (B,C,D,H,W)</span>
-<span class="sd">            y (Tensor): Target value</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">boundary_boxes</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="n">image_rois</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">roi</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">boundary_boxes</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">device</span><span class="p">)]))</span><span class="c1">#.detach()</span>
             <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_bbox</span><span class="o">*</span><span class="n">y</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">boundary_boxes</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-            <span class="n">image_rois</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">roi</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">boundary_boxes</span><span class="p">[</span><span class="n">one_target</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">device</span><span class="p">)</span> <span class="k">for</span> <span class="n">one_target</span> <span class="ow">in</span> <span class="n">tensor2numpy</span><span class="p">(</span><span class="n">y</span><span class="p">)]))</span><span class="c1">#.detach() #x.shape[0]*[self.boundary_boxes[y]</span>
+            <span class="n">image_rois</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">roi</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">boundary_boxes</span><span class="p">[</span><span class="n">one_target</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">device</span><span class="p">)</span> <span class="k">for</span> <span class="n">one_target</span> <span class="ow">in</span> <span class="n">tensor2numpy</span><span class="p">(</span><span class="n">y</span><span class="p">)]))</span>
 
             <span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">boundary_boxes</span><span class="p">[</span><span class="n">one_target</span><span class="p">])</span><span class="o">*</span><span class="p">[</span><span class="n">one_target</span><span class="p">]</span> <span class="k">for</span> <span class="n">one_target</span> <span class="ow">in</span> <span class="n">tensor2numpy</span><span class="p">(</span><span class="n">y</span><span class="p">)]))</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
 
@@ -181,11 +228,19 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;boundary_boxes needs to be of type list or dict&quot;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">image_rois</span><span class="p">,</span> <span class="n">y</span>
+    
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">***Defined ROI-Transformer:***</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Number of BBoxes: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_bbox</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;BBox Count: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">boundary_boxes</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">boundary_boxes</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="k">else</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s1">:</span><span class="si">{</span><span class="n">y</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">boundary_boxes</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span><span class="nb">map</span><span class="p">(</span><span class="nb">len</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">boundary_boxes</span><span class="o">.</span><span class="n">values</span><span class="p">()))])</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Apply ROI transform to shange shape of images</p>
+            <div class="docstring"><p>Apply ROI transform to shange shape of images and Transform boundary boxes to correct format.</p>
 </div>
 
 
@@ -204,36 +259,56 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_shape</span><span class="p">:</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span><span class="nb">int</span><span class="p">,</span><span class="nb">int</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">boundary_boxes</span><span class="p">:</span><span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span><span class="nb">int</span><span class="p">,</span><span class="nb">int</span><span class="p">,</span><span class="nb">int</span><span class="p">,</span><span class="nb">int</span><span class="p">,</span><span class="nb">int</span><span class="p">]]]</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span><span class="o">**</span><span class="n">args</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Transform boundary boxes to correct format.</span>
+        <span class="sd">&quot;&quot;&quot; Init RoiTransform object.</span>
 <span class="sd">        </span>
-<span class="sd">        Args:</span>
-<span class="sd">            output_shape (Tuple): Shape that the image input should be transformed to.</span>
-<span class="sd">            boundary_boxes (List): Availbile boundary boxes. Each target class need at least one boundary box!</span>
-<span class="sd">            batch_size (int): Input batch size of data</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        output_shape : Tuple[int,int,int]</span>
+<span class="sd">             (Default value = None)</span>
+<span class="sd">        boundary_boxes : Union[List[Tuple[int,int,int,int,int,int]]]</span>
+<span class="sd">             (Default value = None)</span>
+<span class="sd">        batch_size :</span>
+<span class="sd">             (Default value = 6)</span>
+<span class="sd">        **args :</span>
+
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
+        
         <span class="k">if</span> <span class="ow">not</span> <span class="n">boundary_boxes</span><span class="p">:</span> <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;bounding_boxes list can not be empty!&quot;</span><span class="p">)</span>
         
         <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="n">batch_size</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">roi</span> <span class="o">=</span> <span class="n">RoIAlign</span><span class="p">(</span><span class="n">output_shape</span><span class="p">,</span><span class="n">spatial_scale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span><span class="n">sampling_ratio</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">num_bbox</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">boundary_boxes</span><span class="p">)</span>
+        
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">boundary_boxes</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">boundary_boxes</span> <span class="o">=</span> <span class="n">convert_boxes_to_roi_format</span><span class="p">([</span><span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">boundary_boxes</span><span class="p">])])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_bbox</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">boundary_boxes</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">boundary_boxes</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">boundary_boxes</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span><span class="n">convert_boxes_to_roi_format</span><span class="p">([</span><span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">value</span><span class="p">])])</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span><span class="n">value</span> <span class="ow">in</span> <span class="n">boundary_boxes</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+            
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_bbox</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">len</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">boundary_boxes</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;boundary_boxes needs to be of type list or dict&quot;</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Transform boundary boxes to correct format.</p>
+            <div class="docstring"><p>Init RoiTransform object.</p>
 
-<p>Args:
-    output_shape (Tuple): Shape that the image input should be transformed to.
-    boundary_boxes (List): Availbile boundary boxes. Each target class need at least one boundary box!
-    batch_size (int): Input batch size of data</p>
+<h2 id="parameters">Parameters</h2>
+
+<p>output_shape : Tuple[int,int,int]
+     (Default value = None)
+boundary_boxes : Union[List[Tuple[int,int,int,int,int,int]]]
+     (Default value = None)
+batch_size :
+     (Default value = 6)
+**args :</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 

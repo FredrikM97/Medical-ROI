@@ -96,24 +96,36 @@
 
 
 <span class="k">def</span> <span class="nf">normalize</span><span class="p">(</span><span class="n">x</span><span class="p">:</span><span class="n">Union</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot; Min-max normalization (0-1):</span>
-<span class="sd">    </span>
-<span class="sd">    Args:</span>
-<span class="sd">        * x - Can be tensor or ndarray to be converted </span>
-<span class="sd">    </span>
-<span class="sd">    Return:</span>
+    <span class="sd">&quot;&quot;&quot;Min-max normalization (0-1):</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : Union[Tensor,np.ndarray]</span>
+<span class="sd">        Can be tensor or ndarray to be converted</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Union[Tensor,np.ndarray]</span>
 <span class="sd">        * Return same type as input but scaled between 0 - 1</span>
+
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">x</span><span class="o">.</span><span class="n">min</span><span class="p">())</span><span class="o">/</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">-</span><span class="n">x</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
 
 <span class="k">def</span> <span class="nf">batchisize_to_5D</span><span class="p">(</span><span class="n">x</span><span class="p">:</span><span class="n">Union</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot; Takes an input with lower dimensions than 5 and pad the dimensions to 5. len(x.shape) &lt; 5 -&gt; len(x.shape) == 5</span>
+    <span class="sd">&quot;&quot;&quot;Takes an input with lower dimensions than 5 and pad the dimensions to 5. len(x.shape) &lt; 5 -&gt; len(x.shape) == 5</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : Union[Tensor,np.ndarray]</span>
+<span class="sd">        Input vector</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Union[Tensor,np.ndarray]</span>
+<span class="sd">        x with len(x.shape) == 5</span>
+
 <span class="sd">    </span>
-<span class="sd">    Args:</span>
-<span class="sd">        * x - Input vector</span>
-<span class="sd">        </span>
-<span class="sd">    Return:</span>
-<span class="sd">        * x with len(x.shape) == 5</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">Tensor</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">expand</span><span class="p">((</span><span class="o">*</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="mi">5</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)),</span><span class="o">*</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)))</span>
@@ -121,17 +133,23 @@
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">x</span><span class="p">,[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">_</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)))])</span>
     
 <span class="k">def</span> <span class="nf">folder2labels</span><span class="p">(</span><span class="n">images</span><span class="p">:</span><span class="nb">list</span><span class="p">,</span> <span class="n">classes</span><span class="p">:</span><span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span> <span class="c1">#, delimiter:str</span>
-    <span class="sd">&quot;&quot;&quot; Extract labels from filename based on delimiter. </span>
+    <span class="sd">&quot;&quot;&quot;Extract labels from filename based on delimiter.</span>
 <span class="sd">    Expects a label before filename</span>
 <span class="sd">    </span>
 <span class="sd">    Example: /AD/image_file.png</span>
-<span class="sd">    Args:</span>
-<span class="sd">        * images: list containing all filenames</span>
-<span class="sd">        * classes: The allowed classes that can be used for labels</span>
-<span class="sd">        </span>
-<span class="sd">        </span>
-<span class="sd">    Return:</span>
-<span class="sd">        * Return a list of labels based on the given classes from the image filenames.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    images : list</span>
+<span class="sd">        list containing all filenames</span>
+<span class="sd">    classes : dict</span>
+<span class="sd">        The allowed classes that can be used for labels</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    np.ndarray</span>
+<span class="sd">        A list of labels based on the given classes from the image filenames.</span>
+
 <span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1">#if delimiter not in images[0]: raise ValueError(f&quot;The defined delimiter could not be found in image input! Image input: {images[0]}&quot;)</span>
@@ -140,22 +158,53 @@
 <span class="k">def</span> <span class="nf">mask_threshold</span><span class="p">(</span><span class="n">image</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">threshold</span><span class="p">:</span><span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Place a threshold on image and remove all values that are below the threshold.</span>
 <span class="sd">    All values under the threshold is set to 0</span>
-<span class="sd"> </span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    image : np.ndarray</span>
+<span class="sd">        Input image that threshold should be applied to.</span>
+<span class="sd">    threshold : float</span>
+<span class="sd">        Value between 0-1 at which procent of the max value that should be taken as a mask</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
 <span class="sd">    </span>
-<span class="sd">    Args:</span>
-<span class="sd">        * image: Input image that threshold should be applied to.</span>
-<span class="sd">        * treshold: Value between 0-1 at which procent of the max value that should be taken as a mask</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">img_threshold</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">*</span><span class="n">threshold</span>
     <span class="n">image</span><span class="p">[</span><span class="n">image</span> <span class="o">&lt;</span> <span class="n">img_threshold</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="k">return</span> <span class="n">image</span> <span class="c1">#np.ma.masked_where(image &lt;= img_threshold,image)</span>
 
 <span class="k">def</span> <span class="nf">set_outside_of_scan_pixels_2_zero</span><span class="p">(</span><span class="n">image</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">mask</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Everything that is zero outside of image is set to zero on the mask. Returns the modified mask&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Everything that is zero outside of image is set to zero on the mask. Returns the modified mask</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    image : np.ndarray</span>
+<span class="sd">        </span>
+<span class="sd">    mask : np.ndarray</span>
+<span class="sd">        </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked_where</span><span class="p">(</span><span class="n">image</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span><span class="n">mask</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">image2axial</span><span class="p">(</span><span class="n">image</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Modify image to display axial view. Expects an image of (B,H,W) or (B,C,H,W) &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Modify image to display axial view. Expects an image of (B,H,W) or (B,C,H,W)</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    image : np.ndarray</span>
+<span class="sd">        </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span> <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected np.ndarray. Got: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">image</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
@@ -164,34 +213,57 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected length of 3 or 4. Got: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-<span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">def greedy_split(arr:np.ndarray, n:int, axis=0) -&gt; list:</span>
-<span class="sd">    &quot;&quot;&quot;Split an image of slices into smaller slices. Example: 1x79 slices with an n of 16 -&gt; 5x16 slices where 1 slice contains 5 of the 79 slices.&quot;&quot;&quot;</span>
-<span class="sd">    assert isinstance(arr, np.ndarray), f&quot;Expected np.ndarray, got: {type(arr)}&quot;</span>
-<span class="sd">    length = arr.shape[axis]</span>
+<span class="k">def</span> <span class="nf">tensor2numpy</span><span class="p">(</span><span class="n">data</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Send to CPU. If computational graph is connected then detach it as well.</span>
 
-<span class="sd">    # compute the size of each of the first n-1 blocks</span>
-<span class="sd">    block_size = np.ceil(length / float(n))</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : torch.tensor</span>
+<span class="sd">        </span>
 
-<span class="sd">    # the indices at which the splits will occur</span>
-<span class="sd">    ix = np.arange(block_size, length, block_size).astype(np.uint8)</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
 
-<span class="sd">    return np.split(arr, ix, axis)</span>
-<span class="sd">&#39;&#39;&#39;</span>
-
-<span class="k">def</span> <span class="nf">tensor2numpy</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Send to CPU. If computational graph is connected then detach it as well.&quot;&quot;&quot;</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">requires_grad</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
 
 <span class="k">def</span> <span class="nf">uint8</span><span class="p">(</span><span class="n">image</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    image : np.ndarray</span>
+<span class="sd">        </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Change range 0-1 to 0-255 and change type to uint8</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">image</span><span class="o">*</span><span class="mi">255</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span> 
                    
 <span class="k">def</span> <span class="nf">preprocess_image</span><span class="p">(</span><span class="n">image</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">input_shape</span><span class="p">:</span><span class="n">Tuple</span><span class="o">=</span><span class="p">(</span><span class="mi">79</span><span class="p">,</span><span class="mi">95</span><span class="p">,</span><span class="mi">79</span><span class="p">),</span> <span class="n">normalized</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Resize, normalize between 0-1 and convert to uint8&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Resize, normalize between 0-1 and convert to uint8</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    image : np.ndarray</span>
+<span class="sd">        </span>
+<span class="sd">    input_shape : Tuple</span>
+<span class="sd">        (Default value = (79,95,79))</span>
+<span class="sd">    normalized :</span>
+<span class="sd">        (Default value = True)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     
     <span class="k">if</span> <span class="n">input_shape</span> <span class="o">!=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
         <span class="n">image</span> <span class="o">=</span> <span class="n">resize</span><span class="p">(</span><span class="n">image</span><span class="p">,</span><span class="n">input_shape</span><span class="p">)</span>
@@ -201,18 +273,29 @@
 
     <span class="k">return</span> <span class="n">image</span>
 
-<span class="k">def</span> <span class="nf">to_grid</span><span class="p">(</span><span class="n">image</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">max_num_slices</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">pad_value</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">nrow</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot; Create grid from image based on maximum number of slices.</span>
+<span class="k">def</span> <span class="nf">to_grid</span><span class="p">(</span><span class="n">image</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">max_num_slices</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">pad_value</span><span class="p">:</span><span class="nb">float</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">nrow</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">padding</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Create grid from image based on maximum number of slices.</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        * image: Image with multiple slices of shape Tuple[D,H,W]</span>
-<span class="sd">        * max_num_slices: The number of slices the image should be reduced.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    image : np.ndarray</span>
+<span class="sd">        Image with multiple slices of shape Tuple[D,H,W]</span>
+<span class="sd">    max_num_slices : int</span>
+<span class="sd">        The number of slices the image should be reduced. (Default value = None)</span>
+<span class="sd">    pad_value : float</span>
+<span class="sd">        (Default value = 0.5)</span>
+<span class="sd">    nrow : int</span>
+<span class="sd">        (Default value = 10)</span>
+<span class="sd">    padding : int</span>
+<span class="sd">        (Default value = 2)</span>
 
-<span class="sd">    Return:</span>
-<span class="sd">        * Return a grid image with reduced number of slices.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Tensor</span>
+<span class="sd">        A grid image with reduced number of slices.</span>
 
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1">#            plot.display_3D(image_process(self.activation_map(class_idx, class_scores)))</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span>
     
    
@@ -245,13 +328,19 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">normalize</span><span class="p">(</span><span class="n">x</span><span class="p">:</span><span class="n">Union</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot; Min-max normalization (0-1):</span>
-<span class="sd">    </span>
-<span class="sd">    Args:</span>
-<span class="sd">        * x - Can be tensor or ndarray to be converted </span>
-<span class="sd">    </span>
-<span class="sd">    Return:</span>
+    <span class="sd">&quot;&quot;&quot;Min-max normalization (0-1):</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : Union[Tensor,np.ndarray]</span>
+<span class="sd">        Can be tensor or ndarray to be converted</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Union[Tensor,np.ndarray]</span>
 <span class="sd">        * Return same type as input but scaled between 0 - 1</span>
+
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">x</span><span class="o">.</span><span class="n">min</span><span class="p">())</span><span class="o">/</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">-</span><span class="n">x</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
 </pre></div>
@@ -260,10 +349,14 @@
 
             <div class="docstring"><p>Min-max normalization (0-1):</p>
 
-<p>Args:
-    * x - Can be tensor or ndarray to be converted </p>
+<h2 id="parameters">Parameters</h2>
 
-<p>Return:
+<p>x : Union[Tensor,np.ndarray]
+    Can be tensor or ndarray to be converted</p>
+
+<h2 id="returns">Returns</h2>
+
+<p>Union[Tensor,np.ndarray]
     * Return same type as input but scaled between 0 - 1</p>
 </div>
 
@@ -282,13 +375,19 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">batchisize_to_5D</span><span class="p">(</span><span class="n">x</span><span class="p">:</span><span class="n">Union</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot; Takes an input with lower dimensions than 5 and pad the dimensions to 5. len(x.shape) &lt; 5 -&gt; len(x.shape) == 5</span>
+    <span class="sd">&quot;&quot;&quot;Takes an input with lower dimensions than 5 and pad the dimensions to 5. len(x.shape) &lt; 5 -&gt; len(x.shape) == 5</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : Union[Tensor,np.ndarray]</span>
+<span class="sd">        Input vector</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Union[Tensor,np.ndarray]</span>
+<span class="sd">        x with len(x.shape) == 5</span>
+
 <span class="sd">    </span>
-<span class="sd">    Args:</span>
-<span class="sd">        * x - Input vector</span>
-<span class="sd">        </span>
-<span class="sd">    Return:</span>
-<span class="sd">        * x with len(x.shape) == 5</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">Tensor</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">expand</span><span class="p">((</span><span class="o">*</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="mi">5</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)),</span><span class="o">*</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)))</span>
@@ -300,11 +399,15 @@
 
             <div class="docstring"><p>Takes an input with lower dimensions than 5 and pad the dimensions to 5. len(x.shape) &lt; 5 -> len(x.shape) == 5</p>
 
-<p>Args:
-    * x - Input vector</p>
+<h2 id="parameters">Parameters</h2>
 
-<p>Return:
-    * x with len(x.shape) == 5</p>
+<p>x : Union[Tensor,np.ndarray]
+    Input vector</p>
+
+<h2 id="returns">Returns</h2>
+
+<p>Union[Tensor,np.ndarray]
+    x with len(x.shape) == 5</p>
 </div>
 
 
@@ -320,17 +423,23 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">folder2labels</span><span class="p">(</span><span class="n">images</span><span class="p">:</span><span class="nb">list</span><span class="p">,</span> <span class="n">classes</span><span class="p">:</span><span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span> <span class="c1">#, delimiter:str</span>
-    <span class="sd">&quot;&quot;&quot; Extract labels from filename based on delimiter. </span>
+    <span class="sd">&quot;&quot;&quot;Extract labels from filename based on delimiter.</span>
 <span class="sd">    Expects a label before filename</span>
 <span class="sd">    </span>
 <span class="sd">    Example: /AD/image_file.png</span>
-<span class="sd">    Args:</span>
-<span class="sd">        * images: list containing all filenames</span>
-<span class="sd">        * classes: The allowed classes that can be used for labels</span>
-<span class="sd">        </span>
-<span class="sd">        </span>
-<span class="sd">    Return:</span>
-<span class="sd">        * Return a list of labels based on the given classes from the image filenames.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    images : list</span>
+<span class="sd">        list containing all filenames</span>
+<span class="sd">    classes : dict</span>
+<span class="sd">        The allowed classes that can be used for labels</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    np.ndarray</span>
+<span class="sd">        A list of labels based on the given classes from the image filenames.</span>
+
 <span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1">#if delimiter not in images[0]: raise ValueError(f&quot;The defined delimiter could not be found in image input! Image input: {images[0]}&quot;)</span>
@@ -339,16 +448,22 @@
 
         </details>
 
-            <div class="docstring"><p>Extract labels from filename based on delimiter. 
+            <div class="docstring"><p>Extract labels from filename based on delimiter.
 Expects a label before filename</p>
 
-<p>Example: /AD/image_file.png
-Args:
-    * images: list containing all filenames
-    * classes: The allowed classes that can be used for labels</p>
+<p>Example: /AD/image_file.png</p>
 
-<p>Return:
-    * Return a list of labels based on the given classes from the image filenames.</p>
+<h2 id="parameters">Parameters</h2>
+
+<p>images : list
+    list containing all filenames
+classes : dict
+    The allowed classes that can be used for labels</p>
+
+<h2 id="returns">Returns</h2>
+
+<p>np.ndarray
+    A list of labels based on the given classes from the image filenames.</p>
 </div>
 
 
@@ -366,11 +481,18 @@ Args:
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">mask_threshold</span><span class="p">(</span><span class="n">image</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">threshold</span><span class="p">:</span><span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Place a threshold on image and remove all values that are below the threshold.</span>
 <span class="sd">    All values under the threshold is set to 0</span>
-<span class="sd"> </span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    image : np.ndarray</span>
+<span class="sd">        Input image that threshold should be applied to.</span>
+<span class="sd">    threshold : float</span>
+<span class="sd">        Value between 0-1 at which procent of the max value that should be taken as a mask</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
 <span class="sd">    </span>
-<span class="sd">    Args:</span>
-<span class="sd">        * image: Input image that threshold should be applied to.</span>
-<span class="sd">        * treshold: Value between 0-1 at which procent of the max value that should be taken as a mask</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">img_threshold</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">*</span><span class="n">threshold</span>
     <span class="n">image</span><span class="p">[</span><span class="n">image</span> <span class="o">&lt;</span> <span class="n">img_threshold</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
@@ -382,9 +504,14 @@ Args:
             <div class="docstring"><p>Place a threshold on image and remove all values that are below the threshold.
 All values under the threshold is set to 0</p>
 
-<p>Args:
-    * image: Input image that threshold should be applied to.
-    * treshold: Value between 0-1 at which procent of the max value that should be taken as a mask</p>
+<h2 id="parameters">Parameters</h2>
+
+<p>image : np.ndarray
+    Input image that threshold should be applied to.
+threshold : float
+    Value between 0-1 at which procent of the max value that should be taken as a mask</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -400,13 +527,34 @@ All values under the threshold is set to 0</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">set_outside_of_scan_pixels_2_zero</span><span class="p">(</span><span class="n">image</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">mask</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Everything that is zero outside of image is set to zero on the mask. Returns the modified mask&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Everything that is zero outside of image is set to zero on the mask. Returns the modified mask</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    image : np.ndarray</span>
+<span class="sd">        </span>
+<span class="sd">    mask : np.ndarray</span>
+<span class="sd">        </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked_where</span><span class="p">(</span><span class="n">image</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span><span class="n">mask</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
             <div class="docstring"><p>Everything that is zero outside of image is set to zero on the mask. Returns the modified mask</p>
+
+<h2 id="parameters">Parameters</h2>
+
+<p>image : np.ndarray</p>
+
+<p>mask : np.ndarray</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -422,7 +570,18 @@ All values under the threshold is set to 0</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">image2axial</span><span class="p">(</span><span class="n">image</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Modify image to display axial view. Expects an image of (B,H,W) or (B,C,H,W) &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Modify image to display axial view. Expects an image of (B,H,W) or (B,C,H,W)</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    image : np.ndarray</span>
+<span class="sd">        </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span> <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected np.ndarray. Got: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">image</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
@@ -435,6 +594,12 @@ All values under the threshold is set to 0</p>
         </details>
 
             <div class="docstring"><p>Modify image to display axial view. Expects an image of (B,H,W) or (B,C,H,W)</p>
+
+<h2 id="parameters">Parameters</h2>
+
+<p>image : np.ndarray</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -444,13 +609,24 @@ All values under the threshold is set to 0</p>
 
         
             <span class="def">def</span>
-            <span class="name">tensor2numpy</span><span class="signature">(data)</span>:
+            <span class="name">tensor2numpy</span><span class="signature">(data: &lt;built-in method tensor of type object&gt;)</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">tensor2numpy</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Send to CPU. If computational graph is connected then detach it as well.&quot;&quot;&quot;</span>
+            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">tensor2numpy</span><span class="p">(</span><span class="n">data</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Send to CPU. If computational graph is connected then detach it as well.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : torch.tensor</span>
+<span class="sd">        </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">requires_grad</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
@@ -460,6 +636,12 @@ All values under the threshold is set to 0</p>
         </details>
 
             <div class="docstring"><p>Send to CPU. If computational graph is connected then detach it as well.</p>
+
+<h2 id="parameters">Parameters</h2>
+
+<p>data : torch.tensor</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -475,13 +657,31 @@ All values under the threshold is set to 0</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">uint8</span><span class="p">(</span><span class="n">image</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    image : np.ndarray</span>
+<span class="sd">        </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Change range 0-1 to 0-255 and change type to uint8</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">image</span><span class="o">*</span><span class="mi">255</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span> 
 </pre></div>
 
         </details>
 
-    
+            <div class="docstring"><h2 id="parameters">Parameters</h2>
+
+<p>image : np.ndarray</p>
+
+<h2 id="returns">Returns</h2>
+</div>
+
 
                 </section>
                 <section id="preprocess_image">
@@ -499,7 +699,22 @@ All values under the threshold is set to 0</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">preprocess_image</span><span class="p">(</span><span class="n">image</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">input_shape</span><span class="p">:</span><span class="n">Tuple</span><span class="o">=</span><span class="p">(</span><span class="mi">79</span><span class="p">,</span><span class="mi">95</span><span class="p">,</span><span class="mi">79</span><span class="p">),</span> <span class="n">normalized</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Resize, normalize between 0-1 and convert to uint8&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Resize, normalize between 0-1 and convert to uint8</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    image : np.ndarray</span>
+<span class="sd">        </span>
+<span class="sd">    input_shape : Tuple</span>
+<span class="sd">        (Default value = (79,95,79))</span>
+<span class="sd">    normalized :</span>
+<span class="sd">        (Default value = True)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     
     <span class="k">if</span> <span class="n">input_shape</span> <span class="o">!=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
         <span class="n">image</span> <span class="o">=</span> <span class="n">resize</span><span class="p">(</span><span class="n">image</span><span class="p">,</span><span class="n">input_shape</span><span class="p">)</span>
@@ -513,6 +728,17 @@ All values under the threshold is set to 0</p>
         </details>
 
             <div class="docstring"><p>Resize, normalize between 0-1 and convert to uint8</p>
+
+<h2 id="parameters">Parameters</h2>
+
+<p>image : np.ndarray</p>
+
+<p>input_shape : Tuple
+    (Default value = (79,95,79))
+normalized :
+    (Default value = True)</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -524,27 +750,38 @@ All values under the threshold is set to 0</p>
             <span class="def">def</span>
             <span class="name">to_grid</span><span class="signature">(
     image: numpy.ndarray,
-    max_num_slices=None,
-    pad_value=0.5,
-    nrow=10,
-    padding=2
+    max_num_slices: int = None,
+    pad_value: float = 0.5,
+    nrow: int = 10,
+    padding: int = 2
 ) -&gt; torch.Tensor</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">to_grid</span><span class="p">(</span><span class="n">image</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">max_num_slices</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">pad_value</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">nrow</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot; Create grid from image based on maximum number of slices.</span>
+            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">to_grid</span><span class="p">(</span><span class="n">image</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">max_num_slices</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">pad_value</span><span class="p">:</span><span class="nb">float</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">nrow</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">padding</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Create grid from image based on maximum number of slices.</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        * image: Image with multiple slices of shape Tuple[D,H,W]</span>
-<span class="sd">        * max_num_slices: The number of slices the image should be reduced.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    image : np.ndarray</span>
+<span class="sd">        Image with multiple slices of shape Tuple[D,H,W]</span>
+<span class="sd">    max_num_slices : int</span>
+<span class="sd">        The number of slices the image should be reduced. (Default value = None)</span>
+<span class="sd">    pad_value : float</span>
+<span class="sd">        (Default value = 0.5)</span>
+<span class="sd">    nrow : int</span>
+<span class="sd">        (Default value = 10)</span>
+<span class="sd">    padding : int</span>
+<span class="sd">        (Default value = 2)</span>
 
-<span class="sd">    Return:</span>
-<span class="sd">        * Return a grid image with reduced number of slices.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Tensor</span>
+<span class="sd">        A grid image with reduced number of slices.</span>
 
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1">#            plot.display_3D(image_process(self.activation_map(class_idx, class_scores)))</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span>
     
    
@@ -565,12 +802,23 @@ All values under the threshold is set to 0</p>
 
             <div class="docstring"><p>Create grid from image based on maximum number of slices.</p>
 
-<p>Args:
-    * image: Image with multiple slices of shape Tuple[D,H,W]
-    * max_num_slices: The number of slices the image should be reduced.</p>
+<h2 id="parameters">Parameters</h2>
 
-<p>Return:
-    * Return a grid image with reduced number of slices.</p>
+<p>image : np.ndarray
+    Image with multiple slices of shape Tuple[D,H,W]
+max_num_slices : int
+    The number of slices the image should be reduced. (Default value = None)
+pad_value : float
+    (Default value = 0.5)
+nrow : int
+    (Default value = 10)
+padding : int
+    (Default value = 2)</p>
+
+<h2 id="returns">Returns</h2>
+
+<p>Tensor
+    A grid image with reduced number of slices.</p>
 </div>
 
 

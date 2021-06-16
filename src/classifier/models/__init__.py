@@ -10,6 +10,18 @@ from .vgg import *
 BASEDIR = 'src.classifier.'
 
 def find_model_using_name(model_name):
+    """
+
+    Parameters
+    ----------
+    model_name :
+        
+
+    Returns
+    -------
+
+    
+    """
     from inspect import isclass
     from pkgutil import iter_modules
     from pathlib import Path
@@ -29,6 +41,18 @@ def find_model_using_name(model_name):
 def create_model(name:str=None, args:dict={}):
     """Create a model given the configuration.
     This is the main interface between this package and train.py/validate.py
+
+    Parameters
+    ----------
+    name : str
+        (Default value = None)
+    args : dict
+        (Default value = {})
+
+    Returns
+    -------
+
+    
     """
     
     model = find_model_using_name(name)

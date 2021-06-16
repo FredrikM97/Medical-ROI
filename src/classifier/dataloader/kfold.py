@@ -7,6 +7,22 @@ class KFold(sk_StratifiedKFold):
     __doc__ += sk_StratifiedKFold.__doc__
     
     def __init__(self, n_splits=5, shuffle=False, random_state=None):
+        """
+
+        Parameters
+        ----------
+        n_splits :
+            (Default value = 5)
+        shuffle :
+            (Default value = False)
+        random_state :
+            (Default value = None)
+
+        Returns
+        -------
+
+        
+        """
         super().__init__(n_splits=n_splits, shuffle=shuffle, random_state=random_state)
         
         self._folds = []
@@ -15,12 +31,20 @@ class KFold(sk_StratifiedKFold):
         
     def split(self,X,y=None):
         """Extended version of the split for a pytorch dataloader's dataset
+
+        Parameters
+        ----------
+        X :
+            List
+        y :
+            (Default value = None)
+
+        Returns
+        -------
+        type
+            output (self): Return a self object to reference the next fold.
+
         
-        Args:
-        X (List): Dataset to split.
-        
-        Return:
-        output (self): Return a self object to reference the next fold. 
         """
 
         self.fold_idx = 0
@@ -29,6 +53,7 @@ class KFold(sk_StratifiedKFold):
         return self
 
     def next(self):
+        """ """
         if self.fold_idx < self.n_splits:
             self.fold_idx += 1
             return self.data()
@@ -36,6 +61,15 @@ class KFold(sk_StratifiedKFold):
         
     
     def data(self) -> None:
-        """Access the data fold in dataset"""
+        """Access the data fold in dataset
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        
+        """
 
         return self._folds[self.fold_idx]

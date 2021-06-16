@@ -7,14 +7,43 @@ import torch
 __all__ = []
 
 class ActivationMapCallback(pl.callbacks.Callback):
+    """ """
     
     def __init__(self, model):
+        """
+
+        Parameters
+        ----------
+        model :
+            
+
+        Returns
+        -------
+
+        
+        """
         self.hooks = []
         for name, module in model.named_modules():
             if type(module) == torch.nn.modules.conv.Conv3d:
                 self.hooks.append(utils.hooks.ActivationMapHook(module, name))
                  
     def on_epoch_end(self, trainer, pl_module, fig=None):
+        """
+
+        Parameters
+        ----------
+        trainer :
+            
+        pl_module :
+            
+        fig :
+            (Default value = None)
+
+        Returns
+        -------
+
+        
+        """
         print("Activation map!")
         set_to_train = False
         if trainer.model.training:

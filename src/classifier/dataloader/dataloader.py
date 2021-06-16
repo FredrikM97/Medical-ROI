@@ -17,7 +17,32 @@ import torchvision.transforms as tf
 import random
 
 class AdniDataloader(pl.LightningDataModule): 
+    """ """
     def __init__(self,data_dir, batch_size=6, shuffle=True, num_workers=1, img_shape=(79,95,79), classes={},**hparams:dict):
+        """
+
+        Parameters
+        ----------
+        data_dir :
+            
+        batch_size :
+            (Default value = 6)
+        shuffle :
+            (Default value = True)
+        num_workers :
+            (Default value = 1)
+        img_shape :
+            (Default value = (79,95,79))
+        classes :
+            (Default value = {})
+        **hparams : dict
+            
+
+        Returns
+        -------
+
+        
+        """
         super().__init__()
         self.shuffle = shuffle
         self.seed = hparams.get('seed',0)
@@ -67,6 +92,18 @@ class AdniDataloader(pl.LightningDataModule):
         
         
     def setup(self, stage=None):
+        """
+
+        Parameters
+        ----------
+        stage :
+            (Default value = None)
+
+        Returns
+        -------
+
+        
+        """
         dataset_full = load.load_files(BASEDIR + "/"+self.data_dir)
         
         # Assign kfold or split depending on the configuration
@@ -82,6 +119,7 @@ class AdniDataloader(pl.LightningDataModule):
             ]
         
     def __str__(self):
+        """ """
         return (
             f"***Defined dataloader:***\n"
             f"Data directory: {self.data_dir}\n"
@@ -92,33 +130,79 @@ class AdniDataloader(pl.LightningDataModule):
         
     
     def next_fold(self):
+        """ """
         if self.split_conf['folds'] <= self.kfold_index: return False
         self.kfold_index +=1
         self.folds = next(self.kfold)
         return True
     
     def train_dataloader(self):
+        """ """
         return DataLoader(self.adni_train,
                         shuffle=True,
                         **self.init_kwargs
                      )
     
     def val_dataloader(self):
+        """ """
         return DataLoader(self.adni_val,
                         shuffle=False,
                         **self.init_kwargs
                     )
     
 class ToDevice(object):
+    """ """
     def __init__(self, device):
+        """
+
+        Parameters
+        ----------
+        device :
+            
+
+        Returns
+        -------
+
+        
+        """
         self.device = device
 
     def __call__(self, sample):
+        """
+
+        Parameters
+        ----------
+        sample :
+            
+
+        Returns
+        -------
+
+        
+        """
         return sample.to(self.device)
     
 def _split(dataset, test_size, random_state=0, shuffle=False):
-        if test_size == 0.0:
-            return dataset, np.array([])
+    """
+
+    Parameters
+    ----------
+    dataset :
         
-        train_samples, valid_samples = train_test_split(dataset, test_size=test_size, random_state=random_state, shuffle=shuffle)
-        return train_samples, valid_samples
+    test_size :
+        
+    random_state :
+        (Default value = 0)
+    shuffle :
+        (Default value = False)
+
+    Returns
+    -------
+
+    
+    """
+    if test_size == 0.0:
+        return dataset, np.array([])
+
+    train_samples, valid_samples = train_test_split(dataset, test_size=test_size, random_state=random_state, shuffle=shuffle)
+    return train_samples, valid_samples

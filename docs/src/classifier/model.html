@@ -109,14 +109,37 @@
 
 
 <span class="k">class</span> <span class="nc">Model</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">LightningModule</span><span class="p">):</span> 
+    <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">class_weights</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">hp_metrics</span><span class="p">:</span><span class="nb">list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">loss</span><span class="o">=</span><span class="p">{},</span> <span class="n">roi_hparams</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;enable&quot;</span><span class="p">:</span><span class="kc">False</span><span class="p">,</span><span class="s1">&#39;input_shape&#39;</span><span class="p">:</span><span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;bounding_boxes&#39;</span><span class="p">:[]},</span><span class="o">**</span><span class="n">hparams</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        class_weights : torch.Tensor</span>
+<span class="sd">            (Default value = None)</span>
+<span class="sd">        hp_metrics : list</span>
+<span class="sd">            (Default value = None)</span>
+<span class="sd">        loss :</span>
+<span class="sd">            (Default value = {})</span>
+<span class="sd">        roi_hparams :</span>
+<span class="sd">            (Default value = {&quot;enable&quot;:False,&#39;input_shape&#39;:None, &#39;bounding_boxes&#39;:[]})</span>
+<span class="sd">        **hparams :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span> 
         <span class="bp">self</span><span class="o">.</span><span class="n">save_hyperparameters</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">create_model</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">hparams</span><span class="p">[</span><span class="s1">&#39;arch&#39;</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">roi_enabled</span> <span class="o">=</span> <span class="n">roi_hparams</span><span class="p">[</span><span class="s1">&#39;enable&#39;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hp_metrics</span> <span class="o">=</span> <span class="n">hp_metrics</span>
-
+        <span class="bp">self</span><span class="o">.</span><span class="n">roi_model</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">criteria</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">loss</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]](</span><span class="n">weight</span><span class="o">=</span><span class="n">class_weights</span><span class="p">)</span>
+        
+        
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">roi_enabled</span><span class="p">:</span>
             <span class="c1"># Dont import unless we want to use RoiTransform.. (Compability without cuda 11.1)</span>
             <span class="kn">from</span> <span class="nn">src.utils.transforms</span> <span class="kn">import</span> <span class="n">RoiTransform</span>
@@ -135,17 +158,42 @@
 
             <span class="bp">self</span><span class="o">.</span><span class="n">valid_metrics</span> <span class="o">=</span> <span class="n">model_metrics</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">valid_dummy_metric</span> <span class="o">=</span> <span class="n">pl_metrics</span><span class="o">.</span><span class="n">AUROC</span><span class="p">(</span><span class="n">num_classes</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">compute_on_step</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="c1">#MetricTracker()</span>
-        <span class="c1">#print(f&quot;***Defined hyperparameters:***\n{self.hparams}&quot;)</span>
-        
+       
     <span class="k">def</span> <span class="nf">on_train_start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">log_hyperparams</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hparams</span><span class="p">,</span> <span class="p">{</span><span class="n">metric</span><span class="p">:</span><span class="mi">0</span> <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp_metrics</span><span class="p">})</span>
         
     <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
     
     <span class="k">def</span> <span class="nf">training_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        batch : dict</span>
+<span class="sd">            </span>
+<span class="sd">        batch_idx : int</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">x</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="n">batch</span>
         <span class="c1"># Since we might want to apply ROI at any time we can enable and disable it here. ROIAlign needs to be on the GPU!</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">roi_enabled</span><span class="p">:</span>
@@ -157,6 +205,20 @@
         <span class="k">return</span> <span class="n">loss</span>
     
     <span class="k">def</span> <span class="nf">validation_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        batch : dict</span>
+<span class="sd">            </span>
+<span class="sd">        batch_idx : int</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">x</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="n">batch</span>
         <span class="c1"># Since we might want to apply ROI at any time we can enable and disable it here. ROIAlign needs to be on the GPU!</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">roi_enabled</span><span class="p">:</span>
@@ -175,9 +237,33 @@
         <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;loss/val&#39;</span><span class="p">:</span><span class="n">loss</span><span class="p">}</span>
   
     <span class="k">def</span> <span class="nf">training_epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        outputs :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s1">&#39;loss/train&#39;</span><span class="p">,</span><span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">x</span><span class="p">[</span><span class="s1">&#39;loss&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">outputs</span><span class="p">])</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
         
     <span class="k">def</span> <span class="nf">validation_epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">outputs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        outputs :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         
         <span class="n">metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">valid_metrics</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
 
@@ -190,6 +276,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">valid_dummy_metric</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
         
     <span class="k">def</span> <span class="nf">configure_optimizers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
         <span class="c1"># Note: dont use list if only one item.. Causes silent crashes</span>
         <span class="n">optim</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">hparams</span><span class="o">.</span><span class="n">optimizer</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]]</span>
         <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">hparams</span><span class="o">.</span><span class="n">optimizer</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">])</span>
@@ -200,6 +287,7 @@
         <span class="p">}</span>
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span><span class="si">{</span><span class="s2">&quot;Architecture: [</span><span class="si">{0}</span><span class="s2">]&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;&quot;&quot;***Defined hyperparameters:***</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">hparams</span><span class="si">}</span><span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
             
@@ -223,14 +311,37 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">Model</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">LightningModule</span><span class="p">):</span> 
+    <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">class_weights</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">hp_metrics</span><span class="p">:</span><span class="nb">list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">loss</span><span class="o">=</span><span class="p">{},</span> <span class="n">roi_hparams</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;enable&quot;</span><span class="p">:</span><span class="kc">False</span><span class="p">,</span><span class="s1">&#39;input_shape&#39;</span><span class="p">:</span><span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;bounding_boxes&#39;</span><span class="p">:[]},</span><span class="o">**</span><span class="n">hparams</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        class_weights : torch.Tensor</span>
+<span class="sd">            (Default value = None)</span>
+<span class="sd">        hp_metrics : list</span>
+<span class="sd">            (Default value = None)</span>
+<span class="sd">        loss :</span>
+<span class="sd">            (Default value = {})</span>
+<span class="sd">        roi_hparams :</span>
+<span class="sd">            (Default value = {&quot;enable&quot;:False,&#39;input_shape&#39;:None, &#39;bounding_boxes&#39;:[]})</span>
+<span class="sd">        **hparams :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span> 
         <span class="bp">self</span><span class="o">.</span><span class="n">save_hyperparameters</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">create_model</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">hparams</span><span class="p">[</span><span class="s1">&#39;arch&#39;</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">roi_enabled</span> <span class="o">=</span> <span class="n">roi_hparams</span><span class="p">[</span><span class="s1">&#39;enable&#39;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hp_metrics</span> <span class="o">=</span> <span class="n">hp_metrics</span>
-
+        <span class="bp">self</span><span class="o">.</span><span class="n">roi_model</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">criteria</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">loss</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]](</span><span class="n">weight</span><span class="o">=</span><span class="n">class_weights</span><span class="p">)</span>
+        
+        
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">roi_enabled</span><span class="p">:</span>
             <span class="c1"># Dont import unless we want to use RoiTransform.. (Compability without cuda 11.1)</span>
             <span class="kn">from</span> <span class="nn">src.utils.transforms</span> <span class="kn">import</span> <span class="n">RoiTransform</span>
@@ -249,17 +360,42 @@
 
             <span class="bp">self</span><span class="o">.</span><span class="n">valid_metrics</span> <span class="o">=</span> <span class="n">model_metrics</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">valid_dummy_metric</span> <span class="o">=</span> <span class="n">pl_metrics</span><span class="o">.</span><span class="n">AUROC</span><span class="p">(</span><span class="n">num_classes</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">compute_on_step</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="c1">#MetricTracker()</span>
-        <span class="c1">#print(f&quot;***Defined hyperparameters:***\n{self.hparams}&quot;)</span>
-        
+       
     <span class="k">def</span> <span class="nf">on_train_start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">log_hyperparams</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hparams</span><span class="p">,</span> <span class="p">{</span><span class="n">metric</span><span class="p">:</span><span class="mi">0</span> <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp_metrics</span><span class="p">})</span>
         
     <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
     
     <span class="k">def</span> <span class="nf">training_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        batch : dict</span>
+<span class="sd">            </span>
+<span class="sd">        batch_idx : int</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">x</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="n">batch</span>
         <span class="c1"># Since we might want to apply ROI at any time we can enable and disable it here. ROIAlign needs to be on the GPU!</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">roi_enabled</span><span class="p">:</span>
@@ -271,6 +407,20 @@
         <span class="k">return</span> <span class="n">loss</span>
     
     <span class="k">def</span> <span class="nf">validation_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        batch : dict</span>
+<span class="sd">            </span>
+<span class="sd">        batch_idx : int</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">x</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="n">batch</span>
         <span class="c1"># Since we might want to apply ROI at any time we can enable and disable it here. ROIAlign needs to be on the GPU!</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">roi_enabled</span><span class="p">:</span>
@@ -289,9 +439,33 @@
         <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;loss/val&#39;</span><span class="p">:</span><span class="n">loss</span><span class="p">}</span>
   
     <span class="k">def</span> <span class="nf">training_epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        outputs :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s1">&#39;loss/train&#39;</span><span class="p">,</span><span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">x</span><span class="p">[</span><span class="s1">&#39;loss&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">outputs</span><span class="p">])</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
         
     <span class="k">def</span> <span class="nf">validation_epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">outputs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        outputs :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         
         <span class="n">metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">valid_metrics</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
 
@@ -304,6 +478,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">valid_dummy_metric</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
         
     <span class="k">def</span> <span class="nf">configure_optimizers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
         <span class="c1"># Note: dont use list if only one item.. Causes silent crashes</span>
         <span class="n">optim</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">hparams</span><span class="o">.</span><span class="n">optimizer</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]]</span>
         <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">hparams</span><span class="o">.</span><span class="n">optimizer</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">])</span>
@@ -314,6 +489,7 @@
         <span class="p">}</span>
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span><span class="si">{</span><span class="s2">&quot;Architecture: [</span><span class="si">{0}</span><span class="s2">]&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;&quot;&quot;***Defined hyperparameters:***</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">hparams</span><span class="si">}</span><span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
             
@@ -324,10 +500,7 @@
 
         </details>
 
-            <div class="docstring"><p>Helper class that provides a standard way to create an ABC using
-inheritance.</p>
-</div>
-
+    
 
                             <div id="Model.__init__" class="classattr">
                                         <div class="attr function"><a class="headerlink" href="#Model.__init__">#&nbsp;&nbsp</a>
@@ -345,13 +518,35 @@ inheritance.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">class_weights</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">hp_metrics</span><span class="p">:</span><span class="nb">list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">loss</span><span class="o">=</span><span class="p">{},</span> <span class="n">roi_hparams</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;enable&quot;</span><span class="p">:</span><span class="kc">False</span><span class="p">,</span><span class="s1">&#39;input_shape&#39;</span><span class="p">:</span><span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;bounding_boxes&#39;</span><span class="p">:[]},</span><span class="o">**</span><span class="n">hparams</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        class_weights : torch.Tensor</span>
+<span class="sd">            (Default value = None)</span>
+<span class="sd">        hp_metrics : list</span>
+<span class="sd">            (Default value = None)</span>
+<span class="sd">        loss :</span>
+<span class="sd">            (Default value = {})</span>
+<span class="sd">        roi_hparams :</span>
+<span class="sd">            (Default value = {&quot;enable&quot;:False,&#39;input_shape&#39;:None, &#39;bounding_boxes&#39;:[]})</span>
+<span class="sd">        **hparams :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span> 
         <span class="bp">self</span><span class="o">.</span><span class="n">save_hyperparameters</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">create_model</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">hparams</span><span class="p">[</span><span class="s1">&#39;arch&#39;</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">roi_enabled</span> <span class="o">=</span> <span class="n">roi_hparams</span><span class="p">[</span><span class="s1">&#39;enable&#39;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hp_metrics</span> <span class="o">=</span> <span class="n">hp_metrics</span>
-
+        <span class="bp">self</span><span class="o">.</span><span class="n">roi_model</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">criteria</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">loss</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]](</span><span class="n">weight</span><span class="o">=</span><span class="n">class_weights</span><span class="p">)</span>
+        
+        
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">roi_enabled</span><span class="p">:</span>
             <span class="c1"># Dont import unless we want to use RoiTransform.. (Compability without cuda 11.1)</span>
             <span class="kn">from</span> <span class="nn">src.utils.transforms</span> <span class="kn">import</span> <span class="n">RoiTransform</span>
@@ -370,13 +565,25 @@ inheritance.</p>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">valid_metrics</span> <span class="o">=</span> <span class="n">model_metrics</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">valid_dummy_metric</span> <span class="o">=</span> <span class="n">pl_metrics</span><span class="o">.</span><span class="n">AUROC</span><span class="p">(</span><span class="n">num_classes</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">compute_on_step</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="c1">#MetricTracker()</span>
-        <span class="c1">#print(f&quot;***Defined hyperparameters:***\n{self.hparams}&quot;)</span>
 </pre></div>
 
         </details>
 
-    
+            <div class="docstring"><h2 id="parameters">Parameters</h2>
+
+<p>class_weights : torch.Tensor
+    (Default value = None)
+hp_metrics : list
+    (Default value = None)
+loss :
+    (Default value = {})
+roi_hparams :
+    (Default value = {"enable":False,'input_shape':None, 'bounding_boxes':[]})
+**hparams :</p>
+
+<h2 id="returns">Returns</h2>
+</div>
+
 
                             </div>
                             <div id="Model.on_train_start" class="classattr">
@@ -390,15 +597,14 @@ inheritance.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">on_train_start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">log_hyperparams</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hparams</span><span class="p">,</span> <span class="p">{</span><span class="n">metric</span><span class="p">:</span><span class="mi">0</span> <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp_metrics</span><span class="p">})</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Called at the beginning of training after sanity check.</p>
-</div>
-
+    
 
                             </div>
                             <div id="Model.forward" class="classattr">
@@ -412,19 +618,28 @@ inheritance.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Same as :meth:<code>torch.nn.Module.forward()</code>.</p>
+            <div class="docstring"><h2 id="parameters">Parameters</h2>
 
-<p>Args:
-    <em>args: Whatever you decide to pass into the forward method.
-    *</em>kwargs: Keyword arguments are also possible.</p>
+<p>x :</p>
 
-<p>Return:
-    Your model's output</p>
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -440,6 +655,20 @@ inheritance.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">training_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        batch : dict</span>
+<span class="sd">            </span>
+<span class="sd">        batch_idx : int</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">x</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="n">batch</span>
         <span class="c1"># Since we might want to apply ROI at any time we can enable and disable it here. ROIAlign needs to be on the GPU!</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">roi_enabled</span><span class="p">:</span>
@@ -453,70 +682,13 @@ inheritance.</p>
 
         </details>
 
-            <div class="docstring"><p>Here you compute and return the training loss and some additional metrics for e.g.
-the progress bar or logger.</p>
+            <div class="docstring"><h2 id="parameters">Parameters</h2>
 
-<p>Args:
-    batch (:class:<code>~torch.Tensor</code> | (:class:<code>~torch.Tensor</code>, ...) | [:class:<code>~torch.Tensor</code>, ...]):
-        The output of your :class:<code>~torch.utils.data.DataLoader</code>. A tensor, tuple or list.
-    batch_idx (int): Integer displaying index of this batch
-    optimizer_idx (int): When using multiple optimizers, this argument will also be present.
-    hiddens(:class:<code>~torch.Tensor</code>): Passed in if
-        :paramref:<code>~pytorch_lightning.core.lightning.LightningModule.truncated_bptt_steps</code> &gt; 0.</p>
+<p>batch : dict</p>
 
-<p>Return:
-    Any of.</p>
+<p>batch_idx : int</p>
 
-<pre><code>- :class:`~torch.Tensor` - The loss tensor
-- ``dict`` - A dictionary. Can include any keys, but must include the key ``'loss'``
-- ``None`` - Training will skip to the next batch
-</code></pre>
-
-<p>Note:
-    Returning <code>None</code> is currently not supported for multi-GPU or TPU, or with 16-bit precision enabled.</p>
-
-<p>In this step you'd normally do the forward pass and calculate the loss for a batch.
-You can also do fancier things like multiple forward passes or something model specific.</p>
-
-<p>Example::</p>
-
-<pre><code>def training_step(self, batch, batch_idx):
-    x, y, z = batch
-    out = self.encoder(x)
-    loss = self.loss(out, x)
-    return loss
-</code></pre>
-
-<p>If you define multiple optimizers, this step will be called with an additional
-<code>optimizer_idx</code> parameter.</p>
-
-<p>.. code-block:: python</p>
-
-<pre><code># Multiple optimizers (e.g.: GANs)
-def training_step(self, batch, batch_idx, optimizer_idx):
-    if optimizer_idx == 0:
-        # do training_step with encoder
-    if optimizer_idx == 1:
-        # do training_step with decoder
-</code></pre>
-
-<p>If you add truncated back propagation through time you will also get an additional
-argument with the hidden states of the previous step.</p>
-
-<p>.. code-block:: python</p>
-
-<pre><code># Truncated back-propagation through time
-def training_step(self, batch, batch_idx, hiddens):
-    # hiddens are the hidden states from the previous truncated backprop step
-    ...
-    out, hiddens = self.lstm(data, hiddens)
-    ...
-    return {'loss': loss, 'hiddens': hiddens}
-</code></pre>
-
-<p>Note:
-    The loss value shown in the progress bar is smoothed (averaged) over the last values,
-    so it differs from the actual loss returned in train/validation step.</p>
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -532,6 +704,20 @@ def training_step(self, batch, batch_idx, hiddens):
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">validation_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        batch : dict</span>
+<span class="sd">            </span>
+<span class="sd">        batch_idx : int</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">x</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="n">batch</span>
         <span class="c1"># Since we might want to apply ROI at any time we can enable and disable it here. ROIAlign needs to be on the GPU!</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">roi_enabled</span><span class="p">:</span>
@@ -552,94 +738,13 @@ def training_step(self, batch, batch_idx, hiddens):
 
         </details>
 
-            <div class="docstring"><p>Operates on a single batch of data from the validation set.
-In this step you'd might generate examples or calculate anything of interest like accuracy.</p>
+            <div class="docstring"><h2 id="parameters">Parameters</h2>
 
-<p>.. code-block:: python</p>
+<p>batch : dict</p>
 
-<pre><code># the pseudocode for these calls
-val_outs = []
-for val_batch in val_data:
-    out = validation_step(val_batch)
-    val_outs.append(out)
-validation_epoch_end(val_outs)
-</code></pre>
+<p>batch_idx : int</p>
 
-<p>Args:
-    batch (:class:<code>~torch.Tensor</code> | (:class:<code>~torch.Tensor</code>, ...) | [:class:<code>~torch.Tensor</code>, ...]):
-        The output of your :class:<code>~torch.utils.data.DataLoader</code>. A tensor, tuple or list.
-    batch_idx (int): The index of this batch
-    dataloader_idx (int): The index of the dataloader that produced this batch
-        (only if multiple val dataloaders used)</p>
-
-<p>Return:
-   Any of.</p>
-
-<pre><code>- Any object or value
-- ``None`` - Validation will skip to the next batch
-</code></pre>
-
-<p>.. code-block:: python</p>
-
-<pre><code># pseudocode of order
-val_outs = []
-for val_batch in val_data:
-    out = validation_step(val_batch)
-    if defined('validation_step_end'):
-        out = validation_step_end(out)
-    val_outs.append(out)
-val_outs = validation_epoch_end(val_outs)
-</code></pre>
-
-<p>.. code-block:: python</p>
-
-<pre><code># if you have one val dataloader:
-def validation_step(self, batch, batch_idx)
-
-# if you have multiple val dataloaders:
-def validation_step(self, batch, batch_idx, dataloader_idx)
-</code></pre>
-
-<p>Examples::</p>
-
-<pre><code># CASE 1: A single validation dataset
-def validation_step(self, batch, batch_idx):
-    x, y = batch
-
-    # implement your own
-    out = self(x)
-    loss = self.loss(out, y)
-
-    # log 6 example images
-    # or generated text... or whatever
-    sample_imgs = x[:6]
-    grid = torchvision.utils.make_grid(sample_imgs)
-    self.logger.experiment.add_image('example_images', grid, 0)
-
-    # calculate acc
-    labels_hat = torch.argmax(out, dim=1)
-    val_acc = torch.sum(y == labels_hat).item() / (len(y) * 1.0)
-
-    # log the outputs!
-    self.log_dict({'val_loss': loss, 'val_acc': val_acc})
-</code></pre>
-
-<p>If you pass in multiple val dataloaders, :meth:<code><a href="#Model.validation_step">validation_step</a></code> will have an additional argument.</p>
-
-<p>.. code-block:: python</p>
-
-<pre><code># CASE 2: multiple validation dataloaders
-def validation_step(self, batch, batch_idx, dataloader_idx):
-    # dataloader_idx tells you which dataset this is.
-</code></pre>
-
-<p>Note:
-    If you don't need to validate you don't need to implement this method.</p>
-
-<p>Note:
-    When the :meth:<code><a href="#Model.validation_step">validation_step</a></code> is called, the model has been put in eval mode
-    and PyTorch gradients have been disabled. At the end of validation,
-    the model goes back to training mode and gradients are enabled.</p>
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -655,51 +760,28 @@ def validation_step(self, batch, batch_idx, dataloader_idx):
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">training_epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        outputs :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s1">&#39;loss/train&#39;</span><span class="p">,</span><span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">x</span><span class="p">[</span><span class="s1">&#39;loss&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">outputs</span><span class="p">])</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Called at the end of the training epoch with the outputs of all training steps.
-Use this in case you need to do something with all the outputs for every training_step.</p>
+            <div class="docstring"><h2 id="parameters">Parameters</h2>
 
-<p>.. code-block:: python</p>
+<p>outputs :</p>
 
-<pre><code># the pseudocode for these calls
-train_outs = []
-for train_batch in train_data:
-    out = training_step(train_batch)
-    train_outs.append(out)
-training_epoch_end(train_outs)
-</code></pre>
-
-<p>Args:
-    outputs: List of outputs you defined in :meth:<code><a href="#Model.training_step">training_step</a></code>, or if there are
-        multiple dataloaders, a list containing a list of outputs for each dataloader.</p>
-
-<p>Return:
-    None</p>
-
-<p>Note:
-    If this method is not overridden, this won't be called.</p>
-
-<p>Example::</p>
-
-<pre><code>def training_epoch_end(self, training_step_outputs):
-    # do something with all training_step outputs
-    return result
-</code></pre>
-
-<p>With multiple dataloaders, <code>outputs</code> will be a list of lists. The outer list contains
-one entry per dataloader, while the inner list contains the individual outputs of
-each training step for that dataloader.</p>
-
-<p>.. code-block:: python</p>
-
-<pre><code>def training_epoch_end(self, training_step_outputs):
-    for out in training_step_outputs:
-        # do something here
-</code></pre>
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -715,6 +797,18 @@ each training step for that dataloader.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">validation_epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">outputs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        outputs :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         
         <span class="n">metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">valid_metrics</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
 
@@ -729,49 +823,11 @@ each training step for that dataloader.</p>
 
         </details>
 
-            <div class="docstring"><p>Called at the end of the validation epoch with the outputs of all validation steps.</p>
+            <div class="docstring"><h2 id="parameters">Parameters</h2>
 
-<p>.. code-block:: python</p>
+<p>outputs :</p>
 
-<pre><code># the pseudocode for these calls
-val_outs = []
-for val_batch in val_data:
-    out = validation_step(val_batch)
-    val_outs.append(out)
-validation_epoch_end(val_outs)
-</code></pre>
-
-<p>Args:
-    outputs: List of outputs you defined in :meth:<code><a href="#Model.validation_step">validation_step</a></code>, or if there
-        are multiple dataloaders, a list containing a list of outputs for each dataloader.</p>
-
-<p>Return:
-    None</p>
-
-<p>Note:
-    If you didn't define a :meth:<code><a href="#Model.validation_step">validation_step</a></code>, this won't be called.</p>
-
-<p>Examples:
-    With a single dataloader:</p>
-
-<pre><code>.. code-block:: python
-
-    def validation_epoch_end(self, val_step_outputs):
-        for out in val_step_outputs:
-            # do something
-
-With multiple dataloaders, `outputs` will be a list of lists. The outer list contains
-one entry per dataloader, while the inner list contains the individual outputs of
-each validation step for that dataloader.
-
-.. code-block:: python
-
-    def validation_epoch_end(self, outputs):
-        for dataloader_output_result in outputs:
-            dataloader_outs = dataloader_output_result.dataloader_i_outputs
-
-        self.log('final_metric', final_value)
-</code></pre>
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -787,6 +843,7 @@ each validation step for that dataloader.
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">configure_optimizers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
         <span class="c1"># Note: dont use list if only one item.. Causes silent crashes</span>
         <span class="n">optim</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">hparams</span><span class="o">.</span><span class="n">optimizer</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]]</span>
         <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">hparams</span><span class="o">.</span><span class="n">optimizer</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">])</span>
@@ -799,122 +856,7 @@ each validation step for that dataloader.
 
         </details>
 
-            <div class="docstring"><p>Choose what optimizers and learning-rate schedulers to use in your optimization.
-Normally you'd need one. But in the case of GANs or similar you might have multiple.</p>
-
-<p>Return:
-    Any of these 6 options.</p>
-
-<pre><code>- **Single optimizer**.
-- **List or Tuple** of optimizers.
-- **Two lists** - The first list has multiple optimizers, and the second has multiple LR schedulers (or
-  multiple lr_dict).
-- **Dictionary**, with an ``"optimizer"`` key, and (optionally) a ``"lr_scheduler"``
-  key whose value is a single LR scheduler or lr_dict.
-- **Tuple of dictionaries** as described above, with an optional ``"frequency"`` key.
-- **None** - Fit will run without any optimizer.
-</code></pre>
-
-<p>Note:
-    The lr_dict is a dictionary which contains the scheduler and its associated configuration.
-    The default configuration is shown below.</p>
-
-<pre><code>.. code-block:: python
-
-    lr_dict = {
-        'scheduler': lr_scheduler, # The LR scheduler instance (required)
-        # The unit of the scheduler's step size, could also be 'step'
-        'interval': 'epoch',
-        'frequency': 1, # The frequency of the scheduler
-        'monitor': 'val_loss', # Metric for `ReduceLROnPlateau` to monitor
-        'strict': True, # Whether to crash the training if `monitor` is not found
-        'name': None, # Custom name for `LearningRateMonitor` to use
-    }
-
-Only the ``"scheduler"`` key is required, the rest will be set to the defaults above.
-</code></pre>
-
-<p>Note:
-    The <code>frequency</code> value specified in a dict along with the <code>optimizer</code> key is an int corresponding
-    to the number of sequential batches optimized with the specific optimizer.
-    It should be given to none or to all of the optimizers.
-    There is a difference between passing multiple optimizers in a list,
-    and passing multiple optimizers in dictionaries with a frequency of 1:
-    In the former case, all optimizers will operate on the given batch in each optimization step.
-    In the latter, only one optimizer will operate on the given batch at every step.
-    This is different from the <code>frequency</code> value specified in the lr_dict mentioned below.</p>
-
-<pre><code>.. code-block:: python
-
-    def configure_optimizers(self):
-        optimizer_one = torch.optim.SGD(self.model.parameters(), lr=0.01)
-        optimizer_two = torch.optim.SGD(self.model.parameters(), lr=0.01)
-        return [
-            {'optimizer': optimizer_one, 'frequency': 5},
-            {'optimizer': optimizer_two, 'frequency': 10},
-        ]
-
-In this example, the first optimizer will be used for the first 5 steps,
-the second optimizer for the next 10 steps and that cycle will continue.
-If an LR scheduler is specified for an optimizer using the ``lr_scheduler`` key in the above dict,
-the scheduler will only be updated when its optimizer is being used.
-</code></pre>
-
-<p>Examples::</p>
-
-<pre><code># most cases
-def configure_optimizers(self):
-    return Adam(self.parameters(), lr=1e-3)
-
-# multiple optimizer case (e.g.: GAN)
-def configure_optimizers(self):
-    gen_opt = Adam(self.model_gen.parameters(), lr=0.01)
-    dis_opt = Adam(self.model_dis.parameters(), lr=0.02)
-    return gen_opt, dis_opt
-
-# example with learning rate schedulers
-def configure_optimizers(self):
-    gen_opt = Adam(self.model_gen.parameters(), lr=0.01)
-    dis_opt = Adam(self.model_dis.parameters(), lr=0.02)
-    dis_sch = CosineAnnealing(dis_opt, T_max=10)
-    return [gen_opt, dis_opt], [dis_sch]
-
-# example with step-based learning rate schedulers
-def configure_optimizers(self):
-    gen_opt = Adam(self.model_gen.parameters(), lr=0.01)
-    dis_opt = Adam(self.model_dis.parameters(), lr=0.02)
-    gen_sch = {'scheduler': ExponentialLR(gen_opt, 0.99),
-               'interval': 'step'}  # called after each training step
-    dis_sch = CosineAnnealing(dis_opt, T_max=10) # called every epoch
-    return [gen_opt, dis_opt], [gen_sch, dis_sch]
-
-# example with optimizer frequencies
-# see training procedure in `Improved Training of Wasserstein GANs`, Algorithm 1
-# https://arxiv.org/abs/1704.00028
-def configure_optimizers(self):
-    gen_opt = Adam(self.model_gen.parameters(), lr=0.01)
-    dis_opt = Adam(self.model_dis.parameters(), lr=0.02)
-    n_critic = 5
-    return (
-        {'optimizer': dis_opt, 'frequency': n_critic},
-        {'optimizer': gen_opt, 'frequency': 1}
-    )
-</code></pre>
-
-<p>Note:
-    Some things to know:</p>
-
-<pre><code>- Lightning calls ``.backward()`` and ``.step()`` on each optimizer and learning rate scheduler as needed.
-- If you use 16-bit precision (``precision=16``), Lightning will automatically handle the optimizers.
-- If you use multiple optimizers, :meth:`training_step` will have an additional ``optimizer_idx`` parameter.
-- If you use :class:`torch.optim.LBFGS`, Lightning handles the closure function automatically for you.
-- If you use multiple optimizers, gradients will be calculated only for the parameters of current optimizer
-  at each training step.
-- If you need to control how often those optimizers step or override the default ``.step()`` schedule,
-  override the :meth:`optimizer_step` hook.
-</code></pre>
-</div>
-
+    
 
                             </div>
                             <div class="inherited">

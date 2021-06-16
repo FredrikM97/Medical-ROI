@@ -72,6 +72,7 @@
 <span class="kn">from</span> <span class="nn">src.utils.preprocess</span> <span class="kn">import</span> <span class="n">tensor2numpy</span>
 
 <span class="k">class</span> <span class="nc">CAMCallback</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">callbacks</span><span class="o">.</span><span class="n">Callback</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
     <span class="c1">#https://stackoverflow.com/questions/62494963/how-to-do-class-activation-mapping-in-pytorch-vgg16-model</span>
     
     <span class="c1">#def on_fit_start(self, trainer, pl_module) -&gt; None:</span>
@@ -79,10 +80,36 @@
     <span class="c1">#    self.cam_model = CAM(self.cam_type, trainer.model)</span>
         
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cam_type</span><span class="o">=</span><span class="n">torchcam</span><span class="o">.</span><span class="n">cams</span><span class="o">.</span><span class="n">GradCAMpp</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        cam_type :</span>
+<span class="sd">            (Default value = torchcam.cams.GradCAMpp)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cam_type</span> <span class="o">=</span> <span class="n">cam_type</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;What is the cam type&quot;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">cam_type</span><span class="p">)</span>
         
     <span class="k">def</span> <span class="nf">on_epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1">#trainer.model.eval()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cam_model</span> <span class="o">=</span> <span class="n">CAM</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cam_type</span><span class="p">,</span> <span class="n">trainer</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
         
@@ -99,6 +126,18 @@
     
         
     <span class="k">def</span> <span class="nf">get_one_sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">sample</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">pl_module</span><span class="o">.</span><span class="n">val_dataloader</span><span class="p">()):</span>   <span class="c1"># Stepping through dataloader might mess up validation elsewhere ?</span>
             <span class="c1"># Dont call cuda directly (this is not optimized :( ))</span>
             <span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="n">sample</span>
@@ -121,6 +160,7 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">CAMCallback</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">callbacks</span><span class="o">.</span><span class="n">Callback</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
     <span class="c1">#https://stackoverflow.com/questions/62494963/how-to-do-class-activation-mapping-in-pytorch-vgg16-model</span>
     
     <span class="c1">#def on_fit_start(self, trainer, pl_module) -&gt; None:</span>
@@ -128,10 +168,36 @@
     <span class="c1">#    self.cam_model = CAM(self.cam_type, trainer.model)</span>
         
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cam_type</span><span class="o">=</span><span class="n">torchcam</span><span class="o">.</span><span class="n">cams</span><span class="o">.</span><span class="n">GradCAMpp</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        cam_type :</span>
+<span class="sd">            (Default value = torchcam.cams.GradCAMpp)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cam_type</span> <span class="o">=</span> <span class="n">cam_type</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;What is the cam type&quot;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">cam_type</span><span class="p">)</span>
         
     <span class="k">def</span> <span class="nf">on_epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1">#trainer.model.eval()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cam_model</span> <span class="o">=</span> <span class="n">CAM</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cam_type</span><span class="p">,</span> <span class="n">trainer</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
         
@@ -148,6 +214,18 @@
     
         
     <span class="k">def</span> <span class="nf">get_one_sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">sample</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">pl_module</span><span class="o">.</span><span class="n">val_dataloader</span><span class="p">()):</span>   <span class="c1"># Stepping through dataloader might mess up validation elsewhere ?</span>
             <span class="c1"># Dont call cuda directly (this is not optimized :( ))</span>
             <span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="n">sample</span>
@@ -157,11 +235,7 @@
 
         </details>
 
-            <div class="docstring"><p>Abstract base class used to build new callbacks.</p>
-
-<p>Subclass this class and override any of the relevant hooks</p>
-</div>
-
+    
 
                             <div id="CAMCallback.__init__" class="classattr">
                                         <div class="attr function"><a class="headerlink" href="#CAMCallback.__init__">#&nbsp;&nbsp</a>
@@ -173,13 +247,32 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cam_type</span><span class="o">=</span><span class="n">torchcam</span><span class="o">.</span><span class="n">cams</span><span class="o">.</span><span class="n">GradCAMpp</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        cam_type :</span>
+<span class="sd">            (Default value = torchcam.cams.GradCAMpp)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cam_type</span> <span class="o">=</span> <span class="n">cam_type</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;What is the cam type&quot;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">cam_type</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
-    
+            <div class="docstring"><h2 id="parameters">Parameters</h2>
+
+<p>cam_type :
+    (Default value = torchcam.cams.GradCAMpp)</p>
+
+<h2 id="returns">Returns</h2>
+</div>
+
 
                             </div>
                             <div id="CAMCallback.on_epoch_end" class="classattr">
@@ -193,6 +286,20 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">on_epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trainer :</span>
+<span class="sd">            </span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1">#trainer.model.eval()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cam_model</span> <span class="o">=</span> <span class="n">CAM</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cam_type</span><span class="p">,</span> <span class="n">trainer</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
         
@@ -210,7 +317,13 @@
 
         </details>
 
-            <div class="docstring"><p>Called when either of train/val/test epoch ends.</p>
+            <div class="docstring"><h2 id="parameters">Parameters</h2>
+
+<p>trainer :</p>
+
+<p>pl_module :</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -226,6 +339,18 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">get_one_sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        pl_module :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">sample</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">pl_module</span><span class="o">.</span><span class="n">val_dataloader</span><span class="p">()):</span>   <span class="c1"># Stepping through dataloader might mess up validation elsewhere ?</span>
             <span class="c1"># Dont call cuda directly (this is not optimized :( ))</span>
             <span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="n">sample</span>
@@ -235,7 +360,13 @@
 
         </details>
 
-    
+            <div class="docstring"><h2 id="parameters">Parameters</h2>
+
+<p>pl_module :</p>
+
+<h2 id="returns">Returns</h2>
+</div>
+
 
                             </div>
                             <div class="inherited">

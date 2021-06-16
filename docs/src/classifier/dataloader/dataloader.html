@@ -96,14 +96,38 @@
 <span class="kn">import</span> <span class="nn">random</span>
 
 <span class="k">class</span> <span class="nc">AdniDataloader</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">LightningDataModule</span><span class="p">):</span> 
+    <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">data_dir</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">img_shape</span><span class="o">=</span><span class="p">(</span><span class="mi">79</span><span class="p">,</span><span class="mi">95</span><span class="p">,</span><span class="mi">79</span><span class="p">),</span> <span class="n">classes</span><span class="o">=</span><span class="p">{},</span><span class="o">**</span><span class="n">hparams</span><span class="p">:</span><span class="nb">dict</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data_dir :</span>
+<span class="sd">            </span>
+<span class="sd">        batch_size :</span>
+<span class="sd">            (Default value = 6)</span>
+<span class="sd">        shuffle :</span>
+<span class="sd">            (Default value = True)</span>
+<span class="sd">        num_workers :</span>
+<span class="sd">            (Default value = 1)</span>
+<span class="sd">        img_shape :</span>
+<span class="sd">            (Default value = (79,95,79))</span>
+<span class="sd">        classes :</span>
+<span class="sd">            (Default value = {})</span>
+<span class="sd">        **hparams : dict</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">shuffle</span> <span class="o">=</span> <span class="n">shuffle</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">seed</span> <span class="o">=</span> <span class="n">hparams</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;seed&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">split_conf</span> <span class="o">=</span> <span class="n">hparams</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;split&#39;</span><span class="p">,{})</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">img_shape</span> <span class="o">=</span> <span class="n">img_shape</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">=</span> <span class="n">data_dir</span>
-        <span class="c1">#self.delimiter = delimiter</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">classes</span> <span class="o">=</span> <span class="n">classes</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">augmentation</span> <span class="o">=</span> <span class="n">hparams</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;augmentation&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kfold</span> <span class="o">=</span> <span class="kc">None</span>
@@ -113,33 +137,22 @@
             <span class="s1">&#39;num_workers&#39;</span><span class="p">:</span> <span class="n">num_workers</span>
         <span class="p">}</span>
         <span class="n">use_augmentation</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="c1">#tf.RandomApply([</span>
-            <span class="c1">#    tf.Lambda(lambda images: augment(images))</span>
-            <span class="c1">#],p=0.5),</span>
-            <span class="n">tf</span><span class="o">.</span><span class="n">Lambda</span><span class="p">(</span><span class="k">lambda</span> <span class="n">images</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">images</span><span class="p">)),</span> <span class="c1">#.unsqueeze(1)</span>
-            <span class="c1">#tf.RandomChoice([</span>
-                <span class="c1">#tf.RandomRotation(180),</span>
+            <span class="n">tf</span><span class="o">.</span><span class="n">Lambda</span><span class="p">(</span><span class="k">lambda</span> <span class="n">images</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">images</span><span class="p">)),</span>
             <span class="n">tf</span><span class="o">.</span><span class="n">RandomAffine</span><span class="p">(</span>
                 <span class="n">degrees</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">180</span><span class="p">),</span> 
                 <span class="n">translate</span><span class="o">=</span><span class="p">(</span><span class="mf">0.001</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">),</span>
-                <span class="c1">#scale=[randRange(0.75, 1.3)]*2, </span>
-                <span class="c1">#shear=None#randRange(0, 0.5),</span>
+           
             <span class="p">)</span>
-            <span class="c1">#tf.Lambda(lambda images: images)</span>
-            <span class="c1">#tf.RandomPerspective(),</span>
-
- <span class="c1">#           ])#,p=0.6</span>
+        
         <span class="p">]</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">augmentation</span><span class="p">[</span><span class="s1">&#39;enable&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="p">[]</span>
         
         <span class="bp">self</span><span class="o">.</span><span class="n">train_transform</span> <span class="o">=</span> <span class="n">torchvision</span><span class="o">.</span><span class="n">transforms</span><span class="o">.</span><span class="n">Compose</span><span class="p">([</span>
-            <span class="c1">#torchvision.transforms.Resize(self.img_shape)</span>
             <span class="o">*</span><span class="n">use_augmentation</span><span class="p">,</span>
             <span class="n">tf</span><span class="o">.</span><span class="n">Lambda</span><span class="p">(</span><span class="k">lambda</span> <span class="n">images</span><span class="p">:</span> <span class="n">preprocess</span><span class="o">.</span><span class="n">preprocess_image</span><span class="p">(</span><span class="n">images</span><span class="p">,</span><span class="n">input_shape</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">img_shape</span><span class="p">)),</span>
             <span class="n">tf</span><span class="o">.</span><span class="n">Lambda</span><span class="p">(</span><span class="k">lambda</span> <span class="n">images</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">images</span><span class="p">))</span>
         <span class="p">])</span>
         
         <span class="bp">self</span><span class="o">.</span><span class="n">test_transform</span> <span class="o">=</span> <span class="n">torchvision</span><span class="o">.</span><span class="n">transforms</span><span class="o">.</span><span class="n">Compose</span><span class="p">([</span>
-            <span class="c1">#torchvision.transforms.Resize(self.img_shape)</span>
             <span class="n">torchvision</span><span class="o">.</span><span class="n">transforms</span><span class="o">.</span><span class="n">Lambda</span><span class="p">(</span><span class="k">lambda</span> <span class="n">images</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">preprocess</span><span class="o">.</span><span class="n">preprocess_image</span><span class="p">(</span><span class="n">images</span><span class="p">,</span><span class="n">input_shape</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">img_shape</span><span class="p">)))</span>
             
         <span class="p">])</span>
@@ -158,6 +171,18 @@
         
         
     <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        stage :</span>
+<span class="sd">            (Default value = None)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">dataset_full</span> <span class="o">=</span> <span class="n">load</span><span class="o">.</span><span class="n">load_files</span><span class="p">(</span><span class="n">BASEDIR</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span><span class="p">)</span>
         
         <span class="c1"># Assign kfold or split depending on the configuration</span>
@@ -171,20 +196,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">adni_train</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">adni_val</span> <span class="o">=</span> <span class="p">[</span> <span class="c1">#,delimiter=self.delimiter</span>
             <span class="n">AdniDataset</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">transform</span><span class="p">,</span> <span class="n">classes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">classes</span><span class="p">)</span> <span class="k">for</span> <span class="n">transform</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">train_transform</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">test_transform</span><span class="p">],</span> <span class="n">dataset_splitted</span><span class="p">)</span>
             <span class="p">]</span>
-        <span class="c1">#else:</span>
-        <span class="c1">#    self.adni_train, self.adni_val = [AdniDataset(data, transform=self.test_transform,delimiter=self.delimiter, classes=self.classes) for data in dataset_splitted]</span>
-            
-        <span class="c1"># Info of the dataset</span>
-        <span class="sd">&quot;&quot;&quot;print(</span>
-<span class="sd">            f&quot;***Defined dataloader:***\n&quot;</span>
-<span class="sd">            f&quot;Data directory: {self.data_dir}\n&quot;</span>
-<span class="sd">            f&quot;Dataset sizes - Training: {len(self.adni_train)} Validation: {len(self.adni_val)}\n&quot;</span>
-<span class="sd">            f&quot;Seed: {self.seed}\n&quot;</span>
-<span class="sd">            f&quot;Augmentation: {&#39;Enabled&#39; if self.augmentation[&#39;enable&#39;] else &#39;Disabled&#39;}\n&quot;</span>
-<span class="sd">            f&quot;KFold: {&#39;Enabled - Fold: &#39; + str(self.kfold_index) + &#39;/&#39; + str(self.split_conf[&#39;folds&#39;]) if self.split_conf[&#39;kfold_enable&#39;] else &#39;Disabled&#39;}\n&quot;</span>
-<span class="sd">        )&quot;&quot;&quot;</span>
         
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;***Defined dataloader:***</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="sa">f</span><span class="s2">&quot;Data directory: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -195,36 +209,82 @@
         
     
     <span class="k">def</span> <span class="nf">next_fold</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">split_conf</span><span class="p">[</span><span class="s1">&#39;folds&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kfold_index</span><span class="p">:</span> <span class="k">return</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kfold_index</span> <span class="o">+=</span><span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">folds</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kfold</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">True</span>
     
     <span class="k">def</span> <span class="nf">train_dataloader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">DataLoader</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">adni_train</span><span class="p">,</span>
                         <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                         <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">init_kwargs</span>
                      <span class="p">)</span>
     
     <span class="k">def</span> <span class="nf">val_dataloader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">DataLoader</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">adni_val</span><span class="p">,</span>
                         <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                         <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">init_kwargs</span>
                     <span class="p">)</span>
     
 <span class="k">class</span> <span class="nc">ToDevice</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        device :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">device</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sample</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        sample :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">sample</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
     
 <span class="k">def</span> <span class="nf">_split</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">test_size</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">test_size</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
-        
-        <span class="n">train_samples</span><span class="p">,</span> <span class="n">valid_samples</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="n">test_size</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="n">shuffle</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">train_samples</span><span class="p">,</span> <span class="n">valid_samples</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dataset :</span>
+<span class="sd">        </span>
+<span class="sd">    test_size :</span>
+<span class="sd">        </span>
+<span class="sd">    random_state :</span>
+<span class="sd">        (Default value = 0)</span>
+<span class="sd">    shuffle :</span>
+<span class="sd">        (Default value = False)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">test_size</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+
+    <span class="n">train_samples</span><span class="p">,</span> <span class="n">valid_samples</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="n">test_size</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="n">shuffle</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">train_samples</span><span class="p">,</span> <span class="n">valid_samples</span>
 </pre></div>
 
         </details>
@@ -242,14 +302,38 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">AdniDataloader</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">LightningDataModule</span><span class="p">):</span> 
+    <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">data_dir</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">img_shape</span><span class="o">=</span><span class="p">(</span><span class="mi">79</span><span class="p">,</span><span class="mi">95</span><span class="p">,</span><span class="mi">79</span><span class="p">),</span> <span class="n">classes</span><span class="o">=</span><span class="p">{},</span><span class="o">**</span><span class="n">hparams</span><span class="p">:</span><span class="nb">dict</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data_dir :</span>
+<span class="sd">            </span>
+<span class="sd">        batch_size :</span>
+<span class="sd">            (Default value = 6)</span>
+<span class="sd">        shuffle :</span>
+<span class="sd">            (Default value = True)</span>
+<span class="sd">        num_workers :</span>
+<span class="sd">            (Default value = 1)</span>
+<span class="sd">        img_shape :</span>
+<span class="sd">            (Default value = (79,95,79))</span>
+<span class="sd">        classes :</span>
+<span class="sd">            (Default value = {})</span>
+<span class="sd">        **hparams : dict</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">shuffle</span> <span class="o">=</span> <span class="n">shuffle</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">seed</span> <span class="o">=</span> <span class="n">hparams</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;seed&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">split_conf</span> <span class="o">=</span> <span class="n">hparams</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;split&#39;</span><span class="p">,{})</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">img_shape</span> <span class="o">=</span> <span class="n">img_shape</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">=</span> <span class="n">data_dir</span>
-        <span class="c1">#self.delimiter = delimiter</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">classes</span> <span class="o">=</span> <span class="n">classes</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">augmentation</span> <span class="o">=</span> <span class="n">hparams</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;augmentation&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kfold</span> <span class="o">=</span> <span class="kc">None</span>
@@ -259,33 +343,22 @@
             <span class="s1">&#39;num_workers&#39;</span><span class="p">:</span> <span class="n">num_workers</span>
         <span class="p">}</span>
         <span class="n">use_augmentation</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="c1">#tf.RandomApply([</span>
-            <span class="c1">#    tf.Lambda(lambda images: augment(images))</span>
-            <span class="c1">#],p=0.5),</span>
-            <span class="n">tf</span><span class="o">.</span><span class="n">Lambda</span><span class="p">(</span><span class="k">lambda</span> <span class="n">images</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">images</span><span class="p">)),</span> <span class="c1">#.unsqueeze(1)</span>
-            <span class="c1">#tf.RandomChoice([</span>
-                <span class="c1">#tf.RandomRotation(180),</span>
+            <span class="n">tf</span><span class="o">.</span><span class="n">Lambda</span><span class="p">(</span><span class="k">lambda</span> <span class="n">images</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">images</span><span class="p">)),</span>
             <span class="n">tf</span><span class="o">.</span><span class="n">RandomAffine</span><span class="p">(</span>
                 <span class="n">degrees</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">180</span><span class="p">),</span> 
                 <span class="n">translate</span><span class="o">=</span><span class="p">(</span><span class="mf">0.001</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">),</span>
-                <span class="c1">#scale=[randRange(0.75, 1.3)]*2, </span>
-                <span class="c1">#shear=None#randRange(0, 0.5),</span>
+           
             <span class="p">)</span>
-            <span class="c1">#tf.Lambda(lambda images: images)</span>
-            <span class="c1">#tf.RandomPerspective(),</span>
-
- <span class="c1">#           ])#,p=0.6</span>
+        
         <span class="p">]</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">augmentation</span><span class="p">[</span><span class="s1">&#39;enable&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="p">[]</span>
         
         <span class="bp">self</span><span class="o">.</span><span class="n">train_transform</span> <span class="o">=</span> <span class="n">torchvision</span><span class="o">.</span><span class="n">transforms</span><span class="o">.</span><span class="n">Compose</span><span class="p">([</span>
-            <span class="c1">#torchvision.transforms.Resize(self.img_shape)</span>
             <span class="o">*</span><span class="n">use_augmentation</span><span class="p">,</span>
             <span class="n">tf</span><span class="o">.</span><span class="n">Lambda</span><span class="p">(</span><span class="k">lambda</span> <span class="n">images</span><span class="p">:</span> <span class="n">preprocess</span><span class="o">.</span><span class="n">preprocess_image</span><span class="p">(</span><span class="n">images</span><span class="p">,</span><span class="n">input_shape</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">img_shape</span><span class="p">)),</span>
             <span class="n">tf</span><span class="o">.</span><span class="n">Lambda</span><span class="p">(</span><span class="k">lambda</span> <span class="n">images</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">images</span><span class="p">))</span>
         <span class="p">])</span>
         
         <span class="bp">self</span><span class="o">.</span><span class="n">test_transform</span> <span class="o">=</span> <span class="n">torchvision</span><span class="o">.</span><span class="n">transforms</span><span class="o">.</span><span class="n">Compose</span><span class="p">([</span>
-            <span class="c1">#torchvision.transforms.Resize(self.img_shape)</span>
             <span class="n">torchvision</span><span class="o">.</span><span class="n">transforms</span><span class="o">.</span><span class="n">Lambda</span><span class="p">(</span><span class="k">lambda</span> <span class="n">images</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">preprocess</span><span class="o">.</span><span class="n">preprocess_image</span><span class="p">(</span><span class="n">images</span><span class="p">,</span><span class="n">input_shape</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">img_shape</span><span class="p">)))</span>
             
         <span class="p">])</span>
@@ -304,6 +377,18 @@
         
         
     <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        stage :</span>
+<span class="sd">            (Default value = None)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">dataset_full</span> <span class="o">=</span> <span class="n">load</span><span class="o">.</span><span class="n">load_files</span><span class="p">(</span><span class="n">BASEDIR</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span><span class="p">)</span>
         
         <span class="c1"># Assign kfold or split depending on the configuration</span>
@@ -317,20 +402,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">adni_train</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">adni_val</span> <span class="o">=</span> <span class="p">[</span> <span class="c1">#,delimiter=self.delimiter</span>
             <span class="n">AdniDataset</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">transform</span><span class="p">,</span> <span class="n">classes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">classes</span><span class="p">)</span> <span class="k">for</span> <span class="n">transform</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">train_transform</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">test_transform</span><span class="p">],</span> <span class="n">dataset_splitted</span><span class="p">)</span>
             <span class="p">]</span>
-        <span class="c1">#else:</span>
-        <span class="c1">#    self.adni_train, self.adni_val = [AdniDataset(data, transform=self.test_transform,delimiter=self.delimiter, classes=self.classes) for data in dataset_splitted]</span>
-            
-        <span class="c1"># Info of the dataset</span>
-        <span class="sd">&quot;&quot;&quot;print(</span>
-<span class="sd">            f&quot;***Defined dataloader:***\n&quot;</span>
-<span class="sd">            f&quot;Data directory: {self.data_dir}\n&quot;</span>
-<span class="sd">            f&quot;Dataset sizes - Training: {len(self.adni_train)} Validation: {len(self.adni_val)}\n&quot;</span>
-<span class="sd">            f&quot;Seed: {self.seed}\n&quot;</span>
-<span class="sd">            f&quot;Augmentation: {&#39;Enabled&#39; if self.augmentation[&#39;enable&#39;] else &#39;Disabled&#39;}\n&quot;</span>
-<span class="sd">            f&quot;KFold: {&#39;Enabled - Fold: &#39; + str(self.kfold_index) + &#39;/&#39; + str(self.split_conf[&#39;folds&#39;]) if self.split_conf[&#39;kfold_enable&#39;] else &#39;Disabled&#39;}\n&quot;</span>
-<span class="sd">        )&quot;&quot;&quot;</span>
         
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;***Defined dataloader:***</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="sa">f</span><span class="s2">&quot;Data directory: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -341,18 +415,21 @@
         
     
     <span class="k">def</span> <span class="nf">next_fold</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">split_conf</span><span class="p">[</span><span class="s1">&#39;folds&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kfold_index</span><span class="p">:</span> <span class="k">return</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kfold_index</span> <span class="o">+=</span><span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">folds</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kfold</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">True</span>
     
     <span class="k">def</span> <span class="nf">train_dataloader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">DataLoader</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">adni_train</span><span class="p">,</span>
                         <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                         <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">init_kwargs</span>
                      <span class="p">)</span>
     
     <span class="k">def</span> <span class="nf">val_dataloader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">DataLoader</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">adni_val</span><span class="p">,</span>
                         <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                         <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">init_kwargs</span>
@@ -361,49 +438,7 @@
 
         </details>
 
-            <div class="docstring"><p>A DataModule standardizes the training, val, test splits, data preparation and transforms.
-The main advantage is consistent data splits, data preparation and transforms across models.</p>
-
-<p>Example::</p>
-
-<pre><code>class MyDataModule(LightningDataModule):
-    def __init__(self):
-        super().__init__()
-    def prepare_data(self):
-        # download, split, etc...
-        # only called on 1 GPU/TPU in distributed
-    def setup(self):
-        # make assignments here (val/train/test split)
-        # called on every process in DDP
-    def train_dataloader(self):
-        train_split = Dataset(...)
-        return DataLoader(train_split)
-    def val_dataloader(self):
-        val_split = Dataset(...)
-        return DataLoader(val_split)
-    def test_dataloader(self):
-        test_split = Dataset(...)
-        return DataLoader(test_split)
-    def teardown(self):
-        # clean up after fit or test
-        # called on every process in DDP
-</code></pre>
-
-<p>A DataModule implements 6 key methods:</p>
-
-<ul>
-<li><strong>prepare_data</strong> (things to do on 1 GPU/TPU not on every GPU/TPU in distributed mode).</li>
-<li><strong>setup</strong>  (things to do on every accelerator in distributed mode).</li>
-<li><strong>train_dataloader</strong> the training dataloader.</li>
-<li><strong>val_dataloader</strong> the val dataloader(s).</li>
-<li><strong>test_dataloader</strong> the test dataloader(s).</li>
-<li><strong>teardown</strong> (things to do on every accelerator in distributed mode when finished)</li>
-</ul>
-
-<p>This allows you to share a full dataset without explaining how to download,
-split transform and process the data</p>
-</div>
-
+    
 
                             <div id="AdniDataloader.__init__" class="classattr">
                                         <div class="attr function"><a class="headerlink" href="#AdniDataloader.__init__">#&nbsp;&nbsp</a>
@@ -423,13 +458,36 @@ split transform and process the data</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">data_dir</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">img_shape</span><span class="o">=</span><span class="p">(</span><span class="mi">79</span><span class="p">,</span><span class="mi">95</span><span class="p">,</span><span class="mi">79</span><span class="p">),</span> <span class="n">classes</span><span class="o">=</span><span class="p">{},</span><span class="o">**</span><span class="n">hparams</span><span class="p">:</span><span class="nb">dict</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data_dir :</span>
+<span class="sd">            </span>
+<span class="sd">        batch_size :</span>
+<span class="sd">            (Default value = 6)</span>
+<span class="sd">        shuffle :</span>
+<span class="sd">            (Default value = True)</span>
+<span class="sd">        num_workers :</span>
+<span class="sd">            (Default value = 1)</span>
+<span class="sd">        img_shape :</span>
+<span class="sd">            (Default value = (79,95,79))</span>
+<span class="sd">        classes :</span>
+<span class="sd">            (Default value = {})</span>
+<span class="sd">        **hparams : dict</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">shuffle</span> <span class="o">=</span> <span class="n">shuffle</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">seed</span> <span class="o">=</span> <span class="n">hparams</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;seed&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">split_conf</span> <span class="o">=</span> <span class="n">hparams</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;split&#39;</span><span class="p">,{})</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">img_shape</span> <span class="o">=</span> <span class="n">img_shape</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">=</span> <span class="n">data_dir</span>
-        <span class="c1">#self.delimiter = delimiter</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">classes</span> <span class="o">=</span> <span class="n">classes</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">augmentation</span> <span class="o">=</span> <span class="n">hparams</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;augmentation&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kfold</span> <span class="o">=</span> <span class="kc">None</span>
@@ -439,33 +497,22 @@ split transform and process the data</p>
             <span class="s1">&#39;num_workers&#39;</span><span class="p">:</span> <span class="n">num_workers</span>
         <span class="p">}</span>
         <span class="n">use_augmentation</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="c1">#tf.RandomApply([</span>
-            <span class="c1">#    tf.Lambda(lambda images: augment(images))</span>
-            <span class="c1">#],p=0.5),</span>
-            <span class="n">tf</span><span class="o">.</span><span class="n">Lambda</span><span class="p">(</span><span class="k">lambda</span> <span class="n">images</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">images</span><span class="p">)),</span> <span class="c1">#.unsqueeze(1)</span>
-            <span class="c1">#tf.RandomChoice([</span>
-                <span class="c1">#tf.RandomRotation(180),</span>
+            <span class="n">tf</span><span class="o">.</span><span class="n">Lambda</span><span class="p">(</span><span class="k">lambda</span> <span class="n">images</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">images</span><span class="p">)),</span>
             <span class="n">tf</span><span class="o">.</span><span class="n">RandomAffine</span><span class="p">(</span>
                 <span class="n">degrees</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">180</span><span class="p">),</span> 
                 <span class="n">translate</span><span class="o">=</span><span class="p">(</span><span class="mf">0.001</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">),</span>
-                <span class="c1">#scale=[randRange(0.75, 1.3)]*2, </span>
-                <span class="c1">#shear=None#randRange(0, 0.5),</span>
+           
             <span class="p">)</span>
-            <span class="c1">#tf.Lambda(lambda images: images)</span>
-            <span class="c1">#tf.RandomPerspective(),</span>
-
- <span class="c1">#           ])#,p=0.6</span>
+        
         <span class="p">]</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">augmentation</span><span class="p">[</span><span class="s1">&#39;enable&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="p">[]</span>
         
         <span class="bp">self</span><span class="o">.</span><span class="n">train_transform</span> <span class="o">=</span> <span class="n">torchvision</span><span class="o">.</span><span class="n">transforms</span><span class="o">.</span><span class="n">Compose</span><span class="p">([</span>
-            <span class="c1">#torchvision.transforms.Resize(self.img_shape)</span>
             <span class="o">*</span><span class="n">use_augmentation</span><span class="p">,</span>
             <span class="n">tf</span><span class="o">.</span><span class="n">Lambda</span><span class="p">(</span><span class="k">lambda</span> <span class="n">images</span><span class="p">:</span> <span class="n">preprocess</span><span class="o">.</span><span class="n">preprocess_image</span><span class="p">(</span><span class="n">images</span><span class="p">,</span><span class="n">input_shape</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">img_shape</span><span class="p">)),</span>
             <span class="n">tf</span><span class="o">.</span><span class="n">Lambda</span><span class="p">(</span><span class="k">lambda</span> <span class="n">images</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">images</span><span class="p">))</span>
         <span class="p">])</span>
         
         <span class="bp">self</span><span class="o">.</span><span class="n">test_transform</span> <span class="o">=</span> <span class="n">torchvision</span><span class="o">.</span><span class="n">transforms</span><span class="o">.</span><span class="n">Compose</span><span class="p">([</span>
-            <span class="c1">#torchvision.transforms.Resize(self.img_shape)</span>
             <span class="n">torchvision</span><span class="o">.</span><span class="n">transforms</span><span class="o">.</span><span class="n">Lambda</span><span class="p">(</span><span class="k">lambda</span> <span class="n">images</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">preprocess</span><span class="o">.</span><span class="n">preprocess_image</span><span class="p">(</span><span class="n">images</span><span class="p">,</span><span class="n">input_shape</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">img_shape</span><span class="p">)))</span>
             
         <span class="p">])</span>
@@ -485,7 +532,25 @@ split transform and process the data</p>
 
         </details>
 
-    
+            <div class="docstring"><h2 id="parameters">Parameters</h2>
+
+<p>data_dir :</p>
+
+<p>batch_size :
+    (Default value = 6)
+shuffle :
+    (Default value = True)
+num_workers :
+    (Default value = 1)
+img_shape :
+    (Default value = (79,95,79))
+classes :
+    (Default value = {})
+**hparams : dict</p>
+
+<h2 id="returns">Returns</h2>
+</div>
+
 
                             </div>
                             <div id="AdniDataloader.setup" class="classattr">
@@ -499,6 +564,18 @@ split transform and process the data</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        stage :</span>
+<span class="sd">            (Default value = None)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">dataset_full</span> <span class="o">=</span> <span class="n">load</span><span class="o">.</span><span class="n">load_files</span><span class="p">(</span><span class="n">BASEDIR</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span><span class="p">)</span>
         
         <span class="c1"># Assign kfold or split depending on the configuration</span>
@@ -512,46 +589,16 @@ split transform and process the data</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">adni_train</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">adni_val</span> <span class="o">=</span> <span class="p">[</span> <span class="c1">#,delimiter=self.delimiter</span>
             <span class="n">AdniDataset</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">transform</span><span class="p">,</span> <span class="n">classes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">classes</span><span class="p">)</span> <span class="k">for</span> <span class="n">transform</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">train_transform</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">test_transform</span><span class="p">],</span> <span class="n">dataset_splitted</span><span class="p">)</span>
             <span class="p">]</span>
-        <span class="c1">#else:</span>
-        <span class="c1">#    self.adni_train, self.adni_val = [AdniDataset(data, transform=self.test_transform,delimiter=self.delimiter, classes=self.classes) for data in dataset_splitted]</span>
-            
-        <span class="c1"># Info of the dataset</span>
-        <span class="sd">&quot;&quot;&quot;print(</span>
-<span class="sd">            f&quot;***Defined dataloader:***\n&quot;</span>
-<span class="sd">            f&quot;Data directory: {self.data_dir}\n&quot;</span>
-<span class="sd">            f&quot;Dataset sizes - Training: {len(self.adni_train)} Validation: {len(self.adni_val)}\n&quot;</span>
-<span class="sd">            f&quot;Seed: {self.seed}\n&quot;</span>
-<span class="sd">            f&quot;Augmentation: {&#39;Enabled&#39; if self.augmentation[&#39;enable&#39;] else &#39;Disabled&#39;}\n&quot;</span>
-<span class="sd">            f&quot;KFold: {&#39;Enabled - Fold: &#39; + str(self.kfold_index) + &#39;/&#39; + str(self.split_conf[&#39;folds&#39;]) if self.split_conf[&#39;kfold_enable&#39;] else &#39;Disabled&#39;}\n&quot;</span>
-<span class="sd">        )&quot;&quot;&quot;</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Called at the beginning of fit (train + validate), validate, test, predict, or tune.
-This is a good hook when you need to build models dynamically or adjust something about them.
-This hook is called on every process when using DDP.</p>
+            <div class="docstring"><h2 id="parameters">Parameters</h2>
 
-<p>Args:
-    stage: either <code>'fit'</code>, <code>'validate'</code>, <code>'test'</code>, or <code>'predict'</code></p>
+<p>stage :
+    (Default value = None)</p>
 
-<p>Example::</p>
-
-<pre><code>class LitModel(...):
-    def __init__(self):
-        self.l1 = None
-
-    def prepare_data(self):
-        download_data()
-        tokenize()
-
-        # don't do this
-        self.something = else
-
-    def setup(stage):
-        data = Load_data(...)
-        self.l1 = nn.Linear(28, data.num_classes)
-</code></pre>
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -567,6 +614,7 @@ This hook is called on every process when using DDP.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">next_fold</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">split_conf</span><span class="p">[</span><span class="s1">&#39;folds&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kfold_index</span><span class="p">:</span> <span class="k">return</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kfold_index</span> <span class="o">+=</span><span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">folds</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kfold</span><span class="p">)</span>
@@ -589,6 +637,7 @@ This hook is called on every process when using DDP.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">train_dataloader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">DataLoader</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">adni_train</span><span class="p">,</span>
                         <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                         <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">init_kwargs</span>
@@ -597,81 +646,7 @@ This hook is called on every process when using DDP.</p>
 
         </details>
 
-            <div class="docstring"><p>Implement one or more PyTorch DataLoaders for training.</p>
-
-<p>Return:
-    Either a single PyTorch :class:<code>~torch.utils.data.DataLoader</code> or a collection of these
-    (list, dict, nested lists and dicts). In the case of multiple dataloaders, please see
-    this :ref:<code>page &lt;multiple-training-dataloaders&gt;</code></p>
-
-<p>The dataloader you return will not be called every epoch unless you set
-:paramref:<code>~pytorch_lightning.trainer.Trainer.reload_dataloaders_every_epoch</code> to <code>True</code>.</p>
-
-<p>For data processing use the following pattern:</p>
-
-<pre><code>- download in :meth:`prepare_data`
-- process and split in :meth:`setup`
-</code></pre>
-
-<p>However, the above are only necessary for distributed processing.</p>
-
-<p>.. warning:: do not assign state in prepare_data</p>
-
-<ul>
-<li>:meth:<code>~pytorch_lightning.trainer.Trainer.fit</code></li>
-<li>...</li>
-<li>:meth:<code><a href="#AdniDataloader.prepare_data">prepare_data</a></code></li>
-<li>:meth:<code><a href="#AdniDataloader.setup">setup</a></code></li>
-<li>:meth:<code><a href="#AdniDataloader.train_dataloader">train_dataloader</a></code></li>
-</ul>
-
-<p>Note:
-    Lightning adds the correct sampler for distributed and arbitrary hardware.
-    There is no need to set it yourself.</p>
-
-<p>Example::</p>
-
-<pre><code># single dataloader
-def train_dataloader(self):
-    transform = transforms.Compose([transforms.ToTensor(),
-                                    transforms.Normalize((0.5,), (1.0,))])
-    dataset = MNIST(root='/path/to/mnist/', train=True, transform=transform,
-                    download=True)
-    loader = torch.utils.data.DataLoader(
-        dataset=dataset,
-        batch_size=self.batch_size,
-        shuffle=True
-    )
-    return loader
-
-# multiple dataloaders, return as list
-def train_dataloader(self):
-    mnist = MNIST(...)
-    cifar = CIFAR(...)
-    mnist_loader = torch.utils.data.DataLoader(
-        dataset=mnist, batch_size=self.batch_size, shuffle=True
-    )
-    cifar_loader = torch.utils.data.DataLoader(
-        dataset=cifar, batch_size=self.batch_size, shuffle=True
-    )
-    # each batch will be a list of tensors: [batch_mnist, batch_cifar]
-    return [mnist_loader, cifar_loader]
-
-# multiple dataloader, return as dict
-def train_dataloader(self):
-    mnist = MNIST(...)
-    cifar = CIFAR(...)
-    mnist_loader = torch.utils.data.DataLoader(
-        dataset=mnist, batch_size=self.batch_size, shuffle=True
-    )
-    cifar_loader = torch.utils.data.DataLoader(
-        dataset=cifar, batch_size=self.batch_size, shuffle=True
-    )
-    # each batch will be a dict of tensors: {'mnist': batch_mnist, 'cifar': batch_cifar}
-    return {'mnist': mnist_loader, 'cifar': cifar_loader}
-</code></pre>
-</div>
-
+    
 
                             </div>
                             <div id="AdniDataloader.val_dataloader" class="classattr">
@@ -685,6 +660,7 @@ def train_dataloader(self):
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">val_dataloader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">DataLoader</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">adni_val</span><span class="p">,</span>
                         <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                         <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">init_kwargs</span>
@@ -693,58 +669,7 @@ def train_dataloader(self):
 
         </details>
 
-            <div class="docstring"><p>Implement one or multiple PyTorch DataLoaders for validation.</p>
-
-<p>The dataloader you return will not be called every epoch unless you set
-:paramref:<code>~pytorch_lightning.trainer.Trainer.reload_dataloaders_every_epoch</code> to <code>True</code>.</p>
-
-<p>It's recommended that all data downloads and preparation happen in :meth:<code><a href="#AdniDataloader.prepare_data">prepare_data</a></code>.</p>
-
-<ul>
-<li>:meth:<code>~pytorch_lightning.trainer.Trainer.fit</code></li>
-<li>...</li>
-<li>:meth:<code><a href="#AdniDataloader.prepare_data">prepare_data</a></code></li>
-<li>:meth:<code><a href="#AdniDataloader.train_dataloader">train_dataloader</a></code></li>
-<li>:meth:<code><a href="#AdniDataloader.val_dataloader">val_dataloader</a></code></li>
-<li>:meth:<code><a href="#AdniDataloader.test_dataloader">test_dataloader</a></code></li>
-</ul>
-
-<p>Note:
-    Lightning adds the correct sampler for distributed and arbitrary hardware
-    There is no need to set it yourself.</p>
-
-<p>Return:
-    Single or multiple PyTorch DataLoaders.</p>
-
-<p>Examples::</p>
-
-<pre><code>def val_dataloader(self):
-    transform = transforms.Compose([transforms.ToTensor(),
-                                    transforms.Normalize((0.5,), (1.0,))])
-    dataset = MNIST(root='/path/to/mnist/', train=False,
-                    transform=transform, download=True)
-    loader = torch.utils.data.DataLoader(
-        dataset=dataset,
-        batch_size=self.batch_size,
-        shuffle=False
-    )
-
-    return loader
-
-# can also return multiple dataloaders
-def val_dataloader(self):
-    return [loader_a, loader_b, ..., loader_n]
-</code></pre>
-
-<p>Note:
-    If you don't need a validation dataset and a :meth:<code>validation_step</code>, you don't need to
-    implement this method.</p>
-
-<p>Note:
-    In the case where you return multiple validation dataloaders, the :meth:<code>validation_step</code>
-    will have an argument <code>dataloader_idx</code> which matches the order here.</p>
-</div>
-
+    
 
                             </div>
                             <div class="inherited">
@@ -806,10 +731,35 @@ def val_dataloader(self):
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">ToDevice</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        device :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">device</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sample</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        sample :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">sample</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
 </pre></div>
 
@@ -827,12 +777,30 @@ def val_dataloader(self):
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        device :</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">device</span>
 </pre></div>
 
         </details>
 
-    
+            <div class="docstring"><h2 id="parameters">Parameters</h2>
+
+<p>device :</p>
+
+<h2 id="returns">Returns</h2>
+</div>
+
 
                             </div>
                 </section>

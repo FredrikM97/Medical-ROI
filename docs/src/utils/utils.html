@@ -93,10 +93,39 @@
 <span class="kn">import</span> <span class="nn">xml.etree.ElementTree</span> <span class="k">as</span> <span class="nn">ET</span>
 
 <span class="k">def</span> <span class="nf">availible_files</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">contains</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Returns the availible files in directory&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Returns the availible files in directory</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path :</span>
+<span class="sd">        </span>
+<span class="sd">    contains : str</span>
+<span class="sd">        (Default value = &#39;&#39;)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">if</span> <span class="n">contains</span> <span class="ow">in</span> <span class="n">f</span><span class="p">]</span>
             
-<span class="k">def</span> <span class="nf">merge_dict</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">merge_dict</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    a :</span>
+<span class="sd">        </span>
+<span class="sd">    b :</span>
+<span class="sd">        </span>
+<span class="sd">    path : str</span>
+<span class="sd">        (Default value = None)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="s2">&quot;merges b into a&quot;</span>
     <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">path</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">b</span><span class="p">:</span>
@@ -118,7 +147,23 @@
         <span class="s1">&#39;cat&#39;</span><span class="p">:[],</span>
         <span class="s1">&#39;datetime&#39;</span><span class="p">:[],</span>
     <span class="p">},</span>
-    <span class="n">show_output</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="n">show_output</span><span class="p">:</span><span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    input_df :</span>
+<span class="sd">        </span>
+<span class="sd">    types :</span>
+<span class="sd">        (Default value = {&#39;float&#39;:[],&#39;int&#39;:[],&#39;str&#39;:[],&#39;cat&#39;:[],&#39;datetime&#39;:[],})</span>
+<span class="sd">    show_output : bool</span>
+<span class="sd">        (Default value = True)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     
     <span class="n">converter</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s1">&#39;float&#39;</span><span class="p">:</span><span class="s1">&#39;float&#39;</span><span class="p">,</span>
@@ -140,8 +185,21 @@
             
     <span class="k">return</span> <span class="n">input_df</span>
 
-<span class="k">def</span> <span class="nf">copy_file</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">dest</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Copy file from source dir to dest dir. Note that the path must exist where folders should be placed!&quot;&quot;&quot;</span>
+<span class="k">def</span> <span class="nf">copy_file</span><span class="p">(</span><span class="n">src</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">dest</span><span class="p">:</span><span class="nb">str</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Copy file from source dir to dest dir. Note that the path must exist where folders should be placed!</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    src : str</span>
+<span class="sd">        </span>
+<span class="sd">    dest : str</span>
+<span class="sd">        </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">src</span><span class="p">),</span> <span class="s2">&quot;Source file does not exists&quot;</span>
     
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">dest</span><span class="p">):</span>
@@ -150,19 +208,72 @@
     <span class="k">return</span> <span class="kc">False</span>
 
 <span class="k">def</span> <span class="nf">create_directory</span><span class="p">(</span><span class="n">dest</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Creates directory if not exists&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Creates directory if not exists</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dest :</span>
+<span class="sd">        </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">dest</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">remove_preprocessed_filename_definition</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;remove the three first letters to hyandle preprocessed names&quot;&quot;&quot;</span>
+<span class="k">def</span> <span class="nf">remove_preprocessed_filename_definition</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span><span class="nb">str</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;remove the three first letters to hyandle preprocessed names</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    filename : str</span>
+<span class="sd">        </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">filename</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>
 
 
         
-<span class="k">def</span> <span class="nf">xml2dict</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Iterate through all xml files and add them to a dictionary&quot;&quot;&quot;</span>
+<span class="k">def</span> <span class="nf">xml2dict</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Iterate through all xml files and add them to a dictionary</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    r :</span>
+<span class="sd">        </span>
+<span class="sd">    parent : str</span>
+<span class="sd">        (Default value = &#39;&#39;)</span>
+<span class="sd">    delimiter : str</span>
+<span class="sd">        (Default value = &quot;.&quot;)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">param</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">,</span><span class="n">delimiter</span><span class="p">:</span><span class="n">delimiter</span><span class="o">+</span><span class="nb">list</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">attrib</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
-    <span class="k">def</span> <span class="nf">recursive</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">recursive</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        r :</span>
+<span class="sd">            </span>
+<span class="sd">        parent : str</span>
+<span class="sd">            </span>
+<span class="sd">        delimiter : str</span>
+<span class="sd">            (Default value = &#39;.&#39;)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">cont</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="c1"># If list</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">layers</span> <span class="o">:=</span> <span class="n">r</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;./*&quot;</span><span class="p">)):</span>
@@ -175,9 +286,19 @@
             <span class="k">return</span> <span class="p">{}</span>
     <span class="k">return</span> <span class="n">recursive</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="n">delimiter</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">object2type</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">object2type</span><span class="p">(</span><span class="n">data</span><span class="p">:</span><span class="nb">str</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Change the type of data.</span>
 <span class="sd">    Check if data is a int, float otherwise a string/object</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : str</span>
+<span class="sd">        </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
         <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
@@ -187,7 +308,21 @@
     <span class="k">return</span> <span class="n">data</span>
 
 
-<span class="k">def</span> <span class="nf">split_custom_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;#&#39;</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">split_custom_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">sep</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="s1">&#39;#&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    filename : str</span>
+<span class="sd">        </span>
+<span class="sd">    sep : str</span>
+<span class="sd">        (Default value = &#39;#&#39;)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="s2">&quot;Split filenames based on custom seperator.&quot;</span>
     <span class="k">assert</span> <span class="n">sep</span> <span class="ow">in</span> <span class="n">filename</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;The expected seperator (</span><span class="si">{</span><span class="n">sep</span><span class="si">}</span><span class="s2">) could not be found in filename&quot;</span>
     <span class="n">slices</span><span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">sep</span><span class="p">)</span>
@@ -195,7 +330,21 @@
 
     <span class="k">return</span> <span class="n">slices</span>
 
-<span class="k">def</span> <span class="nf">data_filter</span><span class="p">(</span><span class="n">in_dir</span><span class="p">,</span> <span class="n">out_dir</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">data_filter</span><span class="p">(</span><span class="n">in_dir</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">out_dir</span><span class="p">:</span><span class="nb">str</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    in_dir : str</span>
+<span class="sd">        </span>
+<span class="sd">    out_dir : str</span>
+<span class="sd">        </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="s2">&quot;Will remove all but 1 .nii file from each bottom-level folder, keeps in_dir intact and puts result in out_dir. Example usage: data_filter(&#39;..</span><span class="se">\\</span><span class="s2">data</span><span class="se">\\</span><span class="s2">adni_raw&#39;, &#39;..</span><span class="se">\\</span><span class="s2">data</span><span class="se">\\</span><span class="s2">adni_raw_filtered&#39;)&quot;</span>
     <span class="n">files_to_create</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">subdirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">in_dir</span><span class="p">):</span>
@@ -225,13 +374,35 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">availible_files</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">contains</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Returns the availible files in directory&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Returns the availible files in directory</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path :</span>
+<span class="sd">        </span>
+<span class="sd">    contains : str</span>
+<span class="sd">        (Default value = &#39;&#39;)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">if</span> <span class="n">contains</span> <span class="ow">in</span> <span class="n">f</span><span class="p">]</span>
 </pre></div>
 
         </details>
 
             <div class="docstring"><p>Returns the availible files in directory</p>
+
+<h2 id="parameters">Parameters</h2>
+
+<p>path :</p>
+
+<p>contains : str
+    (Default value = '')</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -241,12 +412,28 @@
 
         
             <span class="def">def</span>
-            <span class="name">merge_dict</span><span class="signature">(a, b, path=None)</span>:
+            <span class="name">merge_dict</span><span class="signature">(a, b, path: str = None)</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">merge_dict</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">merge_dict</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    a :</span>
+<span class="sd">        </span>
+<span class="sd">    b :</span>
+<span class="sd">        </span>
+<span class="sd">    path : str</span>
+<span class="sd">        (Default value = None)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="s2">&quot;merges b into a&quot;</span>
     <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">path</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">b</span><span class="p">:</span>
@@ -262,7 +449,16 @@
 
         </details>
 
-            <div class="docstring"><p>merges b into a</p>
+            <div class="docstring"><h2 id="parameters">Parameters</h2>
+
+<p>a :</p>
+
+<p>b :</p>
+
+<p>path : str
+    (Default value = None)</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -275,7 +471,7 @@
             <span class="name">df_object2type</span><span class="signature">(
     input_df,
     types={&#39;float&#39;: [], &#39;int&#39;: [], &#39;str&#39;: [], &#39;cat&#39;: [], &#39;datetime&#39;: []},
-    show_output=True
+    show_output: bool = True
 )</span>:
     </div>
 
@@ -290,7 +486,23 @@
         <span class="s1">&#39;cat&#39;</span><span class="p">:[],</span>
         <span class="s1">&#39;datetime&#39;</span><span class="p">:[],</span>
     <span class="p">},</span>
-    <span class="n">show_output</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="n">show_output</span><span class="p">:</span><span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    input_df :</span>
+<span class="sd">        </span>
+<span class="sd">    types :</span>
+<span class="sd">        (Default value = {&#39;float&#39;:[],&#39;int&#39;:[],&#39;str&#39;:[],&#39;cat&#39;:[],&#39;datetime&#39;:[],})</span>
+<span class="sd">    show_output : bool</span>
+<span class="sd">        (Default value = True)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     
     <span class="n">converter</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s1">&#39;float&#39;</span><span class="p">:</span><span class="s1">&#39;float&#39;</span><span class="p">,</span>
@@ -315,7 +527,18 @@
 
         </details>
 
-    
+            <div class="docstring"><h2 id="parameters">Parameters</h2>
+
+<p>input_df :</p>
+
+<p>types :
+    (Default value = {'float':[],'int':[],'str':[],'cat':[],'datetime':[],})
+show_output : bool
+    (Default value = True)</p>
+
+<h2 id="returns">Returns</h2>
+</div>
+
 
                 </section>
                 <section id="copy_file">
@@ -323,13 +546,26 @@
 
         
             <span class="def">def</span>
-            <span class="name">copy_file</span><span class="signature">(src, dest) -&gt; bool</span>:
+            <span class="name">copy_file</span><span class="signature">(src: str, dest: str) -&gt; bool</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">copy_file</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">dest</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Copy file from source dir to dest dir. Note that the path must exist where folders should be placed!&quot;&quot;&quot;</span>
+            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">copy_file</span><span class="p">(</span><span class="n">src</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">dest</span><span class="p">:</span><span class="nb">str</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Copy file from source dir to dest dir. Note that the path must exist where folders should be placed!</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    src : str</span>
+<span class="sd">        </span>
+<span class="sd">    dest : str</span>
+<span class="sd">        </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">src</span><span class="p">),</span> <span class="s2">&quot;Source file does not exists&quot;</span>
     
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">dest</span><span class="p">):</span>
@@ -341,6 +577,14 @@
         </details>
 
             <div class="docstring"><p>Copy file from source dir to dest dir. Note that the path must exist where folders should be placed!</p>
+
+<h2 id="parameters">Parameters</h2>
+
+<p>src : str</p>
+
+<p>dest : str</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -356,13 +600,30 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">create_directory</span><span class="p">(</span><span class="n">dest</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Creates directory if not exists&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Creates directory if not exists</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dest :</span>
+<span class="sd">        </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">dest</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
             <div class="docstring"><p>Creates directory if not exists</p>
+
+<h2 id="parameters">Parameters</h2>
+
+<p>dest :</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -372,19 +633,36 @@
 
         
             <span class="def">def</span>
-            <span class="name">remove_preprocessed_filename_definition</span><span class="signature">(filename)</span>:
+            <span class="name">remove_preprocessed_filename_definition</span><span class="signature">(filename: str)</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">remove_preprocessed_filename_definition</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;remove the three first letters to hyandle preprocessed names&quot;&quot;&quot;</span>
+            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">remove_preprocessed_filename_definition</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span><span class="nb">str</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;remove the three first letters to hyandle preprocessed names</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    filename : str</span>
+<span class="sd">        </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">filename</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>
 </pre></div>
 
         </details>
 
             <div class="docstring"><p>remove the three first letters to hyandle preprocessed names</p>
+
+<h2 id="parameters">Parameters</h2>
+
+<p>filename : str</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -394,15 +672,46 @@
 
         
             <span class="def">def</span>
-            <span class="name">xml2dict</span><span class="signature">(r, parent=&#39;&#39;, delimiter=&#39;.&#39;) -&gt; list</span>:
+            <span class="name">xml2dict</span><span class="signature">(r, parent: str = &#39;&#39;, delimiter: str = &#39;.&#39;) -&gt; list</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">xml2dict</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Iterate through all xml files and add them to a dictionary&quot;&quot;&quot;</span>
+            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">xml2dict</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Iterate through all xml files and add them to a dictionary</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    r :</span>
+<span class="sd">        </span>
+<span class="sd">    parent : str</span>
+<span class="sd">        (Default value = &#39;&#39;)</span>
+<span class="sd">    delimiter : str</span>
+<span class="sd">        (Default value = &quot;.&quot;)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">param</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">,</span><span class="n">delimiter</span><span class="p">:</span><span class="n">delimiter</span><span class="o">+</span><span class="nb">list</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">attrib</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
-    <span class="k">def</span> <span class="nf">recursive</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">recursive</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        r :</span>
+<span class="sd">            </span>
+<span class="sd">        parent : str</span>
+<span class="sd">            </span>
+<span class="sd">        delimiter : str</span>
+<span class="sd">            (Default value = &#39;.&#39;)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">cont</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="c1"># If list</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">layers</span> <span class="o">:=</span> <span class="n">r</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;./*&quot;</span><span class="p">)):</span>
@@ -419,6 +728,17 @@
         </details>
 
             <div class="docstring"><p>Iterate through all xml files and add them to a dictionary</p>
+
+<h2 id="parameters">Parameters</h2>
+
+<p>r :</p>
+
+<p>parent : str
+    (Default value = '')
+delimiter : str
+    (Default value = ".")</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -428,14 +748,24 @@
 
         
             <span class="def">def</span>
-            <span class="name">object2type</span><span class="signature">(data)</span>:
+            <span class="name">object2type</span><span class="signature">(data: str)</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">object2type</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">object2type</span><span class="p">(</span><span class="n">data</span><span class="p">:</span><span class="nb">str</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Change the type of data.</span>
 <span class="sd">    Check if data is a int, float otherwise a string/object</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : str</span>
+<span class="sd">        </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
         <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
@@ -449,6 +779,12 @@
 
             <div class="docstring"><p>Change the type of data.
 Check if data is a int, float otherwise a string/object</p>
+
+<h2 id="parameters">Parameters</h2>
+
+<p>data : str</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -458,12 +794,26 @@ Check if data is a int, float otherwise a string/object</p>
 
         
             <span class="def">def</span>
-            <span class="name">split_custom_filename</span><span class="signature">(filename: str, sep=&#39;#&#39;)</span>:
+            <span class="name">split_custom_filename</span><span class="signature">(filename: str, sep: str = &#39;#&#39;)</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">split_custom_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;#&#39;</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">split_custom_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">sep</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="s1">&#39;#&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    filename : str</span>
+<span class="sd">        </span>
+<span class="sd">    sep : str</span>
+<span class="sd">        (Default value = &#39;#&#39;)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="s2">&quot;Split filenames based on custom seperator.&quot;</span>
     <span class="k">assert</span> <span class="n">sep</span> <span class="ow">in</span> <span class="n">filename</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;The expected seperator (</span><span class="si">{</span><span class="n">sep</span><span class="si">}</span><span class="s2">) could not be found in filename&quot;</span>
     <span class="n">slices</span><span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">sep</span><span class="p">)</span>
@@ -474,7 +824,14 @@ Check if data is a int, float otherwise a string/object</p>
 
         </details>
 
-            <div class="docstring"><p>Split filenames based on custom seperator.</p>
+            <div class="docstring"><h2 id="parameters">Parameters</h2>
+
+<p>filename : str</p>
+
+<p>sep : str
+    (Default value = '#')</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
@@ -484,12 +841,26 @@ Check if data is a int, float otherwise a string/object</p>
 
         
             <span class="def">def</span>
-            <span class="name">data_filter</span><span class="signature">(in_dir, out_dir)</span>:
+            <span class="name">data_filter</span><span class="signature">(in_dir: str, out_dir: str)</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">data_filter</span><span class="p">(</span><span class="n">in_dir</span><span class="p">,</span> <span class="n">out_dir</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">data_filter</span><span class="p">(</span><span class="n">in_dir</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">out_dir</span><span class="p">:</span><span class="nb">str</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    in_dir : str</span>
+<span class="sd">        </span>
+<span class="sd">    out_dir : str</span>
+<span class="sd">        </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="s2">&quot;Will remove all but 1 .nii file from each bottom-level folder, keeps in_dir intact and puts result in out_dir. Example usage: data_filter(&#39;..</span><span class="se">\\</span><span class="s2">data</span><span class="se">\\</span><span class="s2">adni_raw&#39;, &#39;..</span><span class="se">\\</span><span class="s2">data</span><span class="se">\\</span><span class="s2">adni_raw_filtered&#39;)&quot;</span>
     <span class="n">files_to_create</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">subdirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">in_dir</span><span class="p">):</span>
@@ -507,7 +878,13 @@ Check if data is a int, float otherwise a string/object</p>
 
         </details>
 
-            <div class="docstring"><p>Will remove all but 1 .nii file from each bottom-level folder, keeps in_dir intact and puts result in out_dir. Example usage: data_filter('..\data\adni_raw', '..\data\adni_raw_filtered')</p>
+            <div class="docstring"><h2 id="parameters">Parameters</h2>
+
+<p>in_dir : str</p>
+
+<p>out_dir : str</p>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 

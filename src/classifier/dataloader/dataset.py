@@ -10,6 +10,7 @@ import numpy as np
 from src.utils import preprocess
 
 class AdniDataset(Dataset):
+    """ """
     def __init__(self, data:list, classes={'CN':0,'MCI':1,'AD':2}, transform=None): #, delimiter='_',
         super().__init__()
         self.transform = transform
@@ -20,9 +21,22 @@ class AdniDataset(Dataset):
         
     def __getitem__(self, idx): 
         """Load nifti image and convert it to axial view.
-        
-        Return:
+
+        Parameters
+        ----------
+        data : list
+            
+        classes :
+            (Default value = {'CN':0,'MCI':1,'AD':2})
+        transform :
+            (Default value = None)
+
+        Returns
+        -------
+        type
             * Image and label where image has the shape Tuple[C,W,H,D]
+
+        
         """
         x = preprocess.image2axial(nib.load(self.data[idx]).get_fdata())
         #mask = x <= 0
@@ -40,5 +54,6 @@ class AdniDataset(Dataset):
 
 
     def __len__(self):
+        """ """
         # return the size of the dataset
         return len(self.data)

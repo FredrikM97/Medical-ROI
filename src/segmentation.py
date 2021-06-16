@@ -26,16 +26,22 @@ from src.utils.decorator import HiddenPrints
 
 def segment_mask(background_mask:np.ndarray, image_mask:np.ndarray, upper_bound=150) -> np.ndarray:
     """Simple segmentation of the mask input
-    Note: This one might need some scientific rework since it is not very good
+
+    Parameters
+    ----------
+    background_mask : np.ndarray
+        
+    image_mask : np.ndarray
+        
+    upper_bound :
+        (Default value = 150)
+
+    Returns
+    -------
+
+    
     """
-    """
-    n=1
-    im = filters.gaussian(image_mask, sigma=1/(4.*n), mode='nearest')
-    mask = im > im.max()*0.62
-    label_im = measure.label(mask, connectivity=None) # Use all three dimensions to decide labels
-    #label_im, nb_labels = ndimage.label(mask, connectivity=1)
-    return label_im
-    """
+
     tmp_image = image_mask.copy()
     tmp_image[tmp_image < upper_bound] = 0
     tmp_image[background_mask<=0] = 0
@@ -44,11 +50,10 @@ def segment_mask(background_mask:np.ndarray, image_mask:np.ndarray, upper_bound=
 
     return labeled_masks
 
-def get_bbox_coordinates(feature):
-    """
-    Convert skimage format to x,y,x,y,z0,z1
+def get_bbox_coordinates(feature:object):
+    """Convert skimage format to x,y,x,y,z0,z1
     
-    Expects feature.bbox to be in format: 
+    Expects feature.bbox to be in format:
         min_depth, min_row, min_col, max_depth, max_row, max_col
     Returns:
         min_col, min_row, max_col, max_row, min_depth, max_depth
@@ -60,9 +65,18 @@ def get_bbox_coordinates(feature):
     
     feature = measure.regionprops(tmp_image)[0]
     feature.bbox -> (1, 30, 20, 2, 40, 50)
+
+    Parameters
+    ----------
+    feature : object
+        
+
+    Returns
+    -------
+    type
+        (20, 30, 50, 40, 1, 2)
+
     
-    Return:
-    (20, 30, 50, 40, 1, 2)
     """
     
     min_depth, min_row, min_col, max_depth, max_row, max_col = feature.bbox
@@ -70,11 +84,18 @@ def get_bbox_coordinates(feature):
 
 def bounding_boxes(features:list):
     """Expects features from 2D images
-    
-    Args:
-        features (List[RegionProperties])
-    Return:
+
+    Parameters
+    ----------
+    features : list
+        List
+
+    Returns
+    -------
+    type
         output List[K, 6] with the box coordinates in  (x0, y0, x1, y1, z0, z1) and k is batch size.
+
+    
     """
 
     if isinstance(features, list):
@@ -83,11 +104,27 @@ def bounding_boxes(features:list):
     else:
         return get_bbox_coordinates(features)
 
-def roi_align(image, boxes:list, output_shape=(40,40,40), displayed=False):
-    """ Create aligned image rois for the neural network
+def roi_align(image, boxes:list, output_shape:Tuple=(40,40,40), displayed:bool=False):
+    """Create aligned image rois for the neural network
     Arg:
         image: Image of shape Tuple[D,H,W]
         features (List[Tuple[int,int,int,int,int]]): List of features (z0,y0,z1,y1,x0,x1). Shape is expected based on the input of ROIAlign
+
+    Parameters
+    ----------
+    image :
+        
+    boxes : list
+        
+    output_shape : Tuple
+        (Default value = (40,40,40))
+    displayed : bool
+        (Default value = False)
+
+    Returns
+    -------
+
+    
     """
 
     image_tensor = torch.from_numpy(image).unsqueeze(0).unsqueeze(0).float().cuda()
@@ -103,28 +140,55 @@ def roi_align(image, boxes:list, output_shape=(40,40,40), displayed=False):
 
 def column_to_tuple(pd_column):
     """Convert a pandas column from string to tuple
-    
-    Args:
-        pd_column (Series): A selected column to convert the content to tuple type.
-    Return:
+
+    Parameters
+    ----------
+    pd_column :
+        Series
+
+    Returns
+    -------
+    type
         output (Series):
+
     
     """
     
     return pd_column.apply(ast.literal_eval)
 
-def column_to_np(pd_column, dtype='float64'):
+def column_to_np(pd_column, dtype:str='float64'):
     """Convert a pandas column from tuple to numpy arrays
-    
-    Args:
-        pd_column (Series): A selected column to convert the content to numpy.
-    Return:
+
+    Parameters
+    ----------
+    pd_column :
+        Series
+    dtype : str
+        (Default value = 'float64')
+
+    Returns
+    -------
+    type
         output (Series):
+
+    
     """
     
     return pd_column.apply(lambda x: np.array(x, dtype=dtype))
 
-def center_coordinates(list_of_bbox):
+def center_coordinates(list_of_bbox:list):
+    """
+
+    Parameters
+    ----------
+    list_of_bbox : list
+        
+
+    Returns
+    -------
+
+    
+    """
     z = (list_of_bbox[0] + list_of_bbox[2])/2
     y = (list_of_bbox[1] + list_of_bbox[3])/2
     x = (list_of_bbox[4] + list_of_bbox[5])/2
@@ -132,13 +196,38 @@ def center_coordinates(list_of_bbox):
     return x,y,z
 
 def max_occurance(occurances:list):
-    "Calculate the number of occurances of a type"
+    """Calculate the number of occurances of a type
+
+    Parameters
+    ----------
+    occurances : list
+        
+
+    Returns
+    -------
+
+    
+    """
     u,c = np.unique(occurances, return_counts=True)
     max_val = u[c == c.max()]
     return max_val
 
 def nms_reduction(_bboxes, th=0.5):
-    "Reduce pandas dataframe data containing 'bbox', 'score' and 'observe_class'. "
+    """Reduce pandas dataframe data containing 'bbox', 'score' and 'observe_class'.
+
+    Parameters
+    ----------
+    _bboxes :
+        
+    th :
+        (Default value = 0.5)
+
+    Returns
+    -------
+
+    
+    """
+
     bbox_tensor = torch.Tensor(_bboxes['bbox'].to_list()).float()
     scores = torch.Tensor(_bboxes['score'].to_list()) 
     idxs  = torch.Tensor(_bboxes['observe_class'].to_list())
@@ -147,12 +236,41 @@ def nms_reduction(_bboxes, th=0.5):
     return only_interesting
 
 class Feature_extraction():
-    """
-    Extract features from CAM where the segmented image are about a given threshold.
+    """Extract features from CAM where the segmented image are about a given threshold.
     
     Supports two functions: features and extract.
+
+    Parameters
+    ----------
+
+    Returns
+    -------
+
+    
     """
-    def __init__(self, cam_extractor, upper_bound=0.85, use_quantile_bounds=True,lambda1=1,lambda2=1, n_average=2):
+    def __init__(self, cam_extractor, upper_bound:float=0.85, use_quantile_bounds:bool=True,lambda1:int=1,lambda2:int=1, n_average:int=2):
+        """
+
+        Parameters
+        ----------
+        cam_extractor :
+            
+        upper_bound : float
+            (Default value = 0.85)
+        use_quantile_bounds : bool
+            (Default value = True)
+        lambda1 : int
+            (Default value = 1)
+        lambda2 : int
+            (Default value = 1)
+        n_average : int
+            (Default value = 2)
+
+        Returns
+        -------
+
+        
+        """
 
         self.cam_extractor = cam_extractor
         self.upper_bound = upper_bound
@@ -163,7 +281,20 @@ class Feature_extraction():
 
     def extract(self, nifti_image:torch.Tensor, observe_class:int):
         """
-        Return the segmented mask, image mask class index and upper_bound
+
+        Parameters
+        ----------
+        nifti_image : torch.Tensor
+            
+        observe_class : int
+            
+
+        Returns
+        -------
+        type
+            
+
+        
         """
         if len(nifti_image.shape) > 3:
             nifti_image = nifti_image.squeeze(0)
@@ -195,17 +326,29 @@ class Feature_extraction():
         
         return segmented_mask, image_mask,class_idx,_upper_bound
                 
-    def features(self, i, image_name, nifti_image, patient_class, observe_class):
+    def features(self, i:int, image_name:str, nifti_image, patient_class:int, observe_class:int):
+        """Calculate score and return info of the segmented features
+
+        Parameters
+        ----------
+        i : int
+            index
+        image_name : str
+            Name of image
+        nifti_image :
+            image from nifti
+        patient_class : int
+            Patient class
+        observe_class : int
+            Which class to observe
+
+        Returns
+        -------
+        dict : 
+            Features for; image, patient_class, observe_class, probability_class and score
+
+        
         """
-        Calculate score and return info of the segmented features
-        Args:
-            i: index
-            image_name: Name of image
-            nifti_image: image from nifti
-            patient_class: Patient class
-            observe_class: Which class to observe
-            
-        """    
         segmented_mask, image_mask, class_idx,_upper_bound = self.extract(nifti_image, observe_class)
         features = measure.regionprops(segmented_mask, intensity_image=image_mask)
         new_features = {
@@ -220,5 +363,5 @@ class Feature_extraction():
             'score':self.lambda1 * np.mean(new_features['mean_intensity'])/np.max(image_mask) - self.lambda2*((np.array(new_features['bbox_area']))/image_mask.size)
         })
         
-        #del class_scores, nifti_image, segmented_mask, image_mask, features
+
         return {'image':image_name, 'patient_class':patient_class, 'observe_class':observe_class, 'probability_class':class_idx, **new_features}

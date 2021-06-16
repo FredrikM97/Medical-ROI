@@ -9,7 +9,22 @@ import torch
 from src.utils import utils
 
 class MetricTracker(pl.metrics.Metric):
-    def __init__(self,compute_on_step=False, dist_sync_on_step=False):
+    """ """
+    def __init__(self,compute_on_step:bool=False, dist_sync_on_step:bool=False):
+        """
+
+        Parameters
+        ----------
+        compute_on_step : bool
+            (Default value = False)
+        dist_sync_on_step : bool
+            (Default value = False)
+
+        Returns
+        -------
+
+        
+        """
         super().__init__(compute_on_step=compute_on_step, dist_sync_on_step=dist_sync_on_step)
 
         self.add_state('predicted',default=[], dist_reduce_fx=None)
@@ -19,6 +34,24 @@ class MetricTracker(pl.metrics.Metric):
         self.add_state('num_batch',default=torch.tensor(0.), dist_reduce_fx=None)
         
     def update(self, predicted, target, probability, loss):
+        """
+
+        Parameters
+        ----------
+        predicted :
+            
+        target :
+            
+        probability :
+            
+        loss :
+            
+
+        Returns
+        -------
+
+        
+        """
         self.predicted.append(predicted)
         self.target.append(target)
         self.probability.append(probability)
@@ -27,6 +60,7 @@ class MetricTracker(pl.metrics.Metric):
         self.num_batch +=1
         
     def compute(self):
+        """ """
         # Returns: predicted, target, loss, probability, epoch
         return (
             torch.cat(self.predicted, dim=0),
@@ -36,20 +70,61 @@ class MetricTracker(pl.metrics.Metric):
         )
 
 class Mean(pl.metrics.Metric):
-    def __init__(self,compute_on_step=False):
+    """ """
+    def __init__(self,compute_on_step:bool=False):
+        """
+
+        Parameters
+        ----------
+        compute_on_step : bool
+            (Default value = False)
+
+        Returns
+        -------
+
+        
+        """
         super().__init__(compute_on_step=compute_on_step, dist_sync_on_step=False)
         self.add_state('val',default=torch.tensor(0.), dist_reduce_fx='mean')
         self.add_state('num',default=torch.tensor(0.), dist_reduce_fx='mean')
         
     def update(self, loss):
+        """
+
+        Parameters
+        ----------
+        loss :
+            
+
+        Returns
+        -------
+
+        
+        """
         self.val+=loss.mean()
         self.num +=1
         
     def compute(self):
+        """ """
         return self.val/self.num
 
 class CVTracker(pl.metrics.Metric):
-    def __init__(self,compute_on_step=False, dist_sync_on_step=False):
+    """ """
+    def __init__(self,compute_on_step:bool=False, dist_sync_on_step:bool=False):
+        """
+
+        Parameters
+        ----------
+        compute_on_step : bool
+            (Default value = False)
+        dist_sync_on_step : bool
+            (Default value = False)
+
+        Returns
+        -------
+
+        
+        """
         super().__init__(compute_on_step=compute_on_step, dist_sync_on_step=dist_sync_on_step)
 
         self.add_state('auc',default=[], dist_reduce_fx=None)
@@ -58,6 +133,24 @@ class CVTracker(pl.metrics.Metric):
         self.add_state('loss',default=torch.tensor(0.), dist_reduce_fx=None)
         self.add_state('num_batch',default=torch.tensor(0.), dist_reduce_fx=None)
     def update(self, predicted, target, probability, loss):
+        """
+
+        Parameters
+        ----------
+        predicted :
+            
+        target :
+            
+        probability :
+            
+        loss :
+            
+
+        Returns
+        -------
+
+        
+        """
         self.predicted.append(predicted)
         self.target.append(target)
         self.probability.append(probability)
@@ -66,6 +159,7 @@ class CVTracker(pl.metrics.Metric):
         self.num_batch +=1
         
     def compute(self):
+        """ """
         # Returns: predicted, target, loss, probability, epoch
         return (
             torch.cat(self.predicted, dim=0),

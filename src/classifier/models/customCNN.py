@@ -2,8 +2,21 @@ from torch import nn
 import torch.nn.functional as F
 
 class customCNN(nn.Module):
+    """ """
     
     def __init__(self, **kwargs):
+        """
+
+        Parameters
+        ----------
+        **kwargs :
+            
+
+        Returns
+        -------
+
+        
+        """
         super().__init__()
         
         self.conv_1 = nn.Conv3d(1, 16, kernel_size = (3, 3, 3))
@@ -25,6 +38,18 @@ class customCNN(nn.Module):
         self.dropout = nn.Dropout(0.5)
         
     def forward(self, x):
+        """
+
+        Parameters
+        ----------
+        x :
+            
+
+        Returns
+        -------
+
+        
+        """
         
         #print(x.shape)
         
@@ -56,6 +81,18 @@ class customCNN(nn.Module):
         return self.fc_3(x)
     
     def num_flat_features(self, x):
+        """
+
+        Parameters
+        ----------
+        x :
+            
+
+        Returns
+        -------
+
+        
+        """
         size = x.size()[1:]
         num_features = 1
         for s in size:

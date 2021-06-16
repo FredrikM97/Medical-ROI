@@ -27,7 +27,28 @@ from src.classifier.metric import MetricTracker
 
 
 class Model(pl.LightningModule): 
+    """ """
     def __init__(self,class_weights:torch.Tensor=None,hp_metrics:list=None,loss={}, roi_hparams={"enable":False,'input_shape':None, 'bounding_boxes':[]},**hparams):
+        """
+
+        Parameters
+        ----------
+        class_weights : torch.Tensor
+            (Default value = None)
+        hp_metrics : list
+            (Default value = None)
+        loss :
+            (Default value = {})
+        roi_hparams :
+            (Default value = {"enable":False,'input_shape':None, 'bounding_boxes':[]})
+        **hparams :
+            
+
+        Returns
+        -------
+
+        
+        """
         super().__init__() 
         self.save_hyperparameters()
         self.model = models.create_model(**self.hparams['arch'])
@@ -57,13 +78,40 @@ class Model(pl.LightningModule):
             self.valid_dummy_metric = pl_metrics.AUROC(num_classes=3, average=None,compute_on_step=False)
        
     def on_train_start(self):
+        """ """
         if self.logger:
             self.logger.log_hyperparams(self.hparams, {metric:0 for metric in self.hp_metrics})
         
     def forward(self, x):
+        """
+
+        Parameters
+        ----------
+        x :
+            
+
+        Returns
+        -------
+
+        
+        """
         return self.model(x)
     
     def training_step(self, batch: dict, batch_idx: int) -> dict:
+        """
+
+        Parameters
+        ----------
+        batch : dict
+            
+        batch_idx : int
+            
+
+        Returns
+        -------
+
+        
+        """
         x, target = batch
         # Since we might want to apply ROI at any time we can enable and disable it here. ROIAlign needs to be on the GPU!
         if self.roi_enabled:
@@ -75,6 +123,20 @@ class Model(pl.LightningModule):
         return loss
     
     def validation_step(self, batch: dict, batch_idx: int) -> dict:
+        """
+
+        Parameters
+        ----------
+        batch : dict
+            
+        batch_idx : int
+            
+
+        Returns
+        -------
+
+        
+        """
         x, target = batch
         # Since we might want to apply ROI at any time we can enable and disable it here. ROIAlign needs to be on the GPU!
         if self.roi_enabled:
@@ -93,9 +155,33 @@ class Model(pl.LightningModule):
         return {'loss/val':loss}
   
     def training_epoch_end(self, outputs):
+        """
+
+        Parameters
+        ----------
+        outputs :
+            
+
+        Returns
+        -------
+
+        
+        """
         self.log('loss/train',torch.stack([x['loss'] for x in outputs]).mean())
         
     def validation_epoch_end(self,outputs):
+        """
+
+        Parameters
+        ----------
+        outputs :
+            
+
+        Returns
+        -------
+
+        
+        """
         
         metrics = self.valid_metrics.compute()
 
@@ -108,6 +194,7 @@ class Model(pl.LightningModule):
         self.valid_dummy_metric.reset()
         
     def configure_optimizers(self):
+        """ """
         # Note: dont use list if only one item.. Causes silent crashes
         optim = torch.optim.__dict__[self.hparams.optimizer['type']]
         optimizer = optim(self.model.parameters(), **self.hparams.optimizer['args'])
@@ -118,6 +205,7 @@ class Model(pl.LightningModule):
         }
 
     def __str__(self):
+        """ """
         return (f"""{"Architecture: [{0}]".format(type(self.model).__name__)}\n"""
                 f"""***Defined hyperparameters:***\n{self.hparams}""")
             

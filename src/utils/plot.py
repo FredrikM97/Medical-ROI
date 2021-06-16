@@ -19,8 +19,21 @@ from src.utils.cmap import parula_map
 
 #sns.set(font_scale=2.5)
 
-def intensity_distribution(image, title=""):
-    """Plot the intensity distribution of an input image"""
+def intensity_distribution(image:np.ndarray, title:str=""):
+    """Plot the intensity distribution of an input image
+
+    Parameters
+    ----------
+    image : np.ndarray
+        
+    title : str
+        (Default value = "")
+
+    Returns
+    -------
+
+    
+    """
     fig = plt.figure()
     ax = sns.histplot(image) #, image.max()
     # Ignore the first value as it is only zeros
@@ -32,7 +45,24 @@ def intensity_distribution(image, title=""):
     plt.xlabel("Frequency")
 
 def display_3D(im3d:np.ndarray, cmap:str="jet", step:int=2, plottype:str='imshow'):
-    """Plot 3D image as 2D slices"""
+    """Plot 3D image as 2D slices
+
+    Parameters
+    ----------
+    im3d : np.ndarray
+        
+    cmap : str
+        (Default value = "jet")
+    step : int
+        (Default value = 2)
+    plottype : str
+        (Default value = 'imshow')
+
+    Returns
+    -------
+
+    
+    """
     
     ncols = 9
     nrows = 1 if ceil(im3d.shape[0]/(ncols*step)) == 0 else ceil(im3d.shape[0]/(ncols*step))
@@ -57,34 +87,24 @@ def display_3D(im3d:np.ndarray, cmap:str="jet", step:int=2, plottype:str='imshow
         
     return fig
 
-def features_regions(bboxes:list, image_mask:np.ndarray,grid_kwgs={}):
-    """Plot the extracted features"""
-    '''
-    ncols = 9
-    nrows = 1 if len(image_mask) == 0 else int(np.ceil(len(image_mask)/ncols))
-    fig, axes = plt.subplots(nrows=nrows, ncols=ncols, figsize=(7, 1*nrows))
+def features_regions(bboxes:list, image_mask:np.ndarray,grid_kwgs:dict={}):
+    """Plot the extracted features
 
-    vmin = image_mask.min()
-    vmax = image_mask.max()
-    fig.suptitle(plot_title)
-    flatten_axis = axes.flatten()
-    for ax, image in zip(flatten_axis, image_mask[::step]):
-        ax.imshow(image, cmap='jet', vmin=vmin, vmax=vmax)
-
-        ax.set_xticks([])
-        ax.set_yticks([])
-
-    # Add boundaries
-    
-    for x0,y0,x1,y1,z0,z1 in bboxes:
-        for z in range(z0,z1):
-            flatten_axis[z].add_patch(mpatches.Rectangle((x0, y0), x1 - x0, y1 - y0,fill=False, edgecolor='red', linewidth=2))
-    
-    for ax in flatten_axis[len(image_mask[::step]):]:
-        ax.set_visible(False)
+    Parameters
+    ----------
+    bboxes : list
         
-    return fig
-    '''
+    image_mask : np.ndarray
+        
+    grid_kwgs : dict
+        (Default value = {})
+
+    Returns
+    -------
+
+    
+    """
+
     vmin = image_mask.min()
     vmax = image_mask.max()
     
@@ -106,8 +126,19 @@ def features_regions(bboxes:list, image_mask:np.ndarray,grid_kwgs={}):
     
     plt.axis('off')
 
-def center_distribution(bbox_coords):
-    """Plot the distribution"""
+def center_distribution(bbox_coords:list) -> None:
+    """Plot the distribution
+
+    Parameters
+    ----------
+    bbox_coords : list
+        
+
+    Returns
+    -------
+
+    
+    """
     bbox_listed = list(zip(*bbox_coords))
 
     fig, axes = plt.subplots(1, 3, figsize=(10,5))
@@ -116,11 +147,19 @@ def center_distribution(bbox_coords):
         sns.histplot(cord, ax=ax,bins=10)
 
 def apply_image_bboxes(image,bbox_coords):
-    """
-    Takes coordinates of bounding boxes and plot them.
+    """Takes coordinates of bounding boxes and plot them.
+
+    Parameters
+    ----------
+    image :
+        
+    bbox_coords : list[int]
+        Expect shape of (x0,y0,x1,y1,z0,z1)
+
+    Returns
+    -------
+
     
-    Args:
-        bbox_coords (list[int]): Expect shape of (x0,y0,x1,y1,z0,z1)
     """
 
     for feature in features:
@@ -130,7 +169,23 @@ def apply_image_bboxes(image,bbox_coords):
             
     return image
 
-def roc(roc_classes, prefix='', fig=None):
+def roc(roc_classes, prefix:str='', fig=None):
+    """
+
+    Parameters
+    ----------
+    roc_classes :
+        
+    prefix : str
+        (Default value = '')
+    fig :
+        (Default value = None)
+
+    Returns
+    -------
+
+    
+    """
     # Returns (auc, fpr, tpr), roc_fig
     fig = plt.figure(figsize = (10,7))
     lw = 2
@@ -165,6 +220,20 @@ def roc(roc_classes, prefix='', fig=None):
     return metric_list, fig
 
 def precision_recall_curve(precision, recall):
+    """
+
+    Parameters
+    ----------
+    precision :
+        
+    recall :
+        
+
+    Returns
+    -------
+
+    
+    """
     fig = plt.figure(figsize = (10,7))
     lw=2
     colors = np.array(['aqua', 'darkorange', 'cornflowerblue'])
@@ -194,6 +263,18 @@ def precision_recall_curve(precision, recall):
     return metric_list, fig
 
 def confusion_matrix(cm):
+    """
+
+    Parameters
+    ----------
+    cm :
+        
+
+    Returns
+    -------
+
+    
+    """
     with sns.plotting_context("talk", font_scale=1.4):
         #fig = plt.figure(figsize=(20,20))
         f, axs = plt.subplots(1, 1, figsize=(20,20))
@@ -203,7 +284,29 @@ def confusion_matrix(cm):
     
     return f
 
-def imshow(image, cmap=parula_map, figsize=(8,4),colormap=False,colormap_shrink=1, disable_axis=True):
+def imshow(image, cmap=parula_map, figsize=(8,4),colormap:bool=False,colormap_shrink:float=1, disable_axis:bool=True):
+    """
+
+    Parameters
+    ----------
+    image :
+        
+    cmap :
+        (Default value = parula_map)
+    figsize :
+        (Default value = (8,4))
+    colormap : bool
+        (Default value = False)
+    colormap_shrink : float
+        (Default value = 1)
+    disable_axis : bool
+        (Default value = True)
+
+    Returns
+    -------
+
+    
+    """
     fig = plt.figure(figsize=figsize)
     im = plt.imshow(image, cmap=cmap)
     

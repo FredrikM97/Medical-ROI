@@ -20,7 +20,26 @@ from src.utils.cmap import parula_map
 
 
 class CAM:
-    def __init__(self, model, cam_type=torchcam.cams.GradCAMpp,target_layer="model.layer4", cam_kwargs={}):
+    """ """
+    def __init__(self, model, cam_type=torchcam.cams.GradCAMpp,target_layer:str="model.layer4", cam_kwargs:dict={}):
+        """
+
+        Parameters
+        ----------
+        model :
+            
+        cam_type :
+            (Default value = torchcam.cams.GradCAMpp)
+        target_layer : str
+            (Default value = "model.layer4")
+        cam_kwargs : dict
+            (Default value = {})
+
+        Returns
+        -------
+
+        
+        """
         self._CLASSES=[0,1,2]
         self.CAM_TYPE = cam_type
         self.TARGET_LAYER = target_layer
@@ -28,12 +47,23 @@ class CAM:
         self.extractor = cam_type(model, target_layer=target_layer, **cam_kwargs)
 
     def class_score(self, input_image:np.ndarray, device='cuda', input_shape=(79,95,79)) -> Tuple[torch.tensor, int]:
-        """ Calculate the class scores and the highest probability of the target class
+        """Calculate the class scores and the highest probability of the target class
+
+        Parameters
+        ----------
+        input_image : np.ndarray
             
-        Args:
+        device :
+            (Default value = 'cuda')
+        input_shape :
+            (Default value = (79,95,79))
+
+        Returns
+        -------
+        Tuple[torch.tensor,int]
+            All the probabilities and the best probability class
+
         
-        Return:
-            * Tuple containing all the probabilities and the best probability class
         """
         image = preprocess.preprocess_image(input_image)
         image = preprocess.batchisize_to_5D(image)
@@ -49,30 +79,54 @@ class CAM:
         return class_scores, class_scores.squeeze(0).argmax().item()
     
     def activations(self, class_idx:int=None, class_scores:torch.tensor=None) -> np.ndarray:
-        """ Retrieve the map based on the score from the model
+        """Retrieve the map based on the score from the model
+
+        Parameters
+        ----------
+        class_idx : int
+            (Default value = None)
+        class_scores : torch.tensor
+            (Default value = None)
+
+        Returns
+        -------
+        np.ndarray
+            Tensor with activations from image with shape tensor[D,H,W]
+
         
-        Return:
-            * tensor with activations from image with shape tensor[D,H,W]
         """
 
         return self.extractor(class_idx, class_scores, normalized=False).detach().cpu()
     
     @staticmethod
-    def plot(images=[], masks=[], labels=[],cmap=parula_map, alpha=0.7, class_label:str=None, predicted_override=None, architecture=None):
+    def plot(images:list=[], masks:list=[], labels=[],cmap=parula_map, alpha:float=0.7, class_label:str=None, predicted_override:bool=None, architecture:str=None):
         """Create a plot from the given class activation map and input image. CAM is calculated from the models weights and the probability distribution of each class.
-        
-        Args:
-            class_scores (tensor): tensor of probability for each class 
-            class_idx (Union[List[int],int]): Index of highest class_score probability 
-            input_image (np.ndarray): image to the evaluated
-            cmap (Color object), optional: The cmap to use in plot 
-            alpha (int), optional: Alpha value for opacity 
-            class_label (str), optional: Which class the image belongs to.
-            predicted_override (bool), optional: If class_idx should be overwritten and plot each class instead
-            max_num_slices (int), optional: Number of total slices that should be plotted. Combine multiple slices if image slices are more than number of max_num_slices.
-            
-        Return:
+
+        Parameters
+        ----------
+        images : list
+            (Default value = [])
+        masks : list
+            (Default value = [])
+        labels :
+            (Default value = [])
+        cmap :
+            Color object (Default value = parula_map)
+        alpha : float
+            int (Default value = 0.7)
+        class_label : str
+            str (Default value = None)
+        predicted_override : bool
+            bool (Default value = None)
+        architecture : str
+            (Default value = None)
+
+        Returns
+        -------
+        type
             output (Figure): Figure reference to plot
+
+        
         """
         #class_idx = class_idx if isinstance(class_idx, list) else [class_idx]
         if (max_length :=len(masks)) > len(images):
@@ -143,24 +197,80 @@ class CAM:
         return fig
 
     @staticmethod
-    def get_cam(model, cam_type, input_shape=(79,95,79),target_layer=None,CAM_kwargs={}):
-        """Generate CAM object"""
+    def get_cam(model, cam_type, input_shape:Tuple=(79,95,79),target_layer:str=None,CAM_kwargs:dict={}):
+        """Generate CAM object
+
+        Parameters
+        ----------
+        model :
+            
+        cam_type :
+            
+        input_shape : Tuple
+            (Default value = (79,95,79))
+        target_layer : str
+            (Default value = None)
+        CAM_kwargs : dict
+            (Default value = {})
+
+        Returns
+        -------
+
+        
+        """
         extractor = cam_type(model, input_shape=(1,*input_shape), target_layer=target_layer, **CAM_kwargs)
         return extractor
     
     @staticmethod
     def average_image(images:list):
-        """Calculate average over multiple images"""
+        """Calculate average over multiple images
+
+        Parameters
+        ----------
+        images : list
+            
+
+        Returns
+        -------
+
+        
+        """
         return torch.mean(torch.stack(images), axis=0)
     
     @staticmethod
     def repeat_stack(image:torch.tensor, repeat:int=1, grid_kwargs:dict={}):
-        """Repeat am image in a grid N number of times."""
+        """Repeat am image in a grid N number of times.
+
+        Parameters
+        ----------
+        image : torch.tensor
+            
+        repeat : int
+            (Default value = 1)
+        grid_kwargs : dict
+            (Default value = {})
+
+        Returns
+        -------
+
+        
+        """
         return torch.stack([to_grid(image, **grid_kwargs)]*repeat)
     
     @staticmethod
     def preprocess(filename:str):
-        """Preprocess image to a valid format"""
+        """Preprocess image to a valid format
+
+        Parameters
+        ----------
+        filename : str
+            
+
+        Returns
+        -------
+
+        
+        """
         class_label = utils.split_custom_filename(filename,'/')[4]
         image = image2axial(nib.load(filename).get_fdata())
         image[image <= 0]=0

@@ -75,6 +75,22 @@
     <span class="vm">__doc__</span> <span class="o">+=</span> <span class="n">sk_StratifiedKFold</span><span class="o">.</span><span class="vm">__doc__</span>
     
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_splits</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        n_splits :</span>
+<span class="sd">            (Default value = 5)</span>
+<span class="sd">        shuffle :</span>
+<span class="sd">            (Default value = False)</span>
+<span class="sd">        random_state :</span>
+<span class="sd">            (Default value = None)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">n_splits</span><span class="o">=</span><span class="n">n_splits</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="n">shuffle</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">)</span>
         
         <span class="bp">self</span><span class="o">.</span><span class="n">_folds</span> <span class="o">=</span> <span class="p">[]</span>
@@ -83,12 +99,20 @@
         
     <span class="k">def</span> <span class="nf">split</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Extended version of the split for a pytorch dataloader&#39;s dataset</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X :</span>
+<span class="sd">            List</span>
+<span class="sd">        y :</span>
+<span class="sd">            (Default value = None)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        type</span>
+<span class="sd">            output (self): Return a self object to reference the next fold.</span>
+
 <span class="sd">        </span>
-<span class="sd">        Args:</span>
-<span class="sd">        X (List): Dataset to split.</span>
-<span class="sd">        </span>
-<span class="sd">        Return:</span>
-<span class="sd">        output (self): Return a self object to reference the next fold. </span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">fold_idx</span> <span class="o">=</span> <span class="mi">0</span>
@@ -97,6 +121,7 @@
         <span class="k">return</span> <span class="bp">self</span>
 
     <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fold_idx</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_splits</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">fold_idx</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">()</span>
@@ -104,7 +129,16 @@
         
     
     <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Access the data fold in dataset&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Access the data fold in dataset</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_folds</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">fold_idx</span><span class="p">]</span>
 </pre></div>
@@ -128,6 +162,22 @@
     <span class="vm">__doc__</span> <span class="o">+=</span> <span class="n">sk_StratifiedKFold</span><span class="o">.</span><span class="vm">__doc__</span>
     
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_splits</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        n_splits :</span>
+<span class="sd">            (Default value = 5)</span>
+<span class="sd">        shuffle :</span>
+<span class="sd">            (Default value = False)</span>
+<span class="sd">        random_state :</span>
+<span class="sd">            (Default value = None)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">n_splits</span><span class="o">=</span><span class="n">n_splits</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="n">shuffle</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">)</span>
         
         <span class="bp">self</span><span class="o">.</span><span class="n">_folds</span> <span class="o">=</span> <span class="p">[]</span>
@@ -136,12 +186,20 @@
         
     <span class="k">def</span> <span class="nf">split</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Extended version of the split for a pytorch dataloader&#39;s dataset</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X :</span>
+<span class="sd">            List</span>
+<span class="sd">        y :</span>
+<span class="sd">            (Default value = None)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        type</span>
+<span class="sd">            output (self): Return a self object to reference the next fold.</span>
+
 <span class="sd">        </span>
-<span class="sd">        Args:</span>
-<span class="sd">        X (List): Dataset to split.</span>
-<span class="sd">        </span>
-<span class="sd">        Return:</span>
-<span class="sd">        output (self): Return a self object to reference the next fold. </span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">fold_idx</span> <span class="o">=</span> <span class="mi">0</span>
@@ -150,6 +208,7 @@
         <span class="k">return</span> <span class="bp">self</span>
 
     <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fold_idx</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_splits</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">fold_idx</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">()</span>
@@ -157,7 +216,16 @@
         
     
     <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Access the data fold in dataset&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Access the data fold in dataset</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_folds</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">fold_idx</span><span class="p">]</span>
 </pre></div>
@@ -248,6 +316,22 @@ sample.</li>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_splits</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        n_splits :</span>
+<span class="sd">            (Default value = 5)</span>
+<span class="sd">        shuffle :</span>
+<span class="sd">            (Default value = False)</span>
+<span class="sd">        random_state :</span>
+<span class="sd">            (Default value = None)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">n_splits</span><span class="o">=</span><span class="n">n_splits</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="n">shuffle</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">)</span>
         
         <span class="bp">self</span><span class="o">.</span><span class="n">_folds</span> <span class="o">=</span> <span class="p">[]</span>
@@ -257,7 +341,18 @@ sample.</li>
 
         </details>
 
-    
+            <div class="docstring"><h2 id="parameters">Parameters</h2>
+
+<p>n_splits :
+    (Default value = 5)
+shuffle :
+    (Default value = False)
+random_state :
+    (Default value = None)</p>
+
+<h2 id="returns">Returns</h2>
+</div>
+
 
                             </div>
                             <div id="KFold.split" class="classattr">
@@ -272,12 +367,20 @@ sample.</li>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">split</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Extended version of the split for a pytorch dataloader&#39;s dataset</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X :</span>
+<span class="sd">            List</span>
+<span class="sd">        y :</span>
+<span class="sd">            (Default value = None)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        type</span>
+<span class="sd">            output (self): Return a self object to reference the next fold.</span>
+
 <span class="sd">        </span>
-<span class="sd">        Args:</span>
-<span class="sd">        X (List): Dataset to split.</span>
-<span class="sd">        </span>
-<span class="sd">        Return:</span>
-<span class="sd">        output (self): Return a self object to reference the next fold. </span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">fold_idx</span> <span class="o">=</span> <span class="mi">0</span>
@@ -290,11 +393,17 @@ sample.</li>
 
             <div class="docstring"><p>Extended version of the split for a pytorch dataloader's dataset</p>
 
-<p>Args:
-X (List): Dataset to split.</p>
+<h2 id="parameters">Parameters</h2>
 
-<p>Return:
-output (self): Return a self object to reference the next fold.</p>
+<p>X :
+    List
+y :
+    (Default value = None)</p>
+
+<h2 id="returns">Returns</h2>
+
+<p>type
+    output (self): Return a self object to reference the next fold.</p>
 </div>
 
 
@@ -310,6 +419,7 @@ output (self): Return a self object to reference the next fold.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fold_idx</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_splits</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">fold_idx</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">()</span>
@@ -332,7 +442,16 @@ output (self): Return a self object to reference the next fold.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Access the data fold in dataset&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Access the data fold in dataset</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_folds</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">fold_idx</span><span class="p">]</span>
 </pre></div>
@@ -340,6 +459,10 @@ output (self): Return a self object to reference the next fold.</p>
         </details>
 
             <div class="docstring"><p>Access the data fold in dataset</p>
+
+<h2 id="parameters">Parameters</h2>
+
+<h2 id="returns">Returns</h2>
 </div>
 
 
