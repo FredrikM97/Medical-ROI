@@ -1,19 +1,20 @@
 
-import pytorch_lightning as pl 
-import torch
-from torch.utils.data import DataLoader
-import torchvision
+import random
+
 import numpy as np
-from sklearn.model_selection import train_test_split
-from sklearn.model_selection import StratifiedKFold
+import pytorch_lightning as pl
+import torch
+import torchvision
+import torchvision.transforms as tf
+from sklearn.model_selection import StratifiedKFold, train_test_split
+from torch.utils.data import DataLoader
 
 from src import BASEDIR
-from src.files import load,preprocess
-from .dataset import AdniDataset
-from .augmentation import augment, randomNoise, randRange
+from src.files import load, preprocess
 
-import torchvision.transforms as tf
-import random
+from .augmentation import augment, randomNoise, randRange
+from .dataset import AdniDataset
+
 
 class AdniDataloader(pl.LightningDataModule): 
     """Dataloader module to define training, validation and testing data and split data into separate datasets."""

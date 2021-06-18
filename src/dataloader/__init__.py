@@ -2,11 +2,15 @@
     This package includes all the modules related to data loading and preprocessing.
 """
 import importlib
-from torch.utils import data
-from pytorch_lightning import LightningDataModule
-from src.files import load
-from . import *
 import sys
+
+from pytorch_lightning import LightningDataModule
+from torch.utils import data
+
+from src.files import load
+
+from . import *
+
 BASEDIR = '.'.join([str(__name__),'dataloader'])
 
 def find_dataset_using_name(datadir, dataset_name):

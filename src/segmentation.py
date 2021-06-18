@@ -3,26 +3,24 @@ This module contain various types of functions/classes to access and generate se
 """
 
 
+import ast
+import warnings
+from typing import List, Tuple, Union
+
+import numpy as np
+import torch
+from nms import batched_nms
+from roi_align import RoIAlign
+from scipy import ndimage as ndi
 from skimage import measure
 from skimage import segmentation as seg
 from skimage.filters import sobel
-
-from scipy import ndimage as ndi
-import numpy as np
-import torch
-
-import ast
-from typing import Tuple, Union, List
 from torchvision.ops._utils import convert_boxes_to_roi_format
-import warnings
 
-from roi_align import RoIAlign
-from nms import batched_nms
-from src.files.preprocess import tensor2numpy, preprocess_image
 from src.display import plot
+from src.files.preprocess import preprocess_image, tensor2numpy
 from src.utils.decorator import HiddenPrints
 
-#with HiddenPrints(), warnings.catch_warnings():
 
 def segment_mask(background_mask:np.ndarray, image_mask:np.ndarray, upper_bound=150) -> np.ndarray:
     """Simple segmentation of the mask input

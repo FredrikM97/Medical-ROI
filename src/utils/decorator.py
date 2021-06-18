@@ -2,10 +2,14 @@
 Decorators for functions
 """
 
-import matplotlib.pyplot as plt
 import functools
-import os, sys
+import os
+import sys
+
+import matplotlib.pyplot as plt
+
 from src.files.file import write
+
 
 def figure_decorator(func, figsize=(10,10)):
     """Add decoratoor to function to create subplots"

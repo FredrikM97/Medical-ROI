@@ -1,13 +1,13 @@
 import nibabel as nib
+import numpy as np
 import torch
-from torch.utils.data import Dataset
-
-from skimage.filters import sobel
 from scipy import ndimage as ndi
 from skimage import filters
-import numpy as np
+from skimage.filters import sobel
+from torch.utils.data import Dataset
 
 from src.files import preprocess
+
 
 class AdniDataset(Dataset):
     """ """

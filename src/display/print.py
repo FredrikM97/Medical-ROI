@@ -4,13 +4,15 @@ Common print functions used in different modules.
 
 
 
-import pandas as pd
 import sys
-from ruamel.yaml import YAML
-import matplotlib.pyplot as plt
+from math import ceil, floor
+
 import matplotlib as mpl
-from math import ceil,floor
+import matplotlib.pyplot as plt
+import pandas as pd
 import seaborn as sns
+from ruamel.yaml import YAML
+
 
 def pd_cols(input_df:pd.DataFrame) -> None:
     """Plot all columns of a pandas dataframe

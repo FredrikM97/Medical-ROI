@@ -2,10 +2,12 @@
 Classes related to the evaluation of weights for data and distribution of the model.
 """
 
-from src.files import preprocess
-import torch
 import sklearn
+import torch
 import torch.nn as nn
+
+from src.files import preprocess
+
 
 class ClassWeights:
     """Generate class weights for a dataset based on N number of classes and the unique labels"""

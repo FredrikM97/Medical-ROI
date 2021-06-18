@@ -1,6 +1,8 @@
+from collections import OrderedDict
+
 import pytorch_lightning as pl
 import torch.nn as nn
-from collections import OrderedDict
+
 
 class testModel(nn.Module):
     """ """

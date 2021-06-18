@@ -1,7 +1,7 @@
 #from neural_network.utils.hooks import ActivationMapHook
-import pytorch_lightning as pl
 import matplotlib.pyplot as plt
 import numpy as np
+import pytorch_lightning as pl
 import torch
 
 __all__ = []

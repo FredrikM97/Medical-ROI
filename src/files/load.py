@@ -3,15 +3,18 @@ Predefined loading of different formats to python.
 """
 
 
+import importlib
+import itertools
+import json
 import os
 import xml.etree.ElementTree as ET
 from typing import Dict
-import json
-import importlib
-import numpy as np
-from .preprocess import image2axial
+
 import nibabel as nib
-import itertools
+import numpy as np
+
+from .preprocess import image2axial
+
 
 def load_json(dirpath:str=None) -> dict:
     """Open a json file and return the key name and config data if the file exists

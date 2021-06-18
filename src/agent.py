@@ -2,33 +2,30 @@
 Agent class to load configs, model, dataloader and train the model.
 """
 
-import pytorch_lightning as pl
-import torch
-from typing import Tuple
-from pytorch_lightning import callbacks as pl_callbacks
-from pytorch_lightning import loggers as pl_loggers
-
-import os
 import contextlib
 import itertools
 import json
-
-
+import os
 from datetime import datetime
 from threading import Lock
-from src.utils.decorator import HiddenPrints
+from typing import Tuple
+
+import pytorch_lightning as pl
+import torch
+from pytorch_lightning import callbacks as pl_callbacks
+from pytorch_lightning import loggers as pl_loggers
+
+from src import BASEDIR
 from src.cam import CAM
-from src.files.file import create_directory
+from src.dataloader.class_weight import ClassWeights, InitWeightDistribution
+from src.files import load
+from src.files.file import create_directory, write
+from src.model import Model
+from src.types.dictionary import merge_dict
+from src.utils.decorator import HiddenPrints, close_on_finish_decorator
+
 from . import callbacks as lc_callbacks
 from . import dataloader
-from src import BASEDIR
-from src.dataloader.class_weight import ClassWeights,InitWeightDistribution
-from src.utils.decorator import close_on_finish_decorator
-from src.types.dictionary import merge_dict
-from src.files import load
-from src.model import Model
-from src.files.file import write
-
 
 
 class Agent:

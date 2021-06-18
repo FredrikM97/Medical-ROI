@@ -2,27 +2,25 @@
 Model class for the agent and training of different architectures.
 """
 
-#from ..architectures import create_architecture #testModel
-from . import models
-
-import pytorch_lightning as pl
-import torch.nn as nn
-import torch
-import torch.nn.functional as F
-import numpy as np
-from torch.optim.lr_scheduler import ReduceLROnPlateau
-import torchmetrics as pl_metrics
-
 import os
-import matplotlib.pyplot as plt
-import seaborn as sns
 import warnings
 
-
-from src.files import preprocess
-from src.display.plot import confusion_matrix
+import matplotlib.pyplot as plt
+import numpy as np
+import pytorch_lightning as pl
+import seaborn as sns
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+import torchmetrics as pl_metrics
+from torch.optim.lr_scheduler import ReduceLROnPlateau
 
 from src import BASEDIR
+from src.display.plot import confusion_matrix
+from src.files import preprocess
+
+from . import models
+
 
 class Model(pl.LightningModule): 
     """ """

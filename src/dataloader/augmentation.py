@@ -2,16 +2,20 @@
 Agmentation for the dataloader
 """
 
-from skimage.transform import warp, AffineTransform, ProjectiveTransform#, rotate
-from skimage.exposure import equalize_adapthist, equalize_hist, rescale_intensity, adjust_gamma, adjust_log, adjust_sigmoid
-from skimage.filters import gaussian
-from skimage.util import random_noise
 import random
 
-from scipy.ndimage import rotate
-
-from torchvision import transforms
 import numpy as np
+from scipy.ndimage import rotate
+from skimage.exposure import (adjust_gamma, adjust_log, adjust_sigmoid,
+                              equalize_adapthist, equalize_hist,
+                              rescale_intensity)
+from skimage.filters import gaussian
+from skimage.transform import (AffineTransform,  # , rotate
+                               ProjectiveTransform, warp)
+from skimage.util import random_noise
+from torchvision import transforms
+
+
 def randRange(a:float, b:float):
     """Generate random float values in desired range
 

@@ -1,4 +1,5 @@
 from pytorch_lightning.callbacks import progress
+
 __all__ = ['LitProgressBar']
 
 class LitProgressBar(progress.ProgressBarBase):

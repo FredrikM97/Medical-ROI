@@ -4,6 +4,7 @@ Folder containing all architectures for the agent.
 
 import importlib
 import types
+
 from .resnet import *
 from .vgg import *
 
@@ -20,10 +21,10 @@ def find_model_using_name(model_name):
     Raises:
 
     """
-    from inspect import isclass
-    from pkgutil import iter_modules
-    from pathlib import Path
     from importlib import import_module
+    from inspect import isclass
+    from pathlib import Path
+    from pkgutil import iter_modules
 
     # iterate through the modules in the current package
     package_dir = Path(__file__).resolve().parent

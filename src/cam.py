@@ -2,22 +2,20 @@
 This module contain various types of functions/classes to access and generate CAM.
 
 """
+import warnings
+from typing import List, Tuple, Union
+
+import matplotlib.pyplot as plt
+import nibabel as nib
+import numpy as np
+import torch
+import torchcam
+import torchvision
+
+from src.display.cmap import parula_map
 from src.files import preprocess
 from src.files.preprocess import image2axial, to_grid
 from src.types.string import split_custom_filename
-import nibabel as nib
-
-import warnings
-import torchcam 
-import torch
-#from torch import tensor
-import numpy as np
-from typing import Tuple, Union, List
-
-import torchvision
-import matplotlib.pyplot as plt
-
-from src.display.cmap import parula_map
 
 
 class CAM:

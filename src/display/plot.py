@@ -2,24 +2,19 @@
 Plot functions for images
 """
 
-
-
-
-import matplotlib.pyplot as plt
-import numpy as np
-import matplotlib.patches as mpatches
-from math import ceil
-import pytorch_lightning as pl
-import seaborn as sns
-import cv2
-from matplotlib import colors
 from math import ceil, floor
 from typing import Tuple
 
-from src.files import preprocess
-from src.display.cmap import parula_map
+import cv2
+import matplotlib.patches as mpatches
+import matplotlib.pyplot as plt
+import numpy as np
+import pytorch_lightning as pl
+import seaborn as sns
+from matplotlib import colors
 
-#sns.set(font_scale=2.5)
+from src.display.cmap import parula_map
+from src.files import preprocess
 
 def intensity_distribution(image:'np.ndarray', title:str="") -> "None":
     """Plot the intensity distribution of an input image

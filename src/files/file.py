@@ -1,5 +1,6 @@
 import os
 
+
 def create_directory(dest:str)-> bool:
     """Creates directory if not exists
 

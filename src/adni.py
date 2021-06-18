@@ -1,20 +1,17 @@
+import enum
 import os
+from dataclasses import dataclass
 
+import nibabel as nib
+import numpy as np
 import pandas as pd
 
-import numpy as np
-
-import enum
-from dataclasses import dataclass
-import nibabel as nib
-
-from src.display.print import dict2yaml
-from src.files import load
-from src.types.df import xml2dict,df_object2type
-from src.files import preprocess
-from src.types.string import split_custom_filename,remove_preprocessed_filename_definition
-
 from src import BASEDIR
+from src.display.print import dict2yaml
+from src.files import load, preprocess
+from src.types.df import df_object2type, xml2dict
+from src.types.string import (remove_preprocessed_filename_definition,
+                              split_custom_filename)
 
 __all__ = ["Adni"]
 

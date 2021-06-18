@@ -4,13 +4,14 @@ Preprocessing functions for images, labels
 
 
 
+#from torch.nn.functional import pad
+from typing import Tuple, Union
+
 import numpy as np
 import torch
-from torch import Tensor, from_numpy
-#from torch.nn.functional import pad
-from typing import Union, Tuple
-from skimage.transform import resize
 import torchvision
+from skimage.transform import resize
+from torch import Tensor, from_numpy
 
 
 def normalize(x:'Union[torch.Tensor,np.ndarray]') -> 'Union[torch.Tensor,np.ndarray]':

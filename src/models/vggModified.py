@@ -1,7 +1,6 @@
 import torch
 import torch.nn as nn
 
-
 model_urls = {
     'vgg11': 'https://download.pytorch.org/models/vgg11-bbd30ac9.pth',
     'vgg13': 'https://download.pytorch.org/models/vgg13-c768596a.pth',

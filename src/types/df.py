@@ -1,5 +1,7 @@
-import pandas as pd
 from typing import Union
+
+import pandas as pd
+
 
 def df_object2type(
     input_df:pd.DataFrame,

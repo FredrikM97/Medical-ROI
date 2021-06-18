@@ -1,6 +1,7 @@
-from sklearn.model_selection import StratifiedKFold as sk_StratifiedKFold
 import numpy as np
 import torch
+from sklearn.model_selection import StratifiedKFold as sk_StratifiedKFold
+
 
 class KFold(sk_StratifiedKFold):
     """Custom KFold based on the sklearn KFold adapted for pytorch dataloader"""

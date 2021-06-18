@@ -1,10 +1,11 @@
+import numpy as np
 import pytorch_lightning as pl
 import torch
-import numpy as np
 import torchcam
 
 from src.cam import CAM
 from src.files.preprocess import tensor2numpy
+
 
 class CAMCallback(pl.callbacks.Callback):
     """ """
