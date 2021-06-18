@@ -12,8 +12,8 @@ import matplotlib as mpl
 from math import ceil,floor
 import seaborn as sns
 
-def pd_cols(input_df):
-    """
+def pd_cols(input_df:pd.DataFrame) -> None:
+    """Plot all columns of a pandas dataframe
 
     Parameters
     ----------
@@ -29,8 +29,8 @@ def pd_cols(input_df):
     with pd.option_context('display.max_columns', None):
         display(input_df.head())
 
-def dict2yaml(input_dict:dict):
-    """
+def dict2yaml(input_dict:dict) -> None:
+    """Plot a dictionary in yaml format.
 
     Parameters
     ----------

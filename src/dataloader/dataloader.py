@@ -16,7 +16,7 @@ import torchvision.transforms as tf
 import random
 
 class AdniDataloader(pl.LightningDataModule): 
-    """ """
+    """Dataloader module to define training, validation and testing data and split data into separate datasets."""
     def __init__(self,data_dir:str, batch_size:int=6, shuffle=True, num_workers:int=1, img_shape=(79,95,79), classes:dict={},**hparams:dict):
         """
 
@@ -92,8 +92,8 @@ class AdniDataloader(pl.LightningDataModule):
             self.next_fold()
         
         
-    def setup(self, stage=None):
-        """
+    def setup(self, stage:str=None):
+        """Setup the dataset
 
         Parameters
         ----------
@@ -125,7 +125,7 @@ class AdniDataloader(pl.LightningDataModule):
         ]
 
     def __str__(self):
-        """ """
+        """Return context of class data"""
         return (
             f"***Defined dataloader:***\n"
             f"Data directory: {self.data_dir}\n"
@@ -135,7 +135,7 @@ class AdniDataloader(pl.LightningDataModule):
         
     
     def next_fold(self):
-        """ """
+        """Move to next fold"""
         if self.split_conf['folds'] <= self.kfold_index: return False
         self.kfold_index +=1
         self.folds = next(self.kfold)
@@ -162,7 +162,7 @@ class AdniDataloader(pl.LightningDataModule):
                     )
     
 class ToDevice(object):
-    """ """
+    """Send module to defined device"""
     def __init__(self, device):
         """
 
@@ -193,7 +193,7 @@ class ToDevice(object):
         """
         return sample.to(self.device)
     
-def _split(dataset, test_size, random_state=0, shuffle=False):
+def _split(dataset:list, test_size:float, random_state:int=0, shuffle:bool=False) -> "tuple[list, list]":
     """
 
     Parameters

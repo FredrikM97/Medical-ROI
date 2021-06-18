@@ -6,7 +6,7 @@ class KFold(sk_StratifiedKFold):
     """Custom KFold based on the sklearn KFold adapted for pytorch dataloader"""
     __doc__ += sk_StratifiedKFold.__doc__
     
-    def __init__(self, n_splits=5, shuffle=False, random_state=None):
+    def __init__(self, n_splits:int=5, shuffle:bool=False, random_state:int=None):
         """
 
         Parameters

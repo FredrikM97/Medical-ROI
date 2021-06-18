@@ -1,6 +1,6 @@
 import os
 
-def create_directory(dest)-> bool:
+def create_directory(dest:str)-> bool:
     """Creates directory if not exists
 
     Parameters
@@ -15,8 +15,8 @@ def create_directory(dest)-> bool:
     """
     return os.makedirs(os.path.dirname(dest), exist_ok=True)
 
-def filter_dir(in_dir:str, out_dir:str):
-    """
+def filter_dir(in_dir:str, out_dir:str) -> None:
+    """Remove all but 1 .nii file from each bottom-level folder, keeps in_dir intact and puts result in out_dir. Example usage: data_filter('..\\data\\adni_raw', '..\\data\\adni_raw_filtered')
 
     Parameters
     ----------
@@ -30,7 +30,7 @@ def filter_dir(in_dir:str, out_dir:str):
 
     
     """
-    "Will remove all but 1 .nii file from each bottom-level folder, keeps in_dir intact and puts result in out_dir. Example usage: data_filter('..\\data\\adni_raw', '..\\data\\adni_raw_filtered')"
+    ""
     files_to_create = []
     for root, subdirs, files in os.walk(in_dir):
         nii_files_in_directory = []
@@ -67,7 +67,7 @@ def copy(src:str, dest:str)-> bool:
     return False
 
 
-def availible_files(path, contains:str=''):
+def availible_files(path:str, contains:str='') -> list:
     """Returns the availible files in directory
 
     Parameters
@@ -84,7 +84,7 @@ def availible_files(path, contains:str=''):
     """
     return [f for f in os.listdir(path) if contains in f]
 
-def write(filepath:str, message:str, flag='a'):
+def write(filepath:str, message:str, flag:str='a') -> None:
     """Write to a file defined by a filepath and a given message
 
     Parameters

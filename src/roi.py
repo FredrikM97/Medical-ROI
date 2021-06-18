@@ -49,7 +49,7 @@ class RoiTransform:
         else:
             raise ValueError("boundary_boxes needs to be of type list or dict")
             
-    def __call__(self, x:torch.Tensor, y):
+    def __call__(self, x:torch.Tensor, y) -> Tuple[torch.tensor, torch.tensor]:
         """Expect to take an y of integer type and if boundary_boxes are a dict then the key should be a numeric value.
 
         Parameters
@@ -78,7 +78,7 @@ class RoiTransform:
 
         return image_rois, y
     
-    def __str__(self):
+    def __str__(self) -> str:
         """ """
         return (
             f"\n\n***Defined ROI-Transformer:***\n"

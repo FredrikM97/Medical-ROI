@@ -133,7 +133,7 @@ def files_path(srcdir:str):
 
     return tmp
 
-def nifti_axial(path:str) -> np.ndarray:
+def nifti_axial(path:str) -> "ndarray":
     """Load an nifti image from the axial view
 
     Parameters

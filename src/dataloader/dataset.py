@@ -19,7 +19,7 @@ class AdniDataset(Dataset):
         self.labels = preprocess.folder2labels(data, classes)#, delimiter)
         self.data = data
         
-    def __getitem__(self, idx): 
+    def __getitem__(self, idx) -> "tuple[tensor,tensor]": 
         """Load nifti image and convert it to axial view.
 
         Parameters
@@ -53,7 +53,7 @@ class AdniDataset(Dataset):
         return x, y
 
 
-    def __len__(self):
+    def __len__(self) -> int:
         """ """
         # return the size of the dataset
         return len(self.data)

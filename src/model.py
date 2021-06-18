@@ -66,7 +66,7 @@ class Model(pl.LightningModule):
             self.valid_metrics = self.metric_object('/val')
             self.test_metrics = self.metric_object('/test')
 
-    def metric_object(self, postfix=None, compute_on_step=False):
+    def metric_object(self, postfix:bool=None, compute_on_step:bool=False) -> pl_metrics.MetricCollection:
         return pl_metrics.MetricCollection({
             "Accuracy":pl_metrics.Accuracy(average='micro', compute_on_step=compute_on_step),
             "Precision":pl_metrics.Precision(num_classes=3, average='micro',compute_on_step=compute_on_step),

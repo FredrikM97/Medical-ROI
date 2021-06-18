@@ -8,7 +8,7 @@ import sklearn
 import torch.nn as nn
 
 class ClassWeights:
-    """ """
+    """Generate class weights for a dataset based on N number of classes and the unique labels"""
     def __init__(self, classes:dict):
         """
 
@@ -47,11 +47,11 @@ class ClassWeights:
         return self.weights.numpy()
     
 class InitWeightDistribution:
-    """ """
+    """Init a model with a weight distribution."""
     
     #def __init__(self, model):
     #    self.model = model
-    def __new__(self, model, dist):
+    def __new__(self, model:torch.nn.Module, dist:str):
         """
 
         Parameters
@@ -69,7 +69,7 @@ class InitWeightDistribution:
         getattr(self, dist)(self,model)
         
     
-    def uniform(self,m):
+    def uniform(self,m:torch.nn.Module) -> None:
         """
 
         Parameters
@@ -89,7 +89,7 @@ class InitWeightDistribution:
             m.weight.data.uniform_(0.0, 1.0)
             m.bias.data.fill_(0)
         
-    def normal(self,model):
+    def normal(self,model:torch.nn.Module) -> None:
         """
 
         Parameters

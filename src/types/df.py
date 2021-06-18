@@ -1,8 +1,9 @@
 import pandas as pd
+from typing import Union
 
 def df_object2type(
-    input_df,
-    types={
+    input_df:pd.DataFrame,
+    types:dict={
         'float':[],
         'int':[],
         'str':[],
@@ -47,7 +48,7 @@ def df_object2type(
             
     return input_df
 
-def object2type(data:str):
+def object2type(data:str) -> Union[int, float]:
     """Change the type of data.
     Check if data is a int, float otherwise a string/object
 
@@ -86,7 +87,7 @@ def xml2dict(r, parent:str='', delimiter:str=".") -> list:
     
     """
     param = lambda r,delimiter:delimiter+list(r.attrib.values())[0].replace(" ", "_") if r.attrib else ''
-    def recursive(r, parent:str, delimiter:str='.') -> list:
+    def recursive(r:str, parent:str, delimiter:str='.') -> list:
         """
 
         Parameters

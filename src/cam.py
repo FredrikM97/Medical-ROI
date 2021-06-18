@@ -99,7 +99,7 @@ class CAM:
         return self.extractor(class_idx, class_scores, normalized=False).detach().cpu()
     
     @staticmethod
-    def plot(images:list=[], masks:list=[], labels=[],cmap=parula_map, alpha:float=0.7, class_label:str=None, predicted_override:bool=None, architecture:str=None):
+    def plot(images:list=[], masks:list=[], labels=[],cmap=parula_map, alpha:float=0.7, class_label:str=None, predicted_override:bool=None, architecture:str=None) -> plt.figure:
         """Create a plot from the given class activation map and input image. CAM is calculated from the models weights and the probability distribution of each class.
 
         Parameters
@@ -197,7 +197,7 @@ class CAM:
         return fig
 
     @staticmethod
-    def get_cam(model, cam_type, input_shape:Tuple=(79,95,79),target_layer:str=None,CAM_kwargs:dict={}):
+    def get_cam(model, cam_type, input_shape:Tuple=(79,95,79),target_layer:str=None,CAM_kwargs:dict={}) -> torchcam.cams:
         """Generate CAM object
 
         Parameters
@@ -222,7 +222,7 @@ class CAM:
         return extractor
     
     @staticmethod
-    def average_image(images:list):
+    def average_image(images:list) -> torch.tensor:
         """Calculate average over multiple images
 
         Parameters
@@ -238,7 +238,7 @@ class CAM:
         return torch.mean(torch.stack(images), axis=0)
     
     @staticmethod
-    def repeat_stack(image:torch.tensor, repeat:int=1, grid_kwargs:dict={}):
+    def repeat_stack(image:torch.tensor, repeat:int=1, grid_kwargs:dict={}) ->torch.tensor:
         """Repeat am image in a grid N number of times.
 
         Parameters
@@ -258,7 +258,7 @@ class CAM:
         return torch.stack([to_grid(image, **grid_kwargs)]*repeat)
     
     @staticmethod
-    def preprocess(filename:str):
+    def preprocess(filename:str) -> np.ndarray:
         """Preprocess image to a valid format
 
         Parameters

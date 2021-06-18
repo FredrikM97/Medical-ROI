@@ -20,7 +20,7 @@ from src.display.cmap import parula_map
 
 #sns.set(font_scale=2.5)
 
-def intensity_distribution(image:np.ndarray, title:str=""):
+def intensity_distribution(image:"ndarray", title:str="") -> None:
     """Plot the intensity distribution of an input image
 
     Parameters
@@ -45,7 +45,7 @@ def intensity_distribution(image:np.ndarray, title:str=""):
     plt.xlabel("Intensity")
     plt.xlabel("Frequency")
 
-def display_3D(im3d:np.ndarray, cmap:str="jet", step:int=2, plottype:str='imshow'):
+def display_3D(im3d:"ndarray", cmap:str="jet", step:int=2, plottype:str='imshow') -> "Figure":
     """Plot 3D image as 2D slices
 
     Parameters
@@ -88,7 +88,7 @@ def display_3D(im3d:np.ndarray, cmap:str="jet", step:int=2, plottype:str='imshow
         
     return fig
 
-def features_regions(bboxes:list, image_mask:np.ndarray,grid_kwgs:dict={}):
+def features_regions(bboxes:list, image_mask:"ndarray",grid_kwgs:dict={}) -> None:
     """Plot the extracted features
 
     Parameters
@@ -147,7 +147,7 @@ def center_distribution(bbox_coords:list) -> None:
     for ax,cord in zip(axes.flatten(),combine_coordinates(np.array(bbox_listed))):
         sns.histplot(cord, ax=ax,bins=10)
 
-def apply_image_bboxes(image,bbox_coords):
+def apply_image_bboxes(image:"ndarray",bbox_coords:list) -> "ndarray":
     """Takes coordinates of bounding boxes and plot them.
 
     Parameters
@@ -163,15 +163,15 @@ def apply_image_bboxes(image,bbox_coords):
     
     """
 
-    for feature in features:
+    for feature in bbox_coords:
         x0,y0,x1,y1,z0,z1 = bounding_boxes(feature)
         for z in range(z0,z1):
             flatten_axis[z].add_patch(mpatches.Rectangle((x0, y0), x1 - x0, y1 - y0,fill=False, edgecolor='red', linewidth=2))
             
     return image
 
-def roc(roc_classes, prefix:str='', fig=None):
-    """
+def roc(roc_classes:"tensor", prefix:str='', fig:"Figure"=None)-> "[np.ndarray, plt.figure]":
+    """Plot ROC curve of the provided classes
 
     Parameters
     ----------
@@ -221,7 +221,7 @@ def roc(roc_classes, prefix:str='', fig=None):
     return metric_list, fig
 
 def precision_recall_curve(precision, recall):
-    """
+    """Plot the precision recall curve
 
     Parameters
     ----------
@@ -263,8 +263,8 @@ def precision_recall_curve(precision, recall):
 
     return metric_list, fig
 
-def confusion_matrix(cm):
-    """
+def confusion_matrix(cm:"torch.tensor") -> "Figure":
+    """Plot the confusion matrix
 
     Parameters
     ----------
@@ -285,7 +285,7 @@ def confusion_matrix(cm):
     
     return f
 
-def imshow(image, cmap=parula_map, figsize=(8,4),colormap:bool=False,colormap_shrink:float=1, disable_axis:bool=True):
+def imshow(image:"tensor", cmap:list=parula_map, figsize:tuple=(8,4),colormap:bool=False,colormap_shrink:float=1, disable_axis:bool=True) -> None:
     """
 
     Parameters
@@ -318,10 +318,9 @@ def imshow(image, cmap=parula_map, figsize=(8,4),colormap:bool=False,colormap_sh
         plt.axis('off')
 
     plt.show()
-
-  
-def advanced_plot(slices):
-    """
+    
+def advanced_plot(slices:list):
+    """Advaned plot function for plotting with grid for nifti images.
 
     Parameters
     ----------
@@ -365,7 +364,7 @@ def advanced_plot(slices):
     plt.show()  # finally, render the plot
 
 def meta_settings(rows:int=1, cols:int=2, figsize=(16,16)):
-    """
+    """Set meta settings for subplots. Include the number of rows and columns.
 
     Parameters
     ----------
@@ -415,7 +414,7 @@ def move_legend(ax, new_loc:str="upper left",title:str=None,**kws):
         ax.legend(handles, labels, title=title, borderaxespad=0., bbox_to_anchor=(1.02, 1), loc=new_loc,**kws)
 
 def set_plot_settings(ax,rotation:int=0, title:str=None, xlabel:str=None, ylabel:str=None, **kws):
-    """
+    """Set label, title, rotation and theme for axis of a plot
 
     Parameters
     ----------
@@ -446,7 +445,7 @@ def set_plot_settings(ax,rotation:int=0, title:str=None, xlabel:str=None, ylabel
     
     
 def countplot(
-                df, 
+                df:"DataFrame", 
                 x:str=None, 
                 y:str=None, 
                 hue:str=None, 
@@ -516,7 +515,7 @@ def countplot(
     return ax1
 
 def histplot(
-            df, 
+            df:"DataFrame", 
             x=None,
             y=None,
             hue:str=None, 
@@ -582,7 +581,7 @@ def histplot(
     return ax1
 
 def catplot(
-            df, 
+            df:"DataFrame", 
             x=None,
             y=None,
             hue:str=None, 
@@ -649,7 +648,7 @@ def catplot(
 
     
 def boxplot(
-                df, 
+                df:"DataFrame", 
                 x:str=None, 
                 y:str=None, 
                 hue:str=None, 

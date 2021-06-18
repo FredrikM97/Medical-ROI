@@ -12,7 +12,7 @@ from scipy.ndimage import rotate
 
 from torchvision import transforms
 import numpy as np
-def randRange(a, b):
+def randRange(a:float, b:float):
     """Generate random float values in desired range
 
     Parameters
@@ -30,7 +30,7 @@ def randRange(a, b):
     return np.random.rand() * (b - a) + a
 
 
-def randomAffine(im):
+def randomAffine(im:"ndarray") -> "ndarray":
     """Affine transformation with random scale, rotation, shear and translation parameters
 
     Parameters
@@ -53,7 +53,7 @@ def randomAffine(im):
         
     return im
 
-def randomCrop(im):
+def randomCrop(im:"ndarray") -> "ndarray":
     """croping the image in the center from a random margin from the borders
 
     Parameters
@@ -74,7 +74,7 @@ def randomCrop(im):
     return im[start[0]:end[0], start[1]:end[1]]
 
 
-def randomIntensity(im):
+def randomIntensity(im:"ndarray") -> "ndarray":
     """Rescales the intensity of the image to random interval of image intensity distribution
 
     Parameters
@@ -91,7 +91,7 @@ def randomIntensity(im):
                              in_range=tuple(np.percentile(im, (randRange(0,10), randRange(90,100)))),
                              out_range=tuple(np.percentile(im, (randRange(0,10), randRange(90,100)))))
 
-def randomGamma(im):
+def randomGamma(im:"ndarray") -> "ndarray":
     """Gamma filter for contrast adjustment with random gamma value.
 
     Parameters
@@ -106,7 +106,7 @@ def randomGamma(im):
     """
     return adjust_gamma(im, gamma=randRange(0.95, 1.05))
 
-def randomGaussian(im):
+def randomGaussian(im:"ndarray") -> "ndarray":
     """Gaussian filter for bluring the image with random variance.
 
     Parameters
@@ -121,7 +121,7 @@ def randomGaussian(im):
     """
     return gaussian(im, sigma=randRange(0, 1))
 
-def randomRotate(im):
+def randomRotate(im:"ndarray") -> "ndarray":
     """Gaussian filter for bluring the image with random variance.
 
     Parameters
@@ -136,7 +136,7 @@ def randomRotate(im):
     """
     return rotate(im, random.choice([0,90,180,270]), axes=(2,1), reshape=False)
 
-def randomFilter(im):
+def randomFilter(im:"ndarray") -> "ndarray":
     """randomly selects an exposure filter from histogram equalizers, contrast adjustments, and intensity rescaler and applys it on the input image.
     filters include: equalize_adapthist, equalize_hist, rescale_intensity, adjust_gamma, adjust_log, adjust_sigmoid, gaussian
 
@@ -155,7 +155,7 @@ def randomFilter(im):
     return filt(im)
 
 
-def randomNoise(im):
+def randomNoise(im:"ndarray") -> "ndarray":
     """Random gaussian noise with random variance.
 
     Parameters
@@ -171,7 +171,7 @@ def randomNoise(im):
     var = randRange(0.001, 0.01)
     return random_noise(im, var=var)#im + np.random.normal(0, var, 1)#random_noise(im, var=var)
 
-def augment(im, Steps=[randomGamma]): #randomCrop #randomAffine, ,randomAffine,randomRotate
+def augment(im:"ndarray", Steps:list=[randomGamma]) -> "ndarray": #randomCrop #randomAffine, ,randomAffine,randomRotate
     """Image augmentation by doing a series of transformations on the image.
 
     Parameters
