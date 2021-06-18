@@ -84,10 +84,11 @@
 <span class="sd">This module contain various types of functions/classes to access and generate CAM.</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">src.utils</span> <span class="kn">import</span> <span class="n">utils</span><span class="p">,</span> <span class="n">preprocess</span>
-
+<span class="kn">from</span> <span class="nn">src.files</span> <span class="kn">import</span> <span class="n">preprocess</span>
+<span class="kn">from</span> <span class="nn">src.files.preprocess</span> <span class="kn">import</span> <span class="n">image2axial</span><span class="p">,</span> <span class="n">to_grid</span>
+<span class="kn">from</span> <span class="nn">src.types.string</span> <span class="kn">import</span> <span class="n">split_custom_filename</span>
 <span class="kn">import</span> <span class="nn">nibabel</span> <span class="k">as</span> <span class="nn">nib</span>
-<span class="kn">from</span> <span class="nn">src.utils.preprocess</span> <span class="kn">import</span> <span class="n">image2axial</span><span class="p">,</span> <span class="n">to_grid</span>
+
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">import</span> <span class="nn">torchcam</span> 
 <span class="kn">import</span> <span class="nn">torch</span>
@@ -98,7 +99,7 @@
 <span class="kn">import</span> <span class="nn">torchvision</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 
-<span class="kn">from</span> <span class="nn">src.utils.cmap</span> <span class="kn">import</span> <span class="n">parula_map</span>
+<span class="kn">from</span> <span class="nn">src.display.cmap</span> <span class="kn">import</span> <span class="n">parula_map</span>
 
 
 <span class="k">class</span> <span class="nc">CAM</span><span class="p">:</span>
@@ -128,24 +129,19 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">extractor</span> <span class="o">=</span> <span class="n">cam_type</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">target_layer</span><span class="o">=</span><span class="n">target_layer</span><span class="p">,</span> <span class="o">**</span><span class="n">cam_kwargs</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">class_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_image</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s1">&#39;cuda&#39;</span><span class="p">,</span> <span class="n">input_shape</span><span class="o">=</span><span class="p">(</span><span class="mi">79</span><span class="p">,</span><span class="mi">95</span><span class="p">,</span><span class="mi">79</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">class_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_image</span><span class="p">:</span><span class="s1">&#39;np.ndarray&#39;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s1">&#39;cuda&#39;</span><span class="p">,</span> <span class="n">input_shape</span><span class="o">=</span><span class="p">(</span><span class="mi">79</span><span class="p">,</span><span class="mi">95</span><span class="p">,</span><span class="mi">79</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="s1">&#39;Tuple[torch.Tensor, int]&#39;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Calculate the class scores and the highest probability of the target class</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        input_image : np.ndarray</span>
-<span class="sd">            </span>
-<span class="sd">        device :</span>
-<span class="sd">            (Default value = &#39;cuda&#39;)</span>
-<span class="sd">        input_shape :</span>
-<span class="sd">            (Default value = (79,95,79))</span>
+<span class="sd">        Args:</span>
+<span class="sd">          input_image(&#39;np.ndarray&#39;): </span>
+<span class="sd">          device: (Default value = &#39;cuda&#39;)</span>
+<span class="sd">          input_shape: (Default value = (79,95,79))</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        Tuple[torch.tensor,int]</span>
-<span class="sd">            All the probabilities and the best probability class</span>
+<span class="sd">        Returns:</span>
+<span class="sd">          &#39;Tuple[torch.Tensor,int]&#39;&#39;: All the probabilities and the best probability class</span>
 
-<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">image</span> <span class="o">=</span> <span class="n">preprocess</span><span class="o">.</span><span class="n">preprocess_image</span><span class="p">(</span><span class="n">input_image</span><span class="p">)</span>
         <span class="n">image</span> <span class="o">=</span> <span class="n">preprocess</span><span class="o">.</span><span class="n">batchisize_to_5D</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
@@ -160,55 +156,41 @@
         <span class="n">class_scores</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">image_tensor</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">class_scores</span><span class="p">,</span> <span class="n">class_scores</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">argmax</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
     
-    <span class="k">def</span> <span class="nf">activations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">class_idx</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">class_scores</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">activations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">class_idx</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">class_scores</span><span class="p">:</span><span class="s1">&#39;torch.Tensor&#39;</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;np.ndarray&#39;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Retrieve the map based on the score from the model</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        class_idx : int</span>
-<span class="sd">            (Default value = None)</span>
-<span class="sd">        class_scores : torch.tensor</span>
-<span class="sd">            (Default value = None)</span>
+<span class="sd">        Args:</span>
+<span class="sd">          class_idx(int, optional): (Default value = None)</span>
+<span class="sd">          class_scores(&#39;torch.Tensor&#39;, optional): (Default value = None)</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        np.ndarray</span>
-<span class="sd">            Tensor with activations from image with shape tensor[D,H,W]</span>
+<span class="sd">        Returns:</span>
+<span class="sd">          np.ndarray: Tensor with activations from image with shape tensor[D,H,W]</span>
 
-<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">extractor</span><span class="p">(</span><span class="n">class_idx</span><span class="p">,</span> <span class="n">class_scores</span><span class="p">,</span> <span class="n">normalized</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span>
     
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="n">images</span><span class="p">:</span><span class="nb">list</span><span class="o">=</span><span class="p">[],</span> <span class="n">masks</span><span class="p">:</span><span class="nb">list</span><span class="o">=</span><span class="p">[],</span> <span class="n">labels</span><span class="o">=</span><span class="p">[],</span><span class="n">cmap</span><span class="o">=</span><span class="n">parula_map</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span><span class="nb">float</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">class_label</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">predicted_override</span><span class="p">:</span><span class="nb">bool</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">architecture</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="n">images</span><span class="p">:</span><span class="nb">list</span><span class="o">=</span><span class="p">[],</span> <span class="n">masks</span><span class="p">:</span><span class="nb">list</span><span class="o">=</span><span class="p">[],</span> <span class="n">labels</span><span class="o">=</span><span class="p">[],</span><span class="n">cmap</span><span class="p">:</span><span class="nb">list</span><span class="o">=</span><span class="n">parula_map</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span><span class="nb">float</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">class_label</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">predicted_override</span><span class="p">:</span><span class="nb">bool</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">architecture</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Create a plot from the given class activation map and input image. CAM is calculated from the models weights and the probability distribution of each class.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        images : list</span>
-<span class="sd">            (Default value = [])</span>
-<span class="sd">        masks : list</span>
-<span class="sd">            (Default value = [])</span>
-<span class="sd">        labels :</span>
-<span class="sd">            (Default value = [])</span>
-<span class="sd">        cmap :</span>
-<span class="sd">            Color object (Default value = parula_map)</span>
-<span class="sd">        alpha : float</span>
-<span class="sd">            int (Default value = 0.7)</span>
-<span class="sd">        class_label : str</span>
-<span class="sd">            str (Default value = None)</span>
-<span class="sd">        predicted_override : bool</span>
-<span class="sd">            bool (Default value = None)</span>
-<span class="sd">        architecture : str</span>
-<span class="sd">            (Default value = None)</span>
+<span class="sd">        Args:</span>
+<span class="sd">          images(list, optional): (Default value = [])</span>
+<span class="sd">          masks(list, optional): (Default value = [])</span>
+<span class="sd">          labels: (Default value = [])</span>
+<span class="sd">          cmap(list, optional): Color object (Default value = parula_map)</span>
+<span class="sd">          alpha(float, optional): int (Default value = 0.7)</span>
+<span class="sd">          class_label(str, optional): str (Default value = None)</span>
+<span class="sd">          predicted_override(bool, optional): Define if the cam class is overwritten  (Default value = None)</span>
+<span class="sd">          architecture(str, optional): Name of the architecture provided to add in plot title (Default value = None)</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        type</span>
-<span class="sd">            output (Figure): Figure reference to plot</span>
+<span class="sd">        Returns:</span>
+<span class="sd">          type: output (Figure): Figure reference to plot</span>
 
-<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1">#class_idx = class_idx if isinstance(class_idx, list) else [class_idx]</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">max_length</span> <span class="o">:=</span><span class="nb">len</span><span class="p">(</span><span class="n">masks</span><span class="p">))</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">images</span><span class="p">):</span>
@@ -279,81 +261,67 @@
         <span class="k">return</span> <span class="n">fig</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">get_cam</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">cam_type</span><span class="p">,</span> <span class="n">input_shape</span><span class="p">:</span><span class="n">Tuple</span><span class="o">=</span><span class="p">(</span><span class="mi">79</span><span class="p">,</span><span class="mi">95</span><span class="p">,</span><span class="mi">79</span><span class="p">),</span><span class="n">target_layer</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">CAM_kwargs</span><span class="p">:</span><span class="nb">dict</span><span class="o">=</span><span class="p">{}):</span>
+    <span class="k">def</span> <span class="nf">get_cam</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">cam_type</span><span class="p">:</span><span class="s1">&#39;torchcam.cams.gradcam._GradCAM&#39;</span><span class="p">,</span> <span class="n">input_shape</span><span class="p">:</span><span class="n">Tuple</span><span class="o">=</span><span class="p">(</span><span class="mi">79</span><span class="p">,</span><span class="mi">95</span><span class="p">,</span><span class="mi">79</span><span class="p">),</span><span class="n">target_layer</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">CAM_kwargs</span><span class="p">:</span><span class="nb">dict</span><span class="o">=</span><span class="p">{})</span> <span class="o">-&gt;</span> <span class="s1">&#39;torchcam.cams.gradcam._GradCAM&#39;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Generate CAM object</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        model :</span>
-<span class="sd">            </span>
-<span class="sd">        cam_type :</span>
-<span class="sd">            </span>
-<span class="sd">        input_shape : Tuple</span>
-<span class="sd">            (Default value = (79,95,79))</span>
-<span class="sd">        target_layer : str</span>
-<span class="sd">            (Default value = None)</span>
-<span class="sd">        CAM_kwargs : dict</span>
-<span class="sd">            (Default value = {})</span>
+<span class="sd">        Args:</span>
+<span class="sd">          model: </span>
+<span class="sd">          cam_type(&#39;torchcam.cams.gradcam._GradCAM&#39;): </span>
+<span class="sd">          input_shape(Tuple, optional): (Default value = (79,95,79))</span>
+<span class="sd">          target_layer(str, optional): (Default value = None)</span>
+<span class="sd">          CAM_kwargs(dict, optional): (Default value = {})</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
+<span class="sd">        Returns:</span>
 
-<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">extractor</span> <span class="o">=</span> <span class="n">cam_type</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">input_shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="o">*</span><span class="n">input_shape</span><span class="p">),</span> <span class="n">target_layer</span><span class="o">=</span><span class="n">target_layer</span><span class="p">,</span> <span class="o">**</span><span class="n">CAM_kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">extractor</span>
     
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">average_image</span><span class="p">(</span><span class="n">images</span><span class="p">:</span><span class="nb">list</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">average_image</span><span class="p">(</span><span class="n">images</span><span class="p">:</span><span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;torch.Tensor&#39;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Calculate average over multiple images</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        images : list</span>
-<span class="sd">            </span>
+<span class="sd">        Args:</span>
+<span class="sd">          images(list): </span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
+<span class="sd">        Returns:</span>
 
-<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">images</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
     
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">repeat_stack</span><span class="p">(</span><span class="n">image</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">,</span> <span class="n">repeat</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">grid_kwargs</span><span class="p">:</span><span class="nb">dict</span><span class="o">=</span><span class="p">{}):</span>
+    <span class="k">def</span> <span class="nf">repeat_stack</span><span class="p">(</span><span class="n">image</span><span class="p">:</span><span class="s1">&#39;torch.Tensor&#39;</span><span class="p">,</span> <span class="n">repeat</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">grid_kwargs</span><span class="p">:</span><span class="nb">dict</span><span class="o">=</span><span class="p">{})</span> <span class="o">-&gt;</span> <span class="s1">&#39;torch.Tensor&#39;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Repeat am image in a grid N number of times.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        image : torch.tensor</span>
-<span class="sd">            </span>
-<span class="sd">        repeat : int</span>
-<span class="sd">            (Default value = 1)</span>
-<span class="sd">        grid_kwargs : dict</span>
-<span class="sd">            (Default value = {})</span>
+<span class="sd">        Args:</span>
+<span class="sd">          image(&#39;torch.Tensor&#39;): </span>
+<span class="sd">          repeat(int, optional): (Default value = 1)</span>
+<span class="sd">          grid_kwargs(dict, optional): (Default value = {})</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
+<span class="sd">        Returns:</span>
 
-<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">to_grid</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="o">**</span><span class="n">grid_kwargs</span><span class="p">)]</span><span class="o">*</span><span class="n">repeat</span><span class="p">)</span>
     
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">preprocess</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span><span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">preprocess</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span><span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Preprocess image to a valid format</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        filename : str</span>
-<span class="sd">            </span>
+<span class="sd">        Args:</span>
+<span class="sd">          filename(str): </span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
+<span class="sd">        Returns:</span>
 
-<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">class_label</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">split_custom_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="mi">4</span><span class="p">]</span>
+        <span class="n">class_label</span> <span class="o">=</span> <span class="n">split_custom_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="mi">4</span><span class="p">]</span>
         <span class="n">image</span> <span class="o">=</span> <span class="n">image2axial</span><span class="p">(</span><span class="n">nib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">get_fdata</span><span class="p">())</span>
         <span class="n">image</span><span class="p">[</span><span class="n">image</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span>
         <span class="n">image</span> <span class="o">=</span> <span class="n">preprocess</span><span class="o">.</span><span class="n">preprocess_image</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
@@ -401,24 +369,19 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">extractor</span> <span class="o">=</span> <span class="n">cam_type</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">target_layer</span><span class="o">=</span><span class="n">target_layer</span><span class="p">,</span> <span class="o">**</span><span class="n">cam_kwargs</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">class_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_image</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s1">&#39;cuda&#39;</span><span class="p">,</span> <span class="n">input_shape</span><span class="o">=</span><span class="p">(</span><span class="mi">79</span><span class="p">,</span><span class="mi">95</span><span class="p">,</span><span class="mi">79</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">class_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_image</span><span class="p">:</span><span class="s1">&#39;np.ndarray&#39;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s1">&#39;cuda&#39;</span><span class="p">,</span> <span class="n">input_shape</span><span class="o">=</span><span class="p">(</span><span class="mi">79</span><span class="p">,</span><span class="mi">95</span><span class="p">,</span><span class="mi">79</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="s1">&#39;Tuple[torch.Tensor, int]&#39;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Calculate the class scores and the highest probability of the target class</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        input_image : np.ndarray</span>
-<span class="sd">            </span>
-<span class="sd">        device :</span>
-<span class="sd">            (Default value = &#39;cuda&#39;)</span>
-<span class="sd">        input_shape :</span>
-<span class="sd">            (Default value = (79,95,79))</span>
+<span class="sd">        Args:</span>
+<span class="sd">          input_image(&#39;np.ndarray&#39;): </span>
+<span class="sd">          device: (Default value = &#39;cuda&#39;)</span>
+<span class="sd">          input_shape: (Default value = (79,95,79))</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        Tuple[torch.tensor,int]</span>
-<span class="sd">            All the probabilities and the best probability class</span>
+<span class="sd">        Returns:</span>
+<span class="sd">          &#39;Tuple[torch.Tensor,int]&#39;&#39;: All the probabilities and the best probability class</span>
 
-<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">image</span> <span class="o">=</span> <span class="n">preprocess</span><span class="o">.</span><span class="n">preprocess_image</span><span class="p">(</span><span class="n">input_image</span><span class="p">)</span>
         <span class="n">image</span> <span class="o">=</span> <span class="n">preprocess</span><span class="o">.</span><span class="n">batchisize_to_5D</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
@@ -433,55 +396,41 @@
         <span class="n">class_scores</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">image_tensor</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">class_scores</span><span class="p">,</span> <span class="n">class_scores</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">argmax</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
     
-    <span class="k">def</span> <span class="nf">activations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">class_idx</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">class_scores</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">activations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">class_idx</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">class_scores</span><span class="p">:</span><span class="s1">&#39;torch.Tensor&#39;</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;np.ndarray&#39;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Retrieve the map based on the score from the model</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        class_idx : int</span>
-<span class="sd">            (Default value = None)</span>
-<span class="sd">        class_scores : torch.tensor</span>
-<span class="sd">            (Default value = None)</span>
+<span class="sd">        Args:</span>
+<span class="sd">          class_idx(int, optional): (Default value = None)</span>
+<span class="sd">          class_scores(&#39;torch.Tensor&#39;, optional): (Default value = None)</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        np.ndarray</span>
-<span class="sd">            Tensor with activations from image with shape tensor[D,H,W]</span>
+<span class="sd">        Returns:</span>
+<span class="sd">          np.ndarray: Tensor with activations from image with shape tensor[D,H,W]</span>
 
-<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">extractor</span><span class="p">(</span><span class="n">class_idx</span><span class="p">,</span> <span class="n">class_scores</span><span class="p">,</span> <span class="n">normalized</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span>
     
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="n">images</span><span class="p">:</span><span class="nb">list</span><span class="o">=</span><span class="p">[],</span> <span class="n">masks</span><span class="p">:</span><span class="nb">list</span><span class="o">=</span><span class="p">[],</span> <span class="n">labels</span><span class="o">=</span><span class="p">[],</span><span class="n">cmap</span><span class="o">=</span><span class="n">parula_map</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span><span class="nb">float</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">class_label</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">predicted_override</span><span class="p">:</span><span class="nb">bool</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">architecture</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="n">images</span><span class="p">:</span><span class="nb">list</span><span class="o">=</span><span class="p">[],</span> <span class="n">masks</span><span class="p">:</span><span class="nb">list</span><span class="o">=</span><span class="p">[],</span> <span class="n">labels</span><span class="o">=</span><span class="p">[],</span><span class="n">cmap</span><span class="p">:</span><span class="nb">list</span><span class="o">=</span><span class="n">parula_map</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span><span class="nb">float</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">class_label</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">predicted_override</span><span class="p">:</span><span class="nb">bool</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">architecture</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Create a plot from the given class activation map and input image. CAM is calculated from the models weights and the probability distribution of each class.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        images : list</span>
-<span class="sd">            (Default value = [])</span>
-<span class="sd">        masks : list</span>
-<span class="sd">            (Default value = [])</span>
-<span class="sd">        labels :</span>
-<span class="sd">            (Default value = [])</span>
-<span class="sd">        cmap :</span>
-<span class="sd">            Color object (Default value = parula_map)</span>
-<span class="sd">        alpha : float</span>
-<span class="sd">            int (Default value = 0.7)</span>
-<span class="sd">        class_label : str</span>
-<span class="sd">            str (Default value = None)</span>
-<span class="sd">        predicted_override : bool</span>
-<span class="sd">            bool (Default value = None)</span>
-<span class="sd">        architecture : str</span>
-<span class="sd">            (Default value = None)</span>
+<span class="sd">        Args:</span>
+<span class="sd">          images(list, optional): (Default value = [])</span>
+<span class="sd">          masks(list, optional): (Default value = [])</span>
+<span class="sd">          labels: (Default value = [])</span>
+<span class="sd">          cmap(list, optional): Color object (Default value = parula_map)</span>
+<span class="sd">          alpha(float, optional): int (Default value = 0.7)</span>
+<span class="sd">          class_label(str, optional): str (Default value = None)</span>
+<span class="sd">          predicted_override(bool, optional): Define if the cam class is overwritten  (Default value = None)</span>
+<span class="sd">          architecture(str, optional): Name of the architecture provided to add in plot title (Default value = None)</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        type</span>
-<span class="sd">            output (Figure): Figure reference to plot</span>
+<span class="sd">        Returns:</span>
+<span class="sd">          type: output (Figure): Figure reference to plot</span>
 
-<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1">#class_idx = class_idx if isinstance(class_idx, list) else [class_idx]</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">max_length</span> <span class="o">:=</span><span class="nb">len</span><span class="p">(</span><span class="n">masks</span><span class="p">))</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">images</span><span class="p">):</span>
@@ -552,81 +501,67 @@
         <span class="k">return</span> <span class="n">fig</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">get_cam</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">cam_type</span><span class="p">,</span> <span class="n">input_shape</span><span class="p">:</span><span class="n">Tuple</span><span class="o">=</span><span class="p">(</span><span class="mi">79</span><span class="p">,</span><span class="mi">95</span><span class="p">,</span><span class="mi">79</span><span class="p">),</span><span class="n">target_layer</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">CAM_kwargs</span><span class="p">:</span><span class="nb">dict</span><span class="o">=</span><span class="p">{}):</span>
+    <span class="k">def</span> <span class="nf">get_cam</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">cam_type</span><span class="p">:</span><span class="s1">&#39;torchcam.cams.gradcam._GradCAM&#39;</span><span class="p">,</span> <span class="n">input_shape</span><span class="p">:</span><span class="n">Tuple</span><span class="o">=</span><span class="p">(</span><span class="mi">79</span><span class="p">,</span><span class="mi">95</span><span class="p">,</span><span class="mi">79</span><span class="p">),</span><span class="n">target_layer</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">CAM_kwargs</span><span class="p">:</span><span class="nb">dict</span><span class="o">=</span><span class="p">{})</span> <span class="o">-&gt;</span> <span class="s1">&#39;torchcam.cams.gradcam._GradCAM&#39;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Generate CAM object</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        model :</span>
-<span class="sd">            </span>
-<span class="sd">        cam_type :</span>
-<span class="sd">            </span>
-<span class="sd">        input_shape : Tuple</span>
-<span class="sd">            (Default value = (79,95,79))</span>
-<span class="sd">        target_layer : str</span>
-<span class="sd">            (Default value = None)</span>
-<span class="sd">        CAM_kwargs : dict</span>
-<span class="sd">            (Default value = {})</span>
+<span class="sd">        Args:</span>
+<span class="sd">          model: </span>
+<span class="sd">          cam_type(&#39;torchcam.cams.gradcam._GradCAM&#39;): </span>
+<span class="sd">          input_shape(Tuple, optional): (Default value = (79,95,79))</span>
+<span class="sd">          target_layer(str, optional): (Default value = None)</span>
+<span class="sd">          CAM_kwargs(dict, optional): (Default value = {})</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
+<span class="sd">        Returns:</span>
 
-<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">extractor</span> <span class="o">=</span> <span class="n">cam_type</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">input_shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="o">*</span><span class="n">input_shape</span><span class="p">),</span> <span class="n">target_layer</span><span class="o">=</span><span class="n">target_layer</span><span class="p">,</span> <span class="o">**</span><span class="n">CAM_kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">extractor</span>
     
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">average_image</span><span class="p">(</span><span class="n">images</span><span class="p">:</span><span class="nb">list</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">average_image</span><span class="p">(</span><span class="n">images</span><span class="p">:</span><span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;torch.Tensor&#39;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Calculate average over multiple images</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        images : list</span>
-<span class="sd">            </span>
+<span class="sd">        Args:</span>
+<span class="sd">          images(list): </span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
+<span class="sd">        Returns:</span>
 
-<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">images</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
     
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">repeat_stack</span><span class="p">(</span><span class="n">image</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">,</span> <span class="n">repeat</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">grid_kwargs</span><span class="p">:</span><span class="nb">dict</span><span class="o">=</span><span class="p">{}):</span>
+    <span class="k">def</span> <span class="nf">repeat_stack</span><span class="p">(</span><span class="n">image</span><span class="p">:</span><span class="s1">&#39;torch.Tensor&#39;</span><span class="p">,</span> <span class="n">repeat</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">grid_kwargs</span><span class="p">:</span><span class="nb">dict</span><span class="o">=</span><span class="p">{})</span> <span class="o">-&gt;</span> <span class="s1">&#39;torch.Tensor&#39;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Repeat am image in a grid N number of times.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        image : torch.tensor</span>
-<span class="sd">            </span>
-<span class="sd">        repeat : int</span>
-<span class="sd">            (Default value = 1)</span>
-<span class="sd">        grid_kwargs : dict</span>
-<span class="sd">            (Default value = {})</span>
+<span class="sd">        Args:</span>
+<span class="sd">          image(&#39;torch.Tensor&#39;): </span>
+<span class="sd">          repeat(int, optional): (Default value = 1)</span>
+<span class="sd">          grid_kwargs(dict, optional): (Default value = {})</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
+<span class="sd">        Returns:</span>
 
-<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">to_grid</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="o">**</span><span class="n">grid_kwargs</span><span class="p">)]</span><span class="o">*</span><span class="n">repeat</span><span class="p">)</span>
     
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">preprocess</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span><span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">preprocess</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span><span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Preprocess image to a valid format</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        filename : str</span>
-<span class="sd">            </span>
+<span class="sd">        Args:</span>
+<span class="sd">          filename(str): </span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
+<span class="sd">        Returns:</span>
 
-<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">class_label</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">split_custom_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="mi">4</span><span class="p">]</span>
+        <span class="n">class_label</span> <span class="o">=</span> <span class="n">split_custom_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="mi">4</span><span class="p">]</span>
         <span class="n">image</span> <span class="o">=</span> <span class="n">image2axial</span><span class="p">(</span><span class="n">nib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">get_fdata</span><span class="p">())</span>
         <span class="n">image</span><span class="p">[</span><span class="n">image</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span>
         <span class="n">image</span> <span class="o">=</span> <span class="n">preprocess</span><span class="o">.</span><span class="n">preprocess_image</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
@@ -705,29 +640,24 @@ cam_kwargs : dict
     input_image: numpy.ndarray,
     device=&#39;cuda&#39;,
     input_shape=(79, 95, 79)
-) -&gt; Tuple[&lt;built-in method tensor of type object at 0x7f52a9c85d00&gt;, int]</span>:
+) -&gt; Tuple[torch.Tensor, int]</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">class_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_image</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s1">&#39;cuda&#39;</span><span class="p">,</span> <span class="n">input_shape</span><span class="o">=</span><span class="p">(</span><span class="mi">79</span><span class="p">,</span><span class="mi">95</span><span class="p">,</span><span class="mi">79</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">class_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_image</span><span class="p">:</span><span class="s1">&#39;np.ndarray&#39;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s1">&#39;cuda&#39;</span><span class="p">,</span> <span class="n">input_shape</span><span class="o">=</span><span class="p">(</span><span class="mi">79</span><span class="p">,</span><span class="mi">95</span><span class="p">,</span><span class="mi">79</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="s1">&#39;Tuple[torch.Tensor, int]&#39;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Calculate the class scores and the highest probability of the target class</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        input_image : np.ndarray</span>
-<span class="sd">            </span>
-<span class="sd">        device :</span>
-<span class="sd">            (Default value = &#39;cuda&#39;)</span>
-<span class="sd">        input_shape :</span>
-<span class="sd">            (Default value = (79,95,79))</span>
+<span class="sd">        Args:</span>
+<span class="sd">          input_image(&#39;np.ndarray&#39;): </span>
+<span class="sd">          device: (Default value = &#39;cuda&#39;)</span>
+<span class="sd">          input_shape: (Default value = (79,95,79))</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        Tuple[torch.tensor,int]</span>
-<span class="sd">            All the probabilities and the best probability class</span>
+<span class="sd">        Returns:</span>
+<span class="sd">          &#39;Tuple[torch.Tensor,int]&#39;&#39;: All the probabilities and the best probability class</span>
 
-<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">image</span> <span class="o">=</span> <span class="n">preprocess</span><span class="o">.</span><span class="n">preprocess_image</span><span class="p">(</span><span class="n">input_image</span><span class="p">)</span>
         <span class="n">image</span> <span class="o">=</span> <span class="n">preprocess</span><span class="o">.</span><span class="n">batchisize_to_5D</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
@@ -747,19 +677,21 @@ cam_kwargs : dict
 
             <div class="docstring"><p>Calculate the class scores and the highest probability of the target class</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="args">Args</h6>
 
-<p>input_image : np.ndarray</p>
+<ul>
+<li><strong>input_image('np.ndarray'):</strong> </li>
+<li><strong>device:</strong>  (Default value = 'cuda')</li>
+<li><strong>input_shape:</strong>  (Default value = (79,95,79))</li>
+</ul>
 
-<p>device :
-    (Default value = 'cuda')
-input_shape :
-    (Default value = (79,95,79))</p>
+<h6 id="returns">Returns</h6>
 
-<h2 id="returns">Returns</h2>
+<blockquote>
+  <p>'Tuple[torch.Tensor,int]'': All the probabilities and the best probability class</p>
+</blockquote>
 
-<p>Tuple[torch.tensor,int]
-    All the probabilities and the best probability class</p>
+<p>Raises:</p>
 </div>
 
 
@@ -772,28 +704,24 @@ input_shape :
             <span class="name">activations</span><span class="signature">(
     self,
     class_idx: int = None,
-    class_scores: &lt;built-in method tensor of type object at 0x7f52a9c85d00&gt; = None
+    class_scores: torch.Tensor = None
 ) -&gt; numpy.ndarray</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">activations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">class_idx</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">class_scores</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">activations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">class_idx</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">class_scores</span><span class="p">:</span><span class="s1">&#39;torch.Tensor&#39;</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;np.ndarray&#39;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Retrieve the map based on the score from the model</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        class_idx : int</span>
-<span class="sd">            (Default value = None)</span>
-<span class="sd">        class_scores : torch.tensor</span>
-<span class="sd">            (Default value = None)</span>
+<span class="sd">        Args:</span>
+<span class="sd">          class_idx(int, optional): (Default value = None)</span>
+<span class="sd">          class_scores(&#39;torch.Tensor&#39;, optional): (Default value = None)</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        np.ndarray</span>
-<span class="sd">            Tensor with activations from image with shape tensor[D,H,W]</span>
+<span class="sd">        Returns:</span>
+<span class="sd">          np.ndarray: Tensor with activations from image with shape tensor[D,H,W]</span>
 
-<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">extractor</span><span class="p">(</span><span class="n">class_idx</span><span class="p">,</span> <span class="n">class_scores</span><span class="p">,</span> <span class="n">normalized</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span>
@@ -803,17 +731,20 @@ input_shape :
 
             <div class="docstring"><p>Retrieve the map based on the score from the model</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="args">Args</h6>
 
-<p>class_idx : int
-    (Default value = None)
-class_scores : torch.tensor
-    (Default value = None)</p>
+<ul>
+<li><strong>class_idx(int, optional):</strong>  (Default value = None)</li>
+<li><strong>class_scores('torch.Tensor', optional):</strong>  (Default value = None)</li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>np.ndarray
-    Tensor with activations from image with shape tensor[D,H,W]</p>
+<blockquote>
+  <p>np.ndarray: Tensor with activations from image with shape tensor[D,H,W]</p>
+</blockquote>
+
+<p>Raises:</p>
 </div>
 
 
@@ -828,45 +759,35 @@ class_scores : torch.tensor
     images: list = [],
     masks: list = [],
     labels=[],
-    cmap=&lt;matplotlib.colors.LinearSegmentedColormap object&gt;,
+    cmap: list = &lt;matplotlib.colors.LinearSegmentedColormap object&gt;,
     alpha: float = 0.7,
     class_label: str = None,
     predicted_override: bool = None,
     architecture: str = None
-)</span>:
+) -&gt; matplotlib.figure.Figure</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="n">images</span><span class="p">:</span><span class="nb">list</span><span class="o">=</span><span class="p">[],</span> <span class="n">masks</span><span class="p">:</span><span class="nb">list</span><span class="o">=</span><span class="p">[],</span> <span class="n">labels</span><span class="o">=</span><span class="p">[],</span><span class="n">cmap</span><span class="o">=</span><span class="n">parula_map</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span><span class="nb">float</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">class_label</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">predicted_override</span><span class="p">:</span><span class="nb">bool</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">architecture</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="n">images</span><span class="p">:</span><span class="nb">list</span><span class="o">=</span><span class="p">[],</span> <span class="n">masks</span><span class="p">:</span><span class="nb">list</span><span class="o">=</span><span class="p">[],</span> <span class="n">labels</span><span class="o">=</span><span class="p">[],</span><span class="n">cmap</span><span class="p">:</span><span class="nb">list</span><span class="o">=</span><span class="n">parula_map</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span><span class="nb">float</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">class_label</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">predicted_override</span><span class="p">:</span><span class="nb">bool</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">architecture</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Create a plot from the given class activation map and input image. CAM is calculated from the models weights and the probability distribution of each class.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        images : list</span>
-<span class="sd">            (Default value = [])</span>
-<span class="sd">        masks : list</span>
-<span class="sd">            (Default value = [])</span>
-<span class="sd">        labels :</span>
-<span class="sd">            (Default value = [])</span>
-<span class="sd">        cmap :</span>
-<span class="sd">            Color object (Default value = parula_map)</span>
-<span class="sd">        alpha : float</span>
-<span class="sd">            int (Default value = 0.7)</span>
-<span class="sd">        class_label : str</span>
-<span class="sd">            str (Default value = None)</span>
-<span class="sd">        predicted_override : bool</span>
-<span class="sd">            bool (Default value = None)</span>
-<span class="sd">        architecture : str</span>
-<span class="sd">            (Default value = None)</span>
+<span class="sd">        Args:</span>
+<span class="sd">          images(list, optional): (Default value = [])</span>
+<span class="sd">          masks(list, optional): (Default value = [])</span>
+<span class="sd">          labels: (Default value = [])</span>
+<span class="sd">          cmap(list, optional): Color object (Default value = parula_map)</span>
+<span class="sd">          alpha(float, optional): int (Default value = 0.7)</span>
+<span class="sd">          class_label(str, optional): str (Default value = None)</span>
+<span class="sd">          predicted_override(bool, optional): Define if the cam class is overwritten  (Default value = None)</span>
+<span class="sd">          architecture(str, optional): Name of the architecture provided to add in plot title (Default value = None)</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        type</span>
-<span class="sd">            output (Figure): Figure reference to plot</span>
+<span class="sd">        Returns:</span>
+<span class="sd">          type: output (Figure): Figure reference to plot</span>
 
-<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1">#class_idx = class_idx if isinstance(class_idx, list) else [class_idx]</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">max_length</span> <span class="o">:=</span><span class="nb">len</span><span class="p">(</span><span class="n">masks</span><span class="p">))</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">images</span><span class="p">):</span>
@@ -941,29 +862,26 @@ class_scores : torch.tensor
 
             <div class="docstring"><p>Create a plot from the given class activation map and input image. CAM is calculated from the models weights and the probability distribution of each class.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="args">Args</h6>
 
-<p>images : list
-    (Default value = [])
-masks : list
-    (Default value = [])
-labels :
-    (Default value = [])
-cmap :
-    Color object (Default value = parula_map)
-alpha : float
-    int (Default value = 0.7)
-class_label : str
-    str (Default value = None)
-predicted_override : bool
-    bool (Default value = None)
-architecture : str
-    (Default value = None)</p>
+<ul>
+<li><strong>images(list, optional):</strong>  (Default value = [])</li>
+<li><strong>masks(list, optional):</strong>  (Default value = [])</li>
+<li><strong>labels:</strong>  (Default value = [])</li>
+<li><strong>cmap(list, optional):</strong>  Color object (Default value = parula_map)</li>
+<li><strong>alpha(float, optional):</strong>  int (Default value = 0.7)</li>
+<li><strong>class_label(str, optional):</strong>  str (Default value = None)</li>
+<li><strong>predicted_override(bool, optional):</strong>  Define if the cam class is overwritten  (Default value = None)</li>
+<li><strong>architecture(str, optional):</strong>  Name of the architecture provided to add in plot title (Default value = None)</li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<h6 id="returns">Returns</h6>
 
-<p>type
-    output (Figure): Figure reference to plot</p>
+<blockquote>
+  <p>type: output (Figure): Figure reference to plot</p>
+</blockquote>
+
+<p>Raises:</p>
 </div>
 
 
@@ -976,36 +894,30 @@ architecture : str
             <span class="def">def</span>
             <span class="name">get_cam</span><span class="signature">(
     model,
-    cam_type,
+    cam_type: torchcam.cams.gradcam._GradCAM,
     input_shape: Tuple = (79, 95, 79),
     target_layer: str = None,
     CAM_kwargs: dict = {}
-)</span>:
+) -&gt; torchcam.cams.gradcam._GradCAM</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">get_cam</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">cam_type</span><span class="p">,</span> <span class="n">input_shape</span><span class="p">:</span><span class="n">Tuple</span><span class="o">=</span><span class="p">(</span><span class="mi">79</span><span class="p">,</span><span class="mi">95</span><span class="p">,</span><span class="mi">79</span><span class="p">),</span><span class="n">target_layer</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">CAM_kwargs</span><span class="p">:</span><span class="nb">dict</span><span class="o">=</span><span class="p">{}):</span>
+    <span class="k">def</span> <span class="nf">get_cam</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">cam_type</span><span class="p">:</span><span class="s1">&#39;torchcam.cams.gradcam._GradCAM&#39;</span><span class="p">,</span> <span class="n">input_shape</span><span class="p">:</span><span class="n">Tuple</span><span class="o">=</span><span class="p">(</span><span class="mi">79</span><span class="p">,</span><span class="mi">95</span><span class="p">,</span><span class="mi">79</span><span class="p">),</span><span class="n">target_layer</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">CAM_kwargs</span><span class="p">:</span><span class="nb">dict</span><span class="o">=</span><span class="p">{})</span> <span class="o">-&gt;</span> <span class="s1">&#39;torchcam.cams.gradcam._GradCAM&#39;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Generate CAM object</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        model :</span>
-<span class="sd">            </span>
-<span class="sd">        cam_type :</span>
-<span class="sd">            </span>
-<span class="sd">        input_shape : Tuple</span>
-<span class="sd">            (Default value = (79,95,79))</span>
-<span class="sd">        target_layer : str</span>
-<span class="sd">            (Default value = None)</span>
-<span class="sd">        CAM_kwargs : dict</span>
-<span class="sd">            (Default value = {})</span>
+<span class="sd">        Args:</span>
+<span class="sd">          model: </span>
+<span class="sd">          cam_type(&#39;torchcam.cams.gradcam._GradCAM&#39;): </span>
+<span class="sd">          input_shape(Tuple, optional): (Default value = (79,95,79))</span>
+<span class="sd">          target_layer(str, optional): (Default value = None)</span>
+<span class="sd">          CAM_kwargs(dict, optional): (Default value = {})</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
+<span class="sd">        Returns:</span>
 
-<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">extractor</span> <span class="o">=</span> <span class="n">cam_type</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">input_shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="o">*</span><span class="n">input_shape</span><span class="p">),</span> <span class="n">target_layer</span><span class="o">=</span><span class="n">target_layer</span><span class="p">,</span> <span class="o">**</span><span class="n">CAM_kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">extractor</span>
@@ -1015,20 +927,19 @@ architecture : str
 
             <div class="docstring"><p>Generate CAM object</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="args">Args</h6>
 
-<p>model :</p>
+<ul>
+<li><strong>model:</strong> </li>
+<li><strong>cam_type('torchcam.cams.gradcam._GradCAM'):</strong> </li>
+<li><strong>input_shape(Tuple, optional):</strong>  (Default value = (79,95,79))</li>
+<li><strong>target_layer(str, optional):</strong>  (Default value = None)</li>
+<li><strong>CAM_kwargs(dict, optional):</strong>  (Default value = {})</li>
+</ul>
 
-<p>cam_type :</p>
+<p>Returns:</p>
 
-<p>input_shape : Tuple
-    (Default value = (79,95,79))
-target_layer : str
-    (Default value = None)
-CAM_kwargs : dict
-    (Default value = {})</p>
-
-<h2 id="returns">Returns</h2>
+<p>Raises:</p>
 </div>
 
 
@@ -1039,24 +950,22 @@ CAM_kwargs : dict
                 <div class="decorator">@staticmethod</div>
 
             <span class="def">def</span>
-            <span class="name">average_image</span><span class="signature">(images: list)</span>:
+            <span class="name">average_image</span><span class="signature">(images: list) -&gt; torch.Tensor</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">average_image</span><span class="p">(</span><span class="n">images</span><span class="p">:</span><span class="nb">list</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">average_image</span><span class="p">(</span><span class="n">images</span><span class="p">:</span><span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;torch.Tensor&#39;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Calculate average over multiple images</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        images : list</span>
-<span class="sd">            </span>
+<span class="sd">        Args:</span>
+<span class="sd">          images(list): </span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
+<span class="sd">        Returns:</span>
 
-<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">images</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 </pre></div>
@@ -1065,11 +974,15 @@ CAM_kwargs : dict
 
             <div class="docstring"><p>Calculate average over multiple images</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="args">Args</h6>
 
-<p>images : list</p>
+<ul>
+<li><strong>images(list):</strong> </li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<p>Returns:</p>
+
+<p>Raises:</p>
 </div>
 
 
@@ -1081,31 +994,27 @@ CAM_kwargs : dict
 
             <span class="def">def</span>
             <span class="name">repeat_stack</span><span class="signature">(
-    image: &lt;built-in method tensor of type object&gt;,
+    image: torch.Tensor,
     repeat: int = 1,
     grid_kwargs: dict = {}
-)</span>:
+) -&gt; torch.Tensor</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">repeat_stack</span><span class="p">(</span><span class="n">image</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">,</span> <span class="n">repeat</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">grid_kwargs</span><span class="p">:</span><span class="nb">dict</span><span class="o">=</span><span class="p">{}):</span>
+    <span class="k">def</span> <span class="nf">repeat_stack</span><span class="p">(</span><span class="n">image</span><span class="p">:</span><span class="s1">&#39;torch.Tensor&#39;</span><span class="p">,</span> <span class="n">repeat</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">grid_kwargs</span><span class="p">:</span><span class="nb">dict</span><span class="o">=</span><span class="p">{})</span> <span class="o">-&gt;</span> <span class="s1">&#39;torch.Tensor&#39;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Repeat am image in a grid N number of times.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        image : torch.tensor</span>
-<span class="sd">            </span>
-<span class="sd">        repeat : int</span>
-<span class="sd">            (Default value = 1)</span>
-<span class="sd">        grid_kwargs : dict</span>
-<span class="sd">            (Default value = {})</span>
+<span class="sd">        Args:</span>
+<span class="sd">          image(&#39;torch.Tensor&#39;): </span>
+<span class="sd">          repeat(int, optional): (Default value = 1)</span>
+<span class="sd">          grid_kwargs(dict, optional): (Default value = {})</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
+<span class="sd">        Returns:</span>
 
-<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">to_grid</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="o">**</span><span class="n">grid_kwargs</span><span class="p">)]</span><span class="o">*</span><span class="n">repeat</span><span class="p">)</span>
 </pre></div>
@@ -1114,16 +1023,17 @@ CAM_kwargs : dict
 
             <div class="docstring"><p>Repeat am image in a grid N number of times.</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="args">Args</h6>
 
-<p>image : torch.tensor</p>
+<ul>
+<li><strong>image('torch.Tensor'):</strong> </li>
+<li><strong>repeat(int, optional):</strong>  (Default value = 1)</li>
+<li><strong>grid_kwargs(dict, optional):</strong>  (Default value = {})</li>
+</ul>
 
-<p>repeat : int
-    (Default value = 1)
-grid_kwargs : dict
-    (Default value = {})</p>
+<p>Returns:</p>
 
-<h2 id="returns">Returns</h2>
+<p>Raises:</p>
 </div>
 
 
@@ -1134,26 +1044,24 @@ grid_kwargs : dict
                 <div class="decorator">@staticmethod</div>
 
             <span class="def">def</span>
-            <span class="name">preprocess</span><span class="signature">(filename: str)</span>:
+            <span class="name">preprocess</span><span class="signature">(filename: str) -&gt; numpy.ndarray</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">preprocess</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span><span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">preprocess</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span><span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Preprocess image to a valid format</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        filename : str</span>
-<span class="sd">            </span>
+<span class="sd">        Args:</span>
+<span class="sd">          filename(str): </span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
+<span class="sd">        Returns:</span>
 
-<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">class_label</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">split_custom_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="mi">4</span><span class="p">]</span>
+        <span class="n">class_label</span> <span class="o">=</span> <span class="n">split_custom_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="mi">4</span><span class="p">]</span>
         <span class="n">image</span> <span class="o">=</span> <span class="n">image2axial</span><span class="p">(</span><span class="n">nib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">get_fdata</span><span class="p">())</span>
         <span class="n">image</span><span class="p">[</span><span class="n">image</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span>
         <span class="n">image</span> <span class="o">=</span> <span class="n">preprocess</span><span class="o">.</span><span class="n">preprocess_image</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
@@ -1164,11 +1072,15 @@ grid_kwargs : dict
 
             <div class="docstring"><p>Preprocess image to a valid format</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="args">Args</h6>
 
-<p>filename : str</p>
+<ul>
+<li><strong>filename(str):</strong> </li>
+</ul>
 
-<h2 id="returns">Returns</h2>
+<p>Returns:</p>
+
+<p>Raises:</p>
 </div>
 
 

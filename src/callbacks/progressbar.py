@@ -20,17 +20,14 @@ class LitProgressBar(progress.ProgressBarBase):
     def on_epoch_start(self, trainer, pl_module):
         """
 
-        Parameters
-        ----------
-        trainer :
-            
-        pl_module :
-            
+        Args:
+          trainer: 
+          pl_module: 
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         super().on_train_start(trainer, pl_module)
 
@@ -39,25 +36,18 @@ class LitProgressBar(progress.ProgressBarBase):
     def on_train_batch_end(self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx):
         """
 
-        Parameters
-        ----------
-        trainer :
-            
-        pl_module :
-            
-        outputs :
-            
-        batch :
-            
-        batch_idx :
-            
-        dataloader_idx :
-            
+        Args:
+          trainer: 
+          pl_module: 
+          outputs: 
+          batch: 
+          batch_idx: 
+          dataloader_idx: 
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         super().on_train_batch_end(trainer, pl_module, outputs,batch, batch_idx, dataloader_idx) 
         
@@ -68,15 +58,13 @@ class LitProgressBar(progress.ProgressBarBase):
     def _update(self,con):
         """
 
-        Parameters
-        ----------
-        con :
-            
+        Args:
+          con: 
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
 
         print(con, end="\r", flush=True)
@@ -84,15 +72,13 @@ class LitProgressBar(progress.ProgressBarBase):
     def get_progress_bar_dict(self,trainer):
         """
 
-        Parameters
-        ----------
-        trainer :
-            
+        Args:
+          trainer: 
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         tqdm_dict = trainer.progress_bar_dict
         if 'v_num' in tqdm_dict:

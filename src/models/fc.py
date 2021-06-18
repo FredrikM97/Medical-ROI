@@ -39,15 +39,13 @@ class fc(nn.Module):
     def forward(self, x):
         """
 
-        Parameters
-        ----------
-        x :
-            
+        Args:
+          x: 
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         x = torch.flatten(x, 1)
         return self.classifier(x)

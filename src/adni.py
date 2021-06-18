@@ -10,9 +10,9 @@ import nibabel as nib
 
 from src.display.print import dict2yaml
 from src.files import load
-from src.utils.df import xml2dict,df_object2type
+from src.types.df import xml2dict,df_object2type
 from src.files import preprocess
-from src.utils.string import split_custom_filename,remove_preprocessed_filename_definition
+from src.types.string import split_custom_filename,remove_preprocessed_filename_definition
 
 from src import BASEDIR
 
@@ -37,15 +37,13 @@ class AdniPaths:
     def get(self,name:str=None):
         """
 
-        Parameters
-        ----------
-        name : str
-            (Default value = None)
+        Args:
+          name(str, optional): (Default value = None)
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         if name:
             return self.__dict__[name]
@@ -111,17 +109,14 @@ class Adni(AdniProperties):
     def load_meta(self, path:str=None, show_output:bool=True) -> iter:
         """
 
-        Parameters
-        ----------
-        path : str
-            (Default value = None)
-        show_output : bool
-            (Default value = True)
+        Args:
+          path(str, optional): (Default value = None)
+          show_output(bool, optional): (Default value = True)
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         "Load meta to list. Creates a iterator"
         path = path if path else self.path.meta
@@ -132,21 +127,16 @@ class Adni(AdniProperties):
     def load_files(self,path:str=None, columns=None, show_output:bool=True, use_processed=None) -> iter:
         """
 
-        Parameters
-        ----------
-        path : str
-            (Default value = None)
-        columns :
-            (Default value = None)
-        show_output : bool
-            (Default value = True)
-        use_processed :
-            (Default value = None)
+        Args:
+          path(str, optional): (Default value = None)
+          columns: (Default value = None)
+          show_output(bool, optional): (Default value = True)
+          use_processed: (Default value = None)
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         "Load image paths from image_dir"
         use_processed = use_processed if use_processed else self.use_processed 
@@ -188,15 +178,13 @@ class Adni(AdniProperties):
     def load(self,show_output:bool=True) -> None:
         """
 
-        Parameters
-        ----------
-        show_output : bool
-            (Default value = True)
+        Args:
+          show_output(bool, optional): (Default value = True)
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         "Load both images and meta"
         self.files = self.load_files(show_output=show_output)
@@ -205,17 +193,14 @@ class Adni(AdniProperties):
     def info_from_raw_filename(self,filename:str, sep:str=None) -> str:
         """
 
-        Parameters
-        ----------
-        filename : str
-            
-        sep : str
-            (Default value = None)
+        Args:
+          filename(str): 
+          sep(str, optional): (Default value = None)
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         "Get all info from filename instead (bit slower and could do wrong but removes need of multiple folders)"
         assert '_br_raw_' in filename, "The imported filenames does not contain the expected split: '_br_raw_'"
@@ -227,19 +212,15 @@ class Adni(AdniProperties):
         def split(strng, sep, pos):
             """
 
-            Parameters
-            ----------
-            strng :
-                
-            sep :
-                
-            pos :
-                
+            Args:
+              strng: 
+              sep: 
+              pos: 
 
-            Returns
-            -------
+            Returns:
 
-            
+            Raises:
+
             """
             strng = strng.split(sep)
             return sep.join(strng[:pos]), sep.join(strng[pos:])
@@ -253,15 +234,13 @@ class Adni(AdniProperties):
     def info_from_raw_filename_no_image_number(self, filename:str) -> str:
         """
 
-        Parameters
-        ----------
-        filename : str
-            
+        Args:
+          filename(str): 
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         "Get all info from filenames where no image number is included"
         split_order = [('_',1),('_',3),('_',1),('_br_raw_',1),('_',1),('_',1),('.',1)] 
@@ -269,19 +248,15 @@ class Adni(AdniProperties):
         def split(strng:str, sep:str, pos:int):
             """
 
-            Parameters
-            ----------
-            strng : str
-                
-            sep : str
-                
-            pos : int
-                
+            Args:
+              strng(str): 
+              sep(str): 
+              pos(int): 
 
-            Returns
-            -------
+            Returns:
 
-            
+            Raises:
+
             """
             strng = strng.split(sep)
             return sep.join(strng[:pos]), sep.join(strng[pos:])
@@ -296,17 +271,14 @@ class Adni(AdniProperties):
     def get_files(self, path:str=None,columns:list=None) -> iter:
         """
 
-        Parameters
-        ----------
-        path : str
-            (Default value = None)
-        columns : list
-            (Default value = None)
+        Args:
+          path(str, optional): (Default value = None)
+          columns(list, optional): (Default value = None)
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         "Get files from class"
         files = self.load_files(path=path,columns=columns) if path and columns else self.files   
@@ -316,15 +288,13 @@ class Adni(AdniProperties):
     def load_images(self, files:list=None) -> iter:
         """
 
-        Parameters
-        ----------
-        files : list
-            (Default value = None)
+        Args:
+          files(list, optional): (Default value = None)
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         "Load image into memory"
         files = (file['path'] for file in (files if files else self.files))
@@ -334,15 +304,13 @@ class Adni(AdniProperties):
     def get_dataset(self, dist:list=[0.6, 0.15])-> (list,list, list):
         """Load dataset and assign labels. Double check that labels always are the same!
 
-        Parameters
-        ----------
-        dist : list
-            (Default value = [0.6, 0.15])-> (list,list, list)
+        Args:
+          dist(list, optional): (Default value = [0.6, 0.15])-> (list,list, list)
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         
         
@@ -363,15 +331,13 @@ class Adni(AdniProperties):
     def to_slices(self, image_list:list=None) -> iter:
         """Get each slice from each image in path
 
-        Parameters
-        ----------
-        image_list : list
-            (Default value = None)
+        Args:
+          image_list(list, optional): (Default value = None)
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         
         image_list = image_list if image_list else self.load_images()
@@ -379,15 +345,13 @@ class Adni(AdniProperties):
         def func(img_array):
             """
 
-            Parameters
-            ----------
-            img_array :
-                
+            Args:
+              img_array: 
 
-            Returns
-            -------
+            Returns:
 
-            
+            Raises:
+
             """
             for image in img_array:
                 for slices in image:
@@ -399,15 +363,13 @@ class Adni(AdniProperties):
     def to_array(self, image_list:list=None) -> iter:
         """Convert images into numpy arrays and transpose from (x,y,z,n) -> (n,z,x,y)
 
-        Parameters
-        ----------
-        image_list : list
-            (Default value = None)
+        Args:
+          image_list(list, optional): (Default value = None)
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         
         image_list = image_list if image_list else self.load_images()
@@ -418,15 +380,13 @@ class Adni(AdniProperties):
     def to_df(self, show_output:bool=True):
         """Convert image list and meta list to
 
-        Parameters
-        ----------
-        show_output : bool
-            (Default value = True)
+        Args:
+          show_output(bool, optional): (Default value = True)
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
    
         files_df = self.files_to_df(show_output=show_output)
@@ -438,15 +398,13 @@ class Adni(AdniProperties):
     def meta_to_df(self, show_output:bool=True):
         """Convert metadata list to dataframe
 
-        Parameters
-        ----------
-        show_output : bool
-            (Default value = True)
+        Args:
+          show_output(bool, optional): (Default value = True)
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         
         meta_df = pd.DataFrame(self.meta).sort_values('subject.subjectIdentifier')
@@ -461,15 +419,13 @@ class Adni(AdniProperties):
     def files_to_df(self, show_output:bool=True):
         """Convert files list to dataframe
 
-        Parameters
-        ----------
-        show_output : bool
-            (Default value = True)
+        Args:
+          show_output(bool, optional): (Default value = True)
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         
         files_df = pd.DataFrame(self.get_files(),columns=self.filename_raw)

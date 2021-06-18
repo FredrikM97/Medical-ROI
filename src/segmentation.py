@@ -18,8 +18,8 @@ import warnings
 
 from roi_align import RoIAlign
 from nms import batched_nms
-from src.utils.preprocess import tensor2numpy, preprocess_image
-from src.utils import plot
+from src.files.preprocess import tensor2numpy, preprocess_image
+from src.display import plot
 from src.utils.decorator import HiddenPrints
 
 #with HiddenPrints(), warnings.catch_warnings():
@@ -27,19 +27,15 @@ from src.utils.decorator import HiddenPrints
 def segment_mask(background_mask:np.ndarray, image_mask:np.ndarray, upper_bound=150) -> np.ndarray:
     """Simple segmentation of the mask input
 
-    Parameters
-    ----------
-    background_mask : np.ndarray
-        
-    image_mask : np.ndarray
-        
-    upper_bound :
-        (Default value = 150)
+    Args:
+      background_mask(np.ndarray): 
+      image_mask(np.ndarray): 
+      upper_bound: (Default value = 150)
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
 
     tmp_image = image_mask.copy()
@@ -55,28 +51,38 @@ def get_bbox_coordinates(feature:object):
     
     Expects feature.bbox to be in format:
         min_depth, min_row, min_col, max_depth, max_row, max_col
+
+    Args:
+      feature(object): 
+
     Returns:
-        min_col, min_row, max_col, max_row, min_depth, max_depth
-    
-    Example:
-    
-    tmp_image = np.zeros((3,100,100)).astype(int)#np.resize(tmp_image,(3,100,100))
-    tmp_image[1][30:40,20:50] = 1
-    
-    feature = measure.regionprops(tmp_image)[0]
-    feature.bbox -> (1, 30, 20, 2, 40, 50)
+      : min_col, min_row, max_col, max_row, min_depth, max_depth
+      Example: 
+      Example: tmp_image = np.zeros((3,100,100)).astype(int)#np.resize(tmp_image,(3,100,100))
+      tmp_image[1][30: 40,20:50] = 1
+      tmp_image[1][30: 40,20:50] = 1
+      tmp_image[1][30: 40,20:50] = 1
+      tmp_image[1][30: 40,20:50] = 1
+      tmp_image[1][30: 40,20:50] = 1
+      feature = measure.regionprops(tmp_image)[0]
+      tmp_image[1][30: 40,20:50] = 1
+      tmp_image[1][30: 40,20:50] = 1
+      tmp_image[1][30: 40,20:50] = 1
+      tmp_image[1][30: 40,20:50] = 1
+      feature = measure.regionprops(tmp_image)[0]
+      tmp_image[1][30: 40,20:50] = 1
+      tmp_image[1][30: 40,20:50] = 1
+      tmp_image[1][30: 40,20:50] = 1
+      feature = measure.regionprops(tmp_image)[0]
+      tmp_image[1][30: 40,20:50] = 1
+      tmp_image[1][30: 40,20:50] = 1
+      feature = measure.regionprops(tmp_image)[0]
+      tmp_image[1][30: 40,20:50] = 1
+      feature = measure.regionprops(tmp_image)[0]
+      feature.bbox -> (1, 30, 20, 2, 40, 50)
 
-    Parameters
-    ----------
-    feature : object
-        
+    Raises:
 
-    Returns
-    -------
-    type
-        (20, 30, 50, 40, 1, 2)
-
-    
     """
     
     min_depth, min_row, min_col, max_depth, max_row, max_col = feature.bbox
@@ -85,17 +91,14 @@ def get_bbox_coordinates(feature:object):
 def bounding_boxes(features:list):
     """Expects features from 2D images
 
-    Parameters
-    ----------
-    features : list
-        List
+    Args:
+      features(list): List
 
-    Returns
-    -------
-    type
-        output List[K, 6] with the box coordinates in  (x0, y0, x1, y1, z0, z1) and k is batch size.
+    Returns:
+      type: output List[K, 6] with the box coordinates in  (x0, y0, x1, y1, z0, z1) and k is batch size.
 
-    
+    Raises:
+
     """
 
     if isinstance(features, list):
@@ -104,31 +107,23 @@ def bounding_boxes(features:list):
     else:
         return get_bbox_coordinates(features)
 
-def roi_align(image, boxes:list, output_shape:Tuple=(40,40,40), displayed:bool=False):
+def roi_align(image, boxes:list, output_shape:Tuple=(40,40,40), displayed:bool=False) -> 'torch.Tensor':
     """Create aligned image rois for the neural network
-    Arg:
-        image: Image of shape Tuple[D,H,W]
-        features (List[Tuple[int,int,int,int,int]]): List of features (z0,y0,z1,y1,x0,x1). Shape is expected based on the input of ROIAlign
 
-    Parameters
-    ----------
-    image :
-        
-    boxes : list
-        
-    output_shape : Tuple
-        (Default value = (40,40,40))
-    displayed : bool
-        (Default value = False)
+    Args:
+      image: Image of shape Tuple[D,H,W]
+      boxes(list): List of features (z0,y0,z1,y1,x0,x1). Shape is expected based on the input of ROIAlign
+      output_shape(Tuple, optional): (Default value = (40,40,40))
+      displayed(bool, optional): (Default value = False)
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
 
     image_tensor = torch.from_numpy(image).unsqueeze(0).unsqueeze(0).float().cuda()
-    box_tensor = [torch.stack([torch.Tensor(x) for x in boxes]).cuda()]
+    box_tensor = [torch.stack([torch.tensor(x) for x in boxes]).cuda()]
     
     roialign = RoIAlign(output_shape,spatial_scale=1.0,sampling_ratio=-1)
     image_rois = roialign.forward(image_tensor,box_tensor)
@@ -138,56 +133,47 @@ def roi_align(image, boxes:list, output_shape:Tuple=(40,40,40), displayed:bool=F
         [plot.display_3D(x[0],step=1) for x in tensor2numpy(image_rois)]
     return image_rois
 
-def column_to_tuple(pd_column):
+def column_to_tuple(pd_column:'pandas.DataFrame') -> 'pandas.DataFrame':
     """Convert a pandas column from string to tuple
 
-    Parameters
-    ----------
-    pd_column :
-        Series
+    Args:
+      pd_column('pandas.DataFrame'): Series
 
-    Returns
-    -------
-    type
-        output (Series):
+    Returns:
+      type: output (Series):
 
-    
+    Raises:
+
     """
     
     return pd_column.apply(ast.literal_eval)
 
-def column_to_np(pd_column, dtype:str='float64'):
+def column_to_np(pd_column:'pandas.DataFrame', dtype:str='float64') -> 'pandas.DataFrame':
     """Convert a pandas column from tuple to numpy arrays
 
-    Parameters
-    ----------
-    pd_column :
-        Series
-    dtype : str
-        (Default value = 'float64')
+    Args:
+      pd_column('pandas.DataFrame'): Series
+      dtype(str, optional): (Default value = 'float64')
 
-    Returns
-    -------
-    type
-        output (Series):
+    Returns:
+      type: output (Series):
 
-    
+    Raises:
+
     """
     
     return pd_column.apply(lambda x: np.array(x, dtype=dtype))
 
-def center_coordinates(list_of_bbox:list):
+def center_coordinates(list_of_bbox:list) -> 'Tuple[float,float,float]':
     """
 
-    Parameters
-    ----------
-    list_of_bbox : list
-        
+    Args:
+      list_of_bbox(list): 
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
     z = (list_of_bbox[0] + list_of_bbox[2])/2
     y = (list_of_bbox[1] + list_of_bbox[3])/2
@@ -195,37 +181,32 @@ def center_coordinates(list_of_bbox:list):
     
     return x,y,z
 
-def max_occurance(occurances:list):
+def max_occurance(occurances:list) ->'np.ndarray':
     """Calculate the number of occurances of a type
 
-    Parameters
-    ----------
-    occurances : list
-        
+    Args:
+      occurances(list): 
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
     u,c = np.unique(occurances, return_counts=True)
     max_val = u[c == c.max()]
     return max_val
 
-def nms_reduction(_bboxes, th=0.5):
+def nms_reduction(_bboxes, th=0.5) -> list:
     """Reduce pandas dataframe data containing 'bbox', 'score' and 'observe_class'.
 
-    Parameters
-    ----------
-    _bboxes :
-        
-    th :
-        (Default value = 0.5)
+    Args:
+      _bboxes: 
+      th: (Default value = 0.5)
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
 
     bbox_tensor = torch.Tensor(_bboxes['bbox'].to_list()).float()
@@ -240,13 +221,12 @@ class Feature_extraction():
     
     Supports two functions: features and extract.
 
-    Parameters
-    ----------
+    Args:
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
     def __init__(self, cam_extractor, upper_bound:float=0.85, use_quantile_bounds:bool=True,lambda1:int=1,lambda2:int=1, n_average:int=2):
         """
@@ -279,22 +259,18 @@ class Feature_extraction():
         self.lambda2 = lambda2
         self.n_average = n_average
 
-    def extract(self, nifti_image:torch.Tensor, observe_class:int):
-        """
+    def extract(self, nifti_image:'torch.Tensor', observe_class:int) -> tuple:
+        """Extract features from the medical images over an average of N samples to create a segmentation mask which are then
 
-        Parameters
-        ----------
-        nifti_image : torch.Tensor
-            
-        observe_class : int
-            
+        Args:
+          nifti_image('torch.Tensor'): 
+          observe_class(int): 
 
-        Returns
-        -------
-        type
-            
+        Returns:
+          : Tuple containing a segmented mask, the image mask (CAM) which class index that is observed and the segmentation threshold
 
-        
+        Raises:
+
         """
         if len(nifti_image.shape) > 3:
             nifti_image = nifti_image.squeeze(0)
@@ -326,28 +302,21 @@ class Feature_extraction():
         
         return segmented_mask, image_mask,class_idx,_upper_bound
                 
-    def features(self, i:int, image_name:str, nifti_image, patient_class:int, observe_class:int):
+    def features(self, i:int, image_name:str, nifti_image, patient_class:int, observe_class:int) -> dict:
         """Calculate score and return info of the segmented features
 
-        Parameters
-        ----------
-        i : int
-            index
-        image_name : str
-            Name of image
-        nifti_image :
-            image from nifti
-        patient_class : int
-            Patient class
-        observe_class : int
-            Which class to observe
+        Args:
+          i(int): index
+          image_name(str): Name of image
+          nifti_image: image from nifti
+          patient_class(int): Patient class
+          observe_class(int): Which class to observe
 
-        Returns
-        -------
-        dict : 
-            Features for; image, patient_class, observe_class, probability_class and score
+        Returns:
+          : A dictionary features containing the info; image name, patient class, observe class, probability class and score
 
-        
+        Raises:
+
         """
         segmented_mask, image_mask, class_idx,_upper_bound = self.extract(nifti_image, observe_class)
         features = measure.regionprops(segmented_mask, intensity_image=image_mask)

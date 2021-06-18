@@ -10,33 +10,27 @@ from src.files.file import write
 def figure_decorator(func, figsize=(10,10)):
     """Add decoratoor to function to create subplots"
 
-    Parameters
-    ----------
-    func :
-        
-    figsize :
-        (Default value = (10,10))
+    Args:
+      func: 
+      figsize: (Default value = (10,10))
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         """
 
-        Parameters
-        ----------
-        *args :
-            
-        **kwargs :
-            
+        Args:
+          *args: 
+          **kwargs: 
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         fig, ax = plt.subplots(figsize=figsize)
         tmp = func(*args, fig=fig,**kwargs)
@@ -48,23 +42,17 @@ def figure_decorator(func, figsize=(10,10)):
 def close_on_finish_decorator(func, filepath,*args,message='',**kwargs):
     """Call function and write to file if success. If fail then raise an error
 
-    Parameters
-    ----------
-    func :
-        
-    filepath :
-        
-    *args :
-        
-    message :
-        (Default value = '')
-    **kwargs :
-        
+    Args:
+      func: 
+      filepath: 
+      *args: 
+      message: (Default value = '')
+      **kwargs: 
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
     try:
         tmp = func(*args,**kwargs)

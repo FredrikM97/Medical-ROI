@@ -72,38 +72,32 @@
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">functools</span>
 <span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">sys</span>
-<span class="kn">from</span> <span class="nn">.print</span> <span class="kn">import</span> <span class="n">write_to_file</span>
+<span class="kn">from</span> <span class="nn">src.files.file</span> <span class="kn">import</span> <span class="n">write</span>
 
 <span class="k">def</span> <span class="nf">figure_decorator</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">)):</span>
     <span class="sd">&quot;&quot;&quot;Add decoratoor to function to create subplots&quot;</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    func :</span>
-<span class="sd">        </span>
-<span class="sd">    figsize :</span>
-<span class="sd">        (Default value = (10,10))</span>
+<span class="sd">    Args:</span>
+<span class="sd">      func: </span>
+<span class="sd">      figsize: (Default value = (10,10))</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
+<span class="sd">    Returns:</span>
 
-<span class="sd">    </span>
+<span class="sd">    Raises:</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        *args :</span>
-<span class="sd">            </span>
-<span class="sd">        **kwargs :</span>
-<span class="sd">            </span>
+<span class="sd">        Args:</span>
+<span class="sd">          *args: </span>
+<span class="sd">          **kwargs: </span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
+<span class="sd">        Returns:</span>
 
-<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span><span class="p">)</span>
         <span class="n">tmp</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">fig</span><span class="o">=</span><span class="n">fig</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -115,27 +109,21 @@
 <span class="k">def</span> <span class="nf">close_on_finish_decorator</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">filepath</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="n">message</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Call function and write to file if success. If fail then raise an error</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    func :</span>
-<span class="sd">        </span>
-<span class="sd">    filepath :</span>
-<span class="sd">        </span>
-<span class="sd">    *args :</span>
-<span class="sd">        </span>
-<span class="sd">    message :</span>
-<span class="sd">        (Default value = &#39;&#39;)</span>
-<span class="sd">    **kwargs :</span>
-<span class="sd">        </span>
+<span class="sd">    Args:</span>
+<span class="sd">      func: </span>
+<span class="sd">      filepath: </span>
+<span class="sd">      *args: </span>
+<span class="sd">      message: (Default value = &#39;&#39;)</span>
+<span class="sd">      **kwargs: </span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
+<span class="sd">    Returns:</span>
 
-<span class="sd">    </span>
+<span class="sd">    Raises:</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">tmp</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="n">write_to_file</span><span class="p">(</span><span class="n">filepath</span> <span class="o">+</span> <span class="s2">&quot;/done.sample&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">message</span><span class="p">))</span>
+        <span class="n">write</span><span class="p">(</span><span class="n">filepath</span> <span class="o">+</span> <span class="s2">&quot;/done.sample&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">message</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">tmp</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Error occured in function&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
@@ -186,33 +174,27 @@
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">figure_decorator</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">)):</span>
     <span class="sd">&quot;&quot;&quot;Add decoratoor to function to create subplots&quot;</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    func :</span>
-<span class="sd">        </span>
-<span class="sd">    figsize :</span>
-<span class="sd">        (Default value = (10,10))</span>
+<span class="sd">    Args:</span>
+<span class="sd">      func: </span>
+<span class="sd">      figsize: (Default value = (10,10))</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
+<span class="sd">    Returns:</span>
 
-<span class="sd">    </span>
+<span class="sd">    Raises:</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        *args :</span>
-<span class="sd">            </span>
-<span class="sd">        **kwargs :</span>
-<span class="sd">            </span>
+<span class="sd">        Args:</span>
+<span class="sd">          *args: </span>
+<span class="sd">          **kwargs: </span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
+<span class="sd">        Returns:</span>
 
-<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span><span class="p">)</span>
         <span class="n">tmp</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">fig</span><span class="o">=</span><span class="n">fig</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -226,14 +208,16 @@
 
             <div class="docstring"><p>Add decoratoor to function to create subplots"</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="args">Args</h6>
 
-<p>func :</p>
+<ul>
+<li><strong>func:</strong> </li>
+<li><strong>figsize:</strong>  (Default value = (10,10))</li>
+</ul>
 
-<p>figsize :
-    (Default value = (10,10))</p>
+<p>Returns:</p>
 
-<h2 id="returns">Returns</h2>
+<p>Raises:</p>
 </div>
 
 
@@ -251,27 +235,21 @@
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">close_on_finish_decorator</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">filepath</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="n">message</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Call function and write to file if success. If fail then raise an error</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    func :</span>
-<span class="sd">        </span>
-<span class="sd">    filepath :</span>
-<span class="sd">        </span>
-<span class="sd">    *args :</span>
-<span class="sd">        </span>
-<span class="sd">    message :</span>
-<span class="sd">        (Default value = &#39;&#39;)</span>
-<span class="sd">    **kwargs :</span>
-<span class="sd">        </span>
+<span class="sd">    Args:</span>
+<span class="sd">      func: </span>
+<span class="sd">      filepath: </span>
+<span class="sd">      *args: </span>
+<span class="sd">      message: (Default value = &#39;&#39;)</span>
+<span class="sd">      **kwargs: </span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
+<span class="sd">    Returns:</span>
 
-<span class="sd">    </span>
+<span class="sd">    Raises:</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">tmp</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="n">write_to_file</span><span class="p">(</span><span class="n">filepath</span> <span class="o">+</span> <span class="s2">&quot;/done.sample&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">message</span><span class="p">))</span>
+        <span class="n">write</span><span class="p">(</span><span class="n">filepath</span> <span class="o">+</span> <span class="s2">&quot;/done.sample&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">message</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">tmp</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Error occured in function&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
@@ -281,19 +259,19 @@
 
             <div class="docstring"><p>Call function and write to file if success. If fail then raise an error</p>
 
-<h2 id="parameters">Parameters</h2>
+<h6 id="args">Args</h6>
 
-<p>func :</p>
+<ul>
+<li><strong>func:</strong> </li>
+<li><strong>filepath:</strong> </li>
+<li><strong>*args:</strong> </li>
+<li><strong>message:</strong>  (Default value = '')</li>
+<li><strong>**kwargs:</strong> </li>
+</ul>
 
-<p>filepath :</p>
+<p>Returns:</p>
 
-<p>*args :</p>
-
-<p>message :
-    (Default value = '')
-**kwargs :</p>
-
-<h2 id="returns">Returns</h2>
+<p>Raises:</p>
 </div>
 
 

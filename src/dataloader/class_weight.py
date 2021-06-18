@@ -72,15 +72,13 @@ class InitWeightDistribution:
     def uniform(self,m:torch.nn.Module) -> None:
         """
 
-        Parameters
-        ----------
-        m :
-            
+        Args:
+          m(torch.nn.Module): 
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         classname = m.__class__.__name__
         # for every Linear layer in a model..
@@ -92,15 +90,13 @@ class InitWeightDistribution:
     def normal(self,model:torch.nn.Module) -> None:
         """
 
-        Parameters
-        ----------
-        model :
-            
+        Args:
+          model(torch.nn.Module): 
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         for m in model.model.modules():
             #classname = m.__class__.__name__

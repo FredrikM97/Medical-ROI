@@ -30,19 +30,15 @@ class ActivationMapCallback(pl.callbacks.Callback):
     def on_epoch_end(self, trainer, pl_module, fig=None):
         """
 
-        Parameters
-        ----------
-        trainer :
-            
-        pl_module :
-            
-        fig :
-            (Default value = None)
+        Args:
+          trainer: 
+          pl_module: 
+          fig: (Default value = None)
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         print("Activation map!")
         set_to_train = False

@@ -40,15 +40,13 @@ class customCNN(nn.Module):
     def forward(self, x):
         """
 
-        Parameters
-        ----------
-        x :
-            
+        Args:
+          x: 
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         
         #print(x.shape)
@@ -83,15 +81,13 @@ class customCNN(nn.Module):
     def num_flat_features(self, x):
         """
 
-        Parameters
-        ----------
-        x :
-            
+        Args:
+          x: 
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         size = x.size()[1:]
         num_features = 1

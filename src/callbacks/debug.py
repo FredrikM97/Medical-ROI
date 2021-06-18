@@ -11,17 +11,14 @@ class DebugCallback(pl.callbacks.Callback):
     def on_fit_start(self, trainer, pl_module) -> None:
         """Called when fit begins
 
-        Parameters
-        ----------
-        trainer :
-            
-        pl_module :
-            
+        Args:
+          trainer: 
+          pl_module: 
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         print("Fit begins")
 
@@ -29,17 +26,14 @@ class DebugCallback(pl.callbacks.Callback):
     def on_fit_end(self, trainer, pl_module) -> None:
         """Called when fit ends
 
-        Parameters
-        ----------
-        trainer :
-            
-        pl_module :
-            
+        Args:
+          trainer: 
+          pl_module: 
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         print("Fit ends")
 
@@ -47,17 +41,14 @@ class DebugCallback(pl.callbacks.Callback):
     def on_sanity_check_start(self, trainer, pl_module) -> None:
         """Called when the validation sanity check starts.
 
-        Parameters
-        ----------
-        trainer :
-            
-        pl_module :
-            
+        Args:
+          trainer: 
+          pl_module: 
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         print("Validation sanity check starts")
 
@@ -65,17 +56,14 @@ class DebugCallback(pl.callbacks.Callback):
     def on_sanity_check_end(self, trainer, pl_module) -> None:
         """Called when the validation sanity check ends.
 
-        Parameters
-        ----------
-        trainer :
-            
-        pl_module :
-            
+        Args:
+          trainer: 
+          pl_module: 
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         print("Validation sanity check ends")
 
@@ -85,23 +73,17 @@ class DebugCallback(pl.callbacks.Callback):
     ) -> None:
         """Called when the train batch begins.
 
-        Parameters
-        ----------
-        trainer :
-            
-        pl_module :
-            
-        batch :
-            
-        batch_idx :
-            
-        dataloader_idx :
-            
+        Args:
+          trainer: 
+          pl_module: 
+          batch: 
+          batch_idx: 
+          dataloader_idx: 
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         print("train batch begins")
 
@@ -111,25 +93,18 @@ class DebugCallback(pl.callbacks.Callback):
     ) -> None:
         """Called when the train batch ends.
 
-        Parameters
-        ----------
-        trainer :
-            
-        pl_module :
-            
-        outputs :
-            
-        batch :
-            
-        batch_idx :
-            
-        dataloader_idx :
-            
+        Args:
+          trainer: 
+          pl_module: 
+          outputs: 
+          batch: 
+          batch_idx: 
+          dataloader_idx: 
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         print("train batch ends")
 
@@ -137,17 +112,14 @@ class DebugCallback(pl.callbacks.Callback):
     def on_train_epoch_start(self, trainer, pl_module) -> None:
         """Called when the train epoch begins.
 
-        Parameters
-        ----------
-        trainer :
-            
-        pl_module :
-            
+        Args:
+          trainer: 
+          pl_module: 
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         print("train epoch begins")
 
@@ -155,19 +127,15 @@ class DebugCallback(pl.callbacks.Callback):
     def on_train_epoch_end(self, trainer, pl_module, outputs) -> None:
         """Called when the train epoch ends.
 
-        Parameters
-        ----------
-        trainer :
-            
-        pl_module :
-            
-        outputs :
-            
+        Args:
+          trainer: 
+          pl_module: 
+          outputs: 
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         print("train epoch ends")
 
@@ -175,17 +143,14 @@ class DebugCallback(pl.callbacks.Callback):
     def on_validation_epoch_start(self, trainer, pl_module) -> None:
         """Called when the val epoch begins.
 
-        Parameters
-        ----------
-        trainer :
-            
-        pl_module :
-            
+        Args:
+          trainer: 
+          pl_module: 
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         print("val epoch begins")
 
@@ -193,17 +158,14 @@ class DebugCallback(pl.callbacks.Callback):
     def on_validation_epoch_end(self, trainer, pl_module) -> None:
         """Called when the val epoch ends.
 
-        Parameters
-        ----------
-        trainer :
-            
-        pl_module :
-            
+        Args:
+          trainer: 
+          pl_module: 
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         print("val epoch ends")
 
@@ -211,17 +173,14 @@ class DebugCallback(pl.callbacks.Callback):
     def on_test_epoch_start(self, trainer, pl_module) -> None:
         """Called when the test epoch begins.
 
-        Parameters
-        ----------
-        trainer :
-            
-        pl_module :
-            
+        Args:
+          trainer: 
+          pl_module: 
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         print("test epoch begins")
 
@@ -229,17 +188,14 @@ class DebugCallback(pl.callbacks.Callback):
     def on_test_epoch_end(self, trainer, pl_module) -> None:
         """Called when the test epoch ends.
 
-        Parameters
-        ----------
-        trainer :
-            
-        pl_module :
-            
+        Args:
+          trainer: 
+          pl_module: 
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         print("test epoch ends")
 
@@ -247,17 +203,14 @@ class DebugCallback(pl.callbacks.Callback):
     def on_epoch_start(self, trainer, pl_module) -> None:
         """Called when the epoch begins.
 
-        Parameters
-        ----------
-        trainer :
-            
-        pl_module :
-            
+        Args:
+          trainer: 
+          pl_module: 
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         print("epoch begins")
 
@@ -265,17 +218,14 @@ class DebugCallback(pl.callbacks.Callback):
     def on_epoch_end(self, trainer, pl_module) -> None:
         """Called when the epoch ends.
 
-        Parameters
-        ----------
-        trainer :
-            
-        pl_module :
-            
+        Args:
+          trainer: 
+          pl_module: 
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         print("epoch ends")
 
@@ -283,17 +233,14 @@ class DebugCallback(pl.callbacks.Callback):
     def on_batch_start(self, trainer, pl_module) -> None:
         """Called when the training batch begins.
 
-        Parameters
-        ----------
-        trainer :
-            
-        pl_module :
-            
+        Args:
+          trainer: 
+          pl_module: 
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         print("training batch begins")
 
@@ -301,17 +248,14 @@ class DebugCallback(pl.callbacks.Callback):
     def on_batch_end(self, trainer, pl_module) -> None:
         """Called when the training batch ends.
 
-        Parameters
-        ----------
-        trainer :
-            
-        pl_module :
-            
+        Args:
+          trainer: 
+          pl_module: 
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         print("training batch ends")
 
@@ -319,17 +263,14 @@ class DebugCallback(pl.callbacks.Callback):
     def on_train_start(self, trainer, pl_module) -> None:
         """Called when the train begins.
 
-        Parameters
-        ----------
-        trainer :
-            
-        pl_module :
-            
+        Args:
+          trainer: 
+          pl_module: 
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         print("train begins")
 
@@ -337,17 +278,14 @@ class DebugCallback(pl.callbacks.Callback):
     def on_train_end(self, trainer, pl_module) -> None:
         """Called when the train ends.
 
-        Parameters
-        ----------
-        trainer :
-            
-        pl_module :
-            
+        Args:
+          trainer: 
+          pl_module: 
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         print("train ends")
     
@@ -355,17 +293,14 @@ class DebugCallback(pl.callbacks.Callback):
     def on_validation_start(self, trainer, pl_module) -> None:
         """Called when the validation loop begins.
 
-        Parameters
-        ----------
-        trainer :
-            
-        pl_module :
-            
+        Args:
+          trainer: 
+          pl_module: 
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         print("validation loop begins")
 
@@ -373,17 +308,14 @@ class DebugCallback(pl.callbacks.Callback):
     def on_validation_end(self, trainer, pl_module) -> None:
         """Called when the validation loop ends.
 
-        Parameters
-        ----------
-        trainer :
-            
-        pl_module :
-            
+        Args:
+          trainer: 
+          pl_module: 
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         print("validation loop ends")
 
@@ -391,17 +323,14 @@ class DebugCallback(pl.callbacks.Callback):
     def on_test_start(self, trainer, pl_module) -> None:
         """Called when the test begins.
 
-        Parameters
-        ----------
-        trainer :
-            
-        pl_module :
-            
+        Args:
+          trainer: 
+          pl_module: 
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         print("test begins")
 
@@ -409,16 +338,13 @@ class DebugCallback(pl.callbacks.Callback):
     def on_test_end(self, trainer, pl_module) -> None:
         """Called when the test ends.
 
-        Parameters
-        ----------
-        trainer :
-            
-        pl_module :
-            
+        Args:
+          trainer: 
+          pl_module: 
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         print("test ends")

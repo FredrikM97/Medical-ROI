@@ -67,6 +67,17 @@ class Model(pl.LightningModule):
             self.test_metrics = self.metric_object('/test')
 
     def metric_object(self, postfix:bool=None, compute_on_step:bool=False) -> pl_metrics.MetricCollection:
+        """
+
+        Args:
+          postfix(bool, optional): (Default value = None)
+          compute_on_step(bool, optional): (Default value = False)
+
+        Returns:
+
+        Raises:
+
+        """
         return pl_metrics.MetricCollection({
             "Accuracy":pl_metrics.Accuracy(average='micro', compute_on_step=compute_on_step),
             "Precision":pl_metrics.Precision(num_classes=3, average='micro',compute_on_step=compute_on_step),
@@ -85,32 +96,27 @@ class Model(pl.LightningModule):
     def forward(self, x):
         """
 
-        Parameters
-        ----------
-        x :
-            
+        Args:
+          x: 
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         return self.model(x)
     
     def training_step(self, batch: dict, batch_idx: int) -> dict:
         """
 
-        Parameters
-        ----------
-        batch : dict
-            
-        batch_idx : int
-            
+        Args:
+          batch(dict): 
+          batch_idx(int): 
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         x, target = batch
         # Since we might want to apply ROI at any time we can enable and disable it here. ROIAlign needs to be on the GPU!
@@ -125,17 +131,14 @@ class Model(pl.LightningModule):
     def validation_step(self, batch: dict, batch_idx: int) -> dict:
         """
 
-        Parameters
-        ----------
-        batch : dict
-            
-        batch_idx : int
-            
+        Args:
+          batch(dict): 
+          batch_idx(int): 
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         x, target = batch
         # Since we might want to apply ROI at any time we can enable and disable it here. ROIAlign needs to be on the GPU!
@@ -155,17 +158,14 @@ class Model(pl.LightningModule):
     def test_step(self, batch: dict, batch_idx: int) -> dict:
         """
 
-        Parameters
-        ----------
-        batch : dict
-            
-        batch_idx : int
-            
+        Args:
+          batch(dict): 
+          batch_idx(int): 
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         x, target = batch
         # Since we might want to apply ROI at any time we can enable and disable it here. ROIAlign needs to be on the GPU!
@@ -184,30 +184,26 @@ class Model(pl.LightningModule):
     def training_epoch_end(self, outputs):
         """
 
-        Parameters
-        ----------
-        outputs :
-            
+        Args:
+          outputs: 
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         self.log('loss/train',torch.stack([x['loss'] for x in outputs]).mean())
         
     def validation_epoch_end(self,outputs):
         """
 
-        Parameters
-        ----------
-        outputs :
-            
+        Args:
+          outputs: 
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         
         metrics = self.valid_metrics.compute()
@@ -221,6 +217,16 @@ class Model(pl.LightningModule):
         self.valid_metrics.reset()
 
     def test_epoch_end(self, outputs):
+        """
+
+        Args:
+          outputs: 
+
+        Returns:
+
+        Raises:
+
+        """
         metrics = self.test_metrics.compute()
         auc = metrics.pop("AUROC/class/test")
         

@@ -12,17 +12,14 @@ BASEDIR = '.'.join([str(__name__),'dataloader'])
 def find_dataset_using_name(datadir, dataset_name):
     """
 
-    Parameters
-    ----------
-    datadir :
-        
-    dataset_name :
-        
+    Args:
+      datadir: 
+      dataset_name: 
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
     # datadir should be full path to file and dataset_name is the class within the file!
     dataset_filename = datadir
@@ -42,19 +39,15 @@ def find_dataset_using_name(datadir, dataset_name):
 def create_dataset(name:str=None, args:dict={},**kwargs):
     """
 
-    Parameters
-    ----------
-    name : str
-        (Default value = None)
-    args : dict
-        (Default value = {})
-    **kwargs :
-        
+    Args:
+      name(str, optional): (Default value = None)
+      args(dict, optional): (Default value = {})
+      **kwargs: 
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
     return find_dataset_using_name(BASEDIR,name)(**args, **kwargs)
 

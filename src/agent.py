@@ -67,23 +67,19 @@ class Agent:
         
         # Dummy loading of everything to initiate all variables
         self.load_dataloader()
-        #self.load_model() 
-        #self.load_trainer()
+   
 
-    def load_config(self,config_name:str, checkpoint_path:str=None):
+    def load_config(self,config_name:str, checkpoint_path:str=None) -> None:
         """Init the config into object
 
-        Parameters
-        ----------
-        config_name : str
-            
-        checkpoint_path : str
-            (Default value = None)
+        Args:
+          config_name(str): 
+          checkpoint_path(str, optional): (Default value = None)
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         # Load all config settings
         if config_name == None and checkpoint_path == None:
@@ -139,8 +135,16 @@ class Agent:
         
         self.model = model
     
-    def load_dataloader(self):
-        """Init the dataloader into object. If CV is enabled access the next folds with _dataloader.next_fold()"""
+    def load_dataloader(self) -> None:
+        """Init the dataloader into object. If CV is enabled access the next folds with _dataloader.next_fold()
+
+        Args:
+
+        Returns:
+
+        Raises:
+
+        """
         cfg_dataset = self._config['dataloader']
     
         dataset = dataloader.create_dataset(classes=self._config['classes'], **cfg_dataset, seed=self._config['seed'])
@@ -149,8 +153,16 @@ class Agent:
     
     
     
-    def load_trainer(self):
-        """Load a trainer to class"""
+    def load_trainer(self) -> None:
+        """Load a trainer to class
+
+        Args:
+
+        Returns:
+
+        Raises:
+
+        """
         
         cfg_trainer = self._config['trainer']
     
@@ -198,6 +210,7 @@ class Agent:
         )
 
     def save_hparams(self):
+        """ """
         dir_path = f"{self.trainer.logger.log_dir.rsplit('/',1)[0]}/"
         create_directory(dir_path) 
         with open(f"{dir_path}hparams.json", "w") as write_file:
@@ -248,15 +261,13 @@ class ThreadSafeReloadedModel:
     def get_validation_images(self, observe_classes:list=None):
         """
 
-        Parameters
-        ----------
-        observe_classes : list
-            (Default value = None)
+        Args:
+          observe_classes(list, optional): (Default value = None)
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         fileset = self.get_dataloader().val_dataloader().dataset
         if observe_classes != None: 

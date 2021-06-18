@@ -32,19 +32,15 @@ class KFold(sk_StratifiedKFold):
     def split(self,X,y=None):
         """Extended version of the split for a pytorch dataloader's dataset
 
-        Parameters
-        ----------
-        X :
-            List
-        y :
-            (Default value = None)
+        Args:
+          X: List
+          y: (Default value = None)
 
-        Returns
-        -------
-        type
-            output (self): Return a self object to reference the next fold.
+        Returns:
+          type: output (self): Return a self object to reference the next fold.
 
-        
+        Raises:
+
         """
 
         self.fold_idx = 0
@@ -63,13 +59,12 @@ class KFold(sk_StratifiedKFold):
     def data(self) -> None:
         """Access the data fold in dataset
 
-        Parameters
-        ----------
+        Args:
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
 
         return self._folds[self.fold_idx]

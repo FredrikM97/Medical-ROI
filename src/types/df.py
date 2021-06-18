@@ -13,19 +13,15 @@ def df_object2type(
     show_output:bool=True):
     """
 
-    Parameters
-    ----------
-    input_df :
-        
-    types :
-        (Default value = {'float':[],'int':[],'str':[],'cat':[],'datetime':[],})
-    show_output : bool
-        (Default value = True)
+    Args:
+      input_df(pd.DataFrame): 
+      types(dict, optional): (Default value = {'float':[],'int':[],'str':[],'cat':[],'datetime':[],})
+      show_output(bool, optional): (Default value = True)
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
     
     converter = {
@@ -52,15 +48,13 @@ def object2type(data:str) -> Union[int, float]:
     """Change the type of data.
     Check if data is a int, float otherwise a string/object
 
-    Parameters
-    ----------
-    data : str
-        
+    Args:
+      data(str): 
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
     if data.replace('.', '', 1).lstrip('-').isdigit():
         if data.isdigit():
@@ -72,37 +66,29 @@ def object2type(data:str) -> Union[int, float]:
 def xml2dict(r, parent:str='', delimiter:str=".") -> list:
     """Iterate through all xml files and add them to a dictionary
 
-    Parameters
-    ----------
-    r :
-        
-    parent : str
-        (Default value = '')
-    delimiter : str
-        (Default value = ".")
+    Args:
+      r: 
+      parent(str, optional): (Default value = '')
+      delimiter(str, optional): (Default value = ".")
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
     param = lambda r,delimiter:delimiter+list(r.attrib.values())[0].replace(" ", "_") if r.attrib else ''
     def recursive(r:str, parent:str, delimiter:str='.') -> list:
         """
 
-        Parameters
-        ----------
-        r :
-            
-        parent : str
-            
-        delimiter : str
-            (Default value = '.')
+        Args:
+          r(str): 
+          parent(str): 
+          delimiter(str, optional): (Default value = '.')
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         cont = {}
         # If list

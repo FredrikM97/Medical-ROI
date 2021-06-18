@@ -95,15 +95,13 @@ class AdniDataloader(pl.LightningDataModule):
     def setup(self, stage:str=None):
         """Setup the dataset
 
-        Parameters
-        ----------
-        stage :
-            (Default value = None)
+        Args:
+          stage(str, optional): (Default value = None)
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         dataset_full = load.files_path(BASEDIR + "/"+self.data_dir)
         
@@ -196,21 +194,16 @@ class ToDevice(object):
 def _split(dataset:list, test_size:float, random_state:int=0, shuffle:bool=False) -> "tuple[list, list]":
     """
 
-    Parameters
-    ----------
-    dataset :
-        
-    test_size :
-        
-    random_state :
-        (Default value = 0)
-    shuffle :
-        (Default value = False)
+    Args:
+      dataset(list): 
+      test_size(float): 
+      random_state(int, optional): (Default value = 0)
+      shuffle(bool, optional): (Default value = False)
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
     if test_size == 0.0:
         return dataset, np.array([])

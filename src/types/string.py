@@ -1,17 +1,14 @@
 def split_custom_filename(filename:str, sep:str='#') -> str:
     """Split filenames based on custom seperator.
 
-    Parameters
-    ----------
-    filename : str
-        
-    sep : str
-        (Default value = '#')
+    Args:
+      filename(str): 
+      sep(str, optional): (Default value = '#')
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
     
     assert sep in filename, f"The expected seperator ({sep}) could not be found in filename"
@@ -21,17 +18,15 @@ def split_custom_filename(filename:str, sep:str='#') -> str:
     return slices
 
 def remove_preprocessed_filename_definition(filename:str) -> str:
-    """remove the three first letters to hyandle preprocessed names
+    """Remove the three first letters to hyandle preprocessed names
 
-    Parameters
-    ----------
-    filename : str
-        
+    Args:
+      filename(str): 
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
     return filename[2:]
 

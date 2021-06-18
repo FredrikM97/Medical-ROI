@@ -33,17 +33,14 @@ class CAMCallback(pl.callbacks.Callback):
     def on_epoch_end(self, trainer, pl_module):
         """
 
-        Parameters
-        ----------
-        trainer :
-            
-        pl_module :
-            
+        Args:
+          trainer: 
+          pl_module: 
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         #trainer.model.eval()
         self.cam_model = CAM(self.cam_type, trainer.model)
@@ -63,15 +60,13 @@ class CAMCallback(pl.callbacks.Callback):
     def get_one_sample(self, pl_module):
         """
 
-        Parameters
-        ----------
-        pl_module :
-            
+        Args:
+          pl_module: 
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         for i, sample in enumerate(pl_module.val_dataloader()):   # Stepping through dataloader might mess up validation elsewhere ?
             # Dont call cuda directly (this is not optimized :( ))

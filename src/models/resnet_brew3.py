@@ -17,23 +17,17 @@ model_urls = {
 def conv3x3(in_planes, out_planes, stride=1, groups=1, dilation=1):
     """3x3 convolution with padding
 
-    Parameters
-    ----------
-    in_planes :
-        
-    out_planes :
-        
-    stride :
-        (Default value = 1)
-    groups :
-        (Default value = 1)
-    dilation :
-        (Default value = 1)
+    Args:
+      in_planes: 
+      out_planes: 
+      stride: (Default value = 1)
+      groups: (Default value = 1)
+      dilation: (Default value = 1)
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
     return nn.Conv3d(in_planes, out_planes, kernel_size=3, stride=stride,
                      padding=dilation, groups=groups, bias=False, dilation=dilation)
@@ -42,19 +36,15 @@ def conv3x3(in_planes, out_planes, stride=1, groups=1, dilation=1):
 def conv1x1(in_planes, out_planes, stride=1):
     """1x1 convolution
 
-    Parameters
-    ----------
-    in_planes :
-        
-    out_planes :
-        
-    stride :
-        (Default value = 1)
+    Args:
+      in_planes: 
+      out_planes: 
+      stride: (Default value = 1)
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
     return nn.Conv3d(in_planes, out_planes, kernel_size=1, stride=stride, bias=False)
 
@@ -110,15 +100,13 @@ class BasicBlock(nn.Module):
     def forward(self, x):
         """
 
-        Parameters
-        ----------
-        x :
-            
+        Args:
+          x: 
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         identity = x
 
@@ -194,15 +182,13 @@ class Bottleneck(nn.Module):
     def forward(self, x):
         """
 
-        Parameters
-        ----------
-        x :
-            
+        Args:
+          x: 
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         identity = x
 
@@ -284,23 +270,17 @@ class ResNet(nn.Module):
     def _make_layer(self, block, planes, blocks, stride=1, dilate=False):
         """
 
-        Parameters
-        ----------
-        block :
-            
-        planes :
-            
-        blocks :
-            
-        stride :
-            (Default value = 1)
-        dilate :
-            (Default value = False)
+        Args:
+          block: 
+          planes: 
+          blocks: 
+          stride: (Default value = 1)
+          dilate: (Default value = False)
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         norm_layer = self._norm_layer
         downsample = None
@@ -328,15 +308,13 @@ class ResNet(nn.Module):
     def _forward_impl(self, x):
         """
 
-        Parameters
-        ----------
-        x :
-            
+        Args:
+          x: 
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         # See note [TorchScript super()]
         x = self.conv1(x)
@@ -359,15 +337,13 @@ class ResNet(nn.Module):
     def forward(self, x):
         """
 
-        Parameters
-        ----------
-        x :
-            
+        Args:
+          x: 
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         return self._forward_impl(x)
 
@@ -375,25 +351,18 @@ class ResNet(nn.Module):
 def _resnet(arch, block, layers, pretrained, progress, **kwargs):
     """
 
-    Parameters
-    ----------
-    arch :
-        
-    block :
-        
-    layers :
-        
-    pretrained :
-        
-    progress :
-        
-    **kwargs :
-        
+    Args:
+      arch: 
+      block: 
+      layers: 
+      pretrained: 
+      progress: 
+      **kwargs: 
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
     model = ResNet(block, layers, **kwargs)
 
@@ -404,19 +373,15 @@ def resnet18_brew3(pretrained=False, progress=True, **kwargs):
     r"""ResNet-18 model from
     `"Deep Residual Learning for Image Recognition" <https://arxiv.org/pdf/1512.03385.pdf>`_
 
-    Parameters
-    ----------
-    pretrained : bool
-        If True, returns a model pre-trained on ImageNet (Default value = False)
-    progress : bool
-        If True, displays a progress bar of the download to stderr (Default value = True)
-    **kwargs :
-        
+    Args:
+      pretrained(bool, optional): If True, returns a model pre-trained on ImageNet (Default value = False)
+      progress(bool, optional): If True, displays a progress bar of the download to stderr (Default value = True)
+      **kwargs: 
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
     return _resnet('resnet18', BasicBlock, [2, 2, 2, 2], pretrained, progress,
                    **kwargs)
@@ -427,19 +392,15 @@ def resnet34_brew3(pretrained=False, progress=True, **kwargs):
     r"""ResNet-34 model from
     `"Deep Residual Learning for Image Recognition" <https://arxiv.org/pdf/1512.03385.pdf>`_
 
-    Parameters
-    ----------
-    pretrained : bool
-        If True, returns a model pre-trained on ImageNet (Default value = False)
-    progress : bool
-        If True, displays a progress bar of the download to stderr (Default value = True)
-    **kwargs :
-        
+    Args:
+      pretrained(bool, optional): If True, returns a model pre-trained on ImageNet (Default value = False)
+      progress(bool, optional): If True, displays a progress bar of the download to stderr (Default value = True)
+      **kwargs: 
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
     return _resnet('resnet34', BasicBlock, [3, 4, 6, 3], pretrained, progress,
                    **kwargs)
@@ -450,19 +411,15 @@ def resnet50_brew3(pretrained=False, progress=True, **kwargs):
     r"""ResNet-50 model from
     `"Deep Residual Learning for Image Recognition" <https://arxiv.org/pdf/1512.03385.pdf>`_
 
-    Parameters
-    ----------
-    pretrained : bool
-        If True, returns a model pre-trained on ImageNet (Default value = False)
-    progress : bool
-        If True, displays a progress bar of the download to stderr (Default value = True)
-    **kwargs :
-        
+    Args:
+      pretrained(bool, optional): If True, returns a model pre-trained on ImageNet (Default value = False)
+      progress(bool, optional): If True, displays a progress bar of the download to stderr (Default value = True)
+      **kwargs: 
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
     return _resnet('resnet50', Bottleneck, [3, 4, 6, 3], pretrained, progress, #2,4,2
                    **kwargs)

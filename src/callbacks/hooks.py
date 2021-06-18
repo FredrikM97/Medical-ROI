@@ -34,19 +34,15 @@ class ActivationMapHook():
     def callback(self, module, input, output):
         """
 
-        Parameters
-        ----------
-        module :
-            
-        input :
-            
-        output :
-            
+        Args:
+          module: 
+          input: 
+          output: 
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         self.features = output.detach().cpu().data.numpy()
         #self.features = output.cpu().data.numpy()
@@ -73,19 +69,15 @@ class SaveFeaturesHook():
     def hook_fn(self, module, input, output): 
         """
 
-        Parameters
-        ----------
-        module :
-            
-        input :
-            
-        output :
-            
+        Args:
+          module: 
+          input: 
+          output: 
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         self.features = ((output.cpu()).data).numpy()
         

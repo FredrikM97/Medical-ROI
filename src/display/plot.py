@@ -14,26 +14,24 @@ import seaborn as sns
 import cv2
 from matplotlib import colors
 from math import ceil, floor
+from typing import Tuple
 
 from src.files import preprocess
 from src.display.cmap import parula_map
 
 #sns.set(font_scale=2.5)
 
-def intensity_distribution(image:"ndarray", title:str="") -> None:
+def intensity_distribution(image:'np.ndarray', title:str="") -> "None":
     """Plot the intensity distribution of an input image
 
-    Parameters
-    ----------
-    image : np.ndarray
-        
-    title : str
-        (Default value = "")
+    Args:
+      image('np.ndarray'): 
+      title(str, optional): (Default value = "")
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
     fig = plt.figure()
     ax = sns.histplot(image) #, image.max()
@@ -45,24 +43,19 @@ def intensity_distribution(image:"ndarray", title:str="") -> None:
     plt.xlabel("Intensity")
     plt.xlabel("Frequency")
 
-def display_3D(im3d:"ndarray", cmap:str="jet", step:int=2, plottype:str='imshow') -> "Figure":
+def display_3D(im3d:'np.ndarray', cmap:str="jet", step:int=2, plottype:str='imshow') -> "plt.Figure":
     """Plot 3D image as 2D slices
 
-    Parameters
-    ----------
-    im3d : np.ndarray
-        
-    cmap : str
-        (Default value = "jet")
-    step : int
-        (Default value = 2)
-    plottype : str
-        (Default value = 'imshow')
+    Args:
+      im3d('np.ndarray'): 
+      cmap(str, optional): (Default value = "jet")
+      step(int, optional): (Default value = 2)
+      plottype(str, optional): (Default value = 'imshow')
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
     
     ncols = 9
@@ -88,22 +81,18 @@ def display_3D(im3d:"ndarray", cmap:str="jet", step:int=2, plottype:str='imshow'
         
     return fig
 
-def features_regions(bboxes:list, image_mask:"ndarray",grid_kwgs:dict={}) -> None:
+def features_regions(bboxes:list, image_mask:'np.ndarray',grid_kwgs:dict={}) -> "None":
     """Plot the extracted features
 
-    Parameters
-    ----------
-    bboxes : list
-        
-    image_mask : np.ndarray
-        
-    grid_kwgs : dict
-        (Default value = {})
+    Args:
+      bboxes(list): 
+      image_mask('np.ndarray'): 
+      grid_kwgs(dict, optional): (Default value = {})
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
 
     vmin = image_mask.min()
@@ -127,18 +116,16 @@ def features_regions(bboxes:list, image_mask:"ndarray",grid_kwgs:dict={}) -> Non
     
     plt.axis('off')
 
-def center_distribution(bbox_coords:list) -> None:
+def center_distribution(bbox_coords:list) -> "None":
     """Plot the distribution
 
-    Parameters
-    ----------
-    bbox_coords : list
-        
+    Args:
+      bbox_coords(list): 
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
     bbox_listed = list(zip(*bbox_coords))
 
@@ -147,20 +134,17 @@ def center_distribution(bbox_coords:list) -> None:
     for ax,cord in zip(axes.flatten(),combine_coordinates(np.array(bbox_listed))):
         sns.histplot(cord, ax=ax,bins=10)
 
-def apply_image_bboxes(image:"ndarray",bbox_coords:list) -> "ndarray":
+def apply_image_bboxes(image:'np.ndarray',bbox_coords:list) -> 'np.ndarray':
     """Takes coordinates of bounding boxes and plot them.
 
-    Parameters
-    ----------
-    image :
-        
-    bbox_coords : list[int]
-        Expect shape of (x0,y0,x1,y1,z0,z1)
+    Args:
+      image('np.ndarray'): 
+      bbox_coords(list): Expect shape of (x0,y0,x1,y1,z0,z1)
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
 
     for feature in bbox_coords:
@@ -170,22 +154,18 @@ def apply_image_bboxes(image:"ndarray",bbox_coords:list) -> "ndarray":
             
     return image
 
-def roc(roc_classes:"tensor", prefix:str='', fig:"Figure"=None)-> "[np.ndarray, plt.figure]":
+def roc(roc_classes:'torch.tensor', prefix:str='', fig:'plt.figure'=None)-> 'Tuple[np.ndarray, plt.figure]':
     """Plot ROC curve of the provided classes
 
-    Parameters
-    ----------
-    roc_classes :
-        
-    prefix : str
-        (Default value = '')
-    fig :
-        (Default value = None)
+    Args:
+      roc_classes('torch.tensor'): 
+      prefix(str, optional): (Default value = '')
+      fig('plt.figure', optional): (Default value = None)
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
     # Returns (auc, fpr, tpr), roc_fig
     fig = plt.figure(figsize = (10,7))
@@ -223,17 +203,14 @@ def roc(roc_classes:"tensor", prefix:str='', fig:"Figure"=None)-> "[np.ndarray, 
 def precision_recall_curve(precision, recall):
     """Plot the precision recall curve
 
-    Parameters
-    ----------
-    precision :
-        
-    recall :
-        
+    Args:
+      precision: 
+      recall: 
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
     fig = plt.figure(figsize = (10,7))
     lw=2
@@ -263,18 +240,16 @@ def precision_recall_curve(precision, recall):
 
     return metric_list, fig
 
-def confusion_matrix(cm:"torch.tensor") -> "Figure":
+def confusion_matrix(cm:'torch.tensor') -> "plt.Figure":
     """Plot the confusion matrix
 
-    Parameters
-    ----------
-    cm :
-        
+    Args:
+      cm('torch.tensor'): 
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
     with sns.plotting_context("talk", font_scale=1.5):
         #fig = plt.figure(figsize=(20,20))
@@ -285,28 +260,21 @@ def confusion_matrix(cm:"torch.tensor") -> "Figure":
     
     return f
 
-def imshow(image:"tensor", cmap:list=parula_map, figsize:tuple=(8,4),colormap:bool=False,colormap_shrink:float=1, disable_axis:bool=True) -> None:
+def imshow(image:'torch.tensor', cmap:list=parula_map, figsize:tuple=(8,4),colormap:bool=False,colormap_shrink:float=1, disable_axis:bool=True) -> None:
     """
 
-    Parameters
-    ----------
-    image :
-        
-    cmap :
-        (Default value = parula_map)
-    figsize :
-        (Default value = (8,4))
-    colormap : bool
-        (Default value = False)
-    colormap_shrink : float
-        (Default value = 1)
-    disable_axis : bool
-        (Default value = True)
+    Args:
+      image('torch.tensor'): 
+      cmap(list, optional): (Default value = parula_map)
+      figsize(tuple, optional): (Default value = (8,4))
+      colormap(bool, optional): (Default value = False)
+      colormap_shrink(float, optional): (Default value = 1)
+      disable_axis(bool, optional): (Default value = True)
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
     fig = plt.figure(figsize=figsize)
     im = plt.imshow(image, cmap=cmap)
@@ -319,18 +287,16 @@ def imshow(image:"tensor", cmap:list=parula_map, figsize:tuple=(8,4),colormap:bo
 
     plt.show()
     
-def advanced_plot(slices:list):
+def advanced_plot(slices:list) -> None:
     """Advaned plot function for plotting with grid for nifti images.
 
-    Parameters
-    ----------
-    slices :
-        
+    Args:
+      slices(list): 
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
     "Advanced plotting function"
     import matplotlib.gridspec as gridspec
@@ -366,19 +332,15 @@ def advanced_plot(slices:list):
 def meta_settings(rows:int=1, cols:int=2, figsize=(16,16)):
     """Set meta settings for subplots. Include the number of rows and columns.
 
-    Parameters
-    ----------
-    rows : int
-        (Default value = 1)
-    cols : int
-        (Default value = 2)
-    figsize :
-        (Default value = (16,16))
+    Args:
+      rows(int, optional): (Default value = 1)
+      cols(int, optional): (Default value = 2)
+      figsize: (Default value = (16,16))
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
     "Plot settings of meta data"
     plt.rcParams.update({'font.size': 15})
@@ -390,21 +352,16 @@ def move_legend(ax, new_loc:str="upper left",title:str=None,**kws):
     """If the legend disapear this function should be used.
     Recommended from https://github.com/mwaskom/seaborn/issues/2280 where matplotlib have some weird implementation which makes the legend disappear..
 
-    Parameters
-    ----------
-    ax :
-        
-    new_loc : str
-        (Default value = "upper left")
-    title : str
-        (Default value = None)
-    **kws :
-        
+    Args:
+      ax: 
+      new_loc(str, optional): (Default value = "upper left")
+      title(str, optional): (Default value = None)
+      **kws: 
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
     if (old_legend := ax.legend_) is not None:
         handles = old_legend.legendHandles
@@ -416,25 +373,18 @@ def move_legend(ax, new_loc:str="upper left",title:str=None,**kws):
 def set_plot_settings(ax,rotation:int=0, title:str=None, xlabel:str=None, ylabel:str=None, **kws):
     """Set label, title, rotation and theme for axis of a plot
 
-    Parameters
-    ----------
-    ax :
-        
-    rotation : int
-        (Default value = 0)
-    title : str
-        (Default value = None)
-    xlabel : str
-        (Default value = None)
-    ylabel : str
-        (Default value = None)
-    **kws :
-        
+    Args:
+      ax: 
+      rotation(int, optional): (Default value = 0)
+      title(str, optional): (Default value = None)
+      xlabel(str, optional): (Default value = None)
+      ylabel(str, optional): (Default value = None)
+      **kws: 
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
     sns.set_theme(style="ticks", color_codes=True)
     if title: ax.set_title(title)
@@ -445,7 +395,7 @@ def set_plot_settings(ax,rotation:int=0, title:str=None, xlabel:str=None, ylabel
     
     
 def countplot(
-                df:"DataFrame", 
+                df:'pandas.DataFrame', 
                 x:str=None, 
                 y:str=None, 
                 hue:str=None, 
@@ -469,33 +419,22 @@ def countplot(
         ax=axes[0,0]
     )
 
-    Parameters
-    ----------
-    df :
-        
-    x : str
-        (Default value = None)
-    y : str
-        (Default value = None)
-    hue : str
-        (Default value = None)
-    order : list
-        (Default value = None)
-    ax :
-        (Default value = None)
-    plot_kws : dict
-        (Default value = {})
-    setting_kws : dict
-        (Default value = {})
-    legend_kws : dict
-        (Default value = {})
-    **kws :
-        
+    Args:
+      df('pandas.DataFrame'): 
+      x(str, optional): (Default value = None)
+      y(str, optional): (Default value = None)
+      hue(str, optional): (Default value = None)
+      order(list, optional): (Default value = None)
+      ax: (Default value = None)
+      plot_kws(dict, optional): (Default value = {})
+      setting_kws(dict, optional): (Default value = {})
+      legend_kws(dict, optional): (Default value = {})
+      **kws: 
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
     sns.set(font_scale=1.1)
 
@@ -515,7 +454,7 @@ def countplot(
     return ax1
 
 def histplot(
-            df:"DataFrame", 
+            df:'pandas.DataFrame', 
             x=None,
             y=None,
             hue:str=None, 
@@ -530,37 +469,24 @@ def histplot(
         ):
     """
 
-    Parameters
-    ----------
-    df :
-        
-    x :
-        (Default value = None)
-    y :
-        (Default value = None)
-    hue : str
-        (Default value = None)
-    multiple :
-        (Default value = 'stack')
-    bins : int
-        (Default value = 'auto')
-    discrete :
-        (Default value = True)
-    ax :
-        (Default value = None)
-    plot_kws : dict
-        (Default value = {})
-    setting_kws : dict
-        (Default value = {})
-    legend_kws : dict
-        (Default value = {})
-    **kws :
-        
+    Args:
+      df('pandas.DataFrame'): 
+      x: (Default value = None)
+      y: (Default value = None)
+      hue(str, optional): (Default value = None)
+      multiple: (Default value = 'stack')
+      bins(int, optional): (Default value = 'auto')
+      discrete: (Default value = True)
+      ax: (Default value = None)
+      plot_kws(dict, optional): (Default value = {})
+      setting_kws(dict, optional): (Default value = {})
+      legend_kws(dict, optional): (Default value = {})
+      **kws: 
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
     sns.set(font_scale=1.1)
     ax1 = sns.histplot(
@@ -581,7 +507,7 @@ def histplot(
     return ax1
 
 def catplot(
-            df:"DataFrame", 
+            df:'pandas.DataFrame', 
             x=None,
             y=None,
             hue:str=None, 
@@ -596,37 +522,24 @@ def catplot(
         ):
     """
 
-    Parameters
-    ----------
-    df :
-        
-    x :
-        (Default value = None)
-    y :
-        (Default value = None)
-    hue : str
-        (Default value = None)
-    kind :
-        (Default value = 'bar')
-    multiple :
-        (Default value = 'stack')
-    bins : int
-        (Default value = 'auto')
-    discrete :
-        (Default value = True)
-    plot_kws : dict
-        (Default value = {})
-    setting_kws : dict
-        (Default value = {})
-    legend_kws : dict
-        (Default value = {})
-    **kws :
-        
+    Args:
+      df('pandas.DataFrame'): 
+      x: (Default value = None)
+      y: (Default value = None)
+      hue(str, optional): (Default value = None)
+      kind: (Default value = 'bar')
+      multiple: (Default value = 'stack')
+      bins(int, optional): (Default value = 'auto')
+      discrete: (Default value = True)
+      plot_kws(dict, optional): (Default value = {})
+      setting_kws(dict, optional): (Default value = {})
+      legend_kws(dict, optional): (Default value = {})
+      **kws: 
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
     sns.set(font_scale=1.1)
     ax1 = sns.catplot(
@@ -648,7 +561,7 @@ def catplot(
 
     
 def boxplot(
-                df:"DataFrame", 
+                df:'pandas.DataFrame', 
                 x:str=None, 
                 y:str=None, 
                 hue:str=None, 
@@ -661,33 +574,22 @@ def boxplot(
             ):
     """
 
-    Parameters
-    ----------
-    df :
-        
-    x : str
-        (Default value = None)
-    y : str
-        (Default value = None)
-    hue : str
-        (Default value = None)
-    order : list
-        (Default value = None)
-    ax :
-        (Default value = None)
-    plot_kws : dict
-        (Default value = {})
-    setting_kws : dict
-        (Default value = {})
-    legend_kws : dict
-        (Default value = {})
-    **kws :
-        
+    Args:
+      df('pandas.DataFrame'): 
+      x(str, optional): (Default value = None)
+      y(str, optional): (Default value = None)
+      hue(str, optional): (Default value = None)
+      order(list, optional): (Default value = None)
+      ax: (Default value = None)
+      plot_kws(dict, optional): (Default value = {})
+      setting_kws(dict, optional): (Default value = {})
+      legend_kws(dict, optional): (Default value = {})
+      **kws: 
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
  
     sns.set(font_scale=1.1)
@@ -721,33 +623,22 @@ def lineplot(
         ):
     """
 
-    Parameters
-    ----------
-    df :
-        
-    x :
-        (Default value = None)
-    y :
-        (Default value = None)
-    hue : str
-        (Default value = None)
-    title : str
-        (Default value = None)
-    ax :
-        (Default value = None)
-    plot_kws : dict
-        (Default value = {})
-    setting_kws : dict
-        (Default value = {})
-    legend_kws : dict
-        (Default value = {})
-    **kws :
-        
+    Args:
+      df: 
+      x: (Default value = None)
+      y: (Default value = None)
+      hue(str, optional): (Default value = None)
+      title(str, optional): (Default value = None)
+      ax: (Default value = None)
+      plot_kws(dict, optional): (Default value = {})
+      setting_kws(dict, optional): (Default value = {})
+      legend_kws(dict, optional): (Default value = {})
+      **kws: 
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
     "Evaluate if this works. Not tested"
     sns.set(font_scale=1.1)

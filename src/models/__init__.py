@@ -12,15 +12,13 @@ BASEDIR = 'src.classifier.'
 def find_model_using_name(model_name):
     """
 
-    Parameters
-    ----------
-    model_name :
-        
+    Args:
+      model_name: 
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
     from inspect import isclass
     from pkgutil import iter_modules
@@ -42,17 +40,14 @@ def create_model(name:str=None, args:dict={}):
     """Create a model given the configuration.
     This is the main interface between this package and train.py/validate.py
 
-    Parameters
-    ----------
-    name : str
-        (Default value = None)
-    args : dict
-        (Default value = {})
+    Args:
+      name(str, optional): (Default value = None)
+      args(dict, optional): (Default value = {})
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
     
     model = find_model_using_name(name)

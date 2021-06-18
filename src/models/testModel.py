@@ -35,17 +35,14 @@ class testModel(nn.Module):
     def _conv_layer_set(self, in_c, out_c):
         """
 
-        Parameters
-        ----------
-        in_c :
-            
-        out_c :
-            
+        Args:
+          in_c: 
+          out_c: 
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         conv_layer = nn.Sequential(nn.ModuleDict([
             ('conv',nn.Conv3d(in_c, out_c, kernel_size=(3, 3, 3), padding=0)),
@@ -58,15 +55,13 @@ class testModel(nn.Module):
     def forward(self, x):
         """
 
-        Parameters
-        ----------
-        x :
-            
+        Args:
+          x: 
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         # Set 1
         out = self.conv_layer1(x)
@@ -83,15 +78,13 @@ class testModel(nn.Module):
     def num_flat_features(self, x):
         """
 
-        Parameters
-        ----------
-        x :
-            
+        Args:
+          x: 
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         size = x.size()[1:]  # all dimensions except the batch dimension
         num_features = 1

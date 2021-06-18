@@ -16,22 +16,15 @@ import itertools
 def load_json(dirpath:str=None) -> dict:
     """Open a json file and return the key name and config data if the file exists
 
-    Parameters
-    ----------
-    dirpath : str
-        path to json file (Default value = None)
+    Args:
+      dirpath(str, optional): path to json file (Default value = None)
 
-    Returns
-    -------
-    dict
-        * Dictionary with {name:config}
+    Returns:
+      dict: * Dictionary with {name:config}
 
-    Raises
-    ------
-    ValueError
-        If file could not be loaded
+    Raises:
+      ValueError If file could not be loaded
 
-    
     """
     with open(dirpath) as json_file:
         name = ''
@@ -43,17 +36,14 @@ def load_json(dirpath:str=None) -> dict:
 def load_config(filename:str,dirpath:str=None) -> Dict:
     """Load file with same name as the input filename and located in dirpath
 
-    Parameters
-    ----------
-    filename : str
-        
-    dirpath : str
-        (Default value = None)
+    Args:
+      filename(str): 
+      dirpath(str, optional): (Default value = None)
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
 
     dirpath = os.path.abspath(dirpath if dirpath else '.')
@@ -71,15 +61,13 @@ def load_config(filename:str,dirpath:str=None) -> Dict:
 def load_xml(path:str):
     """Load XML from dictory and return a generator
 
-    Parameters
-    ----------
-    path : str
-        
+    Args:
+      path(str): 
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
     assert path, "No path defined"
     for filename in os.listdir(path):
@@ -90,17 +78,14 @@ def load_xml(path:str):
 def load_nifti(srcdir:str) -> list:
     """Load nifti image from srcdir where all files ending with .nii is selected.
 
-    Parameters
-    ----------
-    srcdir : str
-        path to
+    Args:
+      srcdir(str): path to source
 
-    Returns
-    -------
-    list
-        * List of dictionaries containing columns, filename and path to file
+    Returns:
+      : List of dictionaries containing columns, filename and path to file
 
-    
+    Raises:
+
     """
     columns = ['filename','dirs','path']
     return [
@@ -111,18 +96,16 @@ def load_nifti(srcdir:str) -> list:
             for filename in files if filename.endswith('.nii')
         ] 
 
-def files_path(srcdir:str):
+def files_path(srcdir:str) -> 'np.ndarray':
     """Load a file from srcdir if the file ends with .nii
 
-    Parameters
-    ----------
-    srcdir : str
-        
+    Args:
+      srcdir(str): 
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
     tmp = np.array([
             path + '/' + filename
@@ -133,36 +116,31 @@ def files_path(srcdir:str):
 
     return tmp
 
-def nifti_axial(path:str) -> "ndarray":
+def nifti_axial(path:str) -> 'np.ndarray':
     """Load an nifti image from the axial view
 
-    Parameters
-    ----------
-    path : str
-        path to the given file
+    Args:
+      path(str): path to the given file
 
-    Returns
-    -------
-    np.ndarray
-        * Nifti image from axial view
+    Returns:
+      np.ndarray: * Nifti image from axial view
 
-    
+    Raises:
+
     """
     # Load nifti image and convert to axial view
     return image2axial(nib.load(path).get_fdata())
      
-def adni(path) -> iter:
-    """
+def adni(path:str) -> iter:
+    """Load a generator of all images or image if path points at a file
 
-    Parameters
-    ----------
-    path :
-        
+    Args:
+      path(str): 
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
     if os.path.isdir(path):
         files = os.listdir(path)
@@ -172,18 +150,16 @@ def adni(path) -> iter:
     else:
         return nifti_axial(path)#[0]
         
-def spm(path):
-    """
+def spm(path:str):
+    """Load a generator of all images or image if path points at a file
 
-    Parameters
-    ----------
-    path :
-        
+    Args:
+      path(str): 
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
     if os.path.isdir(path):
         files = os.listdir(path)

@@ -56,15 +56,13 @@ class VGG(nn.Module):
     def forward(self, x):
         """
 
-        Parameters
-        ----------
-        x :
-            
+        Args:
+          x: 
 
-        Returns
-        -------
+        Returns:
 
-        
+        Raises:
+
         """
         x = self.features(x)
         #print("VGG shape", x.shape)
@@ -91,17 +89,14 @@ class VGG(nn.Module):
 def make_layers(cfg, batch_norm=False):
     """
 
-    Parameters
-    ----------
-    cfg :
-        
-    batch_norm :
-        (Default value = False)
+    Args:
+      cfg: 
+      batch_norm: (Default value = False)
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
     layers = []
     in_channels = 1
@@ -141,25 +136,18 @@ cfgs = {
 def _vgg(arch, cfg, batch_norm, pretrained, progress, **kwargs):
     """
 
-    Parameters
-    ----------
-    arch :
-        
-    cfg :
-        
-    batch_norm :
-        
-    pretrained :
-        
-    progress :
-        
-    **kwargs :
-        
+    Args:
+      arch: 
+      cfg: 
+      batch_norm: 
+      pretrained: 
+      progress: 
+      **kwargs: 
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
     if pretrained:
         kwargs['init_weights'] = False
@@ -171,19 +159,15 @@ def vgg11_brew(pretrained=False, progress=True, **kwargs):
     r"""VGG 11-layer model (configuration "A") from
     `"Very Deep Convolutional Networks For Large-Scale Image Recognition" <https://arxiv.org/pdf/1409.1556.pdf>`_
 
-    Parameters
-    ----------
-    pretrained : bool
-        If True, returns a model pre-trained on ImageNet (Default value = False)
-    progress : bool
-        If True, displays a progress bar of the download to stderr (Default value = True)
-    **kwargs :
-        
+    Args:
+      pretrained(bool, optional): If True, returns a model pre-trained on ImageNet (Default value = False)
+      progress(bool, optional): If True, displays a progress bar of the download to stderr (Default value = True)
+      **kwargs: 
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
     return _vgg('vgg11', 'A1', False, pretrained, progress, **kwargs)
 
@@ -191,19 +175,15 @@ def vgg11_brew2(pretrained=False, progress=True, **kwargs):
     r"""VGG 11-layer model (configuration "A") from
     `"Very Deep Convolutional Networks For Large-Scale Image Recognition" <https://arxiv.org/pdf/1409.1556.pdf>`_
 
-    Parameters
-    ----------
-    pretrained : bool
-        If True, returns a model pre-trained on ImageNet (Default value = False)
-    progress : bool
-        If True, displays a progress bar of the download to stderr (Default value = True)
-    **kwargs :
-        
+    Args:
+      pretrained(bool, optional): If True, returns a model pre-trained on ImageNet (Default value = False)
+      progress(bool, optional): If True, displays a progress bar of the download to stderr (Default value = True)
+      **kwargs: 
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
     return _vgg('vgg11', 'A2', False, pretrained, progress, **kwargs)
 
@@ -211,19 +191,15 @@ def vgg11_brew3(pretrained=False, progress=True, **kwargs):
     r"""VGG 11-layer model (configuration "A") from
     `"Very Deep Convolutional Networks For Large-Scale Image Recognition" <https://arxiv.org/pdf/1409.1556.pdf>`_
 
-    Parameters
-    ----------
-    pretrained : bool
-        If True, returns a model pre-trained on ImageNet (Default value = False)
-    progress : bool
-        If True, displays a progress bar of the download to stderr (Default value = True)
-    **kwargs :
-        
+    Args:
+      pretrained(bool, optional): If True, returns a model pre-trained on ImageNet (Default value = False)
+      progress(bool, optional): If True, displays a progress bar of the download to stderr (Default value = True)
+      **kwargs: 
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
     return _vgg('vgg11', 'A3', False, pretrained, progress, **kwargs)
 
@@ -231,19 +207,15 @@ def vgg11_brew4(pretrained=False, progress=True, **kwargs):
     r"""VGG 11-layer model (configuration "A") from
     `"Very Deep Convolutional Networks For Large-Scale Image Recognition" <https://arxiv.org/pdf/1409.1556.pdf>`_
 
-    Parameters
-    ----------
-    pretrained : bool
-        If True, returns a model pre-trained on ImageNet (Default value = False)
-    progress : bool
-        If True, displays a progress bar of the download to stderr (Default value = True)
-    **kwargs :
-        
+    Args:
+      pretrained(bool, optional): If True, returns a model pre-trained on ImageNet (Default value = False)
+      progress(bool, optional): If True, displays a progress bar of the download to stderr (Default value = True)
+      **kwargs: 
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
     return _vgg('vgg11', 'A4', False, pretrained, progress, **kwargs)
 
@@ -251,19 +223,15 @@ def vgg13_brew(pretrained=False, progress=True, **kwargs):
     r"""VGG 13-layer model (configuration "B")
     `"Very Deep Convolutional Networks For Large-Scale Image Recognition" <https://arxiv.org/pdf/1409.1556.pdf>`_
 
-    Parameters
-    ----------
-    pretrained : bool
-        If True, returns a model pre-trained on ImageNet (Default value = False)
-    progress : bool
-        If True, displays a progress bar of the download to stderr (Default value = True)
-    **kwargs :
-        
+    Args:
+      pretrained(bool, optional): If True, returns a model pre-trained on ImageNet (Default value = False)
+      progress(bool, optional): If True, displays a progress bar of the download to stderr (Default value = True)
+      **kwargs: 
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
     return _vgg('vgg13', 'B1', False, pretrained, progress, **kwargs)
 
@@ -271,18 +239,14 @@ def vgg16_brew(pretrained=False, progress=True, **kwargs):
     r"""VGG 16-layer model (configuration "D")
     `"Very Deep Convolutional Networks For Large-Scale Image Recognition" <https://arxiv.org/pdf/1409.1556.pdf>`_
 
-    Parameters
-    ----------
-    pretrained : bool
-        If True, returns a model pre-trained on ImageNet (Default value = False)
-    progress : bool
-        If True, displays a progress bar of the download to stderr (Default value = True)
-    **kwargs :
-        
+    Args:
+      pretrained(bool, optional): If True, returns a model pre-trained on ImageNet (Default value = False)
+      progress(bool, optional): If True, displays a progress bar of the download to stderr (Default value = True)
+      **kwargs: 
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
     return _vgg('vgg16', 'D1', False, pretrained, progress, **kwargs)

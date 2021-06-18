@@ -1,19 +1,15 @@
 def merge_dict(a, b, path:str=None):
     """
 
-    Parameters
-    ----------
-    a :
-        
-    b :
-        
-    path : str
-        (Default value = None)
+    Args:
+      a: 
+      b: 
+      path(str, optional): (Default value = None)
 
-    Returns
-    -------
+    Returns:
 
-    
+    Raises:
+
     """
     "merges b into a"
     if path is None: path = []
