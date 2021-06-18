@@ -5,7 +5,7 @@ Decorators for functions
 import matplotlib.pyplot as plt
 import functools
 import os, sys
-from .print import write_to_file
+from src.files.file import write
 
 def figure_decorator(func, figsize=(10,10)):
     """Add decoratoor to function to create subplots"
@@ -68,7 +68,7 @@ def close_on_finish_decorator(func, filepath,*args,message='',**kwargs):
     """
     try:
         tmp = func(*args,**kwargs)
-        write_to_file(filepath + "/done.sample", str(message))
+        write(filepath + "/done.sample", str(message))
         return tmp
     except Exception as e:
         raise Exception("Error occured in function") from e

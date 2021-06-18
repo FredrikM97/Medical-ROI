@@ -7,7 +7,7 @@
         },
         "visualise":{
             "data":{
-                "root":"data/",
+                "root":"../data/",
                 "images_raw":"adni_raw/",
                 "images_processed":"SPM_preprocessed_normalized/ADNI1/",
                 "images_category":"SPM_categorised/ADNI1/",
@@ -51,12 +51,12 @@
         },
         "classifier":{
             "name": "BaseModel",
-            "seed":0,
+            "seed":420,
             "checkpoint_path":null,
             "dataloader": {
                 "name": "AdniDataloader",
                 "args":{
-                    "data_dir": "data/SPM_categorised/ADNI1/",
+                    "data_dir": "data/SPM_categorised/Amira/",
                     "batch_size": 8,
                     "num_workers": 6,
                     "pin_memory": true,
@@ -65,7 +65,8 @@
                     "split":{
                         "kfold_enable":true,
                         "folds":10,
-                        "val_size": 0.1
+                        "val_size": 0.1,
+                        "test_size": 0.1
                     },
                     "augmentation":{
                         "enable":true
@@ -113,7 +114,7 @@
                 }
             }, 
             "logging":{
-                "tensorboard":"/var/metrics/codetests/logs/tb/final",
+                "tensorboard":"/var/metrics/codetests/logs/tb/final2",
                 "visualise":"logs/visualise"
             },
             "trainer":{

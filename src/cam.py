@@ -2,10 +2,10 @@
 This module contain various types of functions/classes to access and generate CAM.
 
 """
-from src.utils import utils, preprocess
-
+from src.files import preprocess
+from src.files.preprocess import image2axial, to_grid
 import nibabel as nib
-from src.utils.preprocess import image2axial, to_grid
+
 import warnings
 import torchcam 
 import torch
@@ -16,7 +16,7 @@ from typing import Tuple, Union, List
 import torchvision
 import matplotlib.pyplot as plt
 
-from src.utils.cmap import parula_map
+from src.display.cmap import parula_map
 
 
 class CAM:
