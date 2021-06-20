@@ -203,7 +203,7 @@ class Agent:
                 f"Checkpoint: {self._config['checkpoint_path']}\n"
                 f"Seed: {self._config['seed']}\n"
                 f"{self.model}\n\n{self.dataloader}"
-                f"{self.model.roi_model if self.model.roi_model != None else ''}" 
+                f"{self.model.roi_model if self.model != None and self.model.roi_model != None else ''}" 
         )
 
     def save_hparams(self):
