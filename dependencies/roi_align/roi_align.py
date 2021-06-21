@@ -46,7 +46,7 @@ def roi_align_2d(input: torch.Tensor, boxes, output_size,
     rois = boxes
     if not isinstance(rois, torch.Tensor):
         rois = convert_boxes_to_roi_format(rois)
-    return roi_al_extension.roi_align(input, rois, spatial_scale, output_size[0], output_size[1], sampling_ratio)
+    return RoIAlign_extension_2d.roi_align(input, rois, spatial_scale, output_size[0], output_size[1], sampling_ratio)
 
 
 def roi_align_3d(input: torch.Tensor, boxes, output_size,
@@ -79,7 +79,7 @@ def roi_align_3d(input: torch.Tensor, boxes, output_size,
     rois = boxes
     if not isinstance(rois, torch.Tensor):
         rois = convert_boxes_to_roi_format(rois)
-    return roi_al_extension_3d.roi_align(input, rois, spatial_scale, output_size[0], output_size[1], output_size[2],
+    return RoIAlign_extension_3d.roi_align(input, rois, spatial_scale, output_size[0], output_size[1], output_size[2],
                                          sampling_ratio)
 
 
@@ -109,7 +109,7 @@ class RoIAlign(nn.Module):
         output (Tensor[K, C, output_size[0], output_size[1](, output_size[2])])
     """
     def __init__(self, output_size, spatial_scale=1., sampling_ratio=-1):
-        super(RoIAlign, self).__init__()
+        super().__init__()
         self.output_size = output_size
         self.spatial_scale = spatial_scale
         self.sampling_ratio = sampling_ratio
