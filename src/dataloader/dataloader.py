@@ -130,7 +130,7 @@ class AdniDataloader(pl.LightningDataModule):
             f"Data directory: {self.data_dir}\n"
             f"Dataset sizes - Training: {len(self.adni_train)} Validation: {len(self.adni_val)} Test: {len(self.adni_test)}\n"
             f"Augmentation: {'Enabled' if self.augmentation['enable'] else 'Disabled'}\n"
-            f"KFold: {'Enabled - Fold: ' + str(self.kfold_index) + '/' + str(self.split_conf['folds']) if self.split_conf['kfold_enable'] else 'Disabled'}\n")
+            f"KFold: {'Enabled - Fold: ' + str(self.kfold_index) + '/' + str(self.split_conf['folds']) if self.split_conf['kfold_enable'] else 'Disabled'}")
         
     
     def next_fold(self):

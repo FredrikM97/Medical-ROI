@@ -21,7 +21,6 @@ from src.files import preprocess
 
 from . import models
 
-
 class Model(pl.LightningModule): 
     """ """
     def __init__(self,class_weights:torch.Tensor=None,hp_metrics:list=None,loss={}, roi_hparams={"enable":False,'input_shape':None, 'bounding_boxes':[]},**hparams):
@@ -56,7 +55,7 @@ class Model(pl.LightningModule):
         
         if self.roi_enabled:
             # Dont import unless we want to use RoiTransform.. (Compability without cuda 11.1)
-            from src.utils.transforms import RoiTransform
+            from src.roi import RoiTransform
             self.roi_model = RoiTransform(**roi_hparams)
         
         with warnings.catch_warnings():

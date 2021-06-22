@@ -6,6 +6,7 @@ import contextlib
 import itertools
 import json
 import os
+import logging
 from datetime import datetime
 from threading import Lock
 from typing import Tuple
@@ -28,6 +29,9 @@ from . import callbacks as lc_callbacks
 from . import dataloader
 
 
+syslog = logging.getLogger(__name__)
+syslog.setLevel(logging.INFO)
+logging.debug("test")
 class Agent:
     """ """
     
@@ -128,8 +132,7 @@ class Agent:
             if cfg_model['weight_distribution']:
                 InitWeightDistribution(model,cfg_model['weight_distribution'])
                 
-            if self.print_enabled: print("Architecture [{0}] was created".format(type(model).__name__))
-        
+            syslog.debug("Architecture [{0}] was created".format(type(model.model).__name__))
         self.model = model
     
     def load_dataloader(self) -> None:
@@ -177,7 +180,7 @@ class Agent:
         ]
         callbacks.extend([getattr(pl_callbacks, key)(**values['args']) for key,values in cfg_trainer['callbacks'].items() if values['enable']])
 
-        if self.print_enabled: print("Enabled callbacks: ", [type(c).__name__ for c in callbacks])
+        syslog.debug(f"Enabled callbacks: {[type(c).__name__ for c in callbacks]}")#, [type(c).__name__ for c in callbacks])
         trainer = pl.Trainer(
             gpus=1 if torch.cuda.is_available() else None, 
             logger=logger if cfg_trainer['tensorboard'] else None,
@@ -191,18 +194,17 @@ class Agent:
         """Load the model and trainer, and run the agent"""
         self.load_model() 
         self.load_trainer()
-        self.print_enabled: print(f"Dataloader fold: {self.dataloader.kfold_index}")
-        
+        syslog.debug(f"Dataloader fold: {self.dataloader.kfold_index}")
         
         close_on_finish_decorator(self.trainer.fit, self.trainer.logger.log_dir, self.model, datamodule=self.dataloader, message=self._config)        
         return self.trainer
     
     def print_info(self):
         """ """
-        print(
-                f"Checkpoint: {self._config['checkpoint_path']}\n"
-                f"Seed: {self._config['seed']}\n"
-                f"{self.model}\n\n{self.dataloader}"
+        syslog.info(
+                f"\nCheckpoint: {self._config['checkpoint_path']}\n"
+                f"Seed: {self._config['seed']}\n\n"
+                f"{self.model if self.model != None else ''}\n\n{self.dataloader}"
                 f"{self.model.roi_model if self.model != None and self.model.roi_model != None else ''}" 
         )
 
