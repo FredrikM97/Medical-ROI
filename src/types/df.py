@@ -103,3 +103,34 @@ def xml2dict(r, parent:str='', delimiter:str=".") -> list:
         else:
             return {}
     return recursive(r, parent, delimiter=delimiter)
+
+def column_to_tuple(pd_column:'pandas.DataFrame') -> 'pandas.DataFrame':
+    """Convert a pandas column from string to tuple
+
+    Args:
+      pd_column('pandas.DataFrame'): Series
+
+    Returns:
+      type: output (Series):
+
+    Raises:
+
+    """
+    
+    return pd_column.apply(ast.literal_eval)
+
+def column_to_np(pd_column:'pandas.DataFrame', dtype:str='float64') -> 'pandas.DataFrame':
+    """Convert a pandas column from tuple to numpy arrays
+
+    Args:
+      pd_column('pandas.DataFrame'): Series
+      dtype(str, optional): (Default value = 'float64')
+
+    Returns:
+      type: output (Series):
+
+    Raises:
+
+    """
+    
+    return pd_column.apply(lambda x: np.array(x, dtype=dtype))

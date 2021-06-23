@@ -7,6 +7,7 @@ import itertools
 import json
 import os
 import logging
+import time
 from datetime import datetime
 from threading import Lock
 from typing import Tuple
@@ -273,3 +274,31 @@ class ThreadSafeReloadedModel:
             return ([idx, image, patient_class, target_class] for (idx, (image, patient_class)), target_class in itertools.product(enumerate(fileset),observe_classes)) 
         return fileset
 
+
+def iterate_models(name,i_limit=5,base_config='base'):
+    torch.cuda.empty_cache()
+    agent = Agent(name, base_config=base_config)
+    logged_metrics = []
+    
+    try:
+        i = 0
+        while True:
+            syslog.info(f"Running model: {name}, Iteration: {i:2}/{i_limit if i_limit != -1 else agent._config['dataloader']['args']['split']['folds']:2}, date: {agent.creation_date}")
+            agent.run()
+            agent.save_hparams()
+            with open(agent.trainer.logger.log_dir.rsplit("/",1)[0] + "/logged_metrics", 'a+') as f:
+                f.write(str(agent.trainer.logged_metrics))
+                
+            logged_metrics.append(agent.trainer.logged_metrics)
+            
+            
+            time.sleep(10)
+            i += 1
+
+            if not agent.dataloader.next_fold() or i == i_limit and i_limit != -1: break
+            torch.cuda.empty_cache()
+    except Exception as e:
+        torch.cuda.empty_cache()
+        raise e
+    #syslog.info(f"{name}: {logged_metrics}")
+    return logged_metrics

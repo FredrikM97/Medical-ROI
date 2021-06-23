@@ -10,12 +10,9 @@ from typing import List, Tuple, Union
 import numpy as np
 import torch
 from nms import batched_nms
-from roi_align import RoIAlign
 from scipy import ndimage as ndi
 from skimage import measure
 from skimage import segmentation as seg
-from skimage.filters import sobel
-from torchvision.ops._utils import convert_boxes_to_roi_format
 
 from src.display import plot
 from src.files.preprocess import preprocess_image, tensor2numpy
@@ -104,63 +101,6 @@ def bounding_boxes(features:list):
 
     else:
         return get_bbox_coordinates(features)
-
-def roi_align(image, boxes:list, output_shape:Tuple=(40,40,40), displayed:bool=False) -> 'torch.Tensor':
-    """Create aligned image rois for the neural network
-
-    Args:
-      image: Image of shape Tuple[D,H,W]
-      boxes(list): List of features (z0,y0,z1,y1,x0,x1). Shape is expected based on the input of ROIAlign
-      output_shape(Tuple, optional): (Default value = (40,40,40))
-      displayed(bool, optional): (Default value = False)
-
-    Returns:
-
-    Raises:
-
-    """
-
-    image_tensor = torch.from_numpy(image).unsqueeze(0).unsqueeze(0).float().cuda()
-    box_tensor = [torch.stack([torch.tensor(x) for x in boxes]).cuda()]
-    
-    roialign = RoIAlign(output_shape,spatial_scale=1.0,sampling_ratio=-1)
-    image_rois = roialign.forward(image_tensor,box_tensor)
-
-    # None branched syntax
-    if displayed:
-        [plot.display_3D(x[0],step=1) for x in tensor2numpy(image_rois)]
-    return image_rois
-
-def column_to_tuple(pd_column:'pandas.DataFrame') -> 'pandas.DataFrame':
-    """Convert a pandas column from string to tuple
-
-    Args:
-      pd_column('pandas.DataFrame'): Series
-
-    Returns:
-      type: output (Series):
-
-    Raises:
-
-    """
-    
-    return pd_column.apply(ast.literal_eval)
-
-def column_to_np(pd_column:'pandas.DataFrame', dtype:str='float64') -> 'pandas.DataFrame':
-    """Convert a pandas column from tuple to numpy arrays
-
-    Args:
-      pd_column('pandas.DataFrame'): Series
-      dtype(str, optional): (Default value = 'float64')
-
-    Returns:
-      type: output (Series):
-
-    Raises:
-
-    """
-    
-    return pd_column.apply(lambda x: np.array(x, dtype=dtype))
 
 def center_coordinates(list_of_bbox:list) -> 'Tuple[float,float,float]':
     """

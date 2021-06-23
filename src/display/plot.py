@@ -279,8 +279,8 @@ def imshow(image:'torch.tensor', cmap:list=parula_map, figsize:tuple=(8,4),color
         cbar = fig.colorbar(im,shrink=colormap_shrink,pad=0.01)
     if disable_axis:
         plt.axis('off')
-
-    plt.show()
+   
+    #plt.show()
     
 def advanced_plot(slices:list) -> None:
     """Advaned plot function for plotting with grid for nifti images.

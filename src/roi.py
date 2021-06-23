@@ -87,3 +87,29 @@ class RoiTransform:
             f"Number of BBoxes: {self.num_bbox}\n"
             f"BBox Count: {len(self.boundary_boxes) if isinstance(self.boundary_boxes, list) else ', '.join([f'{x}:{y}' for x,y in zip(self.boundary_boxes.keys(),map(len, self.boundary_boxes.values()))])}"
         )
+    
+def roi_align(image, boxes:list, output_shape:Tuple=(40,40,40), displayed:bool=False) -> 'torch.Tensor':
+    """Create aligned image rois for the neural network
+
+    Args:
+      image: Image of shape Tuple[D,H,W]
+      boxes(list): List of features (z0,y0,z1,y1,x0,x1). Shape is expected based on the input of ROIAlign
+      output_shape(Tuple, optional): (Default value = (40,40,40))
+      displayed(bool, optional): (Default value = False)
+
+    Returns:
+
+    Raises:
+
+    """
+
+    image_tensor = torch.from_numpy(image).unsqueeze(0).unsqueeze(0).float().cuda()
+    box_tensor = [torch.stack([torch.tensor(x) for x in boxes]).cuda()]
+    
+    roialign = RoIAlign(output_shape,spatial_scale=1.0,sampling_ratio=-1)
+    image_rois = roialign.forward(image_tensor,box_tensor)
+
+    # None branched syntax
+    if displayed:
+        [plot.display_3D(x[0],step=1) for x in tensor2numpy(image_rois)]
+    return image_rois
