@@ -331,6 +331,61 @@
                 }
             }
         }
+    },
+    "roi7":{
+        "name":"ROI7",
+        "dataloader": {
+            "args":{
+                "augmentation":{
+                    "enable":false
+                }
+            }
+        },
+        "model":{
+            "arch": {
+                "name": "fc",
+                "args": {
+                     "input_shape":[23,17,20]
+                }
+            },
+            "roi_hparams":{
+                "enable":true,
+                "output_shape":[23,17,20],
+                "boundary_boxes":{
+                    "AD":[
+                        [54, 52, 61, 62, 58, 61],
+        [49, 55, 55, 60, 43, 44],
+        [47, 45, 74, 68, 49, 63],
+        [45,  8, 56, 12, 43, 44],
+        [19, 26, 21, 37, 50, 52],
+        [26, 43, 70, 90,  8, 39]
+                    ],"MCI":[
+                        [30, 39, 74, 79, 11, 52],
+        [18, 27, 28, 40, 34, 37],
+        [42, 18, 46, 21, 42, 44],
+        [32, 10, 55, 36, 38, 46]
+                    ],
+                    
+                    "CN":[
+                        [33, 39, 74, 80, 24, 58]
+                    ]
+                }
+            }
+        },
+          "trainer":{
+            "callbacks":{
+                "EarlyStopping":{
+                    "enable":true,
+                    "args":{
+                        "monitor":"loss/val",
+                        "min_delta":0.0001,
+                        "patience":20,
+                        "verbose":"False",
+                        "mode":"min"
+                    }
+                }
+            }
+        }
     }
     
 }
