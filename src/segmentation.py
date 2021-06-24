@@ -59,6 +59,13 @@ def get_bbox_coordinates(feature:object):
       tmp_image[1][30: 40,20:50] = 1
       tmp_image[1][30: 40,20:50] = 1
       tmp_image[1][30: 40,20:50] = 1
+      tmp_image[1][30: 40,20:50] = 1
+      feature = measure.regionprops(tmp_image)[0]
+      tmp_image[1][30: 40,20:50] = 1
+      tmp_image[1][30: 40,20:50] = 1
+      tmp_image[1][30: 40,20:50] = 1
+      tmp_image[1][30: 40,20:50] = 1
+      tmp_image[1][30: 40,20:50] = 1
       feature = measure.regionprops(tmp_image)[0]
       tmp_image[1][30: 40,20:50] = 1
       tmp_image[1][30: 40,20:50] = 1

@@ -40,15 +40,6 @@
                     <a class="function" href="#bounding_boxes">bounding_boxes</a>
             </li>
             <li>
-                    <a class="function" href="#roi_align">roi_align</a>
-            </li>
-            <li>
-                    <a class="function" href="#column_to_tuple">column_to_tuple</a>
-            </li>
-            <li>
-                    <a class="function" href="#column_to_np">column_to_np</a>
-            </li>
-            <li>
                     <a class="function" href="#center_coordinates">center_coordinates</a>
             </li>
             <li>
@@ -97,26 +88,21 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 
-<span class="kn">from</span> <span class="nn">skimage</span> <span class="kn">import</span> <span class="n">measure</span>
-<span class="kn">from</span> <span class="nn">skimage</span> <span class="kn">import</span> <span class="n">segmentation</span> <span class="k">as</span> <span class="n">seg</span>
-<span class="kn">from</span> <span class="nn">skimage.filters</span> <span class="kn">import</span> <span class="n">sobel</span>
+<span class="kn">import</span> <span class="nn">ast</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">ndimage</span> <span class="k">as</span> <span class="n">ndi</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">torch</span>
-
-<span class="kn">import</span> <span class="nn">ast</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span>
-<span class="kn">from</span> <span class="nn">torchvision.ops._utils</span> <span class="kn">import</span> <span class="n">convert_boxes_to_roi_format</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
-
-<span class="kn">from</span> <span class="nn">roi_align</span> <span class="kn">import</span> <span class="n">RoIAlign</span>
 <span class="kn">from</span> <span class="nn">nms</span> <span class="kn">import</span> <span class="n">batched_nms</span>
-<span class="kn">from</span> <span class="nn">src.files.preprocess</span> <span class="kn">import</span> <span class="n">tensor2numpy</span><span class="p">,</span> <span class="n">preprocess_image</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">ndimage</span> <span class="k">as</span> <span class="n">ndi</span>
+<span class="kn">from</span> <span class="nn">skimage</span> <span class="kn">import</span> <span class="n">measure</span>
+<span class="kn">from</span> <span class="nn">skimage</span> <span class="kn">import</span> <span class="n">segmentation</span> <span class="k">as</span> <span class="n">seg</span>
+
 <span class="kn">from</span> <span class="nn">src.display</span> <span class="kn">import</span> <span class="n">plot</span>
+<span class="kn">from</span> <span class="nn">src.files.preprocess</span> <span class="kn">import</span> <span class="n">preprocess_image</span><span class="p">,</span> <span class="n">tensor2numpy</span>
 <span class="kn">from</span> <span class="nn">src.utils.decorator</span> <span class="kn">import</span> <span class="n">HiddenPrints</span>
 
-<span class="c1">#with HiddenPrints(), warnings.catch_warnings():</span>
 
 <span class="k">def</span> <span class="nf">segment_mask</span><span class="p">(</span><span class="n">background_mask</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">image_mask</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">150</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Simple segmentation of the mask input</span>
@@ -153,6 +139,13 @@
 <span class="sd">      : min_col, min_row, max_col, max_row, min_depth, max_depth</span>
 <span class="sd">      Example: </span>
 <span class="sd">      Example: tmp_image = np.zeros((3,100,100)).astype(int)#np.resize(tmp_image,(3,100,100))</span>
+<span class="sd">      tmp_image[1][30: 40,20:50] = 1</span>
+<span class="sd">      tmp_image[1][30: 40,20:50] = 1</span>
+<span class="sd">      tmp_image[1][30: 40,20:50] = 1</span>
+<span class="sd">      tmp_image[1][30: 40,20:50] = 1</span>
+<span class="sd">      tmp_image[1][30: 40,20:50] = 1</span>
+<span class="sd">      tmp_image[1][30: 40,20:50] = 1</span>
+<span class="sd">      feature = measure.regionprops(tmp_image)[0]</span>
 <span class="sd">      tmp_image[1][30: 40,20:50] = 1</span>
 <span class="sd">      tmp_image[1][30: 40,20:50] = 1</span>
 <span class="sd">      tmp_image[1][30: 40,20:50] = 1</span>
@@ -200,63 +193,6 @@
 
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">get_bbox_coordinates</span><span class="p">(</span><span class="n">features</span><span class="p">)</span>
-
-<span class="k">def</span> <span class="nf">roi_align</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">boxes</span><span class="p">:</span><span class="nb">list</span><span class="p">,</span> <span class="n">output_shape</span><span class="p">:</span><span class="n">Tuple</span><span class="o">=</span><span class="p">(</span><span class="mi">40</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">40</span><span class="p">),</span> <span class="n">displayed</span><span class="p">:</span><span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;torch.Tensor&#39;</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Create aligned image rois for the neural network</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">      image: Image of shape Tuple[D,H,W]</span>
-<span class="sd">      boxes(list): List of features (z0,y0,z1,y1,x0,x1). Shape is expected based on the input of ROIAlign</span>
-<span class="sd">      output_shape(Tuple, optional): (Default value = (40,40,40))</span>
-<span class="sd">      displayed(bool, optional): (Default value = False)</span>
-
-<span class="sd">    Returns:</span>
-
-<span class="sd">    Raises:</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">image_tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">image</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span>
-    <span class="n">box_tensor</span> <span class="o">=</span> <span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">boxes</span><span class="p">])</span><span class="o">.</span><span class="n">cuda</span><span class="p">()]</span>
-    
-    <span class="n">roialign</span> <span class="o">=</span> <span class="n">RoIAlign</span><span class="p">(</span><span class="n">output_shape</span><span class="p">,</span><span class="n">spatial_scale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span><span class="n">sampling_ratio</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">image_rois</span> <span class="o">=</span> <span class="n">roialign</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">image_tensor</span><span class="p">,</span><span class="n">box_tensor</span><span class="p">)</span>
-
-    <span class="c1"># None branched syntax</span>
-    <span class="k">if</span> <span class="n">displayed</span><span class="p">:</span>
-        <span class="p">[</span><span class="n">plot</span><span class="o">.</span><span class="n">display_3D</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">step</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">tensor2numpy</span><span class="p">(</span><span class="n">image_rois</span><span class="p">)]</span>
-    <span class="k">return</span> <span class="n">image_rois</span>
-
-<span class="k">def</span> <span class="nf">column_to_tuple</span><span class="p">(</span><span class="n">pd_column</span><span class="p">:</span><span class="s1">&#39;pandas.DataFrame&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;pandas.DataFrame&#39;</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Convert a pandas column from string to tuple</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">      pd_column(&#39;pandas.DataFrame&#39;): Series</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">      type: output (Series):</span>
-
-<span class="sd">    Raises:</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    
-    <span class="k">return</span> <span class="n">pd_column</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">ast</span><span class="o">.</span><span class="n">literal_eval</span><span class="p">)</span>
-
-<span class="k">def</span> <span class="nf">column_to_np</span><span class="p">(</span><span class="n">pd_column</span><span class="p">:</span><span class="s1">&#39;pandas.DataFrame&#39;</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="s1">&#39;float64&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;pandas.DataFrame&#39;</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Convert a pandas column from tuple to numpy arrays</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">      pd_column(&#39;pandas.DataFrame&#39;): Series</span>
-<span class="sd">      dtype(str, optional): (Default value = &#39;float64&#39;)</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">      type: output (Series):</span>
-
-<span class="sd">    Raises:</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    
-    <span class="k">return</span> <span class="n">pd_column</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">))</span>
 
 <span class="k">def</span> <span class="nf">center_coordinates</span><span class="p">(</span><span class="n">list_of_bbox</span><span class="p">:</span><span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Tuple[float,float,float]&#39;</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -517,6 +453,13 @@
 <span class="sd">      tmp_image[1][30: 40,20:50] = 1</span>
 <span class="sd">      tmp_image[1][30: 40,20:50] = 1</span>
 <span class="sd">      tmp_image[1][30: 40,20:50] = 1</span>
+<span class="sd">      tmp_image[1][30: 40,20:50] = 1</span>
+<span class="sd">      feature = measure.regionprops(tmp_image)[0]</span>
+<span class="sd">      tmp_image[1][30: 40,20:50] = 1</span>
+<span class="sd">      tmp_image[1][30: 40,20:50] = 1</span>
+<span class="sd">      tmp_image[1][30: 40,20:50] = 1</span>
+<span class="sd">      tmp_image[1][30: 40,20:50] = 1</span>
+<span class="sd">      tmp_image[1][30: 40,20:50] = 1</span>
 <span class="sd">      feature = measure.regionprops(tmp_image)[0]</span>
 <span class="sd">      tmp_image[1][30: 40,20:50] = 1</span>
 <span class="sd">      tmp_image[1][30: 40,20:50] = 1</span>
@@ -561,6 +504,13 @@
   <p>: min_col, min_row, max_col, max_row, min_depth, max_depth
   Example: 
   Example: tmp_image = np.zeros((3,100,100)).astype(int)#np.resize(tmp_image,(3,100,100))
+  tmp_image[1][30: 40,20:50] = 1
+  tmp_image[1][30: 40,20:50] = 1
+  tmp_image[1][30: 40,20:50] = 1
+  tmp_image[1][30: 40,20:50] = 1
+  tmp_image[1][30: 40,20:50] = 1
+  tmp_image[1][30: 40,20:50] = 1
+  feature = measure.regionprops(tmp_image)[0]
   tmp_image[1][30: 40,20:50] = 1
   tmp_image[1][30: 40,20:50] = 1
   tmp_image[1][30: 40,20:50] = 1
@@ -633,169 +583,6 @@
 
 <blockquote>
   <p>type: output List[K, 6] with the box coordinates in  (x0, y0, x1, y1, z0, z1) and k is batch size.</p>
-</blockquote>
-
-<p>Raises:</p>
-</div>
-
-
-                </section>
-                <section id="roi_align">
-                            <div class="attr function"><a class="headerlink" href="#roi_align">#&nbsp;&nbsp</a>
-
-        
-            <span class="def">def</span>
-            <span class="name">roi_align</span><span class="signature">(
-    image,
-    boxes: list,
-    output_shape: Tuple = (40, 40, 40),
-    displayed: bool = False
-) -&gt; torch.Tensor</span>:
-    </div>
-
-                <details>
-            <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">roi_align</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">boxes</span><span class="p">:</span><span class="nb">list</span><span class="p">,</span> <span class="n">output_shape</span><span class="p">:</span><span class="n">Tuple</span><span class="o">=</span><span class="p">(</span><span class="mi">40</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">40</span><span class="p">),</span> <span class="n">displayed</span><span class="p">:</span><span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;torch.Tensor&#39;</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Create aligned image rois for the neural network</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">      image: Image of shape Tuple[D,H,W]</span>
-<span class="sd">      boxes(list): List of features (z0,y0,z1,y1,x0,x1). Shape is expected based on the input of ROIAlign</span>
-<span class="sd">      output_shape(Tuple, optional): (Default value = (40,40,40))</span>
-<span class="sd">      displayed(bool, optional): (Default value = False)</span>
-
-<span class="sd">    Returns:</span>
-
-<span class="sd">    Raises:</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">image_tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">image</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span>
-    <span class="n">box_tensor</span> <span class="o">=</span> <span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">boxes</span><span class="p">])</span><span class="o">.</span><span class="n">cuda</span><span class="p">()]</span>
-    
-    <span class="n">roialign</span> <span class="o">=</span> <span class="n">RoIAlign</span><span class="p">(</span><span class="n">output_shape</span><span class="p">,</span><span class="n">spatial_scale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span><span class="n">sampling_ratio</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">image_rois</span> <span class="o">=</span> <span class="n">roialign</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">image_tensor</span><span class="p">,</span><span class="n">box_tensor</span><span class="p">)</span>
-
-    <span class="c1"># None branched syntax</span>
-    <span class="k">if</span> <span class="n">displayed</span><span class="p">:</span>
-        <span class="p">[</span><span class="n">plot</span><span class="o">.</span><span class="n">display_3D</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">step</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">tensor2numpy</span><span class="p">(</span><span class="n">image_rois</span><span class="p">)]</span>
-    <span class="k">return</span> <span class="n">image_rois</span>
-</pre></div>
-
-        </details>
-
-            <div class="docstring"><p>Create aligned image rois for the neural network</p>
-
-<h6 id="args">Args</h6>
-
-<ul>
-<li><strong>image:</strong>  Image of shape Tuple[D,H,W]</li>
-<li><strong>boxes(list):</strong>  List of features (z0,y0,z1,y1,x0,x1). Shape is expected based on the input of ROIAlign</li>
-<li><strong>output_shape(Tuple, optional):</strong>  (Default value = (40,40,40))</li>
-<li><strong>displayed(bool, optional):</strong>  (Default value = False)</li>
-</ul>
-
-<p>Returns:</p>
-
-<p>Raises:</p>
-</div>
-
-
-                </section>
-                <section id="column_to_tuple">
-                            <div class="attr function"><a class="headerlink" href="#column_to_tuple">#&nbsp;&nbsp</a>
-
-        
-            <span class="def">def</span>
-            <span class="name">column_to_tuple</span><span class="signature">(
-    pd_column: pandas.core.frame.DataFrame
-) -&gt; pandas.core.frame.DataFrame</span>:
-    </div>
-
-                <details>
-            <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">column_to_tuple</span><span class="p">(</span><span class="n">pd_column</span><span class="p">:</span><span class="s1">&#39;pandas.DataFrame&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;pandas.DataFrame&#39;</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Convert a pandas column from string to tuple</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">      pd_column(&#39;pandas.DataFrame&#39;): Series</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">      type: output (Series):</span>
-
-<span class="sd">    Raises:</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    
-    <span class="k">return</span> <span class="n">pd_column</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">ast</span><span class="o">.</span><span class="n">literal_eval</span><span class="p">)</span>
-</pre></div>
-
-        </details>
-
-            <div class="docstring"><p>Convert a pandas column from string to tuple</p>
-
-<h6 id="args">Args</h6>
-
-<ul>
-<li><strong>pd_column('pandas.DataFrame'):</strong>  Series</li>
-</ul>
-
-<h6 id="returns">Returns</h6>
-
-<blockquote>
-  <p>type: output (Series):</p>
-</blockquote>
-
-<p>Raises:</p>
-</div>
-
-
-                </section>
-                <section id="column_to_np">
-                            <div class="attr function"><a class="headerlink" href="#column_to_np">#&nbsp;&nbsp</a>
-
-        
-            <span class="def">def</span>
-            <span class="name">column_to_np</span><span class="signature">(
-    pd_column: pandas.core.frame.DataFrame,
-    dtype: str = &#39;float64&#39;
-) -&gt; pandas.core.frame.DataFrame</span>:
-    </div>
-
-                <details>
-            <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">column_to_np</span><span class="p">(</span><span class="n">pd_column</span><span class="p">:</span><span class="s1">&#39;pandas.DataFrame&#39;</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="s1">&#39;float64&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;pandas.DataFrame&#39;</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Convert a pandas column from tuple to numpy arrays</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">      pd_column(&#39;pandas.DataFrame&#39;): Series</span>
-<span class="sd">      dtype(str, optional): (Default value = &#39;float64&#39;)</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">      type: output (Series):</span>
-
-<span class="sd">    Raises:</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    
-    <span class="k">return</span> <span class="n">pd_column</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">))</span>
-</pre></div>
-
-        </details>
-
-            <div class="docstring"><p>Convert a pandas column from tuple to numpy arrays</p>
-
-<h6 id="args">Args</h6>
-
-<ul>
-<li><strong>pd_column('pandas.DataFrame'):</strong>  Series</li>
-<li><strong>dtype(str, optional):</strong>  (Default value = 'float64')</li>
-</ul>
-
-<h6 id="returns">Returns</h6>
-
-<blockquote>
-  <p>type: output (Series):</p>
 </blockquote>
 
 <p>Raises:</p>

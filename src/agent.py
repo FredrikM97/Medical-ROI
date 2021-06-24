@@ -276,6 +276,18 @@ class ThreadSafeReloadedModel:
 
 
 def iterate_models(name,i_limit=5,base_config='base'):
+    """
+
+    Args:
+      name: 
+      i_limit:  (Default value = 5)
+      base_config:  (Default value = 'base')
+
+    Returns:
+
+    Raises:
+
+    """
     torch.cuda.empty_cache()
     agent = Agent(name, base_config=base_config)
     logged_metrics = []
